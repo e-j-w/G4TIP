@@ -1,0 +1,27 @@
+/Griffin/addGriffinBack 16
+/Projectile/A 18
+/Projectile/Z 8
+/Projectile/KE 48 MeV
+/Projectile/Focus/DX 0. mm
+/Projectile/Focus/DY 0. mm
+/Backing/Material Gold
+/Backing/Thickness 9.5 um
+/Backing/NStep 1
+/Target/Material Carbon
+/Target/Thickness 1.9 um
+/Target/NStep 1
+/EvaporationChannel/Tau 0.3 ps
+/EvaporationChannel/E_gamma 2548 keV
+#/Print/Track_Set
+#/Trigger/PINSingles
+#/run/beamOn 200
+#/Trigger/GammaSingles
+#/run/beamOn 1000000
+#/Trigger/GammaPINCoincidences
+/run/beamOn 100000
+#/run/beamOn 1
+#/Trigger/PINSingles
+#/run/beamOn 20000
+#/Results/Tree/Save 28Mg.root
+#/Projectile/Report
+/Results/Gamma/RingSpectrum 1

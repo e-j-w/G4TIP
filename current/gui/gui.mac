@@ -1,0 +1,56 @@
+#
+#  This file permits to customize, with commands,
+# the menu bar of the G4UIXm, G4UIWin32 sessions.
+# It has no effect with G4UIterminal.
+#
+# File :
+/gui/addMenu file File
+/gui/addButton file Continue continue
+/gui/addButton file Exit "exit"
+#
+# Run menu :
+/gui/addMenu run Run
+/gui/addButton run "beamOn 1" "/run/beamOn 1"
+/gui/addButton run "beamOn 10" "/run/beamOn 10"
+/gui/addButton run "beamOn 100" "/run/beamOn 100"
+/gui/addButton run "beamOn 1K" "/run/beamOn 1000"
+/gui/addButton run "beamOn 10K" "/run/beamOn 10000"
+/gui/addButton run "beamOn 100K" "/run/beamOn 100000"
+/gui/addButton run "beamOn 1M" "/run/beamOn 1000000"
+/gui/addButton run "beamOn 10M" "/run/beamOn 10000000"
+/gui/addButton run "beamOn 100M" "/run/beamOn 100000000"
+#
+
+# Vis menu :
+/gui/addMenu vis Vis
+/gui/addButton vis OGLIX "/control/execute gui/visOGLIX.mac"
+/gui/addButton vis VRML2 "/control/execute gui/visVRML.mac"
+/gui/addButton vis OFF "/vis/disable"
+#
+# Viewer menu :
+/gui/addMenu viewer Viewer
+/gui/addButton viewer "Set style solid" "/vis/viewer/set/style solid"
+/gui/addButton viewer "Set style wireframe" "/vis/viewer/set/style wire"
+#/gui/addButton viewer viewer_update "/vis/viewer/update"
+/gui/addButton viewer "Update scene" "/vis/scene/notifyHandlers"
+/gui/addButton viewer "Th 0 Ph 0" "/vis/viewer/set/viewpointThetaPhi 0 0"
+/gui/addButton viewer "Th 90 Ph 0" "/vis/viewer/set/viewpointThetaPhi 90 0"
+/gui/addButton viewer "Th 180 Ph 0" "/vis/viewer/set/viewpointThetaPhi 180 0"
+/gui/addButton viewer "Th 270 Ph 0" "/vis/viewer/set/viewpointThetaPhi 270 0"
+/gui/addButton viewer "Th 90 Ph 90" "/vis/viewer/set/viewpointThetaPhi 90 90"
+# Zoom in menu :
+
+/gui/addMenu zoomin ZoomIn
+/gui/addButton zoomin "10%" "/vis/viewer/zoom 1.1"
+/gui/addButton zoomin "20%" "/vis/viewer/zoom 1.2"
+/gui/addButton zoomin "50%" "/vis/viewer/zoom 1.5"
+/gui/addButton zoomin "100%" "/vis/viewer/zoom 2.0"
+#Zoom out menu
+/gui/addMenu zoomout ZoomOut
+/gui/addButton zoomout "10%" "/vis/viewer/zoom 0.9"
+/gui/addButton zoomout "20%" "/vis/viewer/zoom 0.8"
+/gui/addButton zoomout "50%" "/vis/viewer/zoom 0.5"
+#
+# BeamIn menu
+#/gui/addMenu beamin BeamIn
+#/gui/addButton beamin "Energy" "/BeamIn/KE"
