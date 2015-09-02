@@ -114,6 +114,7 @@ class Reaction : public G4VProcess
   G4ThreeVector posIn;
   G4double A1,Z1,A2,Z2;
   G4int  nP,nN,nA;
+  G4int  maxNumEvap;
   G4double Egamma,tau;
   vector<evaporation> *history;
 };

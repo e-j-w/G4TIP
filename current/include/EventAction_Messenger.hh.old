@@ -25,13 +25,8 @@ class EventAction_Messenger: public G4UImessenger
     G4UIdirectory*             EventActionDir;
     G4UIcmdWithoutParameter*   GSCmd;
     G4UIcmdWithoutParameter*   PSCmd;
-    G4UIcmdWithoutParameter*   PSRCmd;
-    G4UIcmdWithoutParameter*   PSPCmd;
     G4UIcmdWithoutParameter*   GPCCmd;
-    G4UIcmdWithoutParameter*   GPRCCmd;
-    G4UIcmdWithoutParameter*   GPPCCmd;
-
-
+  
 };
 
 

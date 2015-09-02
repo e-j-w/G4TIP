@@ -1,14 +1,22 @@
 #include "EventAction.hh"
 
  
-EventAction::EventAction(Results* RE,RunAction* RA): results(RE),run_action(RA)
+EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,Recoil* rec):results(RE),run_action(RA),theProjectile(proj),theRecoil(rec)
+//EventAction::EventAction(Results* RE,RunAction* RA):results(RE),run_action(RA)
 { 
 
   ionCollectionID=-1;
-  PINCollectionID=-1;
+  CsICollectionID=-1;
   soa=16*4*sizeof(G4double);
   sov=16*4*sizeof(G4ThreeVector);
   SetTriggerGammaPinCoinc();
+  CsIThreshold=5*MeV;
+
+  // initialize info for CsI trigger - values at compilation!
+  Ap=theProjectile->getA();
+  Zp=theProjectile->getZ();
+  Ar=theRecoil->getA();
+  Zr=theRecoil->getZ();
 }
 
 
@@ -25,8 +33,8 @@ void EventAction::BeginOfEventAction(const G4Event*)
   if(ionCollectionID<0)
     ionCollectionID=SDman->GetCollectionID("ionCollection");
 
-  if(PINCollectionID<0)
-    PINCollectionID=SDman->GetCollectionID("PINCollection");
+  if(CsICollectionID<0)
+    CsICollectionID=SDman->GetCollectionID("CsICollection");
  
   memset(GriffinCrystEnergyDet,0,soa);
   memset(GriffinCrystWeightDet,0,soa);
@@ -34,7 +42,15 @@ void EventAction::BeginOfEventAction(const G4Event*)
   GriffinFold=0;
   // G4cout<<"+++++ Begin of event "<<evt->GetEventID()<<G4endl;
 
-}
+  // initialize info for CsI trigger - if set in macro
+  // why should I have to do this every time?
+  Ap=theProjectile->getA();
+  Zp=theProjectile->getZ();
+  Ar=theRecoil->getA();
+  Zr=theRecoil->getZ();
+  // printf("Ap %d Zp %d Ar %d Zr %d\n",Ap,Zp,Ar,Zr);
+  // getc(stdin);
+ }
 
 
  
@@ -58,34 +74,82 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   eventTrigger=0;
 
   G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
-  TrackerPINHitsCollection* PIN=new TrackerPINHitsCollection();
+  TrackerCsIHitsCollection* CsI=new TrackerCsIHitsCollection();
   TrackerIonHitsCollection* HI=new TrackerIonHitsCollection();
   G4int Np;
 
-  if(HCE!=NULL) {    
-    PIN=(TrackerPINHitsCollection*) HCE->GetHC(PINCollectionID); 
-    Np=PIN->entries();
-    if(Np>0) 
-      eventTrigger|=2;  
-    HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
-  }
+/* 
+     ASC notes 27 Aug 2015:
+     Bitwise OR assignment x|=y -> x = x|y. 
+     eventTrigger 8 is CsI system trigger i.e. trigger on recoil OR projectile
+*/  
 
+  // CsI trigger
+  if(HCE!=NULL) 
+    {  
+      CsI=(TrackerCsIHitsCollection*) HCE->GetHC(CsICollectionID); 
+      HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
+      Np=CsI->entries();
+      if(Np>0) 
+	{
+	  G4double rECsI=0;
+	  G4double pECsI=0.;
+	  for(int i=0;i<Np;i++)
+	    {
+	      // recoil
+		if((*CsI)[i]->GetA()==Ar)
+		  if((*CsI)[i]->GetZ()==Zr)
+		    {
+		      rECsI+=(*CsI)[i]->GetKE();
+		      //printf("recoil CsI partial energy deposit is %9.3f\n",rECsI);
+		    }
+	      // projectile
+		if((*CsI)[i]->GetA()==Ap)
+		  if((*CsI)[i]->GetZ()==Zp)
+		    {
+		      pECsI+=(*CsI)[i]->GetKE();
+		      //printf("proj   CsI partial energy deposit is %9.3f\n",pECsI);
+		    }
+	    }
+	  
+	  if(rECsI>CsIThreshold)
+	    eventTrigger|=2;
 
+	  if(pECsI>CsIThreshold)
+	    eventTrigger|=4;
+
+	  if((eventTrigger&2)||(eventTrigger&4))
+	    eventTrigger|=8;
+	  
+	  // printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
+	  // printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
+	  // printf("CsI eventTrigger is %d\n",eventTrigger);
+	  // getc(stdin);
+	  
+	    }   
+    }
+  // end CsI trigger
+  
+  // HPGe trigger
   if(GriffinFold>0)
-       eventTrigger|=1;
+    eventTrigger|=1;
+  // end HPGe trigger
 
-
-  //  if((eventTrigger&setTrigger)==setTrigger)
+  // printf("HPGe fold is %d\n",GriffinFold);
+  // printf("HPGe eventTrigger is %d\n",eventTrigger);
+  // printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);
+  
+  if((eventTrigger&setTrigger)==setTrigger)
       {
 	if(GriffinFold>0)
 	  for(G4int det=0;det<16;det++)
 	    for(G4int cry=0;cry<4;cry++)
 	      if( GriffinCrystEnergyDet[det][cry]>0)
 		GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
-
-	results->FillTree(evtNb,HI,PIN,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
+	results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
+	// printf("event fulfills trigger conditions %d\n",eventTrigger&setTrigger);
       }
-  
+    // getc(stdin);
 }
 //*********************************************************************//
 void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry) 
@@ -93,8 +157,8 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
   if(GriffinCrystWeightDet[det][cry]==0.)
     {
       GriffinCrystWeightDet[det][cry]=w;
-      GriffinCrystEnergyDet[det][cry]= de;
-      GriffinCrystPosDet[det][cry]= de*pos;
+      GriffinCrystEnergyDet[det][cry]=de;
+      GriffinCrystPosDet[det][cry]=de*pos;
       GriffinFold++;
       return;
     }

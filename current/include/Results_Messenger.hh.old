@@ -26,8 +26,6 @@ class Results_Messenger: public G4UImessenger
     G4UIdirectory*             ResDir;
     G4UIdirectory*             TreDir;
     G4UIdirectory*             ProjDir;
-    G4UIdirectory*             RecDir;
-    G4UIdirectory*             CSDir;
     G4UIdirectory*             GDir;
     G4UIdirectory*             PDir;
     G4UIdirectory*             GRDir;
@@ -42,23 +40,14 @@ class Results_Messenger: public G4UImessenger
 
   //projectile
     G4UIcmdWithoutParameter*   PLSACmd;
-  //recoil
-    G4UIcmdWithoutParameter*   RLSACmd; 
-  //cross section
-    G4UIcmdWithoutParameter*   CSZCmd; 
-    G4UIcmdWithoutParameter*   FCMCmd; 
+ 
   //gamma
     G4UIcmdWithAnInteger*      GRSCmd;
-    G4UIcmdWith3Vector*        DCPCmd;
-    G4UIcmdWith3Vector*        DRPRCmd;
-  //CsI
-    G4UIcmdWithAnInteger*      PRSCmd;
+ 
   //groups
     G4UIcmdWithoutParameter*   RCSPCmd;
     G4UIcmdWithoutParameter*   RRSPCmd;
-    G4UIcmdWithoutParameter*   PCSPCmd;
-    G4UIcmdWithoutParameter*   PRSPCmd;
-    G4UIcmdWithoutParameter*   RCSDCmd;
+
 };
 
 

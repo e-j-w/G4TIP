@@ -73,9 +73,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    theTarget->Report();
    TargetMessenger = new Target_Messenger(theTarget);
 
-   aPIN_array = new PIN_array(ExpHall_log,materials);
+   aCsI_array = new CsI_array(ExpHall_log,materials);
+   aCsI_array->Construct();
+   aCsI_array->Report();
+
+   /*aPIN_array = new PIN_array(ExpHall_log,materials);
    aPIN_array->Construct();
-   aPIN_array->Report();
+   aPIN_array->Report();*/
   
    Chamber* theChamber = new Chamber(ExpHall_log,materials);
    theChamber->Construct();
@@ -98,10 +102,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
    ExpHall_log->SetSensitiveDetector(TrackerIon);
 
-   TrackerPIN = new TrackerPINSD("PINTracker");
-   SDman->AddNewDetector( TrackerPIN );
-   aPIN_array->MakeSensitive(TrackerPIN);
+   TrackerCsI = new TrackerCsISD("CsITracker");
+   SDman->AddNewDetector( TrackerCsI );
+   aCsI_array->MakeSensitive(TrackerCsI);
 
+   /*TrackerPIN = new TrackerPINSD("PINTracker");
+   SDman->AddNewDetector( TrackerPIN );
+   aPIN_array->MakeSensitive(TrackerPIN);*/
  
    return ExpHall_phys;
 }

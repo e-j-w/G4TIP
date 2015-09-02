@@ -38,12 +38,13 @@ G4VParticleChange* Reaction::PostStepDoIt(
   if(reaction_here)
     {
       reaction_here=false;
+      maxNumEvap = 8;
       G4DynamicParticle* RecoilOut;
-      G4DynamicParticle* EvapP [8];
-      G4DynamicParticle* EvapN [8];
-      G4DynamicParticle* EvapA [8];
+      G4DynamicParticle* EvapP [maxNumEvap];
+      G4DynamicParticle* EvapN [maxNumEvap];
+      G4DynamicParticle* EvapA [maxNumEvap];
       RecoilOut =new G4DynamicParticle();
-      for(int i=0; i<8; i++)
+      for(int i=0; i<maxNumEvap; i++)
         {
           EvapP[i]=new G4DynamicParticle();
           EvapN[i]=new G4DynamicParticle();
@@ -57,19 +58,19 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++)
-            if (i<8)
+            if (i<maxNumEvap)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 5.0); //for now, evaporate 5 MeV particles
                 aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
               }
           for(int i=0; i<nN; i++)
-            if (i<8)
+            if (i<maxNumEvap)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, 5.0); //for now, evaporate 5 MeV particles
                 aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
               }
           for(int i=0; i<nA; i++)
-            if (i<8)
+            if (i<maxNumEvap)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, 5.0); //for now, evaporate 5 MeV particles
                 aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)

@@ -8,6 +8,7 @@
  // Elements
  
   elementH  = new G4Element("Hydrogen",  "H",  1.,  1.0079*g/mole);
+  elementBe  = new G4Element("Berylium",  "Be",  4.,  9.012*g/mole);
   elementC  = new G4Element("Carbon",    "C",  6.,  12.011*g/mole);
   elementN  = new G4Element("Nitrogen",  "N",  7.,  14.007*g/mole);
   elementO  = new G4Element("Oxygen",    "O",  8., 15.9994*g/mole);
@@ -25,6 +26,8 @@
   elementCa = new G4Element("Calcium",   "Ca",20.,   40.08*g/mole);
   elementGe = new G4Element("Germanium", "Ge", 32., 72.64*g/mole);
   elementBi = new G4Element("Bismuth",  "Bi", 83., 208.98*g/mole);
+  elementSn = new G4Element("Tin",  "Sn", 50., 118.710*g/mole);
+  elementAg = new G4Element("Silver",  "Ag", 47., 107.8682*g/mole);
  
 // Materials
 
@@ -41,7 +44,12 @@
   Ca = new G4Material("Calcium", 20., 40.08*g/mole, 1.55*g/cm3);
   Ge = new G4Material("Germanium",32.,72.64*g/mole,5.323 *g/cm3);
   Cu = new G4Material("Copper", 29., 63.546*g/mole, 8.960*g/cm3);
-
+  Ti = new G4Material("Titanium", 22., 48*g/mole, 4.506*g/cm3);
+  Ni = new G4Material("Nickel", 28., 58*g/mole, 7.81*g/cm3);
+  Pb = new G4Material("Lead", 82., 207.2*g/mole, 11.34*g/cm3);
+  Sn = new G4Material("Tin", 50., 118.71*g/mole, 7.365*g/cm3);
+  Ag = new G4Material("Silver", 47., 107.8682*g/mole, 10.49*g/cm3);
+  
   BGO = new G4Material("BGO",7.3*g/cm3, 3);
   BGO->AddElement(elementBi, 4);    
   BGO->AddElement(elementGe, 3);    
@@ -54,6 +62,11 @@
   polyethylene = new G4Material("polyethylene",0.935*g/cm3,2);
   polyethylene->AddElement(elementC,1);
   polyethylene->AddElement(elementH,2);
+
+  mylar = new G4Material("mylar",1.38*g/cm3,3);
+  mylar->AddElement(elementC,10);
+  mylar->AddElement(elementH,8);
+  mylar->AddElement(elementO,4);
 
   Air = new G4Material("Air", 1.29*mg/cm3, 2);
   Air->AddElement(elementN, .7);

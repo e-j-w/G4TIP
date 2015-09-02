@@ -11,8 +11,10 @@
 #include "Target_Messenger.hh"
 #include "TrackerIonSD.hh"
 #include "TrackerIonSD_Messenger.hh"
-#include "PIN_array.hh"
-#include "TrackerPINSD.hh"
+//#include "PIN_array.hh"
+//#include "TrackerPINSD.hh"
+#include "CsI_array.hh"
+#include "TrackerCsISD.hh"
 #include "DetectionSystemGriffin.hh"
 #include "GriffinMessenger.hh"
 #include "G4NistManager.hh"
@@ -53,8 +55,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4LogicalVolume* ExpHall_log;
   G4VPhysicalVolume* ExpHall_phys;
   Target* theTarget;
-  PIN_array *aPIN_array; 
-  TrackerPINSD* TrackerPIN;
+  CsI_array *aCsI_array;
+  //PIN_array *aPIN_array;
+  TrackerCsISD* TrackerCsI;
+  //TrackerPINSD* TrackerPIN;
   Chamber* theChamber;
 
   Experimental_Hall_Messenger* ExperimentalHallMessenger;

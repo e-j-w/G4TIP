@@ -17,6 +17,7 @@ class Materials
   // Elements
  
   G4Element* elementH;
+  G4Element* elementBe;
   G4Element* elementC;
   G4Element* elementN;
   G4Element* elementO;
@@ -34,6 +35,8 @@ class Materials
   G4Element* elementCa;
   G4Element* elementGe;
   G4Element* elementBi;
+  G4Element* elementSn;
+  G4Element* elementAg;
 // Materials
 
   G4Material* Vacuum;
@@ -43,6 +46,8 @@ class Materials
   G4Material* C;
   G4Material* Au;
   G4Material* Ir;
+  G4Material* Ti;
+  G4Material* Ni;
   G4Material* Si;
   G4Material* Be;
   G4Material* scintCsI;
@@ -51,6 +56,10 @@ class Materials
   G4Material* Cu;
   G4Material* BGO;
   G4Material* polyethylene;
+  G4Material* mylar;
+  G4Material* Pb;
+  G4Material* Sn;
+  G4Material* Ag;
 
 
 };

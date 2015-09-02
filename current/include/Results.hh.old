@@ -12,28 +12,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include "TrackerIonSD.hh"
-#include "TrackerCsIHit.hh"
+#include "TrackerPINHit.hh"
 #include "Projectile.hh"
-#include "Recoil.hh"
 #include "Flags.hh"
-#include "DetectorConstruction.hh"
 #include "TH1.h"
-#include "TH2.h"
 #include "TGraph.h"
 
-#define GN     16
-#define GS     4
-#define NCsI   24
-#define PI     3.14159
-#define S16K   16384
+#define GN  16
+#define GS   4
+#define NPIN 44
+#define PI  3.14159
+#define S16K 16384
 #define RADIAN 57.29583
 
 typedef struct{
   Int_t evNb;
   Int_t Ap;
   Int_t Zp;
-  Int_t Ar;
-  Int_t Zr;
  } IonStat;
 
 typedef struct{
@@ -46,8 +41,6 @@ typedef struct{
     Double_t E;
     Double_t b;
     Double_t w;
-    Double_t path;  // path length in material
-    Double_t Eloss; // energy loss on path
  } IonInf;
 
 typedef struct{
@@ -62,11 +55,10 @@ typedef struct{
     Double_t w;
     Double_t Id;
     Double_t r;
- } CsIInf;
+ } PINInf;
 class Results
 {
 public:
-  //Results(Projectile*,Recoil*,DetectorConstruction*);
   Results(Projectile*);
   ~Results();
 
@@ -74,7 +66,7 @@ public:
   
   void SetupRun(G4int,G4int);
 
-  void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
+  void FillTree(G4int,TrackerIonHitsCollection*,TrackerPINHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
   void TreeView();
   void TreeSave(G4String);
   void TreeRead(G4String);
@@ -82,39 +74,23 @@ public:
   void TreeClear();
   void TreeCreate();
   void TreeReport();
-  void ProjLabScattAngle();
-  void RecLabScattAngle();
-  void CrossSectionZProfile();
-  void TargetFaceF_CM();
-  void SetTargetFaceCrossSection(G4double xs){TargetFaceCrossSection=xs;};
+
   void GammaRingSpectrum(G4int);
-  void CsIRingSpectrum(G4int);
-  void DetCryCsIGammaSpectrum(G4int,G4int,G4int);
-  void DetRingCsIRingGammaSpectrum(G4int,G4int,G4double);
   G4int RingMap(G4int,G4int);
   void ReportCrystalPositions();
-  void ReportCsIPositions();
   void CalculateCrystalPositions();
-  void CalculateCsIPositions();
-  void GroupCosDist();
   G4double FWHM_response(G4double);
-  G4double CalculatePath(G4ThreeVector,G4ThreeVector);
 private:
   
  // ROOT Tree stuff
-  TTree* tree;
+ 
+  TTree*  tree;
   G4int  IonFill;
 
-  Projectile*           theProjectile;
-  Recoil*               theRecoil;
-  DetectorConstruction* theDetector;
-
-  IonStat       stat;
-  IonInf        gun,pBIn,pTIn,pRIn,pROut,pTOut,pDIn,pDOut,rROut,rTOut,rDIn,rDOut,pDec,rDec,rDTrack,rBIn,rBOut;
-  CsIInf        pHit,rHit;
-  G4int         Ap,Zp,Ar,Zr;
-  G4ThreeVector rDiPos,rDPos; // recoil degrader position vectors for calculating distance
-  G4double      dDensity; // degrader density for calculating path in mg/cm^2
+  Projectile *theProjectile;
+  IonStat stat;
+  IonInf gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec;
+  G4int  Ap,Zp,Ar,Zr;
 
   size_t soh,soi,sos;
 
@@ -127,15 +103,25 @@ private:
   Double_t GE[GN*GS];
   Double_t GW[GN*GS];
 
-  TH1D     *h,*g;
-  TCanvas  *c,*c1;
-  TH2D     *correlation;
+  TH1D* h,*g;
+  TCanvas *c;
+
   G4double TargetFaceCrossSection;
  
   G4ThreeVector CP[GN][GS];
-  G4ThreeVector PP[NCsI];
+  G4ThreeVector PP[NPIN];
 
-  G4double A,B,C,F,G,H;
+
+  //FWHM
+  G4double F;
+  G4double G;
+  G4double H;
+ 
+  //conversion from energy to channels
+  G4double A;
+  G4double B;
+  G4double C;
+
 };
 
 #endif
