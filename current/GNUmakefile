@@ -3,7 +3,7 @@
 # GNUmakefile for examples module.  Gabriele Cosmo, 06/04/98.
 # --------------------------------------------------------------
 
-name := TIP_FEDSAM_TIGRESS_PINWall
+name := TIP_FusEvapDSAM_CsIWall
 G4TARGET := $(name)
 G4EXLIB := true
 

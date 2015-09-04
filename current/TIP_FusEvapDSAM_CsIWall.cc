@@ -29,8 +29,8 @@
 #include "Results_Messenger.hh"
 #include "Projectile.hh"
 #include "Projectile_Messenger.hh"
-#include "Recoil.hh"
-#include "Recoil_Messenger.hh"
+//#include "Recoil.hh"
+//#include "Recoil_Messenger.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 
@@ -58,10 +58,10 @@ int main(int argc,char** argv)
   theProjectile->Report();
 
  // Construct the outgoing beam
-  Recoil* theRecoil=new Recoil();
+/*  Recoil* theRecoil=new Recoil();
   Recoil_Messenger* RecoilMessenger;
   RecoilMessenger=new Recoil_Messenger(theRecoil);
-  theRecoil->Report();
+  theRecoil->Report();*/
  
  // set mandatory user action clas
   PhysicsList *thePhysicsList = new PhysicsList(theProjectile);
@@ -79,7 +79,7 @@ int main(int argc,char** argv)
   runManager->SetUserAction(theRunAction);
  
   //EventAction* eventAction = new EventAction(results,theRunAction);
-  EventAction* eventAction = new EventAction(results,theRunAction,theProjectile,theRecoil);
+  EventAction* eventAction = new EventAction(results,theRunAction,theProjectile);
   runManager->SetUserAction(eventAction);
   EventAction_Messenger* eventActionMessenger;
   eventActionMessenger = new EventAction_Messenger(eventAction);

@@ -32,7 +32,7 @@
 class EventAction : public G4UserEventAction
 {
   public:
-  EventAction(Results*,RunAction*,Projectile*,Recoil*);
+  EventAction(Results*,RunAction*,Projectile*);
    ~EventAction();
   void BeginOfEventAction(const G4Event*);
   void EndOfEventAction(const G4Event*);
@@ -63,7 +63,7 @@ class EventAction : public G4UserEventAction
 
   // Info for CsI trigger
   Projectile* theProjectile;
-  Recoil*     theRecoil;
+  //Recoil*     theRecoil;
   Int_t       Ap,Zp,Ar,Zr;
 };
 

@@ -4,8 +4,6 @@
 /Projectile/KE 48 MeV
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
-/Recoil/A 28
-/Recoil/Z 12
 /Backing/Material Gold
 /Backing/Thickness 9.5 um
 /Backing/NStep 1

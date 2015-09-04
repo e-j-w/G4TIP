@@ -21,15 +21,13 @@
 /tracking/storeTrajectory 1
 /vis/scene/notifyHandlers
 /vis/scene/endOfEventAction accumulate
-/control/execute /home/jono/Documents/Code/TIP_Fusion_Evaporation/current/28Mgrun.mac
+/control/execute /home/jono/Documents/Code/TIP_Fusion_Evaporation/current/28Mg.mac
 /Griffin/addGriffinBack 16
 /Projectile/A 18
 /Projectile/Z 8
 /Projectile/KE 48 MeV
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
-/Recoil/A 28
-/Recoil/Z 12
 /Backing/Material Gold
 /Backing/Thickness 9.5 um
 /Backing/NStep 1
@@ -39,11 +37,12 @@
 /Reaction/Tau 0.3 ps
 /Reaction/E_gamma 2548 keV
 /Reaction/N_protons 2
-/Trigger/CsISingles
-/run/beamOn 200000
+/run/beamOn 1
 /run/particle/addProcManager Fe56[0.0]
 /run/particle/addProcManager Ar40[0.0]
 /vis/scene/notifyHandlers scene-0
+/run/particle/addProcManager Si30[0.0]
 /run/particle/addProcManager Mg28[2548.0]
 /run/particle/addProcManager Mg28[0.0]
 /run/particle/addProcManager O18[0.0]
+/run/beamOn 10

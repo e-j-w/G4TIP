@@ -1,7 +1,7 @@
 #include "EventAction.hh"
 
  
-EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,Recoil* rec):results(RE),run_action(RA),theProjectile(proj),theRecoil(rec)
+EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE),run_action(RA),theProjectile(proj)
 //EventAction::EventAction(Results* RE,RunAction* RA):results(RE),run_action(RA)
 { 
 
@@ -15,8 +15,8 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,Recoil* rec)
   // initialize info for CsI trigger - values at compilation!
   Ap=theProjectile->getA();
   Zp=theProjectile->getZ();
-  Ar=theRecoil->getA();
-  Zr=theRecoil->getZ();
+  //Ar=theRecoil->getA();
+  //Zr=theRecoil->getZ();
 }
 
 
@@ -46,8 +46,8 @@ void EventAction::BeginOfEventAction(const G4Event*)
   // why should I have to do this every time?
   Ap=theProjectile->getA();
   Zp=theProjectile->getZ();
-  Ar=theRecoil->getA();
-  Zr=theRecoil->getZ();
+  //Ar=theRecoil->getA();
+  //Zr=theRecoil->getZ();
   // printf("Ap %d Zp %d Ar %d Zr %d\n",Ap,Zp,Ar,Zr);
   // getc(stdin);
  }
