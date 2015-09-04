@@ -40,6 +40,7 @@ G4bool TrackerPINSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();
   const G4double len=aStep->GetStepLength();
+  //G4cout << "Type: " << type << G4endl;
 
   if(type=="nucleus")
     {

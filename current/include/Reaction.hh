@@ -9,6 +9,7 @@
 #include "G4VProcess.hh"
 #include "DetectorConstruction.hh"
 #include "GammaDecayChannel.hh"
+#include "Recoil.hh"
 #include "Projectile.hh"
 #include "G4VParticleChange.hh"
 #include "G4ParticleChange.hh"
@@ -42,7 +43,7 @@ class Reaction : public G4VProcess
   public:     
    G4bool reaction_here;
 
-  Reaction(Projectile*, const G4String& processName ="Reaction" );
+  Reaction(Projectile*,Recoil*, const G4String& processName ="Reaction" );
 
      virtual ~Reaction();
 
@@ -105,8 +106,9 @@ class Reaction : public G4VProcess
 
   private:
  
-
+  Recoil* theRecoil;
   Projectile *theProjectile;
+
   G4ParticleDefinition* compound;
   G4ParticleDefinition* rec;
   G4ParticleDefinition* proton,*alpha,*neutron;

@@ -3,8 +3,8 @@
 
 Recoil::Recoil()
 {
-  RecoilA=12;
-  RecoilZ=6;
+  RecoilA=28;
+  RecoilZ=12;
   RecoilEx=0.*MeV;
   RecoilTau=0.*ns;
 }

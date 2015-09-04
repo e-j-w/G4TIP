@@ -17,7 +17,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
   G4double At,Zt;
   G4int nP,nN,nA;
   G4int DA,DZ;
-  G4cout<<" Beginin of run "<<G4endl;
+  G4cout<<" Beginning of run "<<G4endl;
   gettimeofday(&ts,NULL);
  
   At=theDetector->GetTarget()->getTargetMass();

@@ -38,10 +38,11 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();
   const G4double len=aStep->GetStepLength();
+  //G4cout << "Type: " << type << G4endl; //right now, always seems to be gamma or lepton
 
-  if(type=="nucleus")
+  //if(type=="nucleus")
+  if((type=="nucleus")||(type=="baryon")) //some evaporated particles classified as baryons by GEANT4 
     {
-    
       char name[132],s1[10],s2[10],s3[10];
       strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
       sscanf(name,"%s %s %s",s1,s2,s3);
@@ -97,10 +98,10 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	}
       else
 	{
-	  //    G4cout << "Energy deposit in the " << name << G4endl;
-	  //    G4cout << "E="<<G4BestUnit(edep,"Energy")<<G4endl;
-	  //    G4cout <<"Event ignored" <<G4endl;
-	  //	    getc(stdin);
+	      //G4cout << "Energy deposit in the " << name << G4endl;
+	      //G4cout << "E="<<G4BestUnit(edep,"Energy")<<G4endl;
+	      //G4cout <<"Event ignored" <<G4endl;
+	      //getc(stdin);
 	  return false;
 	}
     }

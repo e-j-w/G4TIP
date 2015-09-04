@@ -3,8 +3,8 @@
 
 
 
-Reaction::Reaction(Projectile* Proj,  const G4String& aName)
-  : G4VProcess(aName), theProjectile(Proj)
+Reaction::Reaction(Projectile* Proj, Recoil* Rec, const G4String& aName)
+  : G4VProcess(aName), theRecoil(Rec),theProjectile(Proj)
 {
   proton=G4Proton::ProtonDefinition();
   neutron=G4Neutron::NeutronDefinition();
@@ -60,24 +60,30 @@ G4VParticleChange* Reaction::PostStepDoIt(
           for(int i=0; i<nP; i++)
             if (i<maxNumEvap)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 5.0); //for now, evaporate 5 MeV particles
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                //G4cout << "Evaporated particle type: " <<  EvapP[i]->GetDefinition()->GetParticleType() << G4endl;
               }
           for(int i=0; i<nN; i++)
             if (i<maxNumEvap)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, 5.0); //for now, evaporate 5 MeV particles
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                //G4cout << "Evaporated particle type: " <<  EvapN[i]->GetDefinition()->GetParticleType() << G4endl;
               }
           for(int i=0; i<nA; i++)
             if (i<maxNumEvap)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, 5.0); //for now, evaporate 5 MeV particles
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                //G4cout << "Evaporated particle type: " <<  EvapA[i]->GetDefinition()->GetParticleType() << G4endl;
               }
 
           //generate the recoiling nucleus
 	  aParticleChange.AddSecondary(RecoilOut,posIn,true);
+
+          //debug
+          //G4cout << "Recoil type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
 	}
     }
 
@@ -137,7 +143,6 @@ G4double Reaction::PostStepGetPhysicalInteractionLength(
 /*============================================================================*/
 G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle* RecoilOut)
 {
-
 
   G4double Ain;
   G4double Zin;

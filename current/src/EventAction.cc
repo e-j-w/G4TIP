@@ -90,6 +90,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       CsI=(TrackerCsIHitsCollection*) HCE->GetHC(CsICollectionID); 
       HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
       Np=CsI->entries();
+      //G4cout << "CsI entries: " << Np << G4endl;//always 0 for some reason
       if(Np>0) 
 	{
 	  G4double rECsI=0;
@@ -121,10 +122,10 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	  if((eventTrigger&2)||(eventTrigger&4))
 	    eventTrigger|=8;
 	  
-	  // printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
-	  // printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
-	  // printf("CsI eventTrigger is %d\n",eventTrigger);
-	  // getc(stdin);
+          /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
+          printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
+          printf("CsI eventTrigger is %d\n",eventTrigger);
+          getc(stdin);*/
 	  
 	    }   
     }
@@ -135,9 +136,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
     eventTrigger|=1;
   // end HPGe trigger
 
-  // printf("HPGe fold is %d\n",GriffinFold);
-  // printf("HPGe eventTrigger is %d\n",eventTrigger);
-  // printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);
+  /*printf("HPGe fold is %d\n",GriffinFold);
+  printf("HPGe eventTrigger is %d\n",eventTrigger);
+  printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);*/
   
   if((eventTrigger&setTrigger)==setTrigger)
       {
