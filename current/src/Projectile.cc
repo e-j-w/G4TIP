@@ -153,7 +153,7 @@ G4ThreeVector Projectile::getPosition()
   G4double x,y;
   G4double r,phi;
   
-  phi=G4UniformRand()*8.*atan(1.);
+  phi=G4UniformRand()*8.*atan(1.); //2*pi*random number
   r=G4UniformRand()+G4UniformRand();
   if(r>=1) r=-(r-2.);
 

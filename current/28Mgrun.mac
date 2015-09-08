@@ -2,6 +2,9 @@
 /Projectile/A 18
 /Projectile/Z 8
 /Projectile/KE 48 MeV
+/Projectile/Focus/X 0. mm
+/Projectile/Focus/Y 0. mm
+/Projectile/Focus/Z -50. mm
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
 /Backing/Material Gold
@@ -15,7 +18,7 @@
 /Reaction/N_protons 2
 #/Print/Track_Set
 /Trigger/CsISingles
-/run/beamOn 200000
+/run/beamOn 1000
 #/Trigger/GammaSingles
 #/run/beamOn 1000000
 #/Trigger/GammaPINCoincidences

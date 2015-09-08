@@ -87,7 +87,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   // CsI trigger
   if(HCE!=NULL) 
     {  
-      CsI=(TrackerCsIHitsCollection*) HCE->GetHC(CsICollectionID); 
+      CsI=(TrackerCsIHitsCollection*)(HCE->GetHC(CsICollectionID)); 
       HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
       Np=CsI->entries();
       //G4cout << "CsI entries: " << Np << G4endl;//always 0 for some reason

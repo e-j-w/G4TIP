@@ -45,7 +45,7 @@ void Results::TreeCreate()
  if(tree==NULL)
     {
 
-      tree= new TTree("tree","tree");
+      /*tree= new TTree("tree","tree");
       tree->Branch("Gfold",&Gfold,"Gfold/I");
       tree->Branch("GId",GId,"GId[Gfold]/I");
       tree->Branch("GSeg",GSeg,"GSeg[Gfold]/I");
@@ -63,9 +63,9 @@ void Results::TreeCreate()
       tree->Branch("recReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
-      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
+      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");*/
 
-      /*tree= new TTree("tree","tree");
+      tree= new TTree("tree","tree");
       tree->Branch("Gfold",&Gfold,"Gfold/I");
       tree->Branch("GId",GId,"GId[Gfold]/I");
       tree->Branch("GSeg",GSeg,"GSeg[Gfold]/I");
@@ -94,7 +94,7 @@ void Results::TreeCreate()
       tree->Branch("recDegraderIn",&rDIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recDegraderIn",&rDIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recDegraderTrack",&rDTrack,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:path/D:Eloss/D"); // only the relavent stuff?
-      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");*/
+      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
    }
 
 }

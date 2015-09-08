@@ -63,6 +63,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 //G4cout << "Evaporated particle type: " <<  EvapP[i]->GetDefinition()->GetParticleType() << G4endl;
+                //G4cout << "Evaporated particle momentum: " <<  EvapP[i]->GetMomentum() << G4endl;
               }
           for(int i=0; i<nN; i++)
             if (i<maxNumEvap)
@@ -183,10 +184,13 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   //set up the momentum of the emitted particle
   G4double pParticleMag = sqrt(2.0*particleEnergy*EvaporatedParticleDef->GetAtomicMass()*931.494); //set magnitude of the emitted particle's momentum
   pParticle=G4RandomDirection(); //generate a unit vector in a random direction
-  pParticle=pRec*pParticleMag;
+  pParticle=pParticle*pParticleMag;
+  //G4cout << "Evaporated particle momentum magnitude: " <<  pParticleMag << G4endl;
+  //G4cout << "Evaporated particle momentum: " <<  pParticle << G4endl;
 
   //Initially, recoil has the same momentum as the compund system
   pRec = Compound->GetMomentum();
+  //G4cout << "Initial recoil momentum: " << pRec << G4endl;
   //subtract momentum of the emitted particle
   pRec -= pParticle;
 
@@ -195,6 +199,8 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   EvaporatedParticle->SetMomentum(pParticle);
   RecoilOut->SetDefinition(rec);
   RecoilOut->SetMomentum(pRec);
+
+  //G4cout << "Final recoil momentum: " << pRec << G4endl;
 
 }
 //---------------------------------------------------------
@@ -206,7 +212,7 @@ void Reaction::TargetFaceCrossSection()
   A1=theProjectile->getA();
   Z1=theProjectile->getZ(); 
   
-  compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0);
+  compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
 
  
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();

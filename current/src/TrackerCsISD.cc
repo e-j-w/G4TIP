@@ -38,11 +38,11 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();
   const G4double len=aStep->GetStepLength();
-  //G4cout << "Type: " << type << G4endl; //right now, always seems to be gamma or lepton
 
   //if(type=="nucleus")
   if((type=="nucleus")||(type=="baryon")) //some evaporated particles classified as baryons by GEANT4 
     {
+      G4cout << "Hit in CsI of particle type: " << type << G4endl; //right now, always seems to be gamma or lepton
       char name[132],s1[10],s2[10],s3[10];
       strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
       sscanf(name,"%s %s %s",s1,s2,s3);
@@ -119,7 +119,7 @@ void TrackerCsISD::EndOfEvent(G4HCofThisEvent* HCE)
 	  if (false) 
 	   { 
 	   
-	   G4cout << "\n-------->Hits Collection: in this event they are " << NbHits 
+	   G4cout << "\n-------->Hits Collection: in this event there are " << NbHits 
             << " hits for CsI tracking: " << G4endl;
 	   for (i=0;i<NbHits;i++) (*CsICollection)[i]->Print();
 	   //	   	    getc(stdin);
