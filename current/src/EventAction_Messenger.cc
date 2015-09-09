@@ -11,23 +11,18 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   GSCmd = new G4UIcmdWithoutParameter("/Trigger/GammaSingles",this);
   GSCmd->SetGuidance("Select gamma singles events");  
 
-  PSCmd = new G4UIcmdWithoutParameter("/Trigger/CsISingles",this);
-  PSCmd->SetGuidance("Select CsI singles events"); 
+  TACmd = new G4UIcmdWithAnInteger("/Trigger/A",this);
+  TACmd->SetGuidance("Select the mass number for particles to trigger on.");
+  //TACmd->SetParameterName("Trigger A",false);
+  TACmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  PSRCmd = new G4UIcmdWithoutParameter("/Trigger/CsIRecoilSingles",this);
-  PSRCmd->SetGuidance("Select CsI recoil singles events");  
+  TZCmd = new G4UIcmdWithAnInteger("/Trigger/Z",this);
+  TZCmd->SetGuidance("Select the atomic number for particles to trigger on.");
+  //TZCmd->SetParameterName(Trigger Z",false);
+  TZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  PSPCmd = new G4UIcmdWithoutParameter("/Trigger/CsIProjectileSingles",this);
-  PSPCmd->SetGuidance("Select CsI projectile singles events");  
-
-  GPCCmd = new G4UIcmdWithoutParameter("/Trigger/GammaCsICoincidences",this);
-  GPCCmd->SetGuidance("Select gamma-CsI coincident events"); 
-
-  GPRCCmd = new G4UIcmdWithoutParameter("/Trigger/GammaCsIRecoilCoincidences",this);
-  GPRCCmd->SetGuidance("Select gamma-CsI recoil coincident events");
-
-  GPPCCmd = new G4UIcmdWithoutParameter("/Trigger/GammaCsIProjectileCoincidences",this);
-  GPPCCmd->SetGuidance("Select gamma-CsI projectile coincident events");
+  TAZCmd = new G4UIcmdWithoutParameter("/Trigger/DefinedParticleSingles",this);
+  TAZCmd->SetGuidance("Select CsI singles events for the particle defined by /Trigger/A and /Trigger/Z");
 
 }
 
@@ -38,40 +33,27 @@ EventAction_Messenger::~EventAction_Messenger()
 
   delete EventActionDir;
   delete GSCmd;
-  delete PSCmd;
-  delete GPCCmd;
+  delete TACmd;
+  delete TZCmd;
+  delete TAZCmd;
 }
 
 
-void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String)
+void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
 
   // gamma singles
  if( command == GSCmd )
    { aEventAction->SetTriggerGammaSing(); }
- 
- // CsI singles (recoil or  projectile)
- if( command == PSCmd )
-   { aEventAction->SetTriggerPinSing(); }
 
- // CsI recoil singles
- if( command == PSRCmd )
-   { aEventAction->SetTriggerPinRecoilSing(); }
+ // user defined particle singles
+ if( command == TAZCmd )
+   { aEventAction->SetTriggerParticleSing(); }
 
- // CsI projectile singles
- if( command == PSPCmd )
-   { aEventAction->SetTriggerPinProjSing(); }
- 
- // gamma-CsI (recoil or  projectile) coinc
- if( command == GPCCmd )
-   { aEventAction->SetTriggerGammaPinCoinc(); }
-
- // gamma-CsI recoil coinc
- if( command == GPRCCmd )
-   { aEventAction->SetTriggerGammaPinRecoilCoinc(); }
-
- // gamma-CsI projectile coinc
- if( command == GPPCCmd )
-   { aEventAction->SetTriggerGammaPinProjCoinc(); }
+ //A and Z of user defined particle
+ if( command == TACmd )
+   { aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));}
+ if( command == TZCmd )
+   { aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));}
 }
 

@@ -26,7 +26,7 @@
   gamma-CsI recoil-CsI projectile    7
   CsI system                         8
   gamma-CsI system                   9
-
+  user defined particle singles     10
  */
 
 class EventAction : public G4UserEventAction
@@ -38,12 +38,10 @@ class EventAction : public G4UserEventAction
   void EndOfEventAction(const G4Event*);
   void AddGriffinCrystDet(G4double, G4double,G4ThreeVector, G4int, G4int);
   void SetTriggerGammaSing(){setTrigger=1;};
-  void SetTriggerPinRecoilSing(){setTrigger=2;};
-  void SetTriggerPinProjSing(){setTrigger=4;};
-  void SetTriggerPinSing(){setTrigger=8;};
-  void SetTriggerGammaPinRecoilCoinc(){setTrigger=3;};
-  void SetTriggerGammaPinProjCoinc(){setTrigger=5;};
-  void SetTriggerGammaPinCoinc(){setTrigger=9;};
+  void SetTriggerParticleSing(){setTrigger=10;};
+
+  void setTriggerA(G4int);
+  void setTriggerZ(G4int);
 
   private:
   Results*      results;
@@ -63,8 +61,7 @@ class EventAction : public G4UserEventAction
 
   // Info for CsI trigger
   Projectile* theProjectile;
-  //Recoil*     theRecoil;
-  Int_t       Ap,Zp,Ar,Zr;
+  Int_t       At,Zt; //A and Z of particle to trigger on
 };
 
 #endif //EVENTACTION_H

@@ -9,14 +9,11 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   CsICollectionID=-1;
   soa=16*4*sizeof(G4double);
   sov=16*4*sizeof(G4ThreeVector);
-  SetTriggerGammaPinCoinc();
+  At=4;
+  Zt=2;
+  SetTriggerParticleSing();
   CsIThreshold=5*MeV;
 
-  // initialize info for CsI trigger - values at compilation!
-  Ap=theProjectile->getA();
-  Zp=theProjectile->getZ();
-  //Ar=theRecoil->getA();
-  //Zr=theRecoil->getZ();
 }
 
 
@@ -42,14 +39,6 @@ void EventAction::BeginOfEventAction(const G4Event*)
   GriffinFold=0;
   // G4cout<<"+++++ Begin of event "<<evt->GetEventID()<<G4endl;
 
-  // initialize info for CsI trigger - if set in macro
-  // why should I have to do this every time?
-  Ap=theProjectile->getA();
-  Zp=theProjectile->getZ();
-  //Ar=theRecoil->getA();
-  //Zr=theRecoil->getZ();
-  // printf("Ap %d Zp %d Ar %d Zr %d\n",Ap,Zp,Ar,Zr);
-  // getc(stdin);
  }
 
 
@@ -78,11 +67,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   TrackerIonHitsCollection* HI=new TrackerIonHitsCollection();
   G4int Np;
 
-/* 
-     ASC notes 27 Aug 2015:
-     Bitwise OR assignment x|=y -> x = x|y. 
-     eventTrigger 8 is CsI system trigger i.e. trigger on recoil OR projectile
-*/  
+
 
   // CsI trigger
   if(HCE!=NULL) 
@@ -90,44 +75,39 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       CsI=(TrackerCsIHitsCollection*)(HCE->GetHC(CsICollectionID)); 
       HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
       Np=CsI->entries();
-      //G4cout << "CsI entries: " << Np << G4endl;//always 0 for some reason
+
       if(Np>0) 
 	{
-	  G4double rECsI=0;
-	  G4double pECsI=0.;
+	  G4double partECsI=0.; //energy of user defined particle
 	  for(int i=0;i<Np;i++)
 	    {
-	      // recoil
-		if((*CsI)[i]->GetA()==Ar)
-		  if((*CsI)[i]->GetZ()==Zr)
+	      // user defined particle
+		if((*CsI)[i]->GetA()==At)
+		  if((*CsI)[i]->GetZ()==Zt)
 		    {
-		      rECsI+=(*CsI)[i]->GetKE();
-		      //printf("recoil CsI partial energy deposit is %9.3f\n",rECsI);
-		    }
-	      // projectile
-		if((*CsI)[i]->GetA()==Ap)
-		  if((*CsI)[i]->GetZ()==Zp)
-		    {
-		      pECsI+=(*CsI)[i]->GetKE();
-		      //printf("proj   CsI partial energy deposit is %9.3f\n",pECsI);
+		      partECsI+=(*CsI)[i]->GetKE();
+		      //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f\n",At,Zt,partECsI);
 		    }
 	    }
-	  
-	  if(rECsI>CsIThreshold)
-	    eventTrigger|=2;
 
-	  if(pECsI>CsIThreshold)
-	    eventTrigger|=4;
+	  if(partECsI>CsIThreshold)
+	    eventTrigger|=10;
 
-	  if((eventTrigger&2)||(eventTrigger&4))
-	    eventTrigger|=8;
+          /* 
+            ASC notes 27 Aug 2015:
+            Bitwise OR assignment x|=y -> x = x|y. 
+            eventTrigger 8 is CsI system trigger i.e. trigger on recoil OR projectile
+          */  
+
+	  //if((eventTrigger&2)||(eventTrigger&4)) //for more complicated triggering schemes see Aaron's code
+	  //  eventTrigger|=8;
 	  
           /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
           printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
           printf("CsI eventTrigger is %d\n",eventTrigger);
           getc(stdin);*/
 	  
-	    }   
+	}   
     }
   // end CsI trigger
   
@@ -148,7 +128,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	      if( GriffinCrystEnergyDet[det][cry]>0)
 		GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
 	results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
-	// printf("event fulfills trigger conditions %d\n",eventTrigger&setTrigger);
+	printf("Event fulfills trigger condition %d\n",eventTrigger&setTrigger);
       }
     // getc(stdin);
 }
@@ -180,4 +160,20 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
       getc(stdin);
       exit(0);
     }
+}
+//---------------------------------------------------------
+void EventAction::setTriggerA(G4int Ain)
+{
+
+  At=Ain;
+  G4cout<<"----> A of the particle to trigger on set to  "<<At<< G4endl;
+  
+}
+//---------------------------------------------------------
+void EventAction::setTriggerZ(G4int Zin)
+{
+
+  Zt=Zin;
+  G4cout<<"----> Z of the particle to trigger on set to  "<<Zt<< G4endl;
+  
 }

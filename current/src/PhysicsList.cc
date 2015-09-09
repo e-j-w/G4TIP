@@ -100,7 +100,7 @@ void PhysicsList::ConstructEM()
 	  // table->DumpMap();
 	  //	  getc(stdin);
 	  pmanager->AddProcess(new G4NuclearStopping(),   -1, 3,-1);
-	  theReaction=new Reaction(theProjectile,theRecoil);
+	  theReaction=new Reaction(theProjectile);
 	  theReactionMessenger=new Reaction_Messenger(theReaction);
 	  pmanager->AddProcess(theReaction,    -1,-1, 3);
 

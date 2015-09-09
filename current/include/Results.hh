@@ -111,7 +111,7 @@ private:
 
   IonStat       stat;
   IonInf        gun,pBIn,pTIn,pRIn,pROut,pTOut,pDIn,pDOut,rROut,rTOut,rDIn,rDOut,pDec,rDec,rDTrack,rBIn,rBOut;
-  CsIInf        pHit,rHit;
+  CsIInf        partHit; //particle hit
   G4int         Ap,Zp,Ar,Zr;
   G4ThreeVector rDiPos,rDPos; // recoil degrader position vectors for calculating distance
   G4double      dDensity; // degrader density for calculating path in mg/cm^2

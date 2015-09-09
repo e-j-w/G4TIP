@@ -17,15 +17,17 @@
 /Reaction/E_gamma 2548 keV
 /Reaction/N_protons 2
 #/Print/Track_Set
-/Trigger/CsISingles
-/run/beamOn 1000
+/Trigger/DefinedParticleSingles
+/Trigger/A 1
+/Trigger/Z 1
+/run/beamOn 10000
 #/Trigger/GammaSingles
 #/run/beamOn 1000000
 #/Trigger/GammaPINCoincidences
 #/run/beamOn 100000
 #/run/beamOn 1
-#/Trigger/PINSingles
 #/run/beamOn 20000
+/Results/Tree/Report
 /Results/Tree/Save 28Mgrun.root
 /Projectile/Report
 #/Results/Gamma/RingSpectrum 6

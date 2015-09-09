@@ -8,6 +8,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAnInteger.hh"
 
 
 
@@ -24,13 +25,9 @@ class EventAction_Messenger: public G4UImessenger
     
     G4UIdirectory*             EventActionDir;
     G4UIcmdWithoutParameter*   GSCmd;
-    G4UIcmdWithoutParameter*   PSCmd;
-    G4UIcmdWithoutParameter*   PSRCmd;
-    G4UIcmdWithoutParameter*   PSPCmd;
-    G4UIcmdWithoutParameter*   GPCCmd;
-    G4UIcmdWithoutParameter*   GPRCCmd;
-    G4UIcmdWithoutParameter*   GPPCCmd;
-
+    G4UIcmdWithAnInteger*      TACmd;
+    G4UIcmdWithAnInteger*      TZCmd;
+    G4UIcmdWithoutParameter*   TAZCmd;
 
 };
 

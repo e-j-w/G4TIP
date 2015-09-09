@@ -8,7 +8,7 @@ Results::Results(Projectile* proj):theProjectile(proj)
   c=NULL;
   TreeCreate();  
   IonFill=0;
-  soh=sizeof(rHit);
+  soh=sizeof(partHit);
   soi=sizeof(gun);
   sos=sizeof(stat);
   memset(CP,0,sizeof(CP));
@@ -77,8 +77,8 @@ void Results::TreeCreate()
       tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
       // can include path and eloss for any IonInf but they are all == 0
-      tree->Branch("pHit",&pHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
-      tree->Branch("rHit",&rHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
+      tree->Branch("partHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
+      //tree->Branch("rHit",&rHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
       tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projBackingIn",&pBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
@@ -150,8 +150,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
  G4int Nt=IonCollection->entries();
 
  memset(&stat,0,sos);
- memset(&rHit,0,soh);
- memset(&pHit,0,soh);
+ //memset(&rHit,0,soh);
+ memset(&partHit,0,soh);
  memset(&gun,0,soi);
  memset(&pBIn,0,soi);
  memset(&pTIn,0,soi);
@@ -320,61 +320,29 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
    {
      for(Int_t i=0;i<Np;i++)
        {
-	 //		       G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
-	 if((*CsICollection)[i]->GetA()==Ar)
-	   if((*CsICollection)[i]->GetZ()==Zr)
-	     {
-	       if(rHit.E==0.)
-		     {
-		       rHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
-		       rHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
-		       rHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
-		       rHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
-		       rHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
-		       rHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
-		       rHit.b=(*CsICollection)[i]->GetBeta();
-		       rHit.E=(*CsICollection)[i]->GetKE()/MeV;		 
-		       rHit.w=(*CsICollection)[i]->GetWeight();
-		       rHit.Id=(*CsICollection)[i]->GetId();
-		       rHit.r=(*CsICollection)[i]->GetRingId();
-		       //		       G4cout<<"+"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
-	     
-
-		     }
-		   else
-		     {
-		       //	       G4cout<<"-"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection[i]-)[i]->GetPos().getZ()<<G4endl;
-		       if((*CsICollection)[i]->GetId()==rHit.Id)
-			 rHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
-		     }
-		 }
-
-	     if((*CsICollection)[i]->GetA()==Ap)
-	       if((*CsICollection)[i]->GetZ()==Zp)
-		 {
-		   if(pHit.E==0.)
-		     {
-		       pHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
-		       pHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
-		       pHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
-		       pHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
-		       pHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
-		       pHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
-		       pHit.b=(*CsICollection)[i]->GetBeta();
-		       pHit.E=(*CsICollection)[i]->GetKE()/MeV;		 
-		       pHit.w=(*CsICollection)[i]->GetWeight();
-		       pHit.Id=(*CsICollection)[i]->GetId();
-		       pHit.r=(*CsICollection)[i]->GetRingId();
-		     }
-		   else
-		     {
-		       if((*CsICollection)[i]->GetId()==pHit.Id)
-			 pHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
-		     }
-		 }
-	   }
+	 // G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
+         if(partHit.E==0.)
+           {
+             partHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
+             partHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
+             partHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
+             partHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
+             partHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
+             partHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
+             partHit.b=(*CsICollection)[i]->GetBeta();
+             partHit.E=(*CsICollection)[i]->GetKE()/MeV;		 
+             partHit.w=(*CsICollection)[i]->GetWeight();
+             partHit.Id=(*CsICollection)[i]->GetId();
+             partHit.r=(*CsICollection)[i]->GetRingId();
+           }
+         else
+           {
+             if((*CsICollection)[i]->GetId()==partHit.Id)
+               partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
+           }
 	 //	 getc(stdin);
        }
+     }
 
      G4int i,j;
      Gfold=0;
@@ -686,15 +654,10 @@ void Results::CsIRingSpectrum(G4int ring)
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       if(rHit.r==ring)
-	   {
-	     h->Fill(rHit.E);     
-	     g->Fill(rHit.E,rHit.w);
-	   }
-       // if(pHit.r==ring)
+       // if(partHit.r==ring)
        // 	   {
-       // 	     h->Fill(pHit.E);     
-       // 	     g->Fill(pHit.E,pHit.w);
+       // 	     h->Fill(partHit.E);     
+       // 	     g->Fill(partHit.E,partHit.w);
        // 	   }
      }
 	   
@@ -783,7 +746,7 @@ void Results::DetCryCsIGammaSpectrum(G4int det,G4int cry, G4int pin)
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       if(rHit.Id==pin)
+       if(partHit.Id==pin)
 	 for(Int_t j=0;j<Gfold;j++)
 	   if(GId[j]==det)
 	     if(GSeg[j]==cry)
@@ -837,11 +800,11 @@ void Results::DetRingCsIRingGammaSpectrum(G4int detRing,G4int pinRing,G4double c
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       if(rHit.r==pinRing)
+       if(partHit.r==pinRing)
 	 for(Int_t j=0;j<Gfold;j++)
 	   if(RingMap(GId[j],GSeg[j])==detRing)
 	       {
-		 ec=rHit.E/MeV;
+		 ec=partHit.E/MeV;
 		 eg=FWHM_response(GE[j])-coeff*ec;
 		 correlation->Fill(ec,eg,GW[j]);
 		 h->Fill(eg,GW[j]);
@@ -930,19 +893,12 @@ void Results::CalculateCsIPositions()
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       if(pHit.E>0)
+       if(partHit.E>0)
 	 {
-	   x[(Int_t)pHit.Id-1]+=pHit.x;
-	   y[(Int_t)pHit.Id-1]+=pHit.y;
-	   z[(Int_t)pHit.Id-1]+=pHit.z;
-	   n[(Int_t)pHit.Id-1]++;
-	 }
-       if(rHit.E>0)
-	 {
-	   x[(Int_t)rHit.Id-1]+=rHit.x;
-	   y[(Int_t)rHit.Id-1]+=rHit.y;
-	   z[(Int_t)rHit.Id-1]+=rHit.z;
-	   n[(Int_t)rHit.Id-1]++;
+	   x[(Int_t)partHit.Id-1]+=partHit.x;
+	   y[(Int_t)partHit.Id-1]+=partHit.y;
+	   z[(Int_t)partHit.Id-1]+=partHit.z;
+	   n[(Int_t)partHit.Id-1]++;
 	 }
      }
 

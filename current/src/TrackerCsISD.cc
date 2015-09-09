@@ -42,7 +42,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   //if(type=="nucleus")
   if((type=="nucleus")||(type=="baryon")) //some evaporated particles classified as baryons by GEANT4 
     {
-      G4cout << "Hit in CsI of particle type: " << type << G4endl; //right now, always seems to be gamma or lepton
+      //G4cout << "Hit in CsI of particle type: " << type << G4endl;
       char name[132],s1[10],s2[10],s3[10];
       strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
       sscanf(name,"%s %s %s",s1,s2,s3);

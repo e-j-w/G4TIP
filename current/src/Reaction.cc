@@ -3,8 +3,8 @@
 
 
 
-Reaction::Reaction(Projectile* Proj, Recoil* Rec, const G4String& aName)
-  : G4VProcess(aName), theRecoil(Rec),theProjectile(Proj)
+Reaction::Reaction(Projectile* Proj, const G4String& aName)
+  : G4VProcess(aName),theProjectile(Proj)
 {
   proton=G4Proton::ProtonDefinition();
   neutron=G4Neutron::NeutronDefinition();

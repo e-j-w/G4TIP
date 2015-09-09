@@ -64,7 +64,6 @@ class PhysicsList: public G4VUserPhysicsList
   
 
  private:
-  Recoil *theRecoil;
   Projectile *theProjectile;
   Reaction *theReaction; 
   Reaction_Messenger *theReactionMessenger; 
