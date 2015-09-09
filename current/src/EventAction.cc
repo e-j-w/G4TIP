@@ -128,7 +128,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	      if( GriffinCrystEnergyDet[det][cry]>0)
 		GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
 	results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
-	printf("Event fulfills trigger condition %d\n",eventTrigger&setTrigger);
+	//printf("Event fulfills trigger condition %d\n",eventTrigger&setTrigger);
       }
     // getc(stdin);
 }

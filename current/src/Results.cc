@@ -32,11 +32,11 @@ tree->Delete();
 //---------------------------------------------------------
 void Results::SetupRun(G4int DA, G4int DZ)
 {
-  Ap=theProjectile->getA();
+  /*Ap=theProjectile->getA();
   Zp=theProjectile->getZ();
 
   Ar=Ap+DA;
-  Zr=Zp+DZ;
+  Zr=Zp+DZ;*/
   
 }
 //---------------------------------------------------------
@@ -78,7 +78,6 @@ void Results::TreeCreate()
 
       // can include path and eloss for any IonInf but they are all == 0
       tree->Branch("partHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
-      //tree->Branch("rHit",&rHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
       tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projBackingIn",&pBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
@@ -123,8 +122,9 @@ void Results::TreeSave(G4String name)
   dir=gDirectory;
   TFile f(name,"recreate");
   f.cd();
-  tree->AutoSave();
-  tree->SetDirectory(dir);
+  //tree->AutoSave();
+  //tree->SetDirectory(dir);
+  tree->Write();
   f.Close();
   dir->cd();
   G4cout<<"Tree of simulated parameters saved in file "<<name<<G4endl;
@@ -150,7 +150,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
  G4int Nt=IonCollection->entries();
 
  memset(&stat,0,sos);
- //memset(&rHit,0,soh);
  memset(&partHit,0,soh);
  memset(&gun,0,soi);
  memset(&pBIn,0,soi);

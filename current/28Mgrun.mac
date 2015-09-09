@@ -20,7 +20,7 @@
 /Trigger/DefinedParticleSingles
 /Trigger/A 1
 /Trigger/Z 1
-/run/beamOn 10000
+/run/beamOn 100000
 #/Trigger/GammaSingles
 #/run/beamOn 1000000
 #/Trigger/GammaPINCoincidences
