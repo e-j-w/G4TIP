@@ -30,7 +30,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4VPhysicalVolume* Construct();
  
-   Target* GetTarget(){return theTarget;};
+    Target* GetTarget(){return theTarget;};
+    CsI_array* GetCsIArray(){return aCsI_array;};
 
     G4int griffinDetectorsMapIndex;
     G4int griffinDetectorsMap[16];

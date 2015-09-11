@@ -29,8 +29,6 @@
 #include "Results_Messenger.hh"
 #include "Projectile.hh"
 #include "Projectile_Messenger.hh"
-//#include "Recoil.hh"
-//#include "Recoil_Messenger.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 
@@ -71,7 +69,7 @@ int main(int argc,char** argv)
   PrimaryGeneratorAction* generatorAction= new PrimaryGeneratorAction(theDetector,theProjectile);
   runManager->SetUserAction(generatorAction);
 
-  Results* results = new Results(theProjectile);
+  Results* results = new Results(theProjectile,theDetector);
   Results_Messenger* resultsMessenger;
   resultsMessenger = new Results_Messenger(results);
 

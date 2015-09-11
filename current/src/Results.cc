@@ -1,6 +1,6 @@
 #include "Results.hh"
 
-Results::Results(Projectile* proj):theProjectile(proj)
+Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj),theDetector(det)
 //Results::Results(Projectile* proj,Recoil* rec,DetectorConstruction* det):theProjectile(proj),theRecoil(rec),theDetector(det)
 {
   h=NULL;
@@ -38,6 +38,9 @@ void Results::SetupRun(G4int DA, G4int DZ)
   Ar=Ap+DA;
   Zr=Zp+DZ;*/
   
+  CsIDensity=theDetector->GetCsIArray()->GetCsIDensity();
+  // printf("CsI density is     %9.3f g/cm^3\n",CsIDensity);
+  // getc(stdin);
 }
 //---------------------------------------------------------
 void Results::TreeCreate()
@@ -77,8 +80,8 @@ void Results::TreeCreate()
       tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
       // can include path and eloss for any IonInf but they are all == 0
-      tree->Branch("partHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D");
-      tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
+      tree->Branch("partHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D:path/D:dE/D:dEdx/D:dLdx/D:LY/D");
+      /*tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projBackingIn",&pBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
@@ -93,7 +96,7 @@ void Results::TreeCreate()
       tree->Branch("recDegraderIn",&rDIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recDegraderIn",&rDIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
       tree->Branch("recDegraderTrack",&rDTrack,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:path/D:Eloss/D"); // only the relavent stuff?
-      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");
+      tree->Branch("recDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D");*/
    }
 
 }
@@ -329,17 +332,37 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
              partHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
              partHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
              partHit.b=(*CsICollection)[i]->GetBeta();
-             partHit.E=(*CsICollection)[i]->GetKE()/MeV;		 
+             partHit.E=(*CsICollection)[i]->GetKE()/MeV;
+             partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
              partHit.w=(*CsICollection)[i]->GetWeight();
              partHit.Id=(*CsICollection)[i]->GetId();
              partHit.r=(*CsICollection)[i]->GetRingId();
+             // in microns
+             // partHit.path=(*CsICollection)[i]->GetPathLength()/um; 
+             // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
+             // in mg/cm^2
+             partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; 
+             partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+             partHit.dLdx=CalculateBirksLawStep(partHit.dE,partHit.dEdx); // make sure to check units of kB!
+             partHit.LY+=partHit.dLdx;
+             //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
            }
          else
            {
              if((*CsICollection)[i]->GetId()==partHit.Id)
                partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
+               partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
+               // in microns
+               // partHit.path+=(*CsICollection)[i]->GetPathLength()/um;
+               // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+               // in mg/cm^2
+               partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; 
+               partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+               partHit.dLdx=CalculateBirksLawStep(partHit.dE,partHit.dEdx); // make sure to check units of kB!
+               partHit.LY+=partHit.dLdx;
+               //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
            }
-	 //	 getc(stdin);
+         //getc(stdin);
        }
      }
 
@@ -996,4 +1019,18 @@ G4double Results::CalculatePath(G4ThreeVector iPos, G4ThreeVector Pos)
   dist=sqrt(xd*xd+yd*yd+zd*zd);
 
   return dist;
+}
+//=====================================================================================
+G4double Results::CalculateBirksLawStep(G4double dE,G4double dEdx)
+{
+  G4double kB=1.52;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
+  G4double kBm=kB*CsIDensity/10; // Birks constant for CsI (Z<=10!) in (mg/cm^2)/MeV from NIMA 439 (2000) 158.
+  G4double S=1.0;                // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
+  G4double dL;                   // differential light yield
+
+  // dL = S*dE/(1+kB*dEdx); // for dE in MeV/um
+
+  dL = S*dE/(1+kBm*dEdx); // for dE in MeV/(mg/cm^2)
+
+  return dL;
 }

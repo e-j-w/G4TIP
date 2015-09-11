@@ -39,7 +39,8 @@ class TrackerCsIHit : public G4VHit
       void SetPos      (G4ThreeVector xyz){ pos = xyz; };
       void SetMom      (G4ThreeVector xyz){ p = xyz; };
       void SetId        (G4int m)      { id = m; };    
-      void SetRingId    (G4int m)      { ring = m; };    
+      void SetRingId    (G4int m)      { ring = m; };
+      void SetPathLength(G4double l) { path = l; };    
     
       G4int    GetA(){return A;}
       G4int    GetZ(){return Z;}
@@ -50,6 +51,8 @@ class TrackerCsIHit : public G4VHit
       G4ThreeVector GetMom(){ return p; };
       G4int    GetId()      { return id; };       
       G4int    GetRingId()  { return ring; };  
+      G4double GetPathLength()  { return path; };
+
   private:
   
       G4int         A;
@@ -61,6 +64,7 @@ class TrackerCsIHit : public G4VHit
       G4ThreeVector p;
       G4int         id;
       G4int         ring;
+      G4double      path;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

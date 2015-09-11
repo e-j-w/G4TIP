@@ -35,7 +35,7 @@ void TrackerCsIHit::Print()
 {
   G4cout<<"  CsI diode hit - mass: "<<A<<" charge "<<Z<<
     "  energy deposit: " << G4BestUnit(KE,"Energy")
-	<< "  position: " << pos/um  << " um  id: "<<id<<" ring: "<<ring<<G4endl;
+	<< "  position: " << pos/um  << " um  path: "<<path/um<<" id: "<<id<<" ring: "<<ring<<G4endl;
 
   //G4BestUnit(pos,"Length") // is in cm, ions stop on the um length scale
 }

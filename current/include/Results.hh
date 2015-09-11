@@ -17,6 +17,7 @@
 #include "Recoil.hh"
 #include "Flags.hh"
 #include "DetectorConstruction.hh"
+#include "Materials.hh"
 #include "TH1.h"
 #include "TH2.h"
 #include "TGraph.h"
@@ -62,12 +63,18 @@ typedef struct{
     Double_t w;
     Double_t Id;
     Double_t r;
+    Double_t path; // path length in material
+    Double_t dE;   // energy deposit for step
+    Double_t dEdx; // dE/dx in MeV/um
+    Double_t dLdx; // Birks Law dL/dx
+    Double_t LY;   // Birks Law light yield. LY = sum over dL/dx
+    Double_t Q;    // Quenching factor LY/E
  } CsIInf;
 class Results
 {
 public:
   //Results(Projectile*,Recoil*,DetectorConstruction*);
-  Results(Projectile*);
+  Results(Projectile*,DetectorConstruction*);
   ~Results();
 
 public:
@@ -99,6 +106,7 @@ public:
   void GroupCosDist();
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector,G4ThreeVector);
+  G4double CalculateBirksLawStep(G4double,G4double);
 private:
   
  // ROOT Tree stuff
@@ -115,6 +123,7 @@ private:
   G4int         Ap,Zp,Ar,Zr;
   G4ThreeVector rDiPos,rDPos; // recoil degrader position vectors for calculating distance
   G4double      dDensity; // degrader density for calculating path in mg/cm^2
+  G4double      CsIDensity;   // CsI density for calculating path in mg/cm^2
 
   size_t soh,soi,sos;
 
@@ -136,6 +145,8 @@ private:
   G4ThreeVector PP[NCsI];
 
   G4double A,B,C,F,G,H;
+
+  G4Material* a;
 };
 
 #endif

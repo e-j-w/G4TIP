@@ -81,32 +81,26 @@ void PhysicsList::ConstructEM()
 	 pmanager->AddProcess(new G4hIonisation,        -1, 2, 2);
     } 
    else if(particleName=="alpha") {
-         pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
-	 pmanager->AddProcess(new G4ionIonisation,        -1, 2, 2);
+      pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
+      G4ionIonisation* alphaIoni = new G4ionIonisation();
+      alphaIoni->SetStepFunction(0.05, 0.05*um);
+      pmanager->AddProcess(alphaIoni,                 -1, 2, 2);
+      //pmanager->AddProcess(new G4NuclearStopping(),   -1, 3,-1); // small for light particles
+      pmanager->AddProcess(new G4StepLimiter,        -1,-1, 4); // what does this do?
     } 
     else if( particleName == "GenericIon") {
-          pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
-	  G4ionIonisation* ionIoni = new G4ionIonisation();
-	  G4IonParametrisedLossModel* theModel= new G4IonParametrisedLossModel();	 
-	  //  G4ExtDEDXTable* table = new G4ExtDEDXTable();
-	  // theModel -> AddDEDXTable("MyStoppingPowerTable", table);
-	  // table -> RetrievePhysicsTable("MyFile.dat");
-	  ionIoni->SetEmModel(theModel);
-	  ionIoni->SetStepFunction(0.05, 0.05*um);
-	  pmanager->AddProcess(ionIoni,                   -1, 2, 2);
-	  //	  getc(stdin);
-	  //	  theModel->PrintDEDXTable();
-	  // table->StorePhysicsTable("test.dat");
-	  // table->DumpMap();
-	  //	  getc(stdin);
-	  pmanager->AddProcess(new G4NuclearStopping(),   -1, 3,-1);
-	  theReaction=new Reaction(theProjectile);
-	  theReactionMessenger=new Reaction_Messenger(theReaction);
-	  pmanager->AddProcess(theReaction,    -1,-1, 3);
-
-	  pmanager->AddProcess(new G4StepLimiter,        -1,-1, 4);
-
-    } else if (particleName == "neutron") {
+      pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
+      G4ionIonisation* ionIoni = new G4ionIonisation();
+      ionIoni->SetEmModel(new G4IonParametrisedLossModel()); // valid for Z > 2
+      ionIoni->SetStepFunction(0.05, 0.05*um);
+      pmanager->AddProcess(ionIoni,                   -1, 2, 2);
+      pmanager->AddProcess(new G4NuclearStopping(),   -1, 3,-1);
+      theReaction=new Reaction(theProjectile);
+      theReactionMessenger=new Reaction_Messenger(theReaction); //this line needed here but not in Aaron's RDM code
+      pmanager->AddProcess(theReaction,    -1,-1, 3);
+      pmanager->AddProcess(new G4StepLimiter,        -1,-1, 4);
+    }
+    else if (particleName == "neutron") {
          
           // elastic scattering
        G4HadronElasticProcess* theElasticProcess = new G4HadronElasticProcess();

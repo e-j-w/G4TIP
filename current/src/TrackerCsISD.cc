@@ -67,9 +67,10 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	      newHitI->SetWeight(aStep->GetTrack()->GetWeight());
 	      newHitI->SetId(atoi(s2));
 	      newHitI->SetRingId(atoi(s3));
+	      newHitI->SetPathLength(len);
 	      CsICollection->insert( newHitI );
 	      newHitI->Draw();
-	      // printf("newHitI\n");
+	      //  printf("newHitI len %f\n",len/um);
 	      // newHitI->Print(); 
 	      // getc(stdin);
 	    }
@@ -87,6 +88,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	      newHitF->SetWeight(aStep->GetTrack()->GetWeight());
 	      newHitF->SetId(atoi(s2));
 	      newHitF->SetRingId(atoi(s3));
+	      newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?
 	      CsICollection->insert( newHitF );
 	      newHitF->Draw();
 	      // printf("newHitF\n");

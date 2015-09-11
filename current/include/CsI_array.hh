@@ -28,6 +28,8 @@ class CsI_array
   void MakeSensitive(TrackerCsISD*);
   void setZPos(G4double z){zpos=z;Construct();};
   G4int getRingID(G4int i){return ring[i];};
+  G4double GetCsIDensity(){return materials->FindMaterial("CesiumIodide")->GetDensity()/g*cm3;};
+
     private:
  
   vector<CsI_detector*> aCsI_array;
