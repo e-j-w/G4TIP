@@ -15,6 +15,7 @@
 //#include "TrackerPINSD.hh"
 #include "CsI_array.hh"
 #include "TrackerCsISD.hh"
+#include "TrackerCsISD_Messenger.hh"
 #include "DetectionSystemGriffin.hh"
 #include "GriffinMessenger.hh"
 #include "G4NistManager.hh"
@@ -59,6 +60,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   CsI_array *aCsI_array;
   //PIN_array *aPIN_array;
   TrackerCsISD* TrackerCsI;
+  TrackerCsISD_Messenger* TrackerCsISDMessenger;
   //TrackerPINSD* TrackerPIN;
   Chamber* theChamber;
 

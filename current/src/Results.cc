@@ -30,13 +30,10 @@ Results::~Results()
 tree->Delete();
 }
 //---------------------------------------------------------
-void Results::SetupRun(G4int DA, G4int DZ)
+void Results::SetupRun()
 {
   /*Ap=theProjectile->getA();
-  Zp=theProjectile->getZ();
-
-  Ar=Ap+DA;
-  Zr=Zp+DZ;*/
+  Zp=theProjectile->getZ();*/
   
   CsIDensity=theDetector->GetCsIArray()->GetCsIDensity();
   // printf("CsI density is     %9.3f g/cm^3\n",CsIDensity);
@@ -676,17 +673,17 @@ void Results::CsIRingSpectrum(G4int ring)
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       // if(partHit.r==ring)
-       // 	   {
-       // 	     h->Fill(partHit.E);     
-       // 	     g->Fill(partHit.E,partHit.w);
-       // 	   }
+        if(partHit.r==ring)
+        	   {
+        	     h->Fill(partHit.E);     
+        	     g->Fill(partHit.E,partHit.w);
+        	   }
      }
 	   
    g->GetXaxis()->SetTitle("Energy [MeV]");
    g->GetYaxis()->SetTitle("Counts");
-   // h->SetLineColor(kBlue);
-   // h->Draw();
+   h->SetLineColor(kBlue);
+   h->Draw();
    g->SetLineColor(kRed);
    g->Draw();
 
@@ -1023,7 +1020,8 @@ G4double Results::CalculatePath(G4ThreeVector iPos, G4ThreeVector Pos)
 //=====================================================================================
 G4double Results::CalculateBirksLawStep(G4double dE,G4double dEdx)
 {
-  G4double kB=1.52;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
+  //G4double kB=1.52;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
+  G4double kB=12.0;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
   G4double kBm=kB*CsIDensity/10; // Birks constant for CsI (Z<=10!) in (mg/cm^2)/MeV from NIMA 439 (2000) 158.
   G4double S=1.0;                // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
   G4double dL;                   // differential light yield

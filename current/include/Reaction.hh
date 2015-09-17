@@ -29,6 +29,7 @@
 using namespace std;
 
 #define  eps 0.00001
+#define  MAXNUMEVAP 8
 
 typedef struct
 {

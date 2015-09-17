@@ -38,13 +38,13 @@ G4VParticleChange* Reaction::PostStepDoIt(
   if(reaction_here)
     {
       reaction_here=false;
-      maxNumEvap = 8;
+      //maxNumEvap = 8;
       G4DynamicParticle* RecoilOut;
-      G4DynamicParticle* EvapP [maxNumEvap];
-      G4DynamicParticle* EvapN [maxNumEvap];
-      G4DynamicParticle* EvapA [maxNumEvap];
+      G4DynamicParticle* EvapP [MAXNUMEVAP];
+      G4DynamicParticle* EvapN [MAXNUMEVAP];
+      G4DynamicParticle* EvapA [MAXNUMEVAP];
       RecoilOut =new G4DynamicParticle();
-      for(int i=0; i<maxNumEvap; i++)
+      for(int i=0; i<MAXNUMEVAP; i++)
         {
           EvapP[i]=new G4DynamicParticle();
           EvapN[i]=new G4DynamicParticle();
@@ -58,7 +58,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++)
-            if (i<maxNumEvap)
+            if (i<MAXNUMEVAP)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
@@ -66,14 +66,14 @@ G4VParticleChange* Reaction::PostStepDoIt(
                 //G4cout << "Evaporated particle momentum: " <<  EvapP[i]->GetMomentum() << G4endl;
               }
           for(int i=0; i<nN; i++)
-            if (i<maxNumEvap)
+            if (i<MAXNUMEVAP)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 //G4cout << "Evaporated particle type: " <<  EvapN[i]->GetDefinition()->GetParticleType() << G4endl;
               }
           for(int i=0; i<nA; i++)
-            if (i<maxNumEvap)
+            if (i<MAXNUMEVAP)
               {
                 EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, 10.0); //for now, evaporate 10 MeV particles
                 aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
@@ -149,9 +149,6 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
   G4double Zin;
   G4ThreeVector dirIn;
   G4ThreeVector pIn;
-  G4double      tauIn;
-  G4double      KEIn;
-  G4double      betaIn;
 
   Ain=aTrack.GetDynamicParticle()->GetDefinition()->GetAtomicMass();
   if(Ain!=A1) return FALSE;
@@ -160,10 +157,7 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
 
   dirIn=aTrack.GetMomentumDirection();
   posIn=aTrack.GetPosition();
-  betaIn=aTrack.GetVelocity();
-  KEIn=aTrack.GetDynamicParticle()->GetKineticEnergy();
-  pIn=aTrack.GetMomentum(); 
-  tauIn=aTrack.GetProperTime();
+  pIn=aTrack.GetMomentum();
 
   G4DynamicParticle* Compound=new G4DynamicParticle();
   Compound->SetDefinition(compound);

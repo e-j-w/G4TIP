@@ -39,7 +39,7 @@ DetectorConstruction::DetectorConstruction()
   customDetectorPosition  = 1 ; // pos_num
   customDetectorVal				= 0 ; // Unused for now (Oct 2013)
 
- griffinMessenger = new GriffinMessenger(this);
+  griffinMessenger = new GriffinMessenger(this);
 
   griffinDetectorsMapIndex = 0;
   for(G4int i = 0; i < 16; i++)
@@ -76,10 +76,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    aCsI_array = new CsI_array(ExpHall_log,materials);
    aCsI_array->Construct();
    aCsI_array->Report();
-
-   /*aPIN_array = new PIN_array(ExpHall_log,materials);
-   aPIN_array->Construct();
-   aPIN_array->Report();*/
   
    Chamber* theChamber = new Chamber(ExpHall_log,materials);
    theChamber->Construct();
@@ -103,6 +99,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    ExpHall_log->SetSensitiveDetector(TrackerIon);
 
    TrackerCsI = new TrackerCsISD("CsITracker");
+   TrackerCsISDMessenger = new TrackerCsISD_Messenger(TrackerCsI);
    SDman->AddNewDetector( TrackerCsI );
    aCsI_array->MakeSensitive(TrackerCsI);
 

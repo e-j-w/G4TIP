@@ -12,7 +12,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   At=4;
   Zt=2;
   SetTriggerParticleSing();
-  CsIThreshold=5*MeV;
+  CsIThreshold=2*MeV;
 
 }
 

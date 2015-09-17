@@ -292,9 +292,6 @@ class DetectionSystemGriffin
     void ConstructColdFinger();
     void ConstructNewHeavyMet();
 
-    //LogicalVolumes used in ConstructBasicDetectorBlock
-    G4LogicalVolume* germanium_block_log;
-
     //Logical Volumes used in ConstructComplexDetectorBlock:
     G4LogicalVolume* germanium_block1_log;
     G4LogicalVolume* germanium_hole_log;
@@ -304,25 +301,6 @@ class DetectionSystemGriffin
     
     G4LogicalVolume* inter_crystal_electrodeMat_back_log;
     G4LogicalVolume* inter_crystal_electrodeMat_front_log;
-    
-    //Logical Volumes used in ConstructBGOCasing:
-    G4LogicalVolume* back_BGO_log;
-    G4LogicalVolume* BGO_casing_log;
-
-    //Logical Volumes used in ConstructNewSuppressorCasing:
-    G4LogicalVolume* back_quarter_suppressor_shell_log;
-    G4LogicalVolume* right_suppressor_shell_log;
-    G4LogicalVolume* left_suppressor_shell_log;
-    G4LogicalVolume* right_suppressor_shell_extension_log;
-    G4LogicalVolume* left_suppressor_shell_extension_log;
-
-    G4LogicalVolume* cap_for_right_suppressor_log;
-
-    G4LogicalVolume* back_quarter_suppressor_log;
-    G4LogicalVolume* right_suppressor_log;
-    G4LogicalVolume* left_suppressor_log;
-    G4LogicalVolume* right_suppressor_extension_log;
-    G4LogicalVolume* left_suppressor_extension_log;
     
     //Logical Volumes used in ConstructDetector:
     G4LogicalVolume* front_face_log;
@@ -350,6 +328,9 @@ class DetectionSystemGriffin
     G4LogicalVolume* finger_shell_log;
     G4LogicalVolume* tank_log;
 
+    //LogicalVolumes used in ConstructBasicDetectorBlock
+    G4LogicalVolume* germanium_block_log;
+
     //Logical Volumes used in ConstructColdFinger:
     G4LogicalVolume* end_plate_log;
     G4LogicalVolume* finger_log;
@@ -359,6 +340,25 @@ class DetectionSystemGriffin
     G4LogicalVolume* cooling_bar_log;
     G4LogicalVolume* cooling_side_block_log;
     G4LogicalVolume* structureMat_cold_finger_log;
+
+    //Logical Volumes used in ConstructBGOCasing:
+    G4LogicalVolume* back_BGO_log;
+    G4LogicalVolume* BGO_casing_log;
+
+    //Logical Volumes used in ConstructNewSuppressorCasing:
+    G4LogicalVolume* back_quarter_suppressor_shell_log;
+    G4LogicalVolume* right_suppressor_shell_log;
+    G4LogicalVolume* left_suppressor_shell_log;
+    G4LogicalVolume* right_suppressor_shell_extension_log;
+    G4LogicalVolume* left_suppressor_shell_extension_log;
+
+    G4LogicalVolume* cap_for_right_suppressor_log;
+
+    G4LogicalVolume* back_quarter_suppressor_log;
+    G4LogicalVolume* right_suppressor_log;
+    G4LogicalVolume* left_suppressor_log;
+    G4LogicalVolume* right_suppressor_extension_log;
+    G4LogicalVolume* left_suppressor_extension_log;
     
     //Logical Volumes used in ConstructNewHeavyMet:
     G4LogicalVolume* hevimet_log;

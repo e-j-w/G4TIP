@@ -79,7 +79,7 @@ public:
 
 public:
   
-  void SetupRun(G4int,G4int);
+  void SetupRun();
 
   void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
   void TreeView();

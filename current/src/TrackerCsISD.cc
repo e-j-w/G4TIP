@@ -118,7 +118,7 @@ void TrackerCsISD::EndOfEvent(G4HCofThisEvent* HCE)
    G4int NbHits = CsICollection->entries();
 
         if (NbHits>0) 
-	  if (false) 
+	  if (print) 
 	   { 
 	   
 	   G4cout << "\n-------->Hits Collection: in this event there are " << NbHits 

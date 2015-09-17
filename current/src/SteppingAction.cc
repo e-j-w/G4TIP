@@ -76,7 +76,7 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
-  G4int particleType = 0;
+  //G4int particleType = 0;
  
   //  G4int evntNb;
 
@@ -94,23 +94,23 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   // collect energy and track length step by step
   G4double edep;
   edep = aStep->GetTotalEnergyDeposit()/keV;
-  G4double ekin;
-  ekin= aStep->GetPreStepPoint()->GetKineticEnergy();
+  //G4double ekin;
+  //ekin= aStep->GetPreStepPoint()->GetKineticEnergy();
 
-  G4double stepl = 0.;
-  if (aStep->GetTrack()->GetDefinition()->GetPDGCharge() != 0.)
-    stepl = aStep->GetStepLength();
+  //G4double stepl = 0.;
+  //if (aStep->GetTrack()->GetDefinition()->GetPDGCharge() != 0.)
+  //  stepl = aStep->GetStepLength();
 
- G4double weight=aStep->GetTrack()->GetWeight();
+  G4double weight=aStep->GetTrack()->GetWeight();
 
-  // Track particle type in EVERY step
+  /*// Track particle type in EVERY step
   //G4cout << "Particle name = " << aStep->GetTrack()->GetParticleDefinition()->GetParticleName() << G4endl;
   if (aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "gamma")         particleType = 1;
   else if (aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "e-")       particleType = 2;
   else if (aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "e+")       particleType = 3;
   else if (aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "proton")   particleType = 4;
   else if (aStep->GetTrack()->GetParticleDefinition()->GetParticleName() == "neutron")  particleType = 5;
-  else                                                                                  particleType = 0;
+  else                                                                                  particleType = 0;*/
 
   // eventaction->AddParticleType(particleType);
   //evntNb =  eventaction->GetEventNumber();
@@ -124,10 +124,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   G4ThreeVector pos1 = point1->GetPosition();
   G4ThreeVector pos2 = point2->GetPosition();
 
-  G4double time1;
+  /*G4double time1;
   time1= point1->GetGlobalTime();
   G4double time2;
-  time2= point2->GetGlobalTime();
+  time2= point2->GetGlobalTime();*/
 
   size_t found;
   G4String search;
@@ -236,20 +236,20 @@ void SteppingAction::SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(G4Stri
 {
     const char *cstr = volname.c_str();
     G4int av;
-    G4int impr;
+    //G4int impr;
     G4int avOver9 = cstr[4]-'0';
     G4int avOver99 = cstr[5]-'0';
     if(avOver9 == 47) { // under 10
         av = cstr[3]-'0';
-        impr = cstr[10]-'0';
+        //impr = cstr[10]-'0';
     }
     else if(avOver99 == 47) { // under 100
         av = (cstr[3]-'0')*10+(cstr[4]-'0');
-        impr = cstr[11]-'0';
+        //impr = cstr[11]-'0';
     }
     else { // OVER 100
         av = (cstr[3]-'0')*100+(cstr[4]-'0')*10+(cstr[5]-'0');
-        impr = cstr[12]-'0';
+        //impr = cstr[12]-'0';
     }
 
     det = (G4int)(ceil(av/numberOfAssemblyVols))+1;

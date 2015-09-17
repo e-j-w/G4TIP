@@ -49,17 +49,11 @@ int main(int argc,char** argv)
   DetectorConstruction* theDetector=new DetectorConstruction();
   runManager->SetUserInitialization(theDetector);
  
-  // Construct the incoming  beam
+  // Construct the incoming beam
   Projectile* theProjectile=new Projectile();
   Projectile_Messenger* ProjectileMessenger;
   ProjectileMessenger=new Projectile_Messenger(theProjectile);
   theProjectile->Report();
-
- // Construct the outgoing beam
-/*  Recoil* theRecoil=new Recoil();
-  Recoil_Messenger* RecoilMessenger;
-  RecoilMessenger=new Recoil_Messenger(theRecoil);
-  theRecoil->Report();*/
  
  // set mandatory user action clas
   PhysicsList *thePhysicsList = new PhysicsList(theProjectile);
@@ -158,6 +152,17 @@ int main(int argc,char** argv)
 
   
   delete runManager;
+  delete theDetector;
+  delete theProjectile;
+  delete ProjectileMessenger;
+  delete thePhysicsList;
+  delete generatorAction;
+  delete results;
+  delete resultsMessenger;
+  delete theRunAction;
+  delete eventAction;
+  delete eventActionMessenger;
+  delete stepAction;
 
   return 0;
 }

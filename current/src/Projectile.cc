@@ -4,8 +4,8 @@
 
 Projectile::Projectile()
 {
-  A=36;
-  Z=18;
+  A=18;
+  Z=8;
   KE=100*MeV;
   fcX=0.*mm;
   fcDX=0.0*mm;
