@@ -106,7 +106,7 @@ public:
   void GroupCosDist();
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector,G4ThreeVector);
-  G4double CalculateBirksLawStep(G4double,G4double);
+  G4double CalculateBirksLawStep(G4int,G4double,G4double);
 private:
   
  // ROOT Tree stuff
@@ -125,6 +125,9 @@ private:
   G4double      dDensity; // degrader density for calculating path in mg/cm^2
   G4double      CsIDensity;   // CsI density for calculating path in mg/cm^2
 
+  G4double kB[NCsI];  // Birks constant in um/MeV
+  G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV
+
   size_t soh,soi,sos;
 
   Int_t    Gfold;
@@ -135,6 +138,10 @@ private:
   Double_t Gz[GN*GS];
   Double_t GE[GN*GS];
   Double_t GW[GN*GS];
+
+  //CsI parameters outside of structure
+  Double_t PE;
+  Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx
 
   TH1D     *h,*g;
   TCanvas  *c,*c1;

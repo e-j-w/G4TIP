@@ -38,6 +38,15 @@ void Results::SetupRun()
   CsIDensity=theDetector->GetCsIArray()->GetCsIDensity();
   // printf("CsI density is     %9.3f g/cm^3\n",CsIDensity);
   // getc(stdin);
+
+  // setup Birks constant for LY calculation
+  for(int i=0 ; i<NCsI ; i++)
+    {
+      kB[i]=theDetector->GetCsIArray()->GetBirksConstant(i); // Birks constant in um/MeV
+      kBm[i]=kB[i]*CsIDensity/10;                            // Birks constant in (mg/cm^2)/MeV
+      //printf("Birks constant for position %2d set to %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",i+1,kB[i],kBm[i]);
+    }
+  //getc(stdin);
 }
 //---------------------------------------------------------
 void Results::TreeCreate()
@@ -74,6 +83,8 @@ void Results::TreeCreate()
       tree->Branch("Gz",Gz,"Gz[Gfold]/D");
       tree->Branch("GE",GE,"GE[Gfold]/D");
       tree->Branch("GW",GW,"GW[Gfold]/D");
+      tree->Branch("PE",&PE,"E/D");
+      tree->Branch("PLY",&PLY,"LY/D");
       tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
       // can include path and eloss for any IonInf but they are all == 0
@@ -340,7 +351,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
              // in mg/cm^2
              partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; 
              partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-             partHit.dLdx=CalculateBirksLawStep(partHit.dE,partHit.dEdx); // make sure to check units of kB!
+             partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
              partHit.LY+=partHit.dLdx;
              //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
            }
@@ -355,13 +366,16 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
                // in mg/cm^2
                partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; 
                partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-               partHit.dLdx=CalculateBirksLawStep(partHit.dE,partHit.dEdx); // make sure to check units of kB!
+               partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
                partHit.LY+=partHit.dLdx;
                //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
            }
          //getc(stdin);
        }
      }
+
+     PE=partHit.E;
+     PLY=partHit.LY;
 
      G4int i,j;
      Gfold=0;
@@ -1018,17 +1032,16 @@ G4double Results::CalculatePath(G4ThreeVector iPos, G4ThreeVector Pos)
   return dist;
 }
 //=====================================================================================
-G4double Results::CalculateBirksLawStep(G4double dE,G4double dEdx)
+G4double Results::CalculateBirksLawStep(G4int id,G4double dE,G4double dEdx)
 {
-  //G4double kB=1.52;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
-  G4double kB=12.0;              // Birks constant for CsI (Z<=10!) in um/MeV from NIMA 439 (2000) 158.
-  G4double kBm=kB*CsIDensity/10; // Birks constant for CsI (Z<=10!) in (mg/cm^2)/MeV from NIMA 439 (2000) 158.
-  G4double S=1.0;                // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
-  G4double dL;                   // differential light yield
+  G4double S=1.0; // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
+  G4double dL;    // differential light yield
 
-  // dL = S*dE/(1+kB*dEdx); // for dE in MeV/um
-
-  dL = S*dE/(1+kBm*dEdx); // for dE in MeV/(mg/cm^2)
+  //   printf("Birks constant for position %2d is %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",id,kB[id-1],kBm[id-1]);
+  // getc(stdin);
+  
+  // dL = S*dE/(1+kB[id-1]*dEdx); // for dE in MeV/um
+  dL = S*dE/(1+kBm[id-1]*dEdx); // for dE in MeV/(mg/cm^2)
 
   return dL;
 }

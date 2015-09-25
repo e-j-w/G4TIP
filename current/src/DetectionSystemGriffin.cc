@@ -942,7 +942,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlock()
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
+  G4Material* materialVacuum = G4Material::GetMaterial("G4_Galactic");
   if( !materialVacuum ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -999,7 +999,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDeadLayer()
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
+  G4Material* materialVacuum = G4Material::GetMaterial("G4_Galactic");
   if( !materialVacuum ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -1095,7 +1095,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* materialVacuum = G4Material::GetMaterial("Vacuum");
+  G4Material* materialVacuum = G4Material::GetMaterial("G4_Galactic");
   if( !materialVacuum ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -1539,7 +1539,7 @@ void DetectionSystemGriffin::ConstructDetector()
 void DetectionSystemGriffin::ConstructColdFinger()
 {
 
-  G4Material* materialAir = G4Material::GetMaterial("Air");
+  G4Material* materialAir = G4Material::GetMaterial("G4_AIR");
   if( !materialAir ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);

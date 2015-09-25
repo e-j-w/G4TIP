@@ -690,7 +690,7 @@ DetectionSystemGriffin::DetectionSystemGriffin( G4int sel, G4int suppSwitch, G4d
   this->quarterDetectorCxnB = 0.1*mm;
 
   this->electrodeMaterial = "G4_Cu";
-  this->structureMaterial = "Aluminum";
+  this->structureMaterial = "G4_Al";
 
 }// end ::DetectionSystemGriffin
 

@@ -24,6 +24,10 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   TAZCmd = new G4UIcmdWithoutParameter("/Trigger/DefinedParticleSingles",this);
   TAZCmd->SetGuidance("Select CsI singles events for the particle defined by /Trigger/A and /Trigger/Z");
 
+  TIDCmd = new G4UIcmdWithAnInteger("/Trigger/CsIDetectorID",this);
+  TIDCmd->SetGuidance("Select the CsI detector (1-24) to trigger on.  A value of 0 means all detectors are used.");
+
+
 }
 
 
@@ -36,6 +40,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TACmd;
   delete TZCmd;
   delete TAZCmd;
+  delete TIDCmd;
 }
 
 
@@ -55,5 +60,8 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
    { aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));}
  if( command == TZCmd )
    { aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));}
+
+ if( command == TIDCmd )
+   { aEventAction->setTID(TIDCmd->GetNewIntValue(newValue));}
 }
 

@@ -7,7 +7,7 @@ Experimental_Hall::Experimental_Hall(Materials* mat)
   expHall_y = 200.*cm;
   expHall_z = 200.*cm;
 
-  ExperimentalHallMaterial = materials->FindMaterial("Vacuum");
+  ExperimentalHallMaterial = materials->FindMaterial("G4_Galactic");
 
 
 }

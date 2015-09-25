@@ -17,8 +17,8 @@ Target::Target(G4LogicalVolume* experimentalHall_log,Materials* mat)
   TargetEx=4.43891*MeV;
   TargetTau=1e-9*ns;
   Pos = new G4ThreeVector(0.,0.,0.);
-  TargetMaterial = materials->FindMaterial("Carbon");
-  BackingMaterial = materials->FindMaterial("Gold");
+  TargetMaterial = materials->FindMaterial("G4_C");//carbon
+  BackingMaterial = materials->FindMaterial("G4_Au");//gold
   NTStep=20;
   NBStep=20;
   fracReactionBacking=1.;

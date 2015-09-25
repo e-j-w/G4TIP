@@ -12,7 +12,7 @@ Chamber::Chamber(G4LogicalVolume* experimentalHall_log,Materials* mat)
   BTSTheta=0.*deg;
   BTDTheta=181*deg; 
   Pos0 = new G4ThreeVector(0.,0.,0.);
-  Chamber_Material = materials->FindMaterial("Aluminum");
+  Chamber_Material = materials->FindMaterial("G4_Al");
   
 }
 

@@ -81,12 +81,12 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	  G4double partECsI=0.; //energy of user defined particle
 	  for(int i=0;i<Np;i++)
 	    {
-	      // user defined particle
-		if((*CsI)[i]->GetA()==At)
+              if((CsIIDTrigger==0)||((*CsI)[i]->GetId()==CsIIDTrigger)) //CsI detector ID trigger
+		if((*CsI)[i]->GetA()==At) // user defined particle trigger
 		  if((*CsI)[i]->GetZ()==Zt)
 		    {
 		      partECsI+=(*CsI)[i]->GetKE();
-		      //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f\n",At,Zt,partECsI);
+		      //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
 		    }
 	    }
 

@@ -40,8 +40,10 @@ class EventAction : public G4UserEventAction
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
 
+
   void setTriggerA(G4int);
   void setTriggerZ(G4int);
+  void setTID(G4int TID){CsIIDTrigger=TID;};
 
   private:
   Results*      results;
@@ -58,6 +60,7 @@ class EventAction : public G4UserEventAction
   size_t        soa,sov;
   G4int         eventTrigger,setTrigger,systemTrigger;
   G4double      CsIThreshold;
+  G4int         CsIIDTrigger;
 
   // Info for CsI trigger
   Projectile* theProjectile;

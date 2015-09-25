@@ -151,18 +151,10 @@ int main(int argc,char** argv)
   }
 
   
-  delete runManager;
-  delete theDetector;
-  delete theProjectile;
   delete ProjectileMessenger;
-  delete thePhysicsList;
-  delete generatorAction;
-  delete results;
   delete resultsMessenger;
-  delete theRunAction;
-  delete eventAction;
   delete eventActionMessenger;
-  delete stepAction;
+  delete runManager;
 
   return 0;
 }

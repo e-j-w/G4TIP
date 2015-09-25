@@ -8,8 +8,8 @@ CsI_detector::CsI_detector(G4LogicalVolume* experimentalHall_log,Materials* mat)
   CsI_detector_side_y=16.2*mm;
   CsI_detector_thickness=3.0*mm;
   CsI_absorber_thickness=2.0*um;
-  CsI_Material = materials->FindMaterial("CesiumIodide");
-  CsI_absorber_Material = materials->FindMaterial("mylar");
+  CsI_Material = materials->FindMaterial("G4_CESIUM_IODIDE");
+  CsI_absorber_Material = materials->FindMaterial("G4_MYLAR");
   Pos = new G4ThreeVector(0.,0.,0.);
   Pos_abs = new G4ThreeVector(0.,0.,0.);
   Pos_abs->setZ(-CsI_detector_thickness/2.-CsI_absorber_thickness/2.);
