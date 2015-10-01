@@ -37,7 +37,7 @@ int main(int argc,char** argv)
 
  // Seed the random number generator manually
   G4long myseed = time(NULL);
-  myseed=1388637269;
+  //myseed=1388637269;
   CLHEP::HepRandom::setTheSeed(myseed);
   G4cout<<" Seed set to  "<<myseed<<G4endl;
 

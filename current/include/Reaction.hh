@@ -26,6 +26,9 @@
 #include "G4Decay.hh"
 #include "G4RandomDirection.hh"
 #include <math.h>
+
+#include "CLHEP/Random/RandGauss.h" //for generating random numbers with a gaussian dist.
+
 using namespace std;
 
 #define  eps 0.00001
@@ -97,8 +100,19 @@ class Reaction : public G4VProcess
   void SetNumberOfProtons(G4int p){nP=p;};
   void SetNumberOfAlphas(G4int a){nA=a;};
   void SetNumberOfNeutrons(G4int n){nN=n;};
+
+  void SetRxnQ(G4double x){QRxn=x;};
+  void SetExi(G4double x){initExi=x;};
+  void SetEvapQ1(G4double x){QEvap[0]=x;};
+  void SetEvapQ2(G4double x){QEvap[1]=x;};
+  void SetdExi0m(G4double x){evapdeltaEximean[0]=x;};
+  void SetdExi0s(G4double x){evapdeltaExistdev[0]=x;};
+  void SetdExi1m(G4double x){evapdeltaEximean[1]=x;};
+  void SetdExi1s(G4double x){evapdeltaExistdev[1]=x;};
+
   void AddEvaporation(G4String,G4double,G4double);
-  void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double);
+  void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double);
+  //G4ThreeVector GetCMVelocity(const G4Track &);
   G4int GetNumberOfProtons(){return nP;};
   G4int GetNumberOfAlphas(){return nA;};
   G4int GetNumberOfNeutrons(){return nN;}; 
@@ -117,6 +131,8 @@ class Reaction : public G4VProcess
   G4int  nP,nN,nA;
   G4int  maxNumEvap;
   G4double Egamma,tau;
+  G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
+  G4double initExi,evapdeltaExi,evapdeltaEximean[MAXNUMEVAP],evapdeltaExistdev[MAXNUMEVAP]; //excitation energy parameters
   vector<evaporation> *history;
 };
 

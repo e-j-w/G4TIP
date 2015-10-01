@@ -44,6 +44,7 @@ void Results::SetupRun()
     {
       kB[i]=theDetector->GetCsIArray()->GetBirksConstant(i); // Birks constant in um/MeV
       kBm[i]=kB[i]*CsIDensity/10;                            // Birks constant in (mg/cm^2)/MeV
+      S[i]=theDetector->GetCsIArray()->GetLYScaling(i);
       //printf("Birks constant for position %2d set to %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",i+1,kB[i],kBm[i]);
     }
   //getc(stdin);
@@ -1034,14 +1035,14 @@ G4double Results::CalculatePath(G4ThreeVector iPos, G4ThreeVector Pos)
 //=====================================================================================
 G4double Results::CalculateBirksLawStep(G4int id,G4double dE,G4double dEdx)
 {
-  G4double S=1.0; // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
+  //G4double S=1.0; // absolute scinitallation yeild for CsI (can take from arXiv 1502:03800v1 for low E heavy ions).
   G4double dL;    // differential light yield
 
   //   printf("Birks constant for position %2d is %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",id,kB[id-1],kBm[id-1]);
   // getc(stdin);
   
   // dL = S*dE/(1+kB[id-1]*dEdx); // for dE in MeV/um
-  dL = S*dE/(1+kBm[id-1]*dEdx); // for dE in MeV/(mg/cm^2)
+  dL = S[id-1]*dE/(1+kBm[id-1]*dEdx); // for dE in MeV/(mg/cm^2)
 
   return dL;
 }

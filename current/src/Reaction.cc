@@ -10,6 +10,7 @@ Reaction::Reaction(Projectile* Proj, const G4String& aName)
   neutron=G4Neutron::NeutronDefinition();
   alpha=G4Alpha::AlphaDefinition();
   reaction_here=false;
+
   if (verboseLevel>1) {
     G4cout <<GetProcessName() << " is created "<< G4endl;};
  
@@ -38,7 +39,8 @@ G4VParticleChange* Reaction::PostStepDoIt(
   if(reaction_here)
     {
       reaction_here=false;
-      //maxNumEvap = 8;
+
+      //define all dynamic particles
       G4DynamicParticle* RecoilOut;
       G4DynamicParticle* EvapP [MAXNUMEVAP];
       G4DynamicParticle* EvapN [MAXNUMEVAP];
@@ -50,6 +52,10 @@ G4VParticleChange* Reaction::PostStepDoIt(
           EvapN[i]=new G4DynamicParticle();
           EvapA[i]=new G4DynamicParticle();
         }
+
+      //G4ThreeVector cmv = GetCMVelocity(aTrack);
+      //G4cout << "Center of mass velocity: " << cmv << " c" << G4endl;
+
       if(SetupReactionProducts(aTrack,RecoilOut))
 	{
 	  aParticleChange.ProposeTrackStatus(fStopAndKill);
@@ -57,27 +63,44 @@ G4VParticleChange* Reaction::PostStepDoIt(
 
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
-          for(int i=0; i<nP; i++)
-            if (i<MAXNUMEVAP)
+          for(int i=0; i<nP; i++) //protons
+            if (i==0)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, 10.0); //for now, evaporate 10 MeV particles
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[0]);
                 aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                //G4cout << "Evaporated particle type: " <<  EvapP[i]->GetDefinition()->GetParticleType() << G4endl;
-                //G4cout << "Evaporated particle momentum: " <<  EvapP[i]->GetMomentum() << G4endl;
               }
-          for(int i=0; i<nN; i++)
-            if (i<MAXNUMEVAP)
+            else if (i<MAXNUMEVAP)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, 10.0); //for now, evaporate 10 MeV particles
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[1]);
+                aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+              }
+          for(int i=0; i<nN; i++) //neutrons
+            if (i==0)
+              {
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[0]);
                 aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                //G4cout << "Evaporated particle type: " <<  EvapN[i]->GetDefinition()->GetParticleType() << G4endl;
               }
-          for(int i=0; i<nA; i++)
-            if (i<MAXNUMEVAP)
+            else if (i<MAXNUMEVAP)
               {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, 10.0); //for now, evaporate 10 MeV particles
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[1]);
+                aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+              }
+          for(int i=0; i<nA; i++) //alphas
+            if (i==0)
+              {
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[0]);
                 aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                //G4cout << "Evaporated particle type: " <<  EvapA[i]->GetDefinition()->GetParticleType() << G4endl;
+              }
+            else if (i<MAXNUMEVAP)
+              {
+                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[1]);
+                aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
               }
 
           //generate the recoiling nucleus
@@ -148,7 +171,10 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
   G4double Ain;
   G4double Zin;
   G4ThreeVector dirIn;
-  G4ThreeVector pIn;
+  G4ThreeVector pIn; //momentum of incoming particle
+
+  //G4DynamicParticle* Compound=new G4DynamicParticle();
+  //Compound->SetDefinition(compound);
 
   Ain=aTrack.GetDynamicParticle()->GetDefinition()->GetAtomicMass();
   if(Ain!=A1) return FALSE;
@@ -158,45 +184,86 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
   dirIn=aTrack.GetMomentumDirection();
   posIn=aTrack.GetPosition();
   pIn=aTrack.GetMomentum();
+  //G4cout << "KE of beam: " <<  aTrack.GetKineticEnergy() << G4endl;
 
-  G4DynamicParticle* Compound=new G4DynamicParticle();
-  Compound->SetDefinition(compound);
-  Compound->SetMomentum(pIn);
+  //Compound->SetMomentum(pIn);
+  //Compound->SetMomentumDirection(dirIn);
+  //Compound->SetKineticEnergy(aTrack.GetKineticEnergy() + Q - excitation);
+  //G4cout << "KE of compound: " << Compound->GetKineticEnergy() << G4endl;
 
-  RecoilOut->SetDefinition(rec);
-  RecoilOut->SetMomentum(pIn);
+  RecoilOut->SetDefinition(compound);
+  RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
+  RecoilOut->SetMomentumDirection(dirIn);
+  //G4cout << "Before Evaporation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << G4endl;
 
   return TRUE;
 }
 //---------------------------------------------------------------------
 //Computes the momentum of the recoil system after the compund has emitted a particle.
 //particleEnergy in MeV.
-void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* RecoilOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double particleEnergy)
+void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* RecoilOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap)
 {
-  G4ThreeVector pRec, pParticle; //momenta
 
-  //set up the momentum of the emitted particle
-  G4double pParticleMag = sqrt(2.0*particleEnergy*EvaporatedParticleDef->GetAtomicMass()*931.494); //set magnitude of the emitted particle's momentum
-  pParticle=G4RandomDirection(); //generate a unit vector in a random direction
-  pParticle=pParticle*pParticleMag;
+  G4ThreeVector pRec, pParticle; //momenta
+  G4ThreeVector vParticle; //velocity
+  G4ThreeVector cmv=(Compound->GetMomentum()) / (Compound->GetDefinition()->GetPDGMass()); //center of mass velocity (ie. initial compound velocity in the lab frame) 
+  //G4double Qevap; //Q of the evaporation process 
+  //G4cout << "cmv: " <<  cmv << G4endl;
+  //G4cout << "Q: " <<  Qevap << ", deltaExi: " << deltaExi << G4endl;
+  //G4cout << "Before Evaporation - Compound momentum: " << Compound->GetMomentum() << ", Compound KE: " << Compound->GetKineticEnergy() << G4endl;
+  //G4cout << "Compound mass: " << Compound->GetDefinition()->GetPDGMass() << G4endl;
+
+
+  //define the recoil particle after evaporation
+  G4ParticleDefinition* RecoilResidual;
+  G4int rrecA=Compound->GetDefinition()->GetAtomicMass() - EvaporatedParticleDef->GetAtomicMass();
+  G4int rrecZ=Compound->GetDefinition()->GetAtomicNumber() - EvaporatedParticleDef->GetAtomicNumber();
+  RecoilResidual=G4ParticleTable::GetParticleTable()->GetIon(rrecZ,rrecA,0);//3rd parameter is excitation energy - what does this do?
+  //G4cout << "Residual mass: " << RecoilResidual->GetPDGMass() << G4endl;
+
+  deltaExi = deltaExi + Qevap; //amount of the excitation energy that goes into KE of the products
+
+  //derive the center of mass energy of the evaporated particle from the change in excitation energy of the compound
+  //G4double particleCMEnergy = deltaExi - ( deltaExi / ( ((RecoilResidual->GetAtomicMass()) / (EvaporatedParticleDef->GetAtomicMass())) + 1.0));
+  G4double particleCMEnergy = deltaExi * ( 1.0 / ( ((EvaporatedParticleDef->GetAtomicMass()) / (RecoilResidual->GetAtomicMass())) + 1.0));
+  //G4cout << "CM energy of evaporated particle: " << particleCMEnergy << " MeV." << G4endl;
+  //G4cout << "CM energy of recoil particle: " << deltaExi - particleCMEnergy << " MeV." << G4endl;
+  
+
+  //set up the momentum of the evaporated particle
+  G4double vParticleMag = sqrt(2.0*particleCMEnergy/(EvaporatedParticleDef->GetPDGMass())); //set magnitude of the emitted particle's velocity (center of mass frame)
+  vParticle=G4RandomDirection(); //generate a unit vector in a random direction (direction of evaporated particle's momentum in the center of mass)
+  vParticle=vParticle*vParticleMag;
+  vParticle += cmv; //boost velocity to lab frame
+  pParticle = vParticle*EvaporatedParticleDef->GetPDGMass(); //get lab frame momentum
   //G4cout << "Evaporated particle momentum magnitude: " <<  pParticleMag << G4endl;
   //G4cout << "Evaporated particle momentum: " <<  pParticle << G4endl;
 
-  //Initially, recoil has the same momentum as the compund system
-  pRec = Compound->GetMomentum();
+
+  //determine the momentum of the recoil particle
+  pRec = Compound->GetMomentum(); //initially, recoil has the same momentum as the compound system
   //G4cout << "Initial recoil momentum: " << pRec << G4endl;
-  //subtract momentum of the emitted particle
-  pRec -= pParticle;
+  //G4cout << "Initial recoil KE: " << Compound->GetKineticEnergy() << G4endl;
+  pRec -= pParticle; //subtract momentum of the emitted particle from the recoil
+
 
   //set properties of the recoil and evaporated particle
   EvaporatedParticle->SetDefinition(EvaporatedParticleDef);
   EvaporatedParticle->SetMomentum(pParticle);
-  RecoilOut->SetDefinition(rec);
+  RecoilOut->SetDefinition(RecoilResidual);
   RecoilOut->SetMomentum(pRec);
 
-  //G4cout << "Final recoil momentum: " << pRec << G4endl;
+  //G4cout << "After evaporaton - Recoil Z: " <<  rrecZ << ", Recoil A: "<< rrecA << G4endl;
+  //G4cout << "After evaporaton - Recoil momentum: " << pRec << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
 
 }
+//---------------------------------------------------------------------
+//Returns the center of mass velocity of the beam-target system
+/*G4ThreeVector Reaction::GetCMVelocity(const G4Track & aTrack)
+{
+  G4ThreeVector pIn = aTrack.GetMomentum(); //momentum of incoming particle
+  return pIn/((A1+A2)*931.494); //center of mass velocity
+}*/
 //---------------------------------------------------------
 void Reaction::TargetFaceCrossSection()
 {

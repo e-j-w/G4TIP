@@ -32,6 +32,7 @@ class CsI_array
   G4int getRingID(G4int id){return ring[id-1];};               // read ring by position = id-1
   void     SetBirksConstant(G4int id,G4double k){kB[id-1]=k;}; // set kB by position = id-1
   G4double GetBirksConstant(G4int id){return kB[id];};         // read kB by index id
+  G4double GetLYScaling(G4int id){return S[id];};         // read S by index id
   G4double GetCsIDensity(){return materials->FindMaterial("G4_CESIUM_IODIDE")->GetDensity()/g*cm3;};
 
   private:
@@ -44,6 +45,7 @@ class CsI_array
   G4ThreeVector pos[NCsI];
   G4double zpos;
   G4double kB[NCsI]; // Birks constant in um/MeV
+  G4double S[NCsI]; // scaling factor to convert LY to channel
 
 };
 

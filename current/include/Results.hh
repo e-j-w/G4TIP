@@ -127,6 +127,7 @@ private:
 
   G4double kB[NCsI];  // Birks constant in um/MeV
   G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV
+  G4double S[NCsI]; // scaling factor from LY to channel
 
   size_t soh,soi,sos;
 
