@@ -76,6 +76,7 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
+
   //G4int particleType = 0;
  
   //  G4int evntNb;
@@ -113,7 +114,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   else                                                                                  particleType = 0;*/
 
   // eventaction->AddParticleType(particleType);
-  //evntNb =  eventaction->GetEventNumber();
+  //evntNb =  eventaction->GetEventNumber();()->GetParticleName() == "gamma")
   //G4cout << "Found Edep = " << edep/keV << " keV in " << volname << G4endl;
   // example volname
   //volname = av_1_impr_6_sodium_iodide_crystal_block_log_pv_0
@@ -148,6 +149,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   //  Griffin energy deposits
   found = volname.find("germanium_block1");
   if (edep != 0 && found!=G4String::npos) {
+      //this block is never run!!! why?
       SetDetAndCryNumberForGriffinComponent(volname);
       eventaction->AddGriffinCrystDet(edep,weight,pos2,det-1,cry-1);
  
@@ -194,6 +196,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
   // Dead layer specific code
   found = volname.find("germanium_dls_block1");
   if (edep != 0 && found!=G4String::npos) {
+      //this block is never run!!! why?
       SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(volname);
       //      G4cout << "germanium_dls_block1 Found Edep = " << edep << " keV in det = " << det << " cry = " << cry << " found = " << found << " volname = " << volname <<" weight= "<<weight<<" particle type "<<particleType<<G4endl;
       //     getc(stdin);

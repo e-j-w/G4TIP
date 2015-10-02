@@ -104,6 +104,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
               }
 
           //generate the recoiling nucleus
+          RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
 	  aParticleChange.AddSecondary(RecoilOut,posIn,true);
 
           //debug
@@ -194,14 +195,14 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
   RecoilOut->SetDefinition(compound);
   RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
   RecoilOut->SetMomentumDirection(dirIn);
-  //G4cout << "Before Evaporation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << G4endl;
+  //G4cout << "At compound formation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << G4endl;
 
   return TRUE;
 }
 //---------------------------------------------------------------------
 //Computes the momentum of the recoil system after the compund has emitted a particle.
 //particleEnergy in MeV.
-void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* RecoilOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap)
+void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* ResidualOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap)
 {
 
   G4ThreeVector pRec, pParticle; //momenta
@@ -240,21 +241,21 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   //G4cout << "Evaporated particle momentum: " <<  pParticle << G4endl;
 
 
-  //determine the momentum of the recoil particle
-  pRec = Compound->GetMomentum(); //initially, recoil has the same momentum as the compound system
+  //determine the momentum of the residual particle
+  pRec = Compound->GetMomentum(); //initially, residual has the same momentum as the compound system
   //G4cout << "Initial recoil momentum: " << pRec << G4endl;
   //G4cout << "Initial recoil KE: " << Compound->GetKineticEnergy() << G4endl;
-  pRec -= pParticle; //subtract momentum of the emitted particle from the recoil
+  pRec -= pParticle; //subtract momentum of the emitted particle from the residual
 
 
   //set properties of the recoil and evaporated particle
   EvaporatedParticle->SetDefinition(EvaporatedParticleDef);
   EvaporatedParticle->SetMomentum(pParticle);
-  RecoilOut->SetDefinition(RecoilResidual);
-  RecoilOut->SetMomentum(pRec);
+  ResidualOut->SetDefinition(RecoilResidual);
+  ResidualOut->SetMomentum(pRec);
 
-  //G4cout << "After evaporaton - Recoil Z: " <<  rrecZ << ", Recoil A: "<< rrecA << G4endl;
-  //G4cout << "After evaporaton - Recoil momentum: " << pRec << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
+  //G4cout << "After evaporaton - Residual Z: " <<  rrecZ << ", Residual A: "<< rrecA << G4endl;
+  //G4cout << "After evaporaton - Residual momentum: " << pRec << ", Residual KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
 
 }
 //---------------------------------------------------------------------
@@ -269,38 +270,39 @@ void Reaction::TargetFaceCrossSection()
 {
 
   G4int DA=0,DZ=0;
-
   A1=theProjectile->getA();
   Z1=theProjectile->getZ(); 
   
+  //set properties of the compound (which we assume does not gamma decay) 
   compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
 
- 
+  //set properties (including gamma decay processes) of the residual
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
-  rec=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Egamma);
+  residual=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Egamma);
   
-  rec->SetPDGStable(false);
-  rec->SetPDGLifeTime(tau);
-  G4DecayTable *RecDecTab = rec->GetDecayTable(); 
-  if (RecDecTab == NULL) {
-    RecDecTab = new G4DecayTable();
-    rec->SetDecayTable(RecDecTab);
+  residual->SetPDGStable(false);
+  residual->SetPDGLifeTime(tau);
+  G4cout << "Decay lifetime of the residual species: " << tau << " ns, gamma energy " << Egamma << " MeV." <<G4endl;
+  G4DecayTable *ResDecTab = residual->GetDecayTable(); 
+  if (ResDecTab == NULL) {
+    ResDecTab = new G4DecayTable();
+    residual->SetDecayTable(ResDecTab);
   }
-  GammaDecayChannel *RecDec = new GammaDecayChannel(-1,rec,1,Egamma);
-  RecDecTab->Insert(RecDec);
-  // RecDecTab->DumpInfo();
-  // make sure that the recoil has the decay process in its manager
-  G4ProcessManager *rec_pm = rec->GetProcessManager();
-  if (rec_pm == NULL) {
-    G4cerr << "Could not find process manager for the recoil." << G4endl;
+  GammaDecayChannel *ResDec = new GammaDecayChannel(-1,residual,1,Egamma);
+  ResDecTab->Insert(ResDec);
+  //RecDecTab->DumpInfo();
+  // make sure that the residual has the decay process in its manager
+  G4ProcessManager *residual_pm = residual->GetProcessManager();
+  if (residual_pm == NULL) {
+    G4cerr << "Could not find process manager for the residual nucleus." << G4endl;
     exit(EXIT_FAILURE);
   }
-  if (rec_pm->GetProcessActivation(&decay) == false) {
-    G4cout<<"-> adding the recoil decay process"<<G4endl;
-    rec_pm->AddProcess(&decay,1,-1,5);
+  if (residual_pm->GetProcessActivation(&decay) == false) {
+    G4cout<<"-> adding the residual nucleus decay process."<<G4endl;
+    residual_pm->AddProcess(&decay,1,-1,5);
   }
-  // rec_pm->DumpInfo();
+  //residual_pm->DumpInfo();
   // getc(stdin);
 
 }
