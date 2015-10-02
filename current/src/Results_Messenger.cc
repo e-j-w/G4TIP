@@ -56,20 +56,20 @@ Results_Messenger::Results_Messenger(Results* Res) :results(Res)
   // TACmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   // TACmd->SetDefaultValue("test.root");
 
-  //this is for the projectile spectra
+  /*//this is for the projectile spectra
   PLSACmd = new G4UIcmdWithoutParameter("/Results/Projectile/LabScatteringAngle",this);
   PLSACmd->SetGuidance("Examine projectile scattering angle in the lab frame");
 
  //this is for the recoil spectra
   RLSACmd = new G4UIcmdWithoutParameter("/Results/Recoil/LabScatteringAngle",this);
-  RLSACmd->SetGuidance("Examine recoil scattering angle in the lab frame");
+  RLSACmd->SetGuidance("Examine recoil scattering angle in the lab frame");*/
 
 
  //this is for the cross section
   CSZCmd = new G4UIcmdWithoutParameter("/Results/CrossSection/ZProfile",this);
   CSZCmd->SetGuidance("Cross section vs. z profile");
-  FCMCmd = new G4UIcmdWithoutParameter("/Results/CrossSection/FCM",this);
-  FCMCmd->SetGuidance("Centre of mass f(theta) function for the gun conditions");
+  /*FCMCmd = new G4UIcmdWithoutParameter("/Results/CrossSection/FCM",this);
+  FCMCmd->SetGuidance("Centre of mass f(theta) function for the gun conditions");*/
 
   //this is for gamma-ray spectra
   GRSCmd = new G4UIcmdWithAnInteger("/Results/Gamma/RingSpectrum",this);
@@ -182,19 +182,19 @@ void Results_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
  if( command == TACmd )
     { results->TreeAdd(newValue);}
 
- //this is for the projectile spectra
+ /*//this is for the projectile spectra
  if( command == PLSACmd )
     { results->ProjLabScattAngle();}
 
  //this is for the recoil spectra
  if( command == RLSACmd )
-    { results->RecLabScattAngle();}
+    { results->RecLabScattAngle();}*/
 
  //this is for the cross section
  if( command == CSZCmd )
     { results->CrossSectionZProfile();}
- if( command == FCMCmd )
-   { results->TargetFaceF_CM();}
+ /*if( command == FCMCmd )
+   { results->TargetFaceF_CM();}*/
  //this is for gamma-ray spectra
  if( command == GRSCmd )
    { results->GammaRingSpectrum(GRSCmd->GetNewIntValue(newValue));}

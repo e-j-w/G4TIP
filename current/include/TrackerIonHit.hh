@@ -45,9 +45,9 @@ class TrackerIonHit : public G4VHit
       void SetGunFlag(){flag=GUN_FLAG;}
       void SetVolName(G4String name){volumeName=name;};
       void SetFlagZero(){flag=0;}
-  void SetDecayFlag(){pflag=DECAY_FLAG;}
-  void SetReactionInFlag(){pflag=REACTION_IN_FLAG;}
-  void SetReactionOutFlag(){pflag=REACTION_OUT_FLAG;}
+      void SetDecayFlag(){pflag=DECAY_FLAG;}
+      void SetReactionInFlag(){pflag=REACTION_IN_FLAG;}
+      void SetReactionOutFlag(){pflag=REACTION_OUT_FLAG;}
       void SetTargetInFlag(){flag=TARGET_IN_FLAG;}
       void SetBackingInFlag(){flag=BACKING_IN_FLAG;}
       void SetBackingOutFlag(){flag=BACKING_OUT_FLAG;}

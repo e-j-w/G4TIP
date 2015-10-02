@@ -70,6 +70,17 @@ typedef struct{
     Double_t LY;   // Birks Law light yield. LY = sum over dL/dx
     Double_t Q;    // Quenching factor LY/E
  } CsIInf;
+
+typedef struct{
+    Int_t    Gfold;
+    Int_t    GId[GN*GS];
+    Int_t    GSeg[GN*GS];
+    Double_t Gx[GN*GS];
+    Double_t Gy[GN*GS];
+    Double_t Gz[GN*GS];
+    Double_t GE[GN*GS];
+    Double_t GW[GN*GS];
+ } GInf;
 class Results
 {
 public:
@@ -79,7 +90,7 @@ public:
 
 public:
   
-  void SetupRun();
+  void SetupRun(Int_t, Int_t, Int_t);
 
   void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
   void TreeView();
@@ -118,8 +129,9 @@ private:
   DetectorConstruction* theDetector;
 
   IonStat       stat;
-  IonInf        gun,pBIn,pTIn,pRIn,pROut,pTOut,pDIn,pDOut,rROut,rTOut,rDIn,rDOut,pDec,rDec,rDTrack,rBIn,rBOut;
+  IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec; //ion tracking (projectile, residual)
   CsIInf        partHit; //particle hit
+  GInf          GHit; //gamma hit
   G4int         Ap,Zp,Ar,Zr;
   G4ThreeVector rDiPos,rDPos; // recoil degrader position vectors for calculating distance
   G4double      dDensity; // degrader density for calculating path in mg/cm^2
@@ -129,7 +141,7 @@ private:
   G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV
   G4double S[NCsI]; // scaling factor from LY to channel
 
-  size_t soh,soi,sos;
+  size_t soh,sogh,soi,sos;
 
   Int_t    Gfold;
   Int_t    GId[GN*GS];
