@@ -143,15 +143,6 @@ private:
 
   size_t soh,sogh,soi,sos;
 
-  Int_t    Gfold;
-  Int_t    GId[GN*GS];
-  Int_t    GSeg[GN*GS];
-  Double_t Gx[GN*GS];
-  Double_t Gy[GN*GS];
-  Double_t Gz[GN*GS];
-  Double_t GE[GN*GS];
-  Double_t GW[GN*GS];
-
   //CsI parameters outside of structure
   Double_t PE;
   Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx

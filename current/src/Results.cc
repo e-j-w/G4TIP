@@ -61,17 +61,18 @@ void Results::TreeCreate()
  if(tree==NULL)
     {
       tree= new TTree("tree","tree");
-      /*tree->Branch("Gfold",&Gfold,"Gfold/I");
-      tree->Branch("GId",GId,"GId[Gfold]/I");
-      tree->Branch("GSeg",GSeg,"GSeg[Gfold]/I");
-      tree->Branch("Gx",Gx,"Gx[Gfold]/D");
-      tree->Branch("Gy",Gy,"Gy[Gfold]/D");
-      tree->Branch("Gz",Gz,"Gz[Gfold]/D");
-      tree->Branch("GE",GE,"GE[Gfold]/D");
-      tree->Branch("GW",GW,"GW[Gfold]/D");*/
+      tree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
+      tree->Branch("GId",GHit.GId,"GId[Gfold]/I");
+      tree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
+      tree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
+      tree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
+      tree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
+      tree->Branch("GE",GHit.GE,"GE[Gfold]/D");
+      tree->Branch("GW",GHit.GW,"GW[Gfold]/D");
+
       tree->Branch("PE",&PE,"E/D");
       tree->Branch("PLY",&PLY,"LY/D");
-      tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
+      //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
       tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D"); //projectile when shot from the particle gun
       tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D"); //projectile upon entering the target
@@ -83,7 +84,7 @@ void Results::TreeCreate()
 
       tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
 
-      tree->Branch("gammaHit",&GHit,"Gfold/I:GId[Gfold]/I:GSeg[Gfold]/I:Gx[Gfold]/D:Gy[Gfold]/D:Gz[Gfold]/D:GE[Gfold]/D:GW[Gfold]/D"); //gamma hit in HPGe
+      //tree->Branch("gammaHit",&GHit,"Gfold/I:GId[gammaHit.Gfold]/I:GSeg[gammaHit.Gfold]/I:Gx[gammaHit.Gfold]/D:Gy[gammaHit.Gfold]/D:Gz[gammaHit.Gfold]/D:GE[gammaHit.Gfold]/D:GW[gammaHit.Gfold]/D"); //gamma hit in HPGe
 
    }
 
@@ -148,7 +149,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
  memset(&rBIn,0,soi);
  memset(&rBOut,0,soi);
  memset(&partHit,0,soh);
- memset(&GHit,0,sogh);
+ //memset(&GHit,0,sogh);
 
  if(Nt>0) 
    {
@@ -340,13 +341,14 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
            }
          //getc(stdin);
        }
-     }
+     }//end of CsI collection entry saving
 
      PE=partHit.E;
      PLY=partHit.LY;
 
      G4int i,j;
-     Gfold=0;
+     GHit.Gfold=0;
+     //Gfold=0;
      memset(GHit.GId,0,sizeof(GHit.GId));
      memset(GHit.GSeg,0,sizeof(GHit.GSeg));
      memset(GHit.GE,0,sizeof(GHit.GE));
@@ -354,17 +356,19 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
        for(j=0;j<GS;j++)
 	 if(gw[i][j]>0)
 	   {
-	     //	     G4cout<<" i "<<i<<" j "<<j<<" w "<<gw[i][j]<<G4endl;
-	     GHit.GId[Gfold]=i+1;
-	     GHit.GSeg[Gfold]=j;
-	     GHit.Gx[Gfold]=gp[i][j].getX();
-	     GHit.Gy[Gfold]=gp[i][j].getY();
-	     GHit.Gz[Gfold]=gp[i][j].getZ();
-	     GHit.GE[Gfold]=ge[i][j];
-	     GHit.GW[Gfold]=gw[i][j];
-	     Gfold++;
+             //G4cout<<" i "<<i<<" j "<<j<<" w "<<gw[i][j]<<G4endl;
+	     GHit.GId[GHit.Gfold]=i+1;
+	     GHit.GSeg[GHit.Gfold]=j;
+	     GHit.Gx[GHit.Gfold]=gp[i][j].getX();
+	     GHit.Gy[GHit.Gfold]=gp[i][j].getY();
+	     GHit.Gz[GHit.Gfold]=gp[i][j].getZ();
+	     GHit.GE[GHit.Gfold]=ge[i][j];
+	     GHit.GW[GHit.Gfold]=gw[i][j];
+             GHit.Gfold++;
+             //Gfold++;
 	   }
      //        getc(stdin);
+     
 
      tree->Fill();
      IonFill++;
@@ -697,11 +701,11 @@ void Results::GammaRingSpectrum(G4int ring)
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       for(Int_t j=0;j<Gfold;j++)
-	 if(RingMap(GId[j],GSeg[j])==ring)
+       for(Int_t j=0;j<GHit.Gfold;j++)
+	 if(RingMap(GHit.GId[j],GHit.GSeg[j])==ring)
 	   {
-	     h->Fill(FWHM_response(GE[j]));     
-	     g->Fill(FWHM_response(GE[j]),GW[j]);
+	     h->Fill(FWHM_response(GHit.GE[j]));     
+	     g->Fill(FWHM_response(GHit.GE[j]),GHit.GW[j]);
 	   }
      }
 	   
@@ -748,12 +752,12 @@ void Results::DetCryCsIGammaSpectrum(G4int det,G4int cry, G4int pin)
      {
        tree->GetEntry(i);
        if(partHit.Id==pin)
-	 for(Int_t j=0;j<Gfold;j++)
-	   if(GId[j]==det)
-	     if(GSeg[j]==cry)
+	 for(Int_t j=0;j<GHit.Gfold;j++)
+	   if(GHit.GId[j]==det)
+	     if(GHit.GSeg[j]==cry)
 	       {
-		 h->Fill(FWHM_response(GE[j]));     
-		 g->Fill(FWHM_response(GE[j]),GW[j]);
+		 h->Fill(FWHM_response(GHit.GE[j]));     
+		 g->Fill(FWHM_response(GHit.GE[j]),GHit.GW[j]);
 	       }
      }
 	   
@@ -802,13 +806,13 @@ void Results::DetRingCsIRingGammaSpectrum(G4int detRing,G4int pinRing,G4double c
      {
        tree->GetEntry(i);
        if(partHit.r==pinRing)
-	 for(Int_t j=0;j<Gfold;j++)
-	   if(RingMap(GId[j],GSeg[j])==detRing)
+	 for(Int_t j=0;j<GHit.Gfold;j++)
+	   if(RingMap(GHit.GId[j],GHit.GSeg[j])==detRing)
 	       {
 		 ec=partHit.E/MeV;
-		 eg=FWHM_response(GE[j])-coeff*ec;
-		 correlation->Fill(ec,eg,GW[j]);
-		 h->Fill(eg,GW[j]);
+		 eg=FWHM_response(GHit.GE[j])-coeff*ec;
+		 correlation->Fill(ec,eg,GHit.GW[j]);
+		 h->Fill(eg,GHit.GW[j]);
 	       }
      }
 
@@ -841,12 +845,12 @@ void Results::CalculateCrystalPositions()
    for(Int_t i=0;i<N;i++)
      {
        tree->GetEntry(i);
-       for(Int_t j=0;j<Gfold;j++)
+       for(Int_t j=0;j<GHit.Gfold;j++)
 	 {
-	   x[GId[j]-1][GSeg[j]]+=Gx[j];
-	   y[GId[j]-1][GSeg[j]]+=Gy[j];
-	   z[GId[j]-1][GSeg[j]]+=Gz[j];
-	   n[GId[j]-1][GSeg[j]]++;
+	   x[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gx[j];
+	   y[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gy[j];
+	   z[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gz[j];
+	   n[GHit.GId[j]-1][GHit.GSeg[j]]++;
 	 }
      }
 

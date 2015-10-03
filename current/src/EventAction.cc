@@ -135,6 +135,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 //*********************************************************************//
 void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry) 
 {
+  //G4cout<<" Detector "<<det<<" crystal "<<cry<<" weight "<<w<<G4endl;
   if(GriffinCrystWeightDet[det][cry]==0.)
     {
       GriffinCrystWeightDet[det][cry]=w;
