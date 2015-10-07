@@ -39,6 +39,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
   if(reaction_here)
     {
       reaction_here=false;
+      killTrack=false;
 
       //define all dynamic particles
       G4DynamicParticle* RecoilOut;
@@ -53,6 +54,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
           EvapA[i]=new G4DynamicParticle();
         }
 
+      G4ThreeVector pIn=aTrack.GetMomentum();
       //G4ThreeVector cmv = GetCMVelocity(aTrack);
       //G4cout << "Center of mass velocity: " << cmv << " c" << G4endl;
 
@@ -64,44 +66,47 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++) //protons
-            if (i==0)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[0]);
-                aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else if (i<MAXNUMEVAP)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[1]);
-                aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
+            {
+              if (i==0)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
+              else if (i<MAXNUMEVAP)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+                {
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[i]);
+                  aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
+            }
           for(int i=0; i<nN; i++) //neutrons
-            if (i==0)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[0]);
-                aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else if (i<MAXNUMEVAP)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[1]);
-                aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
+            {
+              if (i==0)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
+              else if (i<MAXNUMEVAP)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+                {
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[i]);
+                  aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
+            }
           for(int i=0; i<nA; i++) //alphas
-            if (i==0)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //set the energy of the evaporated particle
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[0]);
-                aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else if (i<MAXNUMEVAP)
-              {
-                evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[1],evapdeltaExistdev[1]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[1]);
-                aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
+            {
+              if (i==0)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
+              else if (i<MAXNUMEVAP)
+                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
+              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+                {
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[i]);
+                  aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
+            }
 
           //generate the recoiling nucleus
           RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
@@ -109,6 +114,18 @@ G4VParticleChange* Reaction::PostStepDoIt(
 
           //debug
           //G4cout << "Recoil type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
+
+          //get rid of the track if neccessary
+          if(killTrack==true)
+          	aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+
+          if (RecoilOut->GetKineticEnergy()==0)
+            {
+              G4cout << "Before evaporaton - beam momentum: " << pIn << G4endl;
+              G4cout << "After evaporaton - Residual momentum: " << RecoilOut->GetMomentum() << ", Residual KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
+              G4cout << "Evaporated alpha 1 momentum: " << EvapA[0]->GetMomentum() << ", Particle KE: " << EvapA[0]->GetKineticEnergy() << " MeV" << G4endl;
+              G4cout << "Evaporated alpha 2 momentum: " << EvapA[1]->GetMomentum() << ", Particle KE: " << EvapA[1]->GetKineticEnergy() << " MeV" << G4endl << G4endl;
+            }
 	}
     }
 
@@ -223,6 +240,11 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   //G4cout << "Residual mass: " << RecoilResidual->GetPDGMass() << G4endl;
 
   deltaExi = deltaExi + Qevap; //amount of the excitation energy that goes into KE of the products
+  if(deltaExi<0.0)
+    {
+      G4cout << "ERROR!  Excitation energy is smaller than the Q value!  Evaporation should not occur!" << G4endl;
+      G4cout << "Please check the reaction PostStepDoIt code and correct this!" << G4endl;
+    }
 
   //derive the center of mass energy of the evaporated particle from the change in excitation energy of the compound
   //G4double particleCMEnergy = deltaExi - ( deltaExi / ( ((RecoilResidual->GetAtomicMass()) / (EvaporatedParticleDef->GetAtomicMass())) + 1.0));
@@ -254,8 +276,12 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   ResidualOut->SetDefinition(RecoilResidual);
   ResidualOut->SetMomentum(pRec);
 
-  //G4cout << "After evaporaton - Residual Z: " <<  rrecZ << ", Residual A: "<< rrecA << G4endl;
-  //G4cout << "After evaporaton - Residual momentum: " << pRec << ", Residual KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
+  /*if(ResidualOut->GetKineticEnergy() == 0)
+    {
+       G4cout << "cmv: " <<  cmv << ", deltaExi: " << deltaExi << ", Q: " << Qevap << G4endl;
+       G4cout << "vParticleMag: " <<  vParticleMag << ", particleCMEnergy: " << particleCMEnergy << G4endl;
+       G4cout << "Evaporated particle PDG mass: " << EvaporatedParticleDef->GetPDGMass() << G4endl << G4endl;
+    }*/
 
 }
 //---------------------------------------------------------------------

@@ -125,6 +125,7 @@ class Reaction : public G4VProcess
   G4ParticleDefinition* compound; //the nucleus formed directly after beam-target reaction
   G4ParticleDefinition* residual; //the residual nucleus after particles have evaporated from the compund nucleus
   G4ParticleDefinition* proton,*alpha,*neutron;
+  G4bool killTrack;
   static G4Decay decay;
   G4ThreeVector posIn;
   G4double A1,Z1,A2,Z2;
