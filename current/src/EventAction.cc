@@ -60,14 +60,17 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 
   }
 
-  eventTrigger=0;
+  one=1;
+  eventTrigger=1;
 
   G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
   TrackerCsIHitsCollection* CsI=new TrackerCsIHitsCollection();
   TrackerIonHitsCollection* HI=new TrackerIonHitsCollection();
   G4int Np;
 
-
+  numP=run_action->GetNumberOfProtons();
+  numN=run_action->GetNumberOfNeutrons();
+  numA=run_action->GetNumberOfAlphas();
 
   // CsI trigger
   if(HCE!=NULL) 
@@ -75,12 +78,15 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       CsI=(TrackerCsIHitsCollection*)(HCE->GetHC(CsICollectionID)); 
       HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
       Np=CsI->entries();
+      //G4cout<<" Number of entries: "<<Np<<G4endl;
+      G4bool allHitsInOne=true;
 
       if(Np>0) 
 	{
 	  G4double partECsI=0.; //energy of user defined particle
 	  for(int i=0;i<Np;i++)
 	    {
+              //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
               if((CsIIDTrigger==0)||((*CsI)[i]->GetId()==CsIIDTrigger)) //CsI detector ID trigger
 		if((*CsI)[i]->GetA()==At) // user defined particle trigger
 		  if((*CsI)[i]->GetZ()==Zt)
@@ -89,18 +95,24 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 		      //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
 		    }
 	    }
+          //check whether all hits in the CsI hit collection are in one detector
+	  for(int i=1;i<Np;i++)
+              if((*CsI)[i]->GetId()!=(*CsI)[0]->GetId())
+                {
+                  allHitsInOne=false;
+                  break;
+                }
 
 	  if(partECsI>CsIThreshold)
-	    eventTrigger|=10;
+	    eventTrigger|=(eventTrigger<<10);
 
-          /* 
-            ASC notes 27 Aug 2015:
-            Bitwise OR assignment x|=y -> x = x|y. 
-            eventTrigger 8 is CsI system trigger i.e. trigger on recoil OR projectile
-          */  
+          //particle-particle coincidence trigger
+          //ie. particle hits in two or more different detectors
+          if(((numP+numN+numA)>1)&&(allHitsInOne==false))
+            eventTrigger|=(eventTrigger<<11);
 
-	  //if((eventTrigger&2)||(eventTrigger&4)) //for more complicated triggering schemes see Aaron's code
-	  //  eventTrigger|=8;
+          if((eventTrigger&(one<<10))&&(eventTrigger&(one<<11)))
+              eventTrigger|=(eventTrigger<<12);
 	  
           /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
           printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
@@ -120,7 +132,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   printf("HPGe eventTrigger is %d\n",eventTrigger);
   printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);*/
   
-  if((eventTrigger&setTrigger)==setTrigger)
+  if(eventTrigger&(one<<setTrigger))
       {
 	if(GriffinFold>0)
 	  for(G4int det=0;det<16;det++)
@@ -128,7 +140,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	      if( GriffinCrystEnergyDet[det][cry]>0)
 		GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
 	results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
-	//printf("Event fulfills trigger condition %d\n",eventTrigger&setTrigger);
+        //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
       }
     // getc(stdin);
 }

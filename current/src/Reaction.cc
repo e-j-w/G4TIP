@@ -55,7 +55,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
         }
 
       G4ThreeVector pIn=aTrack.GetMomentum();
-      //G4ThreeVector cmv = GetCMVelocity(aTrack);
+      G4ThreeVector cmv = GetCMVelocity(aTrack);
       //G4cout << "Center of mass velocity: " << cmv << " c" << G4endl;
 
       if(SetupReactionProducts(aTrack,RecoilOut))
@@ -73,7 +73,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
                   evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
               if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[i]);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -87,7 +87,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
                   evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
               if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[i]);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -101,7 +101,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
                   evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
               if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[i]);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -119,13 +119,6 @@ G4VParticleChange* Reaction::PostStepDoIt(
           if(killTrack==true)
           	aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
 
-          if (RecoilOut->GetKineticEnergy()==0)
-            {
-              G4cout << "Before evaporaton - beam momentum: " << pIn << G4endl;
-              G4cout << "After evaporaton - Residual momentum: " << RecoilOut->GetMomentum() << ", Residual KE: " << RecoilOut->GetKineticEnergy() << " MeV" << G4endl;
-              G4cout << "Evaporated alpha 1 momentum: " << EvapA[0]->GetMomentum() << ", Particle KE: " << EvapA[0]->GetKineticEnergy() << " MeV" << G4endl;
-              G4cout << "Evaporated alpha 2 momentum: " << EvapA[1]->GetMomentum() << ", Particle KE: " << EvapA[1]->GetKineticEnergy() << " MeV" << G4endl << G4endl;
-            }
 	}
     }
 
@@ -219,12 +212,12 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
 //---------------------------------------------------------------------
 //Computes the momentum of the recoil system after the compund has emitted a particle.
 //particleEnergy in MeV.
-void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* ResidualOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap)
+void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* ResidualOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap, G4ThreeVector cmv)
 {
 
   G4ThreeVector pRec, pParticle; //momenta
   G4ThreeVector vParticle; //velocity
-  G4ThreeVector cmv=(Compound->GetMomentum()) / (Compound->GetDefinition()->GetPDGMass()); //center of mass velocity (ie. initial compound velocity in the lab frame) 
+  //G4ThreeVector cmv=(Compound->GetMomentum()) / (Compound->GetDefinition()->GetPDGMass()); //center of mass velocity (ie. initial compound velocity in the lab frame) 
   //G4double Qevap; //Q of the evaporation process 
   //G4cout << "cmv: " <<  cmv << G4endl;
   //G4cout << "Q: " <<  Qevap << ", deltaExi: " << deltaExi << G4endl;
@@ -286,11 +279,11 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
 }
 //---------------------------------------------------------------------
 //Returns the center of mass velocity of the beam-target system
-/*G4ThreeVector Reaction::GetCMVelocity(const G4Track & aTrack)
+G4ThreeVector Reaction::GetCMVelocity(const G4Track & aTrack)
 {
   G4ThreeVector pIn = aTrack.GetMomentum(); //momentum of incoming particle
-  return pIn/((A1+A2)*931.494); //center of mass velocity
-}*/
+  return pIn/(compound->GetPDGMass()); //center of mass velocity
+}
 //---------------------------------------------------------
 void Reaction::TargetFaceCrossSection()
 {

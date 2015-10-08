@@ -39,6 +39,7 @@ class Results_Messenger: public G4UImessenger
     G4UIcmdWithAString*        TSCmd;
     G4UIcmdWithAString*        TRCmd;
     G4UIcmdWithAString*        TACmd;
+    G4UIcmdWithAnInteger*      TCSICmd;
 
   //projectile
     G4UIcmdWithoutParameter*   PLSACmd;

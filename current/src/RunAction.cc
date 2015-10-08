@@ -22,7 +22,10 @@ void RunAction::BeginOfRunAction(const G4Run*)
   Zt=theDetector->GetTarget()->getTargetCharge();
   thePhysicsList->getReaction()->SetTargetMassAndCharge(At,Zt);
   thePhysicsList->getReaction()->TargetFaceCrossSection();
-  theResults->SetupRun(thePhysicsList->getReaction()->GetNumberOfProtons(),thePhysicsList->getReaction()->GetNumberOfNeutrons(),thePhysicsList->getReaction()->GetNumberOfAlphas());
+  nP=thePhysicsList->getReaction()->GetNumberOfProtons();
+  nN=thePhysicsList->getReaction()->GetNumberOfNeutrons();
+  nA=thePhysicsList->getReaction()->GetNumberOfAlphas();
+  theResults->SetupRun(nP,nN,nA);
 }
 
 

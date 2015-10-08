@@ -24,11 +24,16 @@ class RunAction : public G4UserRunAction
   timeval GetStartTime(){return ts;};
   timeval ts;
 
+  G4int GetNumberOfProtons(){return nP;}
+  G4int GetNumberOfNeutrons(){return nN;}
+  G4int GetNumberOfAlphas(){return nA;}
+
   private:
   
   PhysicsList* thePhysicsList;
   Results* theResults;
   DetectorConstruction* theDetector;
+  G4int nP,nN,nA;//number of each type of recoil particle
  
 };
 

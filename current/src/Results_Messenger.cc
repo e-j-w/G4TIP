@@ -44,6 +44,11 @@ Results_Messenger::Results_Messenger(Results* Res) :results(Res)
   TSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   TSCmd->SetDefaultValue("test.root");
 
+  TCSICmd = new G4UIcmdWithAnInteger("/Results/Tree/CsIDetectorID",this);
+  TCSICmd->SetGuidance("The CsI detector Id for which to save data in the root tree.  A value of 0 means all detectors");  
+  TCSICmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  TCSICmd->SetDefaultValue(0);
+
   // TRCmd = new G4UIcmdWithAString("/Results/Tree/Read",this);
   // TRCmd->SetGuidance("Read the ROOT tree of simulated parameters");
   // TRCmd->SetParameterName("file name",false);
@@ -135,6 +140,8 @@ Results_Messenger::~Results_Messenger()
   delete TSCmd;
   delete TACmd;
   delete TCCmd;
+  delete TCSICmd;
+
   //this is for the projectile spectra
  
   delete PLSACmd;
@@ -175,6 +182,9 @@ void Results_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
  
  if( command == TSCmd )
     { results->TreeSave(newValue);}
+
+ if( command == TCSICmd )
+    { results->TreeSetCsIDetector(TCSICmd->GetNewIntValue(newValue));}
 
  if( command == TRCmd )
     { results->TreeRead(newValue);}

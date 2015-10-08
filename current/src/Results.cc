@@ -304,40 +304,44 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
      for(Int_t i=0;i<Np;i++)
        {
 	 // G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
-         if(partHit.E==0.)
+         if((CsITrigId==0)||(CsITrigId==(*CsICollection)[i]->GetId()))//save only data for the detectors we want to see
            {
-             partHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
-             partHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
-             partHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
-             partHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
-             partHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
-             partHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
-             partHit.b=(*CsICollection)[i]->GetBeta();
-             partHit.E=(*CsICollection)[i]->GetKE()/MeV;
-             partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
-             partHit.w=(*CsICollection)[i]->GetWeight();
-             partHit.Id=(*CsICollection)[i]->GetId();
-             partHit.r=(*CsICollection)[i]->GetRingId();
-             // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
-             // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
-             partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-             partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-             partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-             partHit.LY+=partHit.dLdx;
-             //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-           }
-         else
-           {
-             if((*CsICollection)[i]->GetId()==partHit.Id)
-               partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
-               partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
-               // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
-               // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-               partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-               partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-               partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-               partHit.LY+=partHit.dLdx;
-               //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+             if(partHit.E==0.)
+               {
+                 partHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
+                 partHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
+                 partHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
+                 partHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
+                 partHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
+                 partHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
+                 partHit.b=(*CsICollection)[i]->GetBeta();
+                 partHit.E=(*CsICollection)[i]->GetKE()/MeV;
+                 partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
+                 partHit.w=(*CsICollection)[i]->GetWeight();
+                 partHit.Id=(*CsICollection)[i]->GetId();
+                 partHit.r=(*CsICollection)[i]->GetRingId();
+                 // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
+                 // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
+                 partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                 partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                 partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
+                 partHit.LY+=partHit.dLdx;
+                 //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
+                 //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+               }
+             else
+               {
+                 if((*CsICollection)[i]->GetId()==partHit.Id)
+                   partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
+                   partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
+                   // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
+                   // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+                   partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                   partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                   partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
+                   partHit.LY+=partHit.dLdx;
+                   //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+               }
            }
          //getc(stdin);
        }

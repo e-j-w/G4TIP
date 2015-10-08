@@ -15,18 +15,11 @@
 #include "RunAction.hh"
 
 /*
-
   Trigger settings notes:
   Gamma singles                      1
-  CsI recoil singles                 2
-  gamma-CsI recoil coinc             3
-  CsI projectile singles             4
-  gamma-CsI projectile coinc         5
-  CsI recoil-CsI projectile coinc    6
-  gamma-CsI recoil-CsI projectile    7
-  CsI system                         8
-  gamma-CsI system                   9
   user defined particle singles     10
+  CsI particle-particle coinc       11
+  trigger 10 AND 11                 12
  */
 
 class EventAction : public G4UserEventAction
@@ -39,6 +32,7 @@ class EventAction : public G4UserEventAction
   void AddGriffinCrystDet(G4double, G4double,G4ThreeVector, G4int, G4int);
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
+  void SetTriggerParticleCoinc(){setTrigger=12;};
 
 
   void setTriggerA(G4int);
@@ -58,13 +52,15 @@ class EventAction : public G4UserEventAction
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4int         GriffinFold;
   size_t        soa,sov;
-  G4int         eventTrigger,setTrigger,systemTrigger;
+  unsigned long long int  one,eventTrigger,setTrigger,systemTrigger;
   G4double      CsIThreshold;
   G4int         CsIIDTrigger;
+  
 
   // Info for CsI trigger
   Projectile* theProjectile;
   Int_t       At,Zt; //A and Z of particle to trigger on
+  G4int numP,numN,numA;//number of each type of recoil particle
 };
 
 #endif //EVENTACTION_H

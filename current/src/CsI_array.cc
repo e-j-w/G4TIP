@@ -7,10 +7,11 @@ CsI_array::CsI_array(G4LogicalVolume* experimentalHall_log,Materials* mat)
   zpos=51.7*mm;
   materials=mat;
   expHall_log=experimentalHall_log;
-  id[ 0]= 1;pos[ 0].setX( 15.2*mm);pos[ 0].setY( 00.0*mm);pos[ 0].setZ(zpos);ring[ 0]=1;kB[ 0]=19.647;S[ 0]=1635.1130025891;
-  id[ 1]= 2;pos[ 1].setX( 15.2*mm);pos[ 1].setY( 16.7*mm);pos[ 1].setZ(zpos);ring[ 1]=2;kB[ 1]=15.896;S[ 1]=1473.3774742029;
-  id[ 2]= 3;pos[ 2].setX( 00.0*mm);pos[ 2].setY( 16.7*mm);pos[ 2].setZ(zpos);ring[ 2]=1;kB[ 2]=15.764;S[ 2]=1599.6432174967;
-  id[ 3]= 4;pos[ 3].setX(-15.2*mm);pos[ 3].setY( 16.7*mm);pos[ 3].setZ(zpos);ring[ 3]=2;kB[ 3]=15.764;S[ 3]=1599.6432174967;//kB not measured, inferred from 28Mg 3-alpha data to be similar to detector 3
+  id[ 0]= 1;pos[ 0].setX( 15.2*mm);pos[ 0].setY( 00.0*mm);pos[ 0].setZ(zpos);ring[ 0]=1;kB[ 0]=17.077;S[ 0]=1513.105;
+  id[ 1]= 2;pos[ 1].setX( 15.2*mm);pos[ 1].setY( 16.7*mm);pos[ 1].setZ(zpos);ring[ 1]=2;kB[ 1]=15.179;S[ 1]=1437.750;
+  id[ 2]= 3;pos[ 2].setX( 00.0*mm);pos[ 2].setY( 16.7*mm);pos[ 2].setZ(zpos);ring[ 2]=1;kB[ 2]=14.791;S[ 2]=1546.911;
+  id[ 3]= 4;pos[ 3].setX(-15.2*mm);pos[ 3].setY( 16.7*mm);pos[ 3].setZ(zpos);ring[ 3]=2;kB[ 3]=14.791;S[ 3]=1546.911;//kB not measured, inferred from 28Mg 3-alpha data to be similar to detector 3
+
   id[ 4]= 5;pos[ 4].setX(-15.2*mm);pos[ 4].setY( 00.0*mm);pos[ 4].setZ(zpos);ring[ 4]=1;kB[ 4]=15.925;S[ 4]=1605.134086559;
   id[ 5]= 6;pos[ 5].setX(-15.2*mm);pos[ 5].setY(-16.7*mm);pos[ 5].setZ(zpos);ring[ 5]=2;kB[ 5]=16.901;S[ 5]=1525.0788316396;
   id[ 6]= 7;pos[ 6].setX( 00.0*mm);pos[ 6].setY(-16.7*mm);pos[ 6].setZ(zpos);ring[ 6]=1;kB[ 6]=16.122;S[ 6]=1503.1804373217;
@@ -18,7 +19,9 @@ CsI_array::CsI_array(G4LogicalVolume* experimentalHall_log,Materials* mat)
 
   id[ 8]= 9;pos[ 8].setX( 30.4*mm);pos[ 8].setY( 00.0*mm);pos[ 8].setZ(zpos);ring[ 8]=3;kB[ 8]=15.911;S[ 8]=1577.7430029696;//kB not measured, kB and S taken as the average of all other detectors
   id[ 9]=10;pos[ 9].setX( 30.4*mm);pos[ 9].setY( 16.7*mm);pos[ 9].setZ(zpos);ring[ 9]=4;kB[ 9]=13.692;S[ 9]=1462.3231234066;
-  id[10]=11;pos[10].setX( 30.4*mm);pos[10].setY( 33.4*mm);pos[10].setZ(zpos);ring[10]=5;kB[10]=16.913;S[10]=1593.1390566084;
+
+  id[10]=11;pos[10].setX( 30.4*mm);pos[10].setY( 33.4*mm);pos[10].setZ(zpos);ring[10]=5;kB[10]=12.883;S[10]=1417.196;
+
   id[11]=12;pos[11].setX( 15.2*mm);pos[11].setY( 33.4*mm);pos[11].setZ(zpos);ring[11]=4;kB[11]=15.637;S[11]=1643.6015955551;
   id[12]=13;pos[12].setX( 00.0*mm);pos[12].setY( 33.4*mm);pos[12].setZ(zpos);ring[12]=3;kB[12]=16.486;S[12]=1664.9687252773;
   id[13]=14;pos[13].setX(-15.2*mm);pos[13].setY( 33.4*mm);pos[13].setZ(zpos);ring[13]=4;kB[13]=12.342;S[13]=1529.3424354707;

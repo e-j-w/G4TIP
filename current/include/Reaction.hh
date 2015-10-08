@@ -111,8 +111,8 @@ class Reaction : public G4VProcess
   void SetdExi1s(G4double x){evapdeltaExistdev[1]=x;};
 
   void AddEvaporation(G4String,G4double,G4double);
-  void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double);
-  //G4ThreeVector GetCMVelocity(const G4Track &);
+  void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double,G4ThreeVector);
+  G4ThreeVector GetCMVelocity(const G4Track &);
   G4int GetNumberOfProtons(){return nP;};
   G4int GetNumberOfAlphas(){return nA;};
   G4int GetNumberOfNeutrons(){return nN;}; 
