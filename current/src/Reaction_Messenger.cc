@@ -80,6 +80,15 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   dExi1sCmd->SetParameterName("dExi1s",false);
   dExi1sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+
+  CARCmd = new G4UIcmdWithoutParameter("/ParticleEvaporation/ConstrainAngularRange",this);
+  CARCmd->SetGuidance("Require that at least one evaporated particle be emitted in a specified angular range.");
+
+  CARMaxCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/MaxAngle",this);
+  CARMaxCmd->SetGuidance("Maximum angle (from the z/beam axis) in which at least one of the evaporated particles must be emitted.");
+  CARMaxCmd->SetParameterName("CARMax",false);
+  CARMaxCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 
@@ -104,6 +113,9 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  dExi0sCmd;
   delete  dExi1mCmd;
   delete  dExi1sCmd;
+
+  delete  CARCmd;
+  delete  CARMaxCmd;
 }
 
 
@@ -149,6 +161,13 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   if( command == dExi1sCmd )
     { theReaction->SetdExi1s(dExi1sCmd->GetNewDoubleValue(newValue));}
+
+
+  if( command == CARCmd )
+    { theReaction->SetConstrainedAngle();}
+
+  if( command == CARMaxCmd )
+    { theReaction->SetMaxAngle(CARMaxCmd->GetNewDoubleValue(newValue));}
 
 }
 

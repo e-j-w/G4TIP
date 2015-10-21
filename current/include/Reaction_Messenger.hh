@@ -41,6 +41,9 @@ class Reaction_Messenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit* dExi0sCmd;
     G4UIcmdWithADoubleAndUnit* dExi1mCmd;
     G4UIcmdWithADoubleAndUnit* dExi1sCmd;
+
+    G4UIcmdWithoutParameter*   CARCmd;
+    G4UIcmdWithADoubleAndUnit* CARMaxCmd;
 };
 
 

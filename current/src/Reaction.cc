@@ -54,9 +54,9 @@ G4VParticleChange* Reaction::PostStepDoIt(
           EvapA[i]=new G4DynamicParticle();
         }
 
+      //get properties of the beam-target system
       G4ThreeVector pIn=aTrack.GetMomentum();
-      G4ThreeVector cmv = GetCMVelocity(aTrack);
-      //G4cout << "Center of mass velocity: " << cmv << " c" << G4endl;
+      G4ThreeVector cmv = GetCMVelocity(aTrack); //center of mass velocity
 
       if(SetupReactionProducts(aTrack,RecoilOut))
 	{
@@ -108,6 +108,24 @@ G4VParticleChange* Reaction::PostStepDoIt(
                 killTrack=true; //this is no longer the desired reaction channel, kill it
             }
 
+          //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
+          //Otherwise, kill the track.
+          if(constrainedAngle==true)
+            {
+              G4bool goodEvapAngle=false;
+              for(int i=0; i<MAXNUMEVAP; i++) //alphas
+                {
+                  if((i<nP)&&(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
+                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                  if((i<nN)&&(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
+                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                  if((i<nA)&&(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
+                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                }
+              if(goodEvapAngle==false)
+                killTrack=true;
+            }
+
           //generate the recoiling nucleus
           RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
 	  aParticleChange.AddSecondary(RecoilOut,posIn,true);
@@ -117,7 +135,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
 
           //get rid of the track if neccessary
           if(killTrack==true)
-          	aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+            aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
 
 	}
     }
@@ -212,6 +230,10 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
 //---------------------------------------------------------------------
 //Computes the momentum of the recoil system after the compund has emitted a particle.
 //particleEnergy in MeV.
+
+//cmv: center of mass velocity vector for the beam-target system
+//vParticle: unit vector specifying evaporated particle's emission direction in the CM frame.
+
 void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4DynamicParticle* ResidualOut, G4DynamicParticle* EvaporatedParticle, G4ParticleDefinition* EvaporatedParticleDef, G4double deltaExi,  G4double Qevap, G4ThreeVector cmv)
 {
 
@@ -248,8 +270,8 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
 
   //set up the momentum of the evaporated particle
   G4double vParticleMag = sqrt(2.0*particleCMEnergy/(EvaporatedParticleDef->GetPDGMass())); //set magnitude of the emitted particle's velocity (center of mass frame)
-  vParticle=G4RandomDirection(); //generate a unit vector in a random direction (direction of evaporated particle's momentum in the center of mass)
-  vParticle=vParticle*vParticleMag;
+  vParticle=G4RandomDirection(); //generate a unit vector in a random direction (direction of particle emission)
+  vParticle=vParticle*vParticleMag; //calculate velocity vector of emitted particle in CM frame
   vParticle += cmv; //boost velocity to lab frame
   pParticle = vParticle*EvaporatedParticleDef->GetPDGMass(); //get lab frame momentum
   //G4cout << "Evaporated particle momentum magnitude: " <<  pParticleMag << G4endl;

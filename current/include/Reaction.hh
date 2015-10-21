@@ -101,6 +101,7 @@ class Reaction : public G4VProcess
   void SetNumberOfAlphas(G4int a){nA=a;};
   void SetNumberOfNeutrons(G4int n){nN=n;};
 
+  //set properties of raction and emitted particles
   void SetRxnQ(G4double x){QRxn=x;};
   void SetExi(G4double x){initExi=x;};
   void SetEvapQ1(G4double x){QEvap[0]=x;};
@@ -109,6 +110,11 @@ class Reaction : public G4VProcess
   void SetdExi0s(G4double x){evapdeltaExistdev[0]=x;};
   void SetdExi1m(G4double x){evapdeltaEximean[1]=x;};
   void SetdExi1s(G4double x){evapdeltaExistdev[1]=x;};
+
+  //set angular constraints of emitted particles
+  void SetConstrainedAngle(){constrainedAngle=true;};
+  void UnsetConstrainedAngle(){constrainedAngle=false;};
+  void SetMaxAngle(G4double x){maxEvapAngle=x;};
 
   void AddEvaporation(G4String,G4double,G4double);
   void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double,G4ThreeVector);
@@ -131,6 +137,8 @@ class Reaction : public G4VProcess
   G4double A1,Z1,A2,Z2;
   G4int  nP,nN,nA;
   G4int  maxNumEvap;
+  G4bool constrainedAngle; //whether to constrain direction of emitted particles
+  G4double maxEvapAngle; //at least one evaporated particle must be below this angle with respect to the beam axis
   G4double Egamma,tau;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
   G4double initExi,evapdeltaExi,evapdeltaEximean[MAXNUMEVAP],evapdeltaExistdev[MAXNUMEVAP]; //excitation energy parameters

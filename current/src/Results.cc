@@ -332,15 +332,17 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
              else
                {
                  if((*CsICollection)[i]->GetId()==partHit.Id)
-                   partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
-                   partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
-                   // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
-                   // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                   partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                   partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                   partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-                   partHit.LY+=partHit.dLdx;
-                   //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+                   {
+                     partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
+                     partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
+                     // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
+                     // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+                     partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                     partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                     partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
+                     partHit.LY+=partHit.dLdx;
+                     //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+                   }
                }
            }
          //getc(stdin);
