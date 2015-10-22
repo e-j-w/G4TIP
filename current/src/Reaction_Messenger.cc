@@ -60,23 +60,28 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   Q2Cmd->SetParameterName("Q2",false);
   Q2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi0mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstParticleDeltaExiMean",this);
-  dExi0mCmd->SetGuidance("Mean change in compound nucleus excitation energy following evaporation of the first particle.");
+  dExiNGCmd = new G4UIcmdWithAnInteger("/ParticleEvaporation/ExiDistNumberofGaussians",this);
+  dExiNGCmd->SetGuidance("Set the number of gaussian distributions to be used to generate the change in excitation energy distribution of the compound following particle evaporation.");
+  dExiNGCmd->SetParameterName("dExiNG",false);
+  dExiNGCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  dExi0mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstDeltaExiDistMean",this);
+  dExi0mCmd->SetGuidance("Mean value of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi0mCmd->SetParameterName("dExi0m",false);
   dExi0mCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi0sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstParticleDeltaExiWidth",this);
-  dExi0sCmd->SetGuidance("Width of change in compound nucleus excitation energy distrubution, for evaporation of the first particle.");
+  dExi0sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstDeltaExiDistWidth",this);
+  dExi0sCmd->SetGuidance("Width of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi0sCmd->SetParameterName("dExi0s",false);
   dExi0sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi1mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/TotalDeltaExiMean",this);
-  dExi1mCmd->SetGuidance("Mean change in compound nucleus excitation energy following evaporation of all particles.");
+  dExi1mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/SecondDeltaExiDistMean",this);
+  dExi1mCmd->SetGuidance("Mean value of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi1mCmd->SetParameterName("dExi1m",false);
   dExi1mCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi1sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/TotalDeltaExiWidth",this);
-  dExi1sCmd->SetGuidance("Width of change in compound nucleus excitation energy distrubution, for evaporation of the all particles.");
+  dExi1sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/SecondDeltaExiDistWidth",this);
+  dExi1sCmd->SetGuidance("Width of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi1sCmd->SetParameterName("dExi1s",false);
   dExi1sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -88,6 +93,11 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   CARMaxCmd->SetGuidance("Maximum angle (from the z/beam axis) in which at least one of the evaporated particles must be emitted.");
   CARMaxCmd->SetParameterName("CARMax",false);
   CARMaxCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  CARMinCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/MinAngle",this);
+  CARMinCmd->SetGuidance("Minimum angle (from the z/beam axis) in which at least one of the evaporated particles must be emitted.");
+  CARMinCmd->SetParameterName("CARMin",false);
+  CARMinCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -109,6 +119,7 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  theEvaporationDir;
   delete  Q1Cmd;
   delete  Q2Cmd;
+  delete  dExiNGCmd;
   delete  dExi0mCmd;
   delete  dExi0sCmd;
   delete  dExi1mCmd;
@@ -116,6 +127,7 @@ Reaction_Messenger::~Reaction_Messenger()
 
   delete  CARCmd;
   delete  CARMaxCmd;
+  delete  CARMinCmd;
 }
 
 
@@ -150,6 +162,9 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == Q2Cmd )
     { theReaction->SetEvapQ2(Q2Cmd->GetNewDoubleValue(newValue));}
 
+  if( command == dExiNGCmd )
+    { theReaction->SetdExiNGaussians(dExiNGCmd->GetNewIntValue(newValue));}
+
   if( command == dExi0mCmd )
     { theReaction->SetdExi0m(dExi0mCmd->GetNewDoubleValue(newValue));}
 
@@ -168,6 +183,9 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
   if( command == CARMaxCmd )
     { theReaction->SetMaxAngle(CARMaxCmd->GetNewDoubleValue(newValue));}
+
+  if( command == CARMinCmd )
+    { theReaction->SetMinAngle(CARMinCmd->GetNewDoubleValue(newValue));}
 
 }
 

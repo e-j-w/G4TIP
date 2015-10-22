@@ -58,6 +58,31 @@ G4VParticleChange* Reaction::PostStepDoIt(
       G4ThreeVector pIn=aTrack.GetMomentum();
       G4ThreeVector cmv = GetCMVelocity(aTrack); //center of mass velocity
 
+      //generate delta Exi values for each particle to be evaporated
+      if(numExiDists>0)
+        {
+          for(int i=0; i<(nP+nN+nA); i++)
+            if(i<MAXNUMEVAP)
+              {
+                evapdeltaExi[i]=0.;
+                if(numExiDists<=MAXNUMDISTS)
+                  {
+                    for(int j=0; j<numExiDists; j++)
+                      if(j<MAXNUMDISTS)
+                        evapdeltaExi[i]+=CLHEP::RandGauss::shoot(evapdeltaEximean[j],evapdeltaExistdev[j]);
+                    evapdeltaExi[i]=evapdeltaExi[i]/numExiDists; //take the average of the gaussian dists as delta excitation energy
+                  }
+                else
+                  G4cout << "ERROR: reduce /ParticleEvaporation/ExiDistNumberofGaussians to a value of " << MAXNUMDISTS << " or lower, or increase MAXNUMDISTS defined in Reaction.hh." << G4endl;
+              }
+        }
+      else
+        {
+          G4cout << "ERROR: No change in excitation distribution specified for the compound nucleus!" << G4endl;
+          G4cout << "Make sure /ParticleEvaporation/ExiDistNumberofGaussians is set to a value greater than 0." << G4endl;
+        }
+
+
       if(SetupReactionProducts(aTrack,RecoilOut))
 	{
 	  aParticleChange.ProposeTrackStatus(fStopAndKill);
@@ -67,13 +92,9 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++) //protons
             {
-              if (i==0)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
-              else if (i<MAXNUMEVAP)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if((i<MAXNUMEVAP)&&((evapdeltaExi[i]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi, QEvap[i],cmv);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -81,13 +102,9 @@ G4VParticleChange* Reaction::PostStepDoIt(
             }
           for(int i=0; i<nN; i++) //neutrons
             {
-              if (i==0)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
-              else if (i<MAXNUMEVAP)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if((i<MAXNUMEVAP)&&((evapdeltaExi[i+nP]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi, QEvap[i],cmv);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -95,13 +112,9 @@ G4VParticleChange* Reaction::PostStepDoIt(
             }
           for(int i=0; i<nA; i++) //alphas
             {
-              if (i==0)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]); //set the energy of the evaporated particle
-              else if (i<MAXNUMEVAP)
-                  evapdeltaExi = CLHEP::RandGauss::shoot(evapdeltaEximean[i],evapdeltaExistdev[i]) - CLHEP::RandGauss::shoot(evapdeltaEximean[0],evapdeltaExistdev[0]); //energy is difference of total and first particle distributions
-              if((i<MAXNUMEVAP)&&((evapdeltaExi+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if((i<MAXNUMEVAP)&&((evapdeltaExi[i+nP+nN]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
                 {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi, QEvap[i],cmv);
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
               else
@@ -115,12 +128,21 @@ G4VParticleChange* Reaction::PostStepDoIt(
               G4bool goodEvapAngle=false;
               for(int i=0; i<MAXNUMEVAP; i++) //alphas
                 {
-                  if((i<nP)&&(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
-                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
-                  if((i<nN)&&(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
-                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
-                  if((i<nA)&&(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle))
-                    goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                  if((i<nP)&&(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle))
+                    {
+                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      break;
+                    }
+                  if((i<nN)&&(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle))
+                    {
+                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      break;
+                    }
+                  if((i<nA)&&(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle))
+                    {
+                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      break;
+                    }
                 }
               if(goodEvapAngle==false)
                 killTrack=true;

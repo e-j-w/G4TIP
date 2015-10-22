@@ -33,6 +33,7 @@ using namespace std;
 
 #define  eps 0.00001
 #define  MAXNUMEVAP 8
+#define  MAXNUMDISTS 2
 
 typedef struct
 {
@@ -106,6 +107,7 @@ class Reaction : public G4VProcess
   void SetExi(G4double x){initExi=x;};
   void SetEvapQ1(G4double x){QEvap[0]=x;};
   void SetEvapQ2(G4double x){QEvap[1]=x;};
+  void SetdExiNGaussians(G4int x){numExiDists=x;};
   void SetdExi0m(G4double x){evapdeltaEximean[0]=x;};
   void SetdExi0s(G4double x){evapdeltaExistdev[0]=x;};
   void SetdExi1m(G4double x){evapdeltaEximean[1]=x;};
@@ -115,6 +117,7 @@ class Reaction : public G4VProcess
   void SetConstrainedAngle(){constrainedAngle=true;};
   void UnsetConstrainedAngle(){constrainedAngle=false;};
   void SetMaxAngle(G4double x){maxEvapAngle=x;};
+  void SetMinAngle(G4double x){minEvapAngle=x;};
 
   void AddEvaporation(G4String,G4double,G4double);
   void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double,G4ThreeVector);
@@ -137,11 +140,12 @@ class Reaction : public G4VProcess
   G4double A1,Z1,A2,Z2;
   G4int  nP,nN,nA;
   G4int  maxNumEvap;
+  G4int  numExiDists;
   G4bool constrainedAngle; //whether to constrain direction of emitted particles
-  G4double maxEvapAngle; //at least one evaporated particle must be below this angle with respect to the beam axis
+  G4double maxEvapAngle, minEvapAngle; //at least one evaporated particle must be in this angular range with respect to the beam axis
   G4double Egamma,tau;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
-  G4double initExi,evapdeltaExi,evapdeltaEximean[MAXNUMEVAP],evapdeltaExistdev[MAXNUMEVAP]; //excitation energy parameters
+  G4double initExi,evapdeltaExi[MAXNUMEVAP],evapdeltaEximean[MAXNUMDISTS],evapdeltaExistdev[MAXNUMDISTS]; //excitation energy parameters
   vector<evaporation> *history;
 };
 
