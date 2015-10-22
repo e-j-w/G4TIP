@@ -1,0 +1,42 @@
+/Griffin/addGriffinBack 16
+/Projectile/A 18
+/Projectile/Z 8
+/Projectile/KE 48 MeV
+/Projectile/Focus/X 0. mm
+/Projectile/Focus/Y 0. mm
+/Projectile/Focus/Z -50. mm
+/Projectile/Focus/DX 0. mm
+/Projectile/Focus/DY 0. mm
+/Backing/Material G4_Au
+/Backing/Thickness 14.9 um
+/Backing/NStep 1
+/Target/Material G4_C
+/Target/Thickness 1.91 um
+/Target/NStep 1
+/Reaction/Tau 0.3 ps
+/Reaction/E_gamma 1274.537 keV
+/Reaction/N_protons 0
+/Reaction/N_neutrons 0
+/Reaction/N_alpha 2
+/CompoundFormation/Q 23.651 MeV
+/CompoundFormation/CompoundExi 42.851 MeV
+/ParticleEvaporation/Q1 -10.643 MeV
+/ParticleEvaporation/Q2 -10.615 MeV
+/ParticleEvaporation/FirstParticleDeltaExiMean 16.1 MeV
+/ParticleEvaporation/FirstParticleDeltaExiWidth 1.8 MeV
+/ParticleEvaporation/TotalDeltaExiMean 32.2 MeV
+/ParticleEvaporation/TotalDeltaExiWidth 1.8 MeV
+/ParticleEvaporation/ConstrainAngularRange
+/ParticleEvaporation/MaxAngle 50.0 deg
+/Results/Tree/CsIDetectorID 0
+/Trigger/CsIDetectorID 0
+/Trigger/A 4
+/Trigger/Z 2
+/Trigger/DefinedParticleCoinc
+#/Trigger/DefinedParticleSingles
+#/Print/CsI_Track_Set
+#/Print/Track_Set
+/run/beamOn 400000
+/Results/Tree/Report
+/Results/Tree/Save 0p2a_all_coinc_exi16.1w1.8_run1.root
+/Projectile/Report
