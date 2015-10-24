@@ -23,10 +23,12 @@
 /ParticleEvaporation/Q1 -10.643 MeV
 /ParticleEvaporation/Q2 -10.615 MeV
 /ParticleEvaporation/ExiDistNumberofGaussians 2
-/ParticleEvaporation/FirstDeltaExiDistMean 16.1 MeV
-/ParticleEvaporation/FirstDeltaExiDistWidth 4.0 MeV
-/ParticleEvaporation/SecondDeltaExiDistMean 16.1 MeV
-/ParticleEvaporation/SecondDeltaExiDistWidth 2.0 MeV
+/ParticleEvaporation/FirstDeltaExiDistMean 15.8 MeV
+/ParticleEvaporation/FirstDeltaExiDistWidth 1.55 MeV
+/ParticleEvaporation/FirstDeltaExiDistWeight 1.2
+/ParticleEvaporation/SecondDeltaExiDistMean 15.8 MeV
+/ParticleEvaporation/SecondDeltaExiDistWidth 4.2 MeV
+/ParticleEvaporation/SecondDeltaExiDistWeight 1.0
 /ParticleEvaporation/ConstrainAngularRange
 /ParticleEvaporation/MaxAngle 50.0 deg
 /Results/Tree/CsIDetectorID 0
@@ -37,7 +39,7 @@
 #/Trigger/DefinedParticleSingles
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-/run/beamOn 400000
+/run/beamOn 500000
 /Results/Tree/Report
-/Results/Tree/Save 0p2a_all_coinc_exi16.1mixedw_run1.root
+/Results/Tree/Save 0p2a_15.8_2_run3.root
 /Projectile/Report

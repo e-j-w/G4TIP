@@ -75,6 +75,11 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   dExi0sCmd->SetParameterName("dExi0s",false);
   dExi0sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  dExi0wCmd = new G4UIcmdWithADouble("/ParticleEvaporation/FirstDeltaExiDistWeight",this);
+  dExi0wCmd->SetGuidance("Weight of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation, relative to other gaussians.");
+  dExi0wCmd->SetParameterName("dExi0w",false);
+  dExi0wCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   dExi1mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/SecondDeltaExiDistMean",this);
   dExi1mCmd->SetGuidance("Mean value of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi1mCmd->SetParameterName("dExi1m",false);
@@ -84,6 +89,11 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   dExi1sCmd->SetGuidance("Width of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
   dExi1sCmd->SetParameterName("dExi1s",false);
   dExi1sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  dExi1wCmd = new G4UIcmdWithADouble("/ParticleEvaporation/SecondDeltaExiDistWeight",this);
+  dExi1wCmd->SetGuidance("Weight of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation, relative to other gaussians.");
+  dExi1wCmd->SetParameterName("dExi1w",false);
+  dExi1wCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
   CARCmd = new G4UIcmdWithoutParameter("/ParticleEvaporation/ConstrainAngularRange",this);
@@ -122,8 +132,10 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  dExiNGCmd;
   delete  dExi0mCmd;
   delete  dExi0sCmd;
+  delete  dExi0wCmd;
   delete  dExi1mCmd;
   delete  dExi1sCmd;
+  delete  dExi1wCmd;
 
   delete  CARCmd;
   delete  CARMaxCmd;
@@ -171,11 +183,17 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == dExi0sCmd )
     { theReaction->SetdExi0s(dExi0sCmd->GetNewDoubleValue(newValue));}
 
+  if( command == dExi0wCmd )
+    { theReaction->SetdExiWeights(0,dExi0wCmd->GetNewDoubleValue(newValue));}
+
   if( command == dExi1mCmd )
     { theReaction->SetdExi1m(dExi1mCmd->GetNewDoubleValue(newValue));}
 
   if( command == dExi1sCmd )
     { theReaction->SetdExi1s(dExi1sCmd->GetNewDoubleValue(newValue));}
+
+  if( command == dExi1wCmd )
+    { theReaction->SetdExiWeights(1,dExi1wCmd->GetNewDoubleValue(newValue));}
 
 
   if( command == CARCmd )

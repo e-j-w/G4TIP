@@ -1,0 +1,16 @@
+normal(x,mu,sigma)=sigma<=0?1/0:invsqrt2pi/sigma*exp(-0.5*((x-mu)/sigma)**2)
+gmm(x,rho,lambda)=rho<=0||lambda<=0?1/0:  x<0?0.0:x==0?(rho>1?0.0:rho==1?real(lambda):1/0):  exp(rho*log(lambda)+(rho-1.0)*log(x)-lgamma(rho)-lambda*x)
+invsqrt2pi = 0.398942280401433
+
+mu=15.8
+sigma=1.55
+sigma2=4.2
+
+s=2.3
+lambda=2.3
+rho=37
+
+set xrange [0:32]
+set yrange [0.01:1]
+set log y
+plot normal(x, mu, sigma)+normal(x, mu, sigma2), s*gmm(x, rho, lambda)

@@ -69,17 +69,24 @@ G4VParticleChange* Reaction::PostStepDoIt(
                   {
                     for(int j=0; j<numExiDists; j++)
                       if(j<MAXNUMDISTS)
-                        evapdeltaExi[i]+=CLHEP::RandGauss::shoot(evapdeltaEximean[j],evapdeltaExistdev[j]);
-                    evapdeltaExi[i]=evapdeltaExi[i]/numExiDists; //take the average of the gaussian dists as delta excitation energy
+                        if(G4UniformRand()<evapdeltaExiweight[j])
+                          {
+                            evapdeltaExi[i]=CLHEP::RandGauss::shoot(evapdeltaEximean[j],evapdeltaExistdev[j]);
+                            break;
+                          }
                   }
                 else
-                  G4cout << "ERROR: reduce /ParticleEvaporation/ExiDistNumberofGaussians to a value of " << MAXNUMDISTS << " or lower, or increase MAXNUMDISTS defined in Reaction.hh." << G4endl;
+                  {
+                    G4cerr << "ERROR: reduce /ParticleEvaporation/ExiDistNumberofGaussians to a value of " << MAXNUMDISTS << " or lower, or increase MAXNUMDISTS defined in Reaction.hh." << G4endl;
+                    exit(EXIT_FAILURE);
+                  }
               }
         }
       else
         {
-          G4cout << "ERROR: No change in excitation distribution specified for the compound nucleus!" << G4endl;
-          G4cout << "Make sure /ParticleEvaporation/ExiDistNumberofGaussians is set to a value greater than 0." << G4endl;
+          G4cerr << "ERROR: No change in excitation distribution specified for the compound nucleus!" << G4endl;
+          G4cerr << "Make sure /ParticleEvaporation/ExiDistNumberofGaussians is set to a value greater than 0." << G4endl;
+          exit(EXIT_FAILURE);
         }
 
 
@@ -380,5 +387,32 @@ void Reaction::AddEvaporation(G4String particle, G4double energy, G4double fwhm)
   ev->energy=energy;
   ev->fwhm=fwhm;
   history->push_back(*ev);
+
+}
+//---------------------------------------------------------------------
+void Reaction::SetdExiWeights(G4int distNum,G4double weight)
+{
+  G4double totalWeight=0.;
+
+  if((distNum<MAXNUMDISTS)&&(distNum>=0))
+    evapdeltaExiweight[distNum]=weight;
+
+  for(int i=0; i<numExiDists; i++)
+    if(i<MAXNUMDISTS)
+      totalWeight+=evapdeltaExiweight[i]; //get the sum of all weights
+
+  //calculate relative weights
+  if(totalWeight!=0.)
+    for(int i=0; i<numExiDists; i++)
+      if(i<MAXNUMDISTS)
+        evapdeltaExiweight[i]=evapdeltaExiweight[i]/totalWeight;
+
+  //make relative weight values cumulative
+  for(int i=1; i<numExiDists; i++)
+    if(i<MAXNUMDISTS)
+      evapdeltaExiweight[i]+=evapdeltaExiweight[i-1];
+
+  //G4cout << "Weight of first Exi dist: " << evapdeltaExiweight[0] << G4endl;
+  //G4cout << "Weight of second Exi dist: " << evapdeltaExiweight[1] << G4endl;
 
 }  

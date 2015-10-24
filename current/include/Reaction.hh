@@ -112,6 +112,7 @@ class Reaction : public G4VProcess
   void SetdExi0s(G4double x){evapdeltaExistdev[0]=x;};
   void SetdExi1m(G4double x){evapdeltaEximean[1]=x;};
   void SetdExi1s(G4double x){evapdeltaExistdev[1]=x;};
+  void SetdExiWeights(G4int,G4double);
 
   //set angular constraints of emitted particles
   void SetConstrainedAngle(){constrainedAngle=true;};
@@ -145,7 +146,7 @@ class Reaction : public G4VProcess
   G4double maxEvapAngle, minEvapAngle; //at least one evaporated particle must be in this angular range with respect to the beam axis
   G4double Egamma,tau;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
-  G4double initExi,evapdeltaExi[MAXNUMEVAP],evapdeltaEximean[MAXNUMDISTS],evapdeltaExistdev[MAXNUMDISTS]; //excitation energy parameters
+  G4double initExi,evapdeltaExi[MAXNUMEVAP],evapdeltaEximean[MAXNUMDISTS],evapdeltaExistdev[MAXNUMDISTS],evapdeltaExiweight[MAXNUMDISTS]; //excitation energy parameters
   vector<evaporation> *history;
 };
 
