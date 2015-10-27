@@ -58,48 +58,33 @@ G4VParticleChange* Reaction::PostStepDoIt(
       G4ThreeVector pIn=aTrack.GetMomentum();
       G4ThreeVector cmv = GetCMVelocity(aTrack); //center of mass velocity
 
-      //generate delta Exi values for each particle to be evaporated
-      if(numExiDists>0)
-        {
-          for(int i=0; i<(nP+nN+nA); i++)
-            if(i<MAXNUMEVAP)
-              {
-                evapdeltaExi[i]=0.;
-                if(numExiDists<=MAXNUMDISTS)
-                  {
-                    for(int j=0; j<numExiDists; j++)
-                      if(j<MAXNUMDISTS)
-                        if(G4UniformRand()<evapdeltaExiweight[j])
-                          {
-                            evapdeltaExi[i]=CLHEP::RandGauss::shoot(evapdeltaEximean[j],evapdeltaExistdev[j]);
-                            break;
-                          }
-                  }
-                else
-                  {
-                    G4cerr << "ERROR: reduce /ParticleEvaporation/ExiDistNumberofGaussians to a value of " << MAXNUMDISTS << " or lower, or increase MAXNUMDISTS defined in Reaction.hh." << G4endl;
-                    exit(EXIT_FAILURE);
-                  }
-              }
-        }
-      else
-        {
-          G4cerr << "ERROR: No change in excitation distribution specified for the compound nucleus!" << G4endl;
-          G4cerr << "Make sure /ParticleEvaporation/ExiDistNumberofGaussians is set to a value greater than 0." << G4endl;
-          exit(EXIT_FAILURE);
-        }
-
-
+      //generate delta Exi values for each particle to be evaporated  
+      for(int i=0; i<(nP+nN+nA); i++)
+        if(i<MAXNUMEVAP)
+          {
+            evapdeltaExi[i]=0.;
+            while(((evapdeltaExi[i]+QEvap[i]) <= 0.0) || ((evapdeltaExi[i]+QEvap[i]) > initExi)) //clamp delta Exi values to physically possible values
+              evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+          }
+          
+      //check that sum of delta Exi values is in bounds
+      totalEvapdeltaExi=0;
+      for(int i=0; i<(nP+nN+nA); i++)
+        if(i<MAXNUMEVAP)
+          totalEvapdeltaExi+=evapdeltaExi[i];
+      if(totalEvapdeltaExi>initExi) //not physically possible!
+        killTrack=true;
+        
       if(SetupReactionProducts(aTrack,RecoilOut))
-	{
-	  aParticleChange.ProposeTrackStatus(fStopAndKill);
+	      {
+	        aParticleChange.ProposeTrackStatus(fStopAndKill);
           aParticleChange.SetNumberOfSecondaries(1+nP+nN+nA);
 
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++) //protons
             {
-              if((i<MAXNUMEVAP)&&((evapdeltaExi[i]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
                 {
                   EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
@@ -109,7 +94,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
             }
           for(int i=0; i<nN; i++) //neutrons
             {
-              if((i<MAXNUMEVAP)&&((evapdeltaExi[i+nP]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
                 {
                   EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
@@ -119,7 +104,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
             }
           for(int i=0; i<nA; i++) //alphas
             {
-              if((i<MAXNUMEVAP)&&((evapdeltaExi[i+nP+nN]+QEvap[i]) > 0.0)) //check that the particle can be evaporated
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
                 {
                   EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
                   aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
@@ -166,7 +151,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
           if(killTrack==true)
             aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
 
-	}
+      }
     }
 
 
@@ -389,30 +374,3 @@ void Reaction::AddEvaporation(G4String particle, G4double energy, G4double fwhm)
   history->push_back(*ev);
 
 }
-//---------------------------------------------------------------------
-void Reaction::SetdExiWeights(G4int distNum,G4double weight)
-{
-  G4double totalWeight=0.;
-
-  if((distNum<MAXNUMDISTS)&&(distNum>=0))
-    evapdeltaExiweight[distNum]=weight;
-
-  for(int i=0; i<numExiDists; i++)
-    if(i<MAXNUMDISTS)
-      totalWeight+=evapdeltaExiweight[i]; //get the sum of all weights
-
-  //calculate relative weights
-  if(totalWeight!=0.)
-    for(int i=0; i<numExiDists; i++)
-      if(i<MAXNUMDISTS)
-        evapdeltaExiweight[i]=evapdeltaExiweight[i]/totalWeight;
-
-  //make relative weight values cumulative
-  for(int i=1; i<numExiDists; i++)
-    if(i<MAXNUMDISTS)
-      evapdeltaExiweight[i]+=evapdeltaExiweight[i-1];
-
-  //G4cout << "Weight of first Exi dist: " << evapdeltaExiweight[0] << G4endl;
-  //G4cout << "Weight of second Exi dist: " << evapdeltaExiweight[1] << G4endl;
-
-}  

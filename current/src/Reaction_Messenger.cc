@@ -60,40 +60,20 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   Q2Cmd->SetParameterName("Q2",false);
   Q2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExiNGCmd = new G4UIcmdWithAnInteger("/ParticleEvaporation/ExiDistNumberofGaussians",this);
-  dExiNGCmd->SetGuidance("Set the number of gaussian distributions to be used to generate the change in excitation energy distribution of the compound following particle evaporation.");
-  dExiNGCmd->SetParameterName("dExiNG",false);
-  dExiNGCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExiSCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Shift",this);
+  dExiSCmd->SetGuidance("Scaling factor of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExiSCmd->SetParameterName("dExiS",false);
+  dExiSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi0mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstDeltaExiDistMean",this);
-  dExi0mCmd->SetGuidance("Mean value of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExi0mCmd->SetParameterName("dExi0m",false);
-  dExi0mCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExiRhoCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Rho",this);
+  dExiRhoCmd->SetGuidance("Rho of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExiRhoCmd->SetParameterName("dExiRho",false);
+  dExiRhoCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExi0sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/FirstDeltaExiDistWidth",this);
-  dExi0sCmd->SetGuidance("Width of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExi0sCmd->SetParameterName("dExi0s",false);
-  dExi0sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-  dExi0wCmd = new G4UIcmdWithADouble("/ParticleEvaporation/FirstDeltaExiDistWeight",this);
-  dExi0wCmd->SetGuidance("Weight of first gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation, relative to other gaussians.");
-  dExi0wCmd->SetParameterName("dExi0w",false);
-  dExi0wCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-  dExi1mCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/SecondDeltaExiDistMean",this);
-  dExi1mCmd->SetGuidance("Mean value of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExi1mCmd->SetParameterName("dExi1m",false);
-  dExi1mCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-  dExi1sCmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/SecondDeltaExiDistWidth",this);
-  dExi1sCmd->SetGuidance("Width of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExi1sCmd->SetParameterName("dExi1s",false);
-  dExi1sCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
-  dExi1wCmd = new G4UIcmdWithADouble("/ParticleEvaporation/SecondDeltaExiDistWeight",this);
-  dExi1wCmd->SetGuidance("Weight of second gaussian distribution used to characterize change in compound nucleus excitation energy following particle evaporation, relative to other gaussians.");
-  dExi1wCmd->SetParameterName("dExi1w",false);
-  dExi1wCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExiLambdaCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Lambda",this);
+  dExiLambdaCmd->SetGuidance("Lambda of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExiLambdaCmd->SetParameterName("dExiLambda",false);
+  dExiLambdaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
   CARCmd = new G4UIcmdWithoutParameter("/ParticleEvaporation/ConstrainAngularRange",this);
@@ -129,13 +109,9 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  theEvaporationDir;
   delete  Q1Cmd;
   delete  Q2Cmd;
-  delete  dExiNGCmd;
-  delete  dExi0mCmd;
-  delete  dExi0sCmd;
-  delete  dExi0wCmd;
-  delete  dExi1mCmd;
-  delete  dExi1sCmd;
-  delete  dExi1wCmd;
+  delete  dExiSCmd;
+  delete  dExiRhoCmd;
+  delete  dExiLambdaCmd;
 
   delete  CARCmd;
   delete  CARMaxCmd;
@@ -174,26 +150,14 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == Q2Cmd )
     { theReaction->SetEvapQ2(Q2Cmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExiNGCmd )
-    { theReaction->SetdExiNGaussians(dExiNGCmd->GetNewIntValue(newValue));}
+  if( command == dExiSCmd )
+    { theReaction->SetShift(dExiSCmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExi0mCmd )
-    { theReaction->SetdExi0m(dExi0mCmd->GetNewDoubleValue(newValue));}
+  if( command == dExiRhoCmd )
+    { theReaction->SetRho(dExiRhoCmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExi0sCmd )
-    { theReaction->SetdExi0s(dExi0sCmd->GetNewDoubleValue(newValue));}
-
-  if( command == dExi0wCmd )
-    { theReaction->SetdExiWeights(0,dExi0wCmd->GetNewDoubleValue(newValue));}
-
-  if( command == dExi1mCmd )
-    { theReaction->SetdExi1m(dExi1mCmd->GetNewDoubleValue(newValue));}
-
-  if( command == dExi1sCmd )
-    { theReaction->SetdExi1s(dExi1sCmd->GetNewDoubleValue(newValue));}
-
-  if( command == dExi1wCmd )
-    { theReaction->SetdExiWeights(1,dExi1wCmd->GetNewDoubleValue(newValue));}
+  if( command == dExiLambdaCmd )
+    { theReaction->SetLambda(dExiLambdaCmd->GetNewDoubleValue(newValue));}
 
 
   if( command == CARCmd )

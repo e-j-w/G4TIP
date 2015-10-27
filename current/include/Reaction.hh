@@ -27,7 +27,7 @@
 #include "G4RandomDirection.hh"
 #include <math.h>
 
-#include "CLHEP/Random/RandGauss.h" //for generating random numbers with a gaussian dist.
+#include "CLHEP/Random/RandGamma.h" //for generating random numbers with a gaussian dist.
 
 using namespace std;
 
@@ -107,12 +107,9 @@ class Reaction : public G4VProcess
   void SetExi(G4double x){initExi=x;};
   void SetEvapQ1(G4double x){QEvap[0]=x;};
   void SetEvapQ2(G4double x){QEvap[1]=x;};
-  void SetdExiNGaussians(G4int x){numExiDists=x;};
-  void SetdExi0m(G4double x){evapdeltaEximean[0]=x;};
-  void SetdExi0s(G4double x){evapdeltaExistdev[0]=x;};
-  void SetdExi1m(G4double x){evapdeltaEximean[1]=x;};
-  void SetdExi1s(G4double x){evapdeltaExistdev[1]=x;};
-  void SetdExiWeights(G4int,G4double);
+  void SetShift(G4double x){dExiShift=x;};
+  void SetRho(G4double x){rho=x;};
+  void SetLambda(G4double x){lambda=x;};
 
   //set angular constraints of emitted particles
   void SetConstrainedAngle(){constrainedAngle=true;};
@@ -141,13 +138,14 @@ class Reaction : public G4VProcess
   G4double A1,Z1,A2,Z2;
   G4int  nP,nN,nA;
   G4int  maxNumEvap;
-  G4int  numExiDists;
   G4bool constrainedAngle; //whether to constrain direction of emitted particles
   G4double maxEvapAngle, minEvapAngle; //at least one evaporated particle must be in this angular range with respect to the beam axis
   G4double Egamma,tau;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
-  G4double initExi,evapdeltaExi[MAXNUMEVAP],evapdeltaEximean[MAXNUMDISTS],evapdeltaExistdev[MAXNUMDISTS],evapdeltaExiweight[MAXNUMDISTS]; //excitation energy parameters
+  G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi,rho,lambda,dExiShift; //excitation energy parameters
   vector<evaporation> *history;
+  
+  G4int  loopCounter;
 };
 
 #endif
