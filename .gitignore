@@ -2,3 +2,4 @@
 *.tar
 *.root
 *.mac
+*.macro

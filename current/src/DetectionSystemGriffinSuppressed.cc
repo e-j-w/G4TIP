@@ -184,24 +184,29 @@ DetectionSystemGriffin::DetectionSystemGriffin( G4int sel, G4int suppSwitch, G4d
 
   // Note that the GRIFFIN lampshade angles are rotated by 45 degrees with respect to those of TIGRESS.
   //  Uncomment this for TIGRESS!
+  //
+  // ASC 7 Oct 2015
+  // useTigressPositions now does this when the detector is placed, leave this commented and set that 
+  // variable to the proper value!
+  //
   // phi
- this->coords[0][1] 	= this->coords[0][1] - 45.0;
- this->coords[1][1] 	= this->coords[1][1] - 45.0;
- this->coords[2][1] 	= this->coords[2][1] - 45.0;
- this->coords[3][1] 	= this->coords[3][1] - 45.0;
- this->coords[12][1] 	= this->coords[12][1] - 45.0;
- this->coords[13][1] 	= this->coords[13][1] - 45.0;
- this->coords[14][1] 	= this->coords[14][1] - 45.0;
- this->coords[15][1] 	= this->coords[15][1] - 45.0;
- // roll (gamma)
- this->coords[0][4] 	= this->coords[0][4] - 45.0;
- this->coords[1][4] 	= this->coords[1][4] - 45.0;
- this->coords[2][4] 	= this->coords[2][4] - 45.0;
- this->coords[3][4] 	= this->coords[3][4] - 45.0;
- this->coords[12][4] 	= this->coords[12][4] - 45.0;
- this->coords[13][4] 	= this->coords[13][4] - 45.0;
- this->coords[14][4] 	= this->coords[14][4] - 45.0;
- this->coords[15][4] 	= this->coords[15][4] - 45.0;
+ // this->coords[0][1] 	= this->coords[0][1] - 45.0;
+ // this->coords[1][1] 	= this->coords[1][1] - 45.0;
+ // this->coords[2][1] 	= this->coords[2][1] - 45.0;
+ // this->coords[3][1] 	= this->coords[3][1] - 45.0;
+ // this->coords[12][1] 	= this->coords[12][1] - 45.0;
+ // this->coords[13][1] 	= this->coords[13][1] - 45.0;
+ // this->coords[14][1] 	= this->coords[14][1] - 45.0;
+ // this->coords[15][1] 	= this->coords[15][1] - 45.0;
+ // // roll (gamma)
+ // this->coords[0][4] 	= this->coords[0][4] - 45.0;
+ // this->coords[1][4] 	= this->coords[1][4] - 45.0;
+ // this->coords[2][4] 	= this->coords[2][4] - 45.0;
+ // this->coords[3][4] 	= this->coords[3][4] - 45.0;
+ // this->coords[12][4] 	= this->coords[12][4] - 45.0;
+ // this->coords[13][4] 	= this->coords[13][4] - 45.0;
+ // this->coords[14][4] 	= this->coords[14][4] - 45.0;
+ // this->coords[15][4] 	= this->coords[15][4] - 45.0;
   
   /////////////////////////////////////////////////////////////////////
   // GRIFFIN/TIGRESS Detector Properties 

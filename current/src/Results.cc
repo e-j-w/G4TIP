@@ -53,6 +53,15 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
       S[i]=theDetector->GetCsIArray()->GetLYScaling(i);
       //printf("Birks constant for position %2d set to %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",i+1,kB[i],kBm[i]);
     }
+    
+  // get HPGe crystal positions
+  for(int i=0 ; i<GN ; i++)
+    for(int j=0 ; j<GS ; j++)
+      {
+	      CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
+	      printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
+      }
+    
   //getc(stdin);
 }
 //---------------------------------------------------------
@@ -64,14 +73,20 @@ void Results::TreeCreate()
       tree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
       tree->Branch("GId",GHit.GId,"GId[Gfold]/I");
       tree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
+      tree->Branch("GRing",GHit.GRing,"GRing[Gfold]/I");
       tree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
       tree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
       tree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
       tree->Branch("GE",GHit.GE,"GE[Gfold]/D");
       tree->Branch("GW",GHit.GW,"GW[Gfold]/D");
+      tree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
+      tree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
+      tree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
+      tree->Branch("GRingAddBack",GHit.GRingAB,"GRingAB[GfoldAB]/I");
+      tree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
 
-      tree->Branch("PE",&PE,"E/D");
-      tree->Branch("PLY",&PLY,"LY/D");
+      //tree->Branch("PE",&PE,"E/D");
+      //tree->Branch("PLY",&PLY,"LY/D");
       //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
       tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D"); //projectile when shot from the particle gun
@@ -82,7 +97,7 @@ void Results::TreeCreate()
       tree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D"); //residual upon leaving the backing (if it makes it that far)
       tree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D"); //residual upon decaying via gamma emission (decay flag not yet implemented)
 
-      tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/D:r/D:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
+      tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/I:r/I:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
 
       //tree->Branch("gammaHit",&GHit,"Gfold/I:GId[gammaHit.Gfold]/I:GSeg[gammaHit.Gfold]/I:Gx[gammaHit.Gfold]/D:Gy[gammaHit.Gfold]/D:Gz[gammaHit.Gfold]/D:GE[gammaHit.Gfold]/D:GW[gammaHit.Gfold]/D"); //gamma hit in HPGe
 
@@ -303,7 +318,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
    {
      for(Int_t i=0;i<Np;i++)
        {
-	 // G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
+	       // G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
          if((CsITrigId==0)||(CsITrigId==(*CsICollection)[i]->GetId()))//save only data for the detectors we want to see
            {
              if(partHit.E==0.)
@@ -325,7 +340,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
                  partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
                  partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
                  partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-                 partHit.LY+=partHit.dLdx;
+                 partHit.LY=partHit.dLdx;
                  //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
                  //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
                }
@@ -347,37 +362,58 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
            }
          //getc(stdin);
        }
-     }//end of CsI collection entry saving
+   }//end of CsI collection entry saving
 
-     PE=partHit.E;
-     PLY=partHit.LY;
 
-     G4int i,j;
-     GHit.Gfold=0;
-     //Gfold=0;
-     memset(GHit.GId,0,sizeof(GHit.GId));
-     memset(GHit.GSeg,0,sizeof(GHit.GSeg));
-     memset(GHit.GE,0,sizeof(GHit.GE));
-     for(i=0;i<GN;i++)
-       for(j=0;j<GS;j++)
-	 if(gw[i][j]>0)
-	   {
-             //G4cout<<" i "<<i<<" j "<<j<<" w "<<gw[i][j]<<G4endl;
-	     GHit.GId[GHit.Gfold]=i+1;
-	     GHit.GSeg[GHit.Gfold]=j;
-	     GHit.Gx[GHit.Gfold]=gp[i][j].getX();
-	     GHit.Gy[GHit.Gfold]=gp[i][j].getY();
-	     GHit.Gz[GHit.Gfold]=gp[i][j].getZ();
-	     GHit.GE[GHit.Gfold]=ge[i][j];
-	     GHit.GW[GHit.Gfold]=gw[i][j];
-             GHit.Gfold++;
-             //Gfold++;
-	   }
-     //        getc(stdin);
-     
+  G4int i,j;
+  GHit.Gfold=0;
+  GHit.GfoldAB=0;
+  memset(maxGe,0,sizeof(maxGe));
+  memset(GHit.GId,0,sizeof(GHit.GId));
+  memset(GHit.GSeg,0,sizeof(GHit.GSeg));
+  memset(GHit.GE,0,sizeof(GHit.GE));
+  memset(&GHit.GIdAB,0,sizeof(GHit.GIdAB));
+  memset(&GHit.GSegAB,0,sizeof(GHit.GSegAB));
+  memset(&GHit.GRingAB,0,sizeof(GHit.GRingAB));
+  memset(&GHit.GEAB,0,sizeof(GHit.GEAB));
+  //non-addback
+  for(i=0;i<GN;i++)//number of positions
+    for(j=0;j<GS;j++)//number of crystals
+	    if(gw[i][j]>0)
+  	    {
+          //G4cout<<" i "<<i<<" j "<<j<<" w "<<gw[i][j]<<G4endl;
+	        GHit.GId[GHit.Gfold]=i+1;
+	        GHit.GSeg[GHit.Gfold]=j;
+	        GHit.GRing[GHit.Gfold]=RingMap(GHit.GId[GHit.Gfold],GHit.GSeg[GHit.Gfold]);//get the ring in which the hit occured
+	        GHit.Gx[GHit.Gfold]=gp[i][j].getX();
+  	      GHit.Gy[GHit.Gfold]=gp[i][j].getY();
+  	      GHit.Gz[GHit.Gfold]=gp[i][j].getZ();
+  	      GHit.GE[GHit.Gfold]=ge[i][j];
+  	      GHit.GW[GHit.Gfold]=gw[i][j];
+          GHit.Gfold++;
+  	    } 
 
-     tree->Fill();
-     IonFill++;
+  //addback
+  for(i=0;i<GN;i++)//number of positions
+    for(j=0;j<GS;j++)//number of crystals
+  	  if(ge[i][j]>maxGe[i])
+  	    {
+  	      maxGe[i]=ge[i][j];
+  	      GHit.GIdAB[GHit.GfoldAB]=i+1;
+          GHit.GSegAB[GHit.GfoldAB]=j;
+          GHit.GRing[GHit.GfoldAB]=RingMap(GHit.GIdAB[GHit.GfoldAB],GHit.GSegAB[GHit.GfoldAB]);//get the ring in which the hit occured
+  	      GHit.GfoldAB++;
+  	    }
+ 
+  //addback energy: sum deposits over all crystals in the detector with the highest energy deposit
+  for(i=0;i<GHit.GfoldAB;i++)//number of addback events
+    for(j=0;j<GS;j++)//number of crystals
+      if(ge[(GHit.GIdAB[i])-1][j]>0)
+        GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
+
+    
+  tree->Fill();
+  IonFill++;
 }
 //=====================================================================================
 /*void Results::ProjLabScattAngle()

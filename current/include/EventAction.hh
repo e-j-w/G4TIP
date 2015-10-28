@@ -19,7 +19,8 @@
   Gamma singles                      1
   user defined particle singles     10
   CsI particle-particle coinc       11
-  trigger 10 AND 11                 12
+  trigger 10 AND 11                 12 (defined particle-particle coinc)
+  trigger 1 AND 12                  13 (defined particle-particle coinc AND gamma singles)
  */
 
 class EventAction : public G4UserEventAction
@@ -33,6 +34,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
+  void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
 
 
   void setTriggerA(G4int);

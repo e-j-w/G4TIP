@@ -61,25 +61,32 @@ typedef struct{
     Double_t E;
     Double_t b;
     Double_t w;
-    Double_t Id;
-    Double_t r;
+    Int_t Id;
+    Int_t r;
     Double_t path; // path length in material
     Double_t dE;   // energy deposit for step
     Double_t dEdx; // dE/dx in MeV/um
     Double_t dLdx; // Birks Law dL/dx
     Double_t LY;   // Birks Law light yield. LY = sum over dL/dx
-    Double_t Q;    // Quenching factor LY/E
+    //Double_t Q;    // Quenching factor LY/E
  } CsIInf;
 
 typedef struct{
     Int_t    Gfold;
     Int_t    GId[GN*GS];
     Int_t    GSeg[GN*GS];
+    Int_t    GRing[GN*GS];
     Double_t Gx[GN*GS];
     Double_t Gy[GN*GS];
     Double_t Gz[GN*GS];
     Double_t GE[GN*GS];
     Double_t GW[GN*GS];
+    Int_t    GfoldAB;
+    Int_t    GIdAB[GN*GS];
+    Int_t    GSegAB[GN*GS];
+    Int_t    GRingAB[GN*GS];
+    Double_t GEAB[GN*GS];
+
  } GInf;
 class Results
 {
@@ -133,6 +140,7 @@ private:
   IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec; //ion tracking (projectile, residual)
   CsIInf        partHit; //particle hit
   GInf          GHit; //gamma hit
+  G4double      maxGe[GN]; //maximum single gamma energy deposit in a given detector (used to get position of hits when using addback)
   G4int         Ap,Zp,Ar,Zr;
   G4ThreeVector rDiPos,rDPos; // recoil degrader position vectors for calculating distance
   G4double      dDensity; // degrader density for calculating path in mg/cm^2
@@ -147,8 +155,8 @@ private:
   size_t soh,sogh,soi,sos;
 
   //CsI parameters outside of structure
-  Double_t PE;
-  Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx
+  //Double_t PE;
+  //Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx
 
   TH1D     *h,*g;
   TCanvas  *c,*c1;

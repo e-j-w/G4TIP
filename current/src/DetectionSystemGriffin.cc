@@ -188,7 +188,7 @@ G4int DetectionSystemGriffin::PlaceDetector(G4LogicalVolume* exp_hall_log, G4Thr
   copy_number = germanium_copy_number + detector_number*4;
 
   G4RotationMatrix* rotate_germanium[4];
-  G4ThreeVector move_germanium[4];
+  //G4ThreeVector move_germanium[4];
 
   for(i=0; i<4; i++){
     rotate_germanium[i] = new G4RotationMatrix;
@@ -447,12 +447,12 @@ G4int DetectionSystemGriffin::PlaceDetector(G4LogicalVolume* exp_hall_log, G4Thr
       y = x0*cos(i*M_PI/2.0) - y0*sin(i*M_PI/2);
       z = z0;
 
-
       moveInnerExtension[2*i+1] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi),DetectionSystemGriffin::transY(x,y,z,theta,phi),DetectionSystemGriffin::transZ(x,y,z,theta,phi));
       this->leftSuppressorExtensionAssembly->MakeImprint(exp_hall_log, moveInnerExtension[2*i+1], rotateExtension[2*i+1], copy_number_two++);
     }
 
   }//end if(detectors back) statement
+
   return 1;
 }
 // end PlaceDetector    
@@ -749,7 +749,6 @@ G4int DetectionSystemGriffin::PlaceEverythingButCrystals(G4LogicalVolume* exp_ha
 
 G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress)
 {
-
   G4double theta  = this->coords[position_number][0]*deg;
   G4double phi    = this->coords[position_number][1]*deg;
   G4double alpha  = this->coords[position_number][2]*deg; // yaw
@@ -784,7 +783,9 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
   copy_number = germanium_copy_number + detector_number*4;
 
   G4RotationMatrix* rotate_germanium[4];
-  G4ThreeVector move_germanium[4];
+  //G4ThreeVector move_germanium[4];
+
+  //printf("detector number %d\n",detector_number);
 
   for(i=0; i<4; i++){
     rotate_germanium[i] = new G4RotationMatrix;
@@ -798,10 +799,16 @@ G4int DetectionSystemGriffin::PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp
     y = -y0*pow(-1, floor((i+2)/2) );
     z = z0;
 
+    //printf("x %f y %f z %f\n",x,y,z);
+
     move_germanium[i] = G4ThreeVector(DetectionSystemGriffin::transX(x,y,z,theta,phi), DetectionSystemGriffin::transY(x,y,z,theta,phi), DetectionSystemGriffin::transZ(x,y,z,theta,phi));
+
+    //printf("i %d x %f y %f z %f\n",i,move_germanium[i].getX(),move_germanium[i].getY(),move_germanium[i].getZ());
 
     this->germaniumAssemblyCry[i]->MakeImprint(exp_hall_log, move_germanium[i], rotate_germanium[i], copy_number++);
   }
+  //getc(stdin);
+
 
   /////////////////////////////////////////////////////////////////////
   // end germanium_block1_log

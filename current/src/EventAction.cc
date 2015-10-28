@@ -82,66 +82,69 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       G4bool allHitsInOne=true;
 
       if(Np>0) 
-	{
-	  G4double partECsI=0.; //energy of user defined particle
-	  for(int i=0;i<Np;i++)
-	    {
+	      {
+	        G4double partECsI=0.; //energy of user defined particle
+	        for(int i=0;i<Np;i++)
+	          {
               //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
               if((CsIIDTrigger==0)||((*CsI)[i]->GetId()==CsIIDTrigger)) //CsI detector ID trigger
-		if((*CsI)[i]->GetA()==At) // user defined particle trigger
-		  if((*CsI)[i]->GetZ()==Zt)
-		    {
-		      partECsI+=(*CsI)[i]->GetKE();
-		      //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
-		    }
-	    }
+		            if((*CsI)[i]->GetA()==At) // user defined particle trigger
+		              if((*CsI)[i]->GetZ()==Zt)
+		                {
+		                  partECsI+=(*CsI)[i]->GetKE();
+		                  //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
+		                }
+	          }
           //check whether all hits in the CsI hit collection are in one detector
-	  for(int i=1;i<Np;i++)
-              if((*CsI)[i]->GetId()!=(*CsI)[0]->GetId())
-                {
-                  allHitsInOne=false;
-                  break;
-                }
-
-	  if(partECsI>CsIThreshold)
-	    eventTrigger|=(eventTrigger<<10);
+	        for(int i=1;i<Np;i++)
+            if((*CsI)[i]->GetId()!=(*CsI)[0]->GetId())
+              {
+                allHitsInOne=false;
+                break;
+              }
+    
+	        if(partECsI>CsIThreshold)
+	          eventTrigger|=(one<<10);
 
           //particle-particle coincidence trigger
           //ie. particle hits in two or more different detectors
           if(((numP+numN+numA)>1)&&(allHitsInOne==false))
-            eventTrigger|=(eventTrigger<<11);
+            eventTrigger|=(one<<11);
 
           if((eventTrigger&(one<<10))&&(eventTrigger&(one<<11)))
-              eventTrigger|=(eventTrigger<<12);
+            eventTrigger|=(one<<12);
 	  
           /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
           printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
           printf("CsI eventTrigger is %d\n",eventTrigger);
-          getc(stdin);*/
-	  
-	}   
-    }
-  // end CsI trigger
+          getc(stdin);*/ 
+	      }
+	      
+    } // end CsI trigger
   
   // HPGe trigger
   if(GriffinFold>0)
-    eventTrigger|=1;
+    eventTrigger|=(one<<1);
   // end HPGe trigger
+  
+  //particle-particle coincidence AND gamma singles trigger
+  if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
+    eventTrigger|=(one<<13);
 
   /*printf("HPGe fold is %d\n",GriffinFold);
   printf("HPGe eventTrigger is %d\n",eventTrigger);
   printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);*/
   
   if(eventTrigger&(one<<setTrigger))
-      {
-	if(GriffinFold>0)
-	  for(G4int det=0;det<16;det++)
-	    for(G4int cry=0;cry<4;cry++)
-	      if( GriffinCrystEnergyDet[det][cry]>0)
-		GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
-	results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
-        //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
-      }
+    {
+	    if(GriffinFold>0)
+	      for(G4int det=0;det<16;det++)
+	        for(G4int cry=0;cry<4;cry++)
+	          if( GriffinCrystEnergyDet[det][cry]>0)
+		          GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
+	    results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
+      //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
+    }
     // getc(stdin);
 }
 //*********************************************************************//

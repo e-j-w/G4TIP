@@ -26,6 +26,9 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
 
   TAZCCmd = new G4UIcmdWithoutParameter("/Trigger/DefinedParticleCoinc",this);
   TAZCCmd->SetGuidance("Select CsI particle-particle coincidence events for the particle defined by /Trigger/A and /Trigger/Z");
+  
+  TAZCGCmd = new G4UIcmdWithoutParameter("/Trigger/DefinedParticleCoincAndGamma",this);
+  TAZCGCmd->SetGuidance("Select CsI particle-particle coincidence AND gamma singles events for the particle defined by /Trigger/A and /Trigger/Z");
 
   TIDCmd = new G4UIcmdWithAnInteger("/Trigger/CsIDetectorID",this);
   TIDCmd->SetGuidance("Select the CsI detector (1-24) to trigger on.  A value of 0 means all detectors are used.");
@@ -44,6 +47,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TZCmd;
   delete TAZCmd;
   delete TAZCCmd;
+  delete TAZCGCmd;
   delete TIDCmd;
 }
 
@@ -62,6 +66,10 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
  // user defined particle-particle concidences
  if( command == TAZCCmd )
    { aEventAction->SetTriggerParticleCoinc(); }
+   
+ // user defined particle-particle concidences
+ if( command == TAZCGCmd )
+   { aEventAction->SetTriggerParticleCoincAndGamma(); }
 
  //A and Z of user defined particle
  if( command == TACmd )

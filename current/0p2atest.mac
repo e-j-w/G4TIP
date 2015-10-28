@@ -1,3 +1,4 @@
+/Griffin/UseTIGRESSPositions true
 /Griffin/addGriffinBack 16
 /Projectile/A 18
 /Projectile/Z 8
@@ -13,8 +14,8 @@
 /Target/Material G4_C
 /Target/Thickness 1.91 um
 /Target/NStep 1
-/Reaction/Tau 0.3 ps
-/Reaction/E_gamma 1274.537 keV
+/Reaction/Tau 49 fs
+/Reaction/E_gamma 2953.6 keV
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2
@@ -31,11 +32,12 @@
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
 /Trigger/Z 2
-/Trigger/DefinedParticleCoinc
+/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoinc
 #/Trigger/DefinedParticleSingles
 #/Print/CsI_Track_Set
 #/Print/Track_Set
 /run/beamOn 400000
 /Results/Tree/Report
-/Results/Tree/Save 0p2a_gammatest.root
+/Results/Tree/Save 0p2a_2954test_run1.root
 /Projectile/Report

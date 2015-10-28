@@ -22,6 +22,9 @@
 #include "Chamber.hh"
 #include "Chamber_Messenger.hh"
 
+#define GN     16 // detectors
+#define GS     4  // crystals
+
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
@@ -50,7 +53,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
     void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ; 
     void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
-  void UpdateGeometry();
+    void UpdateGeometry();
+    G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
   
   private:
   
@@ -63,6 +67,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   TrackerCsISD_Messenger* TrackerCsISDMessenger;
   //TrackerPINSD* TrackerPIN;
   Chamber* theChamber;
+  G4ThreeVector DetectorCrystalPosition[GN][GS];
 
   Experimental_Hall_Messenger* ExperimentalHallMessenger;
   Chamber_Messenger* ChamberMessenger;
