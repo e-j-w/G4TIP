@@ -14,7 +14,7 @@
 /Target/Material G4_C
 /Target/Thickness 1.91 um
 /Target/NStep 1
-/Reaction/Tau 49 fs
+/Reaction/Tau 4.9e-5 ns
 /Reaction/E_gamma 2953.6 keV
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0

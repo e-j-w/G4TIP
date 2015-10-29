@@ -401,7 +401,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   	      maxGe[i]=ge[i][j];
   	      GHit.GIdAB[GHit.GfoldAB]=i+1;
           GHit.GSegAB[GHit.GfoldAB]=j;
-          GHit.GRing[GHit.GfoldAB]=RingMap(GHit.GIdAB[GHit.GfoldAB],GHit.GSegAB[GHit.GfoldAB]);//get the ring in which the hit occured
+          GHit.GRingAB[GHit.GfoldAB]=RingMap(GHit.GIdAB[GHit.GfoldAB],GHit.GSegAB[GHit.GfoldAB]);//get the ring in which the hit occured
   	      GHit.GfoldAB++;
   	    }
  
