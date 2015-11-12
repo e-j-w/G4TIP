@@ -122,53 +122,50 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
  
       (*ionCollection)[0]->SetGunFlag();
 
-       for (i=0;i<NbHits-1;i++) 
-	 {
-	   if ((*ionCollection)[i]->GetA()==(*ionCollection)[i+1]->GetA())
-	     if ((*ionCollection)[i]->GetZ()==(*ionCollection)[i+1]->GetZ())
-	       if ((*ionCollection)[i]->GetVolName()=="expHall"&&(*ionCollection)[i+1]->GetVolName()=="target")
-		 (*ionCollection)[i+1]->SetTargetInFlag();
+      for (i=0;i<NbHits-1;i++) 
+	      {
+	        if ((*ionCollection)[i]->GetA()==(*ionCollection)[i+1]->GetA())
+	          if ((*ionCollection)[i]->GetZ()==(*ionCollection)[i+1]->GetZ())
+	            if ((*ionCollection)[i]->GetVolName()=="expHall"&&(*ionCollection)[i+1]->GetVolName()=="target")
+		            (*ionCollection)[i+1]->SetTargetInFlag();
 
-	   if ((*ionCollection)[i]->GetA()==(*ionCollection)[i+1]->GetA())
-	     if ((*ionCollection)[i]->GetZ()==(*ionCollection)[i+1]->GetZ())
-	       if ((*ionCollection)[i]->GetVolName()=="target"&&(*ionCollection)[i+1]->GetVolName()=="backing")
-		 (*ionCollection)[i+1]->SetBackingInFlag();
-	 }
+	        if ((*ionCollection)[i]->GetA()==(*ionCollection)[i+1]->GetA())
+	          if ((*ionCollection)[i]->GetZ()==(*ionCollection)[i+1]->GetZ())
+	            if ((*ionCollection)[i]->GetVolName()=="target"&&(*ionCollection)[i+1]->GetVolName()=="backing")
+		            (*ionCollection)[i+1]->SetBackingInFlag();
+     	  }
 
 	
 
-       for (i=1;i<NbHits;i++) 
-	 {
-	   
-	   if ((*ionCollection)[i-1]->GetA()==(*ionCollection)[i]->GetA())
-	     if ((*ionCollection)[i-1]->GetZ()==(*ionCollection)[i]->GetZ())
-	       if ((*ionCollection)[i-1]->GetVolName()=="backing"&&(*ionCollection)[i]->GetVolName()=="expHall")
-		 (*ionCollection)[i]->SetBackingOutFlag();
+      for (i=1;i<NbHits;i++) 
+        {   
+          if ((*ionCollection)[i-1]->GetA()==(*ionCollection)[i]->GetA())
+            if ((*ionCollection)[i-1]->GetZ()==(*ionCollection)[i]->GetZ())
+              if ((*ionCollection)[i-1]->GetVolName()=="backing"&&(*ionCollection)[i]->GetVolName()=="expHall")
+                (*ionCollection)[i]->SetBackingOutFlag();
+        }
 
-	 }
+      if (print) 
+        {	
+          G4cout<<G4endl;
+          G4cout << "-------->Hits Collection: in this event there are " << NbHits << " hits for ion tracking: " << G4endl;
 
-     if (print) 
-     {	
-       G4cout<<G4endl;
-           G4cout << "-------->Hits Collection: in this event there are " << NbHits
-            << " hits for ion tracking: " << G4endl;
-
-      G4cout << " F  A  Z  KE/MeV   beta" <<" "
-	     << std::setw(9)<<std::fixed
-	     <<std::setprecision(4)<<std::right	 
-	     <<" X/mm " <<" "<<std::setw(9)<<std::right
-	     <<" Y/mm "<<" "<<std::setw(9)<<std::right
-	     <<" Z/mm "<<" "<<std::setw(8)<<std::right
-	     <<"px/MeV" <<" "<<std::setw(9)<<std::right
-	     <<"py/MeV"<<" "<<std::setw(9)<<std::right
-	     <<"pz/MeV"<<" "<<std::setw(8)<<std::right
-	     <<"weight"<< G4endl;
+          G4cout << " F  A  Z  KE/MeV   beta" <<" "
+            << std::setw(9)<<std::fixed
+            <<std::setprecision(4)<<std::right	 
+            <<" X/mm " <<" "<<std::setw(9)<<std::right
+            <<" Y/mm "<<" "<<std::setw(9)<<std::right
+            <<" Z/mm "<<" "<<std::setw(8)<<std::right
+            <<"px/MeV" <<" "<<std::setw(9)<<std::right
+            <<"py/MeV"<<" "<<std::setw(9)<<std::right
+            <<"pz/MeV"<<" "<<std::setw(8)<<std::right
+            <<"weight"<< G4endl;
 
            for (i=0;i<NbHits;i++) (*ionCollection)[i]->Print();
-	   
-     }
+	      
+        }
 
-    }  
+    }
  
  static G4int HCID = -1;
   if(HCID<0)

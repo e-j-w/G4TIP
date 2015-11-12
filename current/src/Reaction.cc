@@ -142,10 +142,13 @@ G4VParticleChange* Reaction::PostStepDoIt(
 
           //generate the recoiling nucleus
           RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
-	  aParticleChange.AddSecondary(RecoilOut,posIn,true);
+	        aParticleChange.AddSecondary(RecoilOut,posIn,true);
+	        //RecoilOut->SetKineticEnergy(30.0);//COMMENT OUT WHEN RUNNING FOR REAL!!!  Used for comparison to SRIM
 
           //debug
-          //G4cout << "Recoil type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
+          //G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
+          //G4cout << "Residual KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
+          //G4cout << "Residual A: " << RecoilOut->GetMass()/931.5 << ", Residual Z: " << RecoilOut->GetCharge() <<G4endl;
 
           //get rid of the track if neccessary
           if(killTrack==true)
@@ -237,7 +240,7 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
   RecoilOut->SetDefinition(compound);
   RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
   RecoilOut->SetMomentumDirection(dirIn);
-  //G4cout << "At compound formation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy() << G4endl;
+  //G4cout << "At compound formation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
 
   return TRUE;
 }

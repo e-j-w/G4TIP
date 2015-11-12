@@ -398,11 +398,13 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
     for(j=0;j<GS;j++)//number of crystals
   	  if(ge[i][j]>maxGe[i])
   	    {
-  	      maxGe[i]=ge[i][j];
+  	      //assign position, ring, etc. of the addback hit
   	      GHit.GIdAB[GHit.GfoldAB]=i+1;
           GHit.GSegAB[GHit.GfoldAB]=j;
           GHit.GRingAB[GHit.GfoldAB]=RingMap(GHit.GIdAB[GHit.GfoldAB],GHit.GSegAB[GHit.GfoldAB]);//get the ring in which the hit occured
-  	      GHit.GfoldAB++;
+          if(maxGe[i]==0.)//no energy deposit in this detector prior to this hit
+  	        GHit.GfoldAB++;
+  	      maxGe[i]=ge[i][j];
   	    }
  
   //addback energy: sum deposits over all crystals in the detector with the highest energy deposit

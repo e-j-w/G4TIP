@@ -145,6 +145,7 @@ void Target::Report()
   G4cout<<"----> Target recoil excitation energy set to "<<TargetEx/keV<<" keV"<<G4endl;    
   G4cout<<"---->                Target radius is set to "<<G4BestUnit(aTarget->GetOuterRadius(),"Length")<<G4endl;
   G4cout<<"---->             Target thickness is set to "<<G4BestUnit(2.*aTarget->GetZHalfLength(),"Length")<<G4endl;
+  G4cout<<"---->             Target density is set to "<<Target_log->GetMaterial()->GetDensity()/(g/cm3)<<" g/cm3."<<G4endl;
   G4cout<<"---->  Fraction of reaction on target set to "<<1.-fracReactionBacking<<G4endl;  
   G4cout<<"----> Number of simulation steps in the target is set to "<<NTStep<<G4endl;
 

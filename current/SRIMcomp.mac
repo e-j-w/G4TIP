@@ -11,16 +11,12 @@
 /Backing/Material G4_Au
 /Backing/Thickness 14.9 um
 /Backing/NStep 1
-/Target/Material UserCarbon
+/Target/Material G4_Galactic
 /Target/Thickness 1.91 um
 /Target/Report
 /Target/NStep 1
-#/Reaction/Tau 0.0036 ns
-#/Reaction/E_gamma 1274.537 keV
-/Reaction/Tau 0.000225 ns
+/Reaction/Tau 1000 s
 /Reaction/E_gamma 2082.6 keV
-#/Reaction/Tau 4.9e-5 ns
-#/Reaction/E_gamma 2953.6 keV
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2

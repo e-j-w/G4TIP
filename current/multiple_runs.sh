@@ -12,8 +12,6 @@ for ((RUN = 1; RUN <= $2; RUN++)); do
       then
         RUNNAME=run
         RUNMINUS=$(($RUN-1))
-        echo "$RUNNAME$RUNMINUS"
-        echo "$RUNNAME$RUN"
 	      sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
       fi
 
@@ -23,3 +21,5 @@ done
 
 #change the macro file back to its original state
 sed -i 's/'run"$2"'/'run1'/g' $1
+#for some reason this file gets generated... remove it
+rm 1

@@ -18,6 +18,10 @@
   CsI    = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   Mylar  = man->FindOrBuildMaterial("G4_MYLAR");
   Air    = man->FindOrBuildMaterial("G4_AIR");
+  
+  
+  //Materials
+  UserCarbon  = new G4Material("UserCarbon",   6, 12.011*g/mole,   2.15*g/cm3);
 }
 
 Materials::~ Materials()

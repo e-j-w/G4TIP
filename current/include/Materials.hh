@@ -29,6 +29,9 @@ class Materials
   G4Material* CsI;
   G4Material* Mylar;
   G4Material* Air;
+  
+  //User-defined
+  G4Material* UserCarbon;
 
 };
 

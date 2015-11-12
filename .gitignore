@@ -1,5 +1,8 @@
 *~
 *.tar
 *.root
+*.mca
 *.mac
 *.macro
+1
+testfiles
