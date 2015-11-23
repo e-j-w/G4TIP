@@ -131,9 +131,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
     eventTrigger|=(one<<13);
 
-  /*printf("HPGe fold is %d\n",GriffinFold);
-  printf("HPGe eventTrigger is %d\n",eventTrigger);
-  printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);*/
+  //printf("HPGe fold is %d\n",GriffinFold);
+  //printf("HPGe eventTrigger is %d\n",eventTrigger);
+  //printf("eventTrigger is %d setTrigger is %d\n",eventTrigger,setTrigger);
   
   if(eventTrigger&(one<<setTrigger))
     {

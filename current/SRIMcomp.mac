@@ -12,7 +12,7 @@
 /Backing/Thickness 14.9 um
 /Backing/NStep 1
 /Target/Material G4_Galactic
-/Target/Thickness 1.91 um
+/Target/Thickness 0.0001 um
 /Target/Report
 /Target/NStep 1
 /Reaction/Tau 1000 s
@@ -33,12 +33,13 @@
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
 /Trigger/Z 2
-/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoincAndGamma
 #/Trigger/DefinedParticleCoinc
 #/Trigger/DefinedParticleSingles
+/Trigger/GammaSingles
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-/run/beamOn 400000
+/run/beamOn 300000
 /Results/Tree/Report
-/Results/Tree/Save 0p2a_30MeVSRIMcomp_run1.root
+/Results/Tree/Save 0p2a_30MeVconststoppingcustomdir2.root
 /Projectile/Report

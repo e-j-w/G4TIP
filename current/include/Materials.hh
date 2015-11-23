@@ -32,6 +32,7 @@ class Materials
   
   //User-defined
   G4Material* UserCarbon;
+  G4Material* UserGold;
 
 };
 

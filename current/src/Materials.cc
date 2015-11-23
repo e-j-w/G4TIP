@@ -22,6 +22,7 @@
   
   //Materials
   UserCarbon  = new G4Material("UserCarbon",   6, 12.011*g/mole,   2.15*g/cm3);
+  UserGold  = new G4Material("UserGold",   79, 196.97*g/mole,   19.311*g/cm3);
 }
 
 Materials::~ Materials()

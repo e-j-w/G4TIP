@@ -4,6 +4,13 @@
 //atomic mass unit in MeV/c^2 
 #define xamu 931.494061 
 
+//#include "G4IonSRIMModel.hh"
+/*#include "G4IonParametrisedLossModel.hh"
+#include "G4IonStoppingData.hh"
+#include "G4IonDEDXScalingICRU73.hh"
+#include "G4NistManager.hh"
+#include "G4ParticleTable.hh"*/
+
 #include "G4ios.hh"
 #include "globals.hh"
 #include "G4VProcess.hh"

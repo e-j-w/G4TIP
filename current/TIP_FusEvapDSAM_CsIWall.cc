@@ -55,7 +55,7 @@ int main(int argc,char** argv)
   ProjectileMessenger=new Projectile_Messenger(theProjectile);
   theProjectile->Report();
  
- // set mandatory user action clas
+  // set mandatory user action clas
   PhysicsList *thePhysicsList = new PhysicsList(theProjectile);
   runManager->SetUserInitialization(thePhysicsList);
  

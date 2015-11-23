@@ -2,7 +2,7 @@
 
 PhysicsList::PhysicsList(Projectile*Proj):theProjectile(Proj)
 {
-
+  
 }
 
 
@@ -44,6 +44,7 @@ void PhysicsList::ConstructProcess()
 
 void PhysicsList::ConstructEM()
 {
+
   theParticleIterator->reset();
 
 
@@ -91,9 +92,17 @@ void PhysicsList::ConstructEM()
     else if( particleName == "GenericIon") {
       pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
       G4ionIonisation* ionIoni = new G4ionIonisation();
-      ionIoni->SetEmModel(new G4IonParametrisedLossModel()); // valid for Z > 2
-      ionIoni->SetStepFunction(0.05, 0.05*um);
-      pmanager->AddProcess(ionIoni,                   -1, 2, 2);
+     
+      
+      //G4IonParametrisedLossModel* theModel= new G4IonParametrisedLossModel(); // ICRU 73 based model, valid for Z = 3 to 26
+      G4IonCustomModel* theModel= new G4IonCustomModel(); // Custom replacement for G4IonParametrisedLossModel
+      theModel->RemoveDEDXTable("ICRU73");
+      //theModel->AddDEDXTable("SRIM",new G4IonStoppingData("ion_stopping_data/constant"),new G4IonDEDXScalingICRU73());  
+      theModel->AddDEDXTable("SRIM",new G4IonCustomStoppingData("stopping_data"),new G4IonDEDXScalingICRU73()); //add stopping power data from data files 
+      
+	    ionIoni->SetStepFunction(0.05, 0.05*um);
+	    ionIoni->SetEmModel(theModel);
+	    pmanager->AddProcess(ionIoni,                   -1, 2, 2);
       pmanager->AddProcess(new G4NuclearStopping(),   -1, 3,-1);
       theReaction=new Reaction(theProjectile);
       theReactionMessenger=new Reaction_Messenger(theReaction); //this line needed here but not in Aaron's RDM code

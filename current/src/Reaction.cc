@@ -140,10 +140,14 @@ G4VParticleChange* Reaction::PostStepDoIt(
                 killTrack=true;
             }
 
-          //generate the recoiling nucleus
+          //generate the residual nucleus
           RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
 	        aParticleChange.AddSecondary(RecoilOut,posIn,true);
-	        //RecoilOut->SetKineticEnergy(30.0);//COMMENT OUT WHEN RUNNING FOR REAL!!!  Used for comparison to SRIM
+	        
+	        //SRIM comparison: fix direction and energy of the residual nucleus
+	        //COMMENT OUT WHEN RUNNING FOR REAL!!!
+	        RecoilOut->SetMomentum(G4ThreeVector(0.,0.,1.));
+	        RecoilOut->SetKineticEnergy(30.0);
 
           //debug
           //G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
@@ -339,6 +343,13 @@ void Reaction::TargetFaceCrossSection()
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
   residual=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Egamma);
   
+  /*G4IonParametrisedLossModel* theModel= new G4IonParametrisedLossModel(); // ICRU 73 based model, valid for Z = 3 to 26
+  theModel->RemoveDEDXTable("ICRU73");
+  theModel->AddDEDXTable("SRIM",new G4IonStoppingData("ion_stopping_data/SRIM"),new G4IonDEDXScalingICRU73());
+  G4NistManager* man = G4NistManager::Instance();
+	theModel->PrintDEDXTable(G4ParticleTable::GetParticleTable()->GetIon(10,22,Egamma),man->FindOrBuildMaterial("G4_Au"), 0.1/MeV, 10./MeV, 100, false);
+  getc(stdin);*/
+  
   residual->SetPDGStable(false);
   residual->SetPDGLifeTime(tau);
   G4cout << "Decay lifetime of the residual species: " << tau << " ns, gamma energy " << Egamma << " MeV." <<G4endl;
@@ -361,7 +372,7 @@ void Reaction::TargetFaceCrossSection()
     residual_pm->AddProcess(&decay,1,-1,5);
   }
   //residual_pm->DumpInfo();
-  // getc(stdin);
+  //getc(stdin);
 
 }
 //---------------------------------------------------------------------

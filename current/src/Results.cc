@@ -55,12 +55,12 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
     }
     
   // get HPGe crystal positions
-  for(int i=0 ; i<GN ; i++)
+  /*for(int i=0 ; i<GN ; i++)
     for(int j=0 ; j<GS ; j++)
       {
 	      CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
 	      printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
-      }
+      }*/
     
   //getc(stdin);
 }

@@ -5,6 +5,7 @@
 #include "G4ParticleTypes.hh"
 #include "G4ProcessManager.hh"
 
+
 //gamma
 
 #include "G4ComptonScattering.hh"
@@ -23,9 +24,12 @@
 #include "G4IonConstructor.hh"
 #include "G4StepLimiter.hh"
 #include "G4hMultipleScattering.hh"
-#include "G4IonParametrisedLossModel.hh"
+#include "G4IonCustomModel.hh"
+//#include "G4IonParametrisedLossModel.hh"
 #include "G4NuclearStopping.hh"
-#include "G4ExtDEDXTable.hh"
+#include "G4IonCustomStoppingData.hh"
+//#include "G4IonStoppingData.hh"
+#include "G4IonDEDXScalingICRU73.hh"
 
 //neutrons
 #include "G4LElastic.hh"

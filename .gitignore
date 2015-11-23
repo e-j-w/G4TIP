@@ -6,3 +6,5 @@
 *.macro
 1
 testfiles
+*CMake*
+*cmake*
