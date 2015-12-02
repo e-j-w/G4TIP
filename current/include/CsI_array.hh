@@ -3,6 +3,7 @@
 
 #define NCsI 24
 #include "G4Material.hh"
+#include "Chamber.hh"
 #include "Materials.hh"
 #include "G4ThreeVector.hh"
 #include "CsI_detector.hh"
@@ -28,7 +29,8 @@ class CsI_array
   void Construct();
   void Report();
   void MakeSensitive(TrackerCsISD*);
-  void setZPos(G4double z){zpos=z;Construct();};
+  void SetZPos(G4double z){zpos=z;Construct();};
+  G4double GetZPos(){return zpos;};
   G4int getRingID(G4int id){return ring[id-1];};               // read ring by position = id-1
   void     SetBirksConstant(G4int id,G4double k){kB[id-1]=k;}; // set kB by position = id-1
   G4double GetBirksConstant(G4int id){return kB[id];};         // read kB by index id

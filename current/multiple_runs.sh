@@ -15,7 +15,7 @@ for ((RUN = 1; RUN <= $2; RUN++)); do
 	      sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
       fi
 
-    TIP_FusEvapDSAM_CsIWall $1
+    TIP_Fusion_Evaporation $1
     
 done
 

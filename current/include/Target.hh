@@ -3,6 +3,7 @@
 
 #include "G4RunManager.hh"
 #include "G4Material.hh"
+#include "Chamber.hh"
 #include "Materials.hh"
 #include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
@@ -71,6 +72,9 @@ class Target
 
 
     private:
+    
+  Chamber* chamber;
+  
   // dimensions
   G4double Target_radius;
   G4double Target_thickness;

@@ -5,6 +5,7 @@
 *.mac
 *.macro
 1
+gnuplot*
 testfiles
 *CMake*
 *cmake*

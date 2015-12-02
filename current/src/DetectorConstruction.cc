@@ -67,7 +67,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    ExpHall_log=ExperimentalHall->GetLogVolume();
    ExperimentalHall->Report();
    ExperimentalHallMessenger = new Experimental_Hall_Messenger(ExperimentalHall);
-
+  
+   theChamber = new Chamber(ExpHall_log,materials);
+   theChamber->Construct();
+   theChamber->Report();
+   ChamberMessenger = new Chamber_Messenger(theChamber); 
+   
    theTarget = new Target(ExpHall_log,materials);
    theTarget->Construct();
    theTarget->Report();
@@ -76,11 +81,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    aCsI_array = new CsI_array(ExpHall_log,materials);
    aCsI_array->Construct();
    aCsI_array->Report();
-  
-   Chamber* theChamber = new Chamber(ExpHall_log,materials);
-   theChamber->Construct();
-   theChamber->Report();
-   ChamberMessenger = new Chamber_Messenger(theChamber); 
   //------------------------------------------------ 
   // Sensitive detectors
   //------------------------------------------------ 
@@ -108,6 +108,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
    aPIN_array->MakeSensitive(TrackerPIN);*/
  
    return ExpHall_phys;
+}
+void DetectorConstruction::setZShift(G4double zshift)
+{
+  //shift the chamber
+  G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
+  shift.setZ(shift.getZ() + zshift);
+  theChamber->GetChamberPlacement()->SetTranslation(shift);
+  //shift the target
+  shift = theTarget->GetTargetPlacement()->GetTranslation();
+  shift.setZ(shift.getZ() + zshift);
+  theTarget->GetTargetPlacement()->SetTranslation(shift);
+  //shift the backing
+  shift = theTarget->GetBackingPlacement()->GetTranslation();
+  shift.setZ(shift.getZ() + zshift);
+  theTarget->GetBackingPlacement()->SetTranslation(shift);
+  //shift the CsI array
+  aCsI_array->SetZPos(aCsI_array->GetZPos() + zshift);
+  aCsI_array->MakeSensitive(TrackerCsI);
+  G4RunManager::GetRunManager()->GeometryHasBeenModified();
+  G4cout<<"----> TIP chamber, target, and CsI array have been shifted by   "<<zshift<<" mm"<<G4endl;
+  
 }
 /*====================================================================*/
 void DetectorConstruction::UpdateGeometry()

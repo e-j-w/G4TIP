@@ -10,7 +10,7 @@ Chamber::Chamber(G4LogicalVolume* experimentalHall_log,Materials* mat)
   BTSPhi=0.*deg;
   BTDPhi=361*deg;
   BTSTheta=0.*deg;
-  BTDTheta=181*deg; 
+  BTDTheta=181*deg;
   Pos0 = new G4ThreeVector(0.,0.,0.);
   Chamber_Material = materials->FindMaterial("G4_Al");
   
@@ -31,7 +31,6 @@ G4VPhysicalVolume* Chamber::Construct()
 
   Chamber_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos0),
 	  Chamber_log,"Chamber",expHall_log,false,0);
-
 
   //Visualization Attributes
   setInvisible();

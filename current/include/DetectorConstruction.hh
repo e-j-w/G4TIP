@@ -34,6 +34,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4VPhysicalVolume* Construct();
  
+    Chamber* GetChamber(){return theChamber;};
     Target* GetTarget(){return theTarget;};
     CsI_array* GetCsIArray(){return aCsI_array;};
 
@@ -55,6 +56,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
     void UpdateGeometry();
     G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
+    
+    //TIP chamber z-shift
+    void setZShift(G4double);
   
   private:
   

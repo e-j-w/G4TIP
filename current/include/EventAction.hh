@@ -54,7 +54,7 @@ class EventAction : public G4UserEventAction
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4int         GriffinFold;
   size_t        soa,sov;
-  unsigned long long int  one,eventTrigger,setTrigger,systemTrigger;
+  unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
   G4double      CsIThreshold;
   G4int         CsIIDTrigger;
   

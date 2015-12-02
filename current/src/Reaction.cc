@@ -143,11 +143,6 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //generate the residual nucleus
           RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
 	        aParticleChange.AddSecondary(RecoilOut,posIn,true);
-	        
-	        //SRIM comparison: fix direction and energy of the residual nucleus
-	        //COMMENT OUT WHEN RUNNING FOR REAL!!!
-	        RecoilOut->SetMomentum(G4ThreeVector(0.,0.,1.));
-	        RecoilOut->SetKineticEnergy(30.0);
 
           //debug
           //G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;

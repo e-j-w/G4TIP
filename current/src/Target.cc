@@ -34,26 +34,26 @@ G4VPhysicalVolume* Target::Construct()
 
   aTarget = new G4Tubs("target",0.,Target_radius,Target_thickness/2.,-1.*deg,361.*deg);
 
- Target_log = new G4LogicalVolume(aTarget,TargetMaterial,"target_log",0,0,0);
- target_limits= new G4UserLimits();
- target_limits->SetMaxAllowedStep(Target_thickness/NTStep);
- Target_log->SetUserLimits(target_limits);
- Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0);
- shift.setX(0.);
- shift.setY(0.);
- shift.setZ(-0.5*Target_thickness);
- Target_phys->SetTranslation(shift);
+  Target_log = new G4LogicalVolume(aTarget,TargetMaterial,"target_log",0,0,0);
+  target_limits= new G4UserLimits();
+  target_limits->SetMaxAllowedStep(Target_thickness/NTStep);
+  Target_log->SetUserLimits(target_limits);
+  Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0);
+  shift.setX(0.);
+  shift.setY(0.);
+  shift.setZ(-0.5*Target_thickness);
+  Target_phys->SetTranslation(shift);
 
- aBacking = new G4Tubs("backing",0.,Backing_radius,Backing_thickness/2.,-1.*deg,361.*deg);
- Backing_log = new G4LogicalVolume(aBacking,BackingMaterial,"backing_log",0,0,0);
- backing_limits= new G4UserLimits();
- backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
- Backing_log->SetUserLimits(backing_limits);
+  aBacking = new G4Tubs("backing",0.,Backing_radius,Backing_thickness/2.,-1.*deg,361.*deg);
+  Backing_log = new G4LogicalVolume(aBacking,BackingMaterial,"backing_log",0,0,0);
+  backing_limits= new G4UserLimits();
+  backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
+  Backing_log->SetUserLimits(backing_limits);
  
 
- Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0);
- shift.setZ(0.5*Backing_thickness);
- Backing_phys->SetTranslation(shift);
+  Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0);
+  shift.setZ(0.5*Backing_thickness);
+  Backing_phys->SetTranslation(shift);
 
 
 
@@ -61,15 +61,15 @@ G4VPhysicalVolume* Target::Construct()
   G4VisAttributes* Vis_6 = new G4VisAttributes(lightblue);
   Vis_6->SetVisibility(true);
   Vis_6->SetForceSolid(true);
- Target_log->SetVisAttributes(Vis_6);
+  Target_log->SetVisAttributes(Vis_6);
 
- G4Colour white (1.0,1.0,1.0); 
- G4VisAttributes* Vis_5 = new G4VisAttributes(white);
- Vis_5->SetVisibility(true);
- Vis_5->SetForceSolid(true);
- Backing_log->SetVisAttributes(Vis_5);
+  G4Colour white (1.0,1.0,1.0); 
+  G4VisAttributes* Vis_5 = new G4VisAttributes(white);
+  Vis_5->SetVisibility(true);
+  Vis_5->SetForceSolid(true);
+  Backing_log->SetVisAttributes(Vis_5);
  
-   return Target_phys;
+  return Target_phys;
 }
 
 //-----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 # GNUmakefile for examples module.  Gabriele Cosmo, 06/04/98.
 # --------------------------------------------------------------
 
-name := TIP_FusEvapDSAM_CsIWall
+name := TIP_Fusion_Evaporation
 G4TARGET := $(name)
 G4EXLIB := true
 

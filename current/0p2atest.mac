@@ -8,19 +8,18 @@
 /Projectile/Focus/Z -50. mm
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
+/Construction/TIPChamberZShift -5.0 mm
 /Backing/Material G4_Au
 /Backing/Thickness 14.9 um
 /Backing/NStep 1
-/Target/Material UserCarbon
+/Target/Material G4_C
 /Target/Thickness 1.91 um
 /Target/Report
 /Target/NStep 1
-#/Reaction/Tau 0.0036 ns
-#/Reaction/E_gamma 1274.537 keV
-/Reaction/Tau 0.000225 ns
-/Reaction/E_gamma 2082.6 keV
-#/Reaction/Tau 4.9e-5 ns
-#/Reaction/E_gamma 2953.6 keV
+#/Reaction/Tau 1.876e-5 ns
+#/Reaction/E_gamma 2987.7 keV
+/Reaction/Tau 7.0e-5 ns
+/Reaction/E_gamma 2953.6 keV
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2
@@ -44,5 +43,5 @@
 #/Print/Track_Set
 /run/beamOn 400000
 /Results/Tree/Report
-/Results/Tree/Save 0p2a_30MeVSRIMcomp_run1.root
+/Results/Tree/Save run1.root
 /Projectile/Report

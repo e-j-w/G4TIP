@@ -32,6 +32,7 @@ class Chamber
   void setVisible();
   void setInvisible();
   void Report();
+  G4VPhysicalVolume* GetChamberPlacement(){return Chamber_phys;}
   
     private:
   // dimensions
