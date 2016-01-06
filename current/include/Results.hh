@@ -30,6 +30,10 @@
 #define RADIAN 57.29583
 
 typedef struct{
+  Double_t recoilGammaPhiDiff;
+ } EventStat;
+
+typedef struct{
   Int_t evNb;
   Int_t Ap;
   Int_t Zp;
@@ -45,7 +49,9 @@ typedef struct{
     Double_t py;
     Double_t pz;
     Double_t E;
-    Double_t b;
+    Double_t b;//beta
+    Double_t theta;//angle of emission from beam (z) axis
+    Double_t phi;//angle between plane of emission and horizontal (x) axis plane
     Double_t w;
     Double_t path;  // path length in material
     Double_t Eloss; // energy loss on path
@@ -85,6 +91,9 @@ typedef struct{
     Int_t    GIdAB[GN*GS];
     Int_t    GSegAB[GN*GS];
     Int_t    GRingAB[GN*GS];
+    Double_t    GxAB[GN*GS];
+    Double_t    GyAB[GN*GS];
+    Double_t    GzAB[GN*GS];
     Double_t GEAB[GN*GS];
 
  } GInf;
@@ -136,6 +145,7 @@ private:
   Recoil*               theRecoil;
   DetectorConstruction* theDetector;
 
+  EventStat     eStat;
   IonStat       stat;
   IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec; //ion tracking (projectile, residual)
   CsIInf        partHit; //particle hit
@@ -152,7 +162,7 @@ private:
   G4double S[NCsI]; // scaling factor from LY to channel
 
 
-  size_t soh,sogh,soi,sos;
+  size_t soh,sogh,soi,sos,soes;
 
   //CsI parameters outside of structure
   //Double_t PE;

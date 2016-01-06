@@ -8,7 +8,6 @@
 /Projectile/Focus/Z -50. mm
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
-/Construction/TIPChamberZShift -5.0 mm
 /Backing/Material G4_Au
 /Backing/Thickness 14.9 um
 /Backing/NStep 1
@@ -41,6 +40,8 @@
 #/Trigger/DefinedParticleSingles
 #/Print/CsI_Track_Set
 #/Print/Track_Set
+#need to run this AFTER adjusting the target/backing parameters!
+/Construction/TIPChamberZShift 0.0 mm
 /run/beamOn 400000
 /Results/Tree/Report
 /Results/Tree/Save run1.root
