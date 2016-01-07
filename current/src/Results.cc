@@ -6,12 +6,12 @@ Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj)
   h=NULL;
   g=NULL;  
   c=NULL;
-  TreeCreate();  
-  IonFill=0;
+  TreeCreate();
   soh=sizeof(partHit);
   sogh=sizeof(GHit);
   soi=sizeof(gun);
   sos=sizeof(stat);
+  soes=sizeof(eStat);
   memset(CP,0,sizeof(CP));
 
   // HPGe FWHM response parameters
@@ -28,9 +28,10 @@ Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj)
 
 Results::~Results()
 {
-Gtree->Delete();
-Iontree->Delete();
-CsItree->Delete();
+  Gtree->Delete();
+  CsItree->Delete();
+  Iontree->Delete();
+  Stattree->Delete();
 }
 //---------------------------------------------------------
 void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
@@ -70,7 +71,7 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
 //---------------------------------------------------------
 void Results::TreeCreate()
 {
-  if((Gtree==NULL)&&(Iontree==NULL)&&(CsItree==NULL))
+  if((Gtree==NULL)&&(Iontree==NULL)&&(CsItree==NULL)&&(Stattree==NULL))
     {
       Gtree= new TTree("Gtree","Gtree");
       Gtree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
@@ -91,19 +92,6 @@ void Results::TreeCreate()
       Gtree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
       Gtree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
       
-      //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
-
-      Iontree= new TTree("Iontree","Iontree");
-      Iontree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
-      Iontree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
-      Iontree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
-      Iontree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
-      Iontree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
-      Iontree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
-      Iontree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
-
-      //tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/I:r/I:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
-      
       CsItree= new TTree("CsItree","CsItree");
       CsItree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
       CsItree->Branch("x",partHit.x,"x[CsIfold]/D");
@@ -122,6 +110,22 @@ void Results::TreeCreate()
       CsItree->Branch("dEdx",partHit.dEdx,"dEdx[CsIfold]/D");
       CsItree->Branch("dLdx",partHit.dLdx,"dLdx[CsIfold]/D");
       CsItree->Branch("LY",partHit.LY,"LY[CsIfold]/D");
+      
+      //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
+
+      Iontree= new TTree("Iontree","Iontree");
+      Iontree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
+      Iontree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
+      Iontree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
+      Iontree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
+      Iontree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
+      Iontree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
+      Iontree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
+      
+      Stattree= new TTree("EventStats","EventStats");
+      Stattree->Branch("ds",&eStat,"ds/D");
+      
+      
     }
   else
     {
@@ -134,19 +138,22 @@ void Results::TreeCreate()
 void Results::TreeClear()
 {
   Gtree->Delete("all");
-  Iontree->Delete("all");
   CsItree->Delete("all");
+  Iontree->Delete("all");
+  Stattree->Delete("all");
   Gtree=NULL;
-  Iontree=NULL;
   CsItree=NULL;
+  Iontree=NULL;
+  Stattree=NULL;
   TreeCreate();
 }
 //---------------------------------------------------------
 void Results::TreeReport()
 {
   Gtree->Print();
-  Iontree->Print();
   CsItree->Print();
+  Iontree->Print();
+  Stattree->Print();
 }
 //---------------------------------------------------------
 void Results::TreeSave(G4String name)
@@ -160,6 +167,7 @@ void Results::TreeSave(G4String name)
   Gtree->Write();
   Iontree->Write();
   CsItree->Write();
+  Stattree->Write();
   f.Close();
   dir->cd();
   G4cout<<"Trees of simulated parameters saved in file "<<name<<G4endl;
@@ -184,6 +192,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 
  G4int Nt=IonCollection->entries();
 
+ memset(&eStat,0,soes);
  memset(&stat,0,sos);
  memset(&gun,0,soi);
  memset(&pTIn,0,soi);
@@ -339,7 +348,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 	 }
    }//end of ion collection entry saving
 
-  partHit.CsIfold=1;
+  partHit.CsIfold=0;
   memset(&partHit.x,0,sizeof(partHit.x));
   memset(&partHit.y,0,sizeof(partHit.y));
   memset(&partHit.z,0,sizeof(partHit.z));
@@ -356,58 +365,62 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   memset(&partHit.dLdx,0,sizeof(partHit.dLdx));
   memset(&partHit.LY,0,sizeof(partHit.LY));
  
- G4int Np=CsICollection->entries();
- if(Np>0)
-   {
-     for(Int_t i=0;i<Np;i++)
-       {
-         if((CsITrigId==0)||(CsITrigId==(*CsICollection)[i]->GetId()))//save only data for the detectors we want to see
-           {
-             if(partHit.E[0]==0.)
-               {
-                 partHit.x[0]=(*CsICollection)[i]->GetPos().getX()/mm;
-                 partHit.y[0]=(*CsICollection)[i]->GetPos().getY()/mm;
-                 partHit.z[0]=(*CsICollection)[i]->GetPos().getZ()/mm;
-                 partHit.px[0]=(*CsICollection)[i]->GetMom().getX()/MeV;
-                 partHit.py[0]=(*CsICollection)[i]->GetMom().getY()/MeV;
-                 partHit.pz[0]=(*CsICollection)[i]->GetMom().getZ()/MeV;
-                 partHit.b[0]=(*CsICollection)[i]->GetBeta();
-                 partHit.E[0]=(*CsICollection)[i]->GetKE()/MeV;
-                 partHit.dE[0]=(*CsICollection)[i]->GetKE()/MeV;		 
-                 partHit.w[0]=(*CsICollection)[i]->GetWeight();
-                 partHit.Id[0]=(*CsICollection)[i]->GetId();
-                 partHit.r[0]=(*CsICollection)[i]->GetRingId();
-                 // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
-                 // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
-                 partHit.path[0]=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                 partHit.dEdx[0]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                 partHit.dLdx[0]=CalculateBirksLawStep(partHit.Id[0],partHit.dE[0],partHit.dEdx[0]); // make sure to check units of kB!
-                 partHit.LY[0]=partHit.dLdx[0];
-                 //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
-                 //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-               }
-             else
-               {
-                 if((*CsICollection)[i]->GetId()==partHit.Id[0])
-                   {
-                     partHit.E[0]+=(*CsICollection)[i]->GetKE()/MeV;	
-                     partHit.dE[0]=(*CsICollection)[i]->GetKE()/MeV;		 
-                     // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
-                     // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                     partHit.path[0]+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                     partHit.dEdx[0]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                     partHit.dLdx[0]=CalculateBirksLawStep(partHit.Id[0],partHit.dE[0],partHit.dEdx[0]); // make sure to check units of kB!
-                     partHit.LY[0]+=partHit.dLdx[0];
-                     //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-                   }
-               }
-           }
-         //getc(stdin);
-       }
-   }//end of CsI collection entry saving
-
-
   G4int i,j;
+  G4int Np=CsICollection->entries();
+  if(Np>0)
+    {
+      for(j=1;j<NCsI+1;j++)//loop through CsI detector IDs (1 indexed)
+        {
+          if((CsITrigId==0)||(CsITrigId==j))//save only data for the detectors we want to see
+            for(i=0;i<Np;i++)//loop through all entries in the collection
+              {
+                if((*CsICollection)[i]->GetId()==j)//check whether entry belongs to the detector we are looking at
+                  {
+                    if((partHit.E[partHit.CsIfold]==0.)&&((*CsICollection)[i]->GetKE()>0.)) //first entry for a given detector with nonzero energy
+                      {
+                        partHit.x[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getX()/mm;
+                        partHit.y[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getY()/mm;
+                        partHit.z[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getZ()/mm;
+                        partHit.px[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getX()/MeV;
+                        partHit.py[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getY()/MeV;
+                        partHit.pz[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getZ()/MeV;
+                        partHit.b[partHit.CsIfold]=(*CsICollection)[i]->GetBeta();
+                        partHit.E[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;
+                        partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
+                        partHit.w[partHit.CsIfold]=(*CsICollection)[i]->GetWeight();
+                        partHit.Id[partHit.CsIfold]=(*CsICollection)[i]->GetId();
+                        partHit.r[partHit.CsIfold]=(*CsICollection)[i]->GetRingId();
+                        // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
+                        // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
+                        partHit.path[partHit.CsIfold]=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                        partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                        partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
+                        partHit.LY[partHit.CsIfold]=partHit.dLdx[partHit.CsIfold];
+                        //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
+                        //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+                      }
+                    else if((*CsICollection)[i]->GetKE()>0.) //later entries for a given detector with nonzero energy
+                      {
+                        partHit.E[partHit.CsIfold]+=(*CsICollection)[i]->GetKE()/MeV;	
+                        partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
+                        // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
+                        // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+                        partHit.path[partHit.CsIfold]+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                        partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                        partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
+                        partHit.LY[partHit.CsIfold]+=partHit.dLdx[partHit.CsIfold];
+                        //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+                      }
+                  }
+                //getc(stdin);
+              }
+          if(partHit.E[partHit.CsIfold]>0.)
+            partHit.CsIfold++;//increase fold if energy in a given detector is greater than 0
+        }
+    }//end of CsI collection entry saving
+
+
+  
   GHit.Gfold=0;
   GHit.GfoldAB=0;
   memset(maxGe,0,sizeof(maxGe));
@@ -462,12 +475,29 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
         GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
         
   //compute an approxiate Doppler shift based on the specific detectors where gamma and evaporated particles were seen
-  //...
+  G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[0],GHit.GSegAB[0]); //what about fold>1 events?
+  if(gammaVec.mag()!=0)
+    gammaVec.setMag(1.0);
+  //G4cout << "gammaVec: " << gammaVec << G4endl; 
+  G4ThreeVector resMom,partMom;
+  resMom.setX(gun.px);
+  resMom.setY(gun.py);
+  resMom.setZ(gun.pz);
+  for(i=0;i<partHit.CsIfold;i++)
+    {
+      partMom.setX(partHit.px[i]);
+      partMom.setY(partHit.py[i]);
+      partMom.setZ(partHit.pz[i]);
+      resMom -= partMom;
+    }
+  if(resMom.mag()!=0)
+    resMom.setMag(1.0);
+  eStat.ds = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
     
   Gtree->Fill();
-  Iontree->Fill();
   CsItree->Fill();
-  IonFill++;
+  Iontree->Fill();
+  Stattree->Fill();
 }
 //=====================================================================================
 G4int Results::RingMap(G4int id,G4int seg)

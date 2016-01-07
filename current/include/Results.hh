@@ -132,8 +132,7 @@ public:
 private:
   
  // ROOT Tree stuff
-  TTree *Gtree,*Iontree,*CsItree;
-  G4int  IonFill;
+  TTree *Gtree,*CsItree,*Iontree,*Stattree;
 
   Projectile*           theProjectile;
   Recoil*               theRecoil;
