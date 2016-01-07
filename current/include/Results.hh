@@ -30,7 +30,7 @@
 #define RADIAN 57.29583
 
 typedef struct{
-  Double_t recoilGammaPhiDiff;
+  Double_t ds;//doppler shift
  } EventStat;
 
 typedef struct{
@@ -58,22 +58,23 @@ typedef struct{
  } IonInf;
 
 typedef struct{
-    Double_t x;
-    Double_t y;
-    Double_t z;
-    Double_t px;
-    Double_t py;
-    Double_t pz;
-    Double_t E;
-    Double_t b;
-    Double_t w;
-    Int_t Id;
-    Int_t r;
-    Double_t path; // path length in material
-    Double_t dE;   // energy deposit for step
-    Double_t dEdx; // dE/dx in MeV/um
-    Double_t dLdx; // Birks Law dL/dx
-    Double_t LY;   // Birks Law light yield. LY = sum over dL/dx
+    Int_t    CsIfold;
+    Double_t x[NCsI];
+    Double_t y[NCsI];
+    Double_t z[NCsI];
+    Double_t px[NCsI];
+    Double_t py[NCsI];
+    Double_t pz[NCsI];
+    Double_t E[NCsI];
+    Double_t b[NCsI];
+    Double_t w[NCsI];
+    Int_t Id[NCsI];
+    Int_t r[NCsI];
+    Double_t path[NCsI]; // path length in material
+    Double_t dE[NCsI];   // energy deposit for step
+    Double_t dEdx[NCsI]; // dE/dx in MeV/um
+    Double_t dLdx[NCsI]; // Birks Law dL/dx
+    Double_t LY[NCsI];   // Birks Law light yield. LY = sum over dL/dx
     //Double_t Q;    // Quenching factor LY/E
  } CsIInf;
 
@@ -109,7 +110,6 @@ public:
   void SetupRun(Int_t, Int_t, Int_t);
 
   void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
-  void TreeView();
   void TreeSave(G4String);
   void TreeRead(G4String);
   void TreeAdd(G4String);
@@ -119,18 +119,12 @@ public:
   void TreeSetCsIDetector(G4int index){CsITrigId=index;};
   void ProjLabScattAngle();
   void RecLabScattAngle();
-  void CrossSectionZProfile();
   void TargetFaceF_CM();
   void SetTargetFaceCrossSection(G4double xs){TargetFaceCrossSection=xs;};
-  void GammaRingSpectrum(G4int);
-  void CsIRingSpectrum(G4int);
-  void DetCryCsIGammaSpectrum(G4int,G4int,G4int);
-  void DetRingCsIRingGammaSpectrum(G4int,G4int,G4double);
   G4int RingMap(G4int,G4int);
   void ReportCrystalPositions();
   void ReportCsIPositions();
-  void CalculateCrystalPositions();
-  void CalculateCsIPositions();
+  void GetCsIPositions();
   void GroupCosDist();
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector,G4ThreeVector);
@@ -138,7 +132,7 @@ public:
 private:
   
  // ROOT Tree stuff
-  TTree* tree;
+  TTree *Gtree,*Iontree,*CsItree;
   G4int  IonFill;
 
   Projectile*           theProjectile;

@@ -1,3 +1,5 @@
+//Fusion-Evaporation reaction process code
+//Jonathan W.
 //inelastic collision followed by parametrized evaporation 
 #include "Reaction.hh"
 

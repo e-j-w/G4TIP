@@ -34,28 +34,9 @@ class Results_Messenger: public G4UImessenger
 
   // tree
     G4UIcmdWithoutParameter*   TRepCmd;
-    G4UIcmdWithoutParameter*   TVCmd;
-    G4UIcmdWithoutParameter*   TCCmd;
     G4UIcmdWithAString*        TSCmd;
-    G4UIcmdWithAString*        TRCmd;
-    G4UIcmdWithAString*        TACmd;
     G4UIcmdWithAnInteger*      TCSICmd;
 
-  //projectile
-    G4UIcmdWithoutParameter*   PLSACmd;
-  //recoil
-    G4UIcmdWithoutParameter*   RLSACmd; 
-  //cross section
-    G4UIcmdWithoutParameter*   CSZCmd; 
-    G4UIcmdWithoutParameter*   FCMCmd; 
-  //gamma
-    G4UIcmdWithAnInteger*      GRSCmd;
-    G4UIcmdWith3Vector*        DCPCmd;
-    G4UIcmdWith3Vector*        DRPRCmd;
-  //CsI
-    G4UIcmdWithAnInteger*      PRSCmd;
-  //groups
-    G4UIcmdWithoutParameter*   RCSPCmd;
     G4UIcmdWithoutParameter*   RRSPCmd;
     G4UIcmdWithoutParameter*   PCSPCmd;
     G4UIcmdWithoutParameter*   PRSPCmd;

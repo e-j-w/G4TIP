@@ -12,7 +12,6 @@ Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj)
   sogh=sizeof(GHit);
   soi=sizeof(gun);
   sos=sizeof(stat);
-  soes=sizeof(eStat);
   memset(CP,0,sizeof(CP));
 
   // HPGe FWHM response parameters
@@ -29,7 +28,9 @@ Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj)
 
 Results::~Results()
 {
-tree->Delete();
+Gtree->Delete();
+Iontree->Delete();
+CsItree->Delete();
 }
 //---------------------------------------------------------
 void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
@@ -55,76 +56,97 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
       //printf("Birks constant for position %2d set to %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",i+1,kB[i],kBm[i]);
     }
     
-  // get HPGe crystal positions
-  /*for(int i=0 ; i<GN ; i++)
-    for(int j=0 ; j<GS ; j++)
+  //get HPGe and CsI crystal positions
+  GetCsIPositions();
+  for(int i=0; i<GN; i++)
+    for(int j=0; j<GS; j++)
       {
 	      CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
-	      printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
+	      //printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
       }
     
-  getc(stdin);*/
+  //getc(stdin);
 }
 //---------------------------------------------------------
 void Results::TreeCreate()
 {
- if(tree==NULL)
+  if((Gtree==NULL)&&(Iontree==NULL)&&(CsItree==NULL))
     {
-      tree= new TTree("tree","tree");
-      tree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
-      tree->Branch("GId",GHit.GId,"GId[Gfold]/I");
-      tree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
-      tree->Branch("GRing",GHit.GRing,"GRing[Gfold]/I");
-      tree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
-      tree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
-      tree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
-      tree->Branch("GE",GHit.GE,"GE[Gfold]/D");
-      tree->Branch("GW",GHit.GW,"GW[Gfold]/D");
-      tree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
-      tree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
-      tree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
-      tree->Branch("GRingAddBack",GHit.GRingAB,"GRingAB[GfoldAB]/I");
-      tree->Branch("GxAddBack",GHit.GxAB,"GxAB[GfoldAB]/D");
-      tree->Branch("GyAddBack",GHit.GyAB,"GyAB[GfoldAB]/D");
-      tree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
-      tree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
-
-      //tree->Branch("PE",&PE,"E/D");
-      //tree->Branch("PLY",&PLY,"LY/D");
+      Gtree= new TTree("Gtree","Gtree");
+      Gtree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
+      Gtree->Branch("GId",GHit.GId,"GId[Gfold]/I");
+      Gtree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
+      Gtree->Branch("GRing",GHit.GRing,"GRing[Gfold]/I");
+      Gtree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
+      Gtree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
+      Gtree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
+      Gtree->Branch("GE",GHit.GE,"GE[Gfold]/D");
+      Gtree->Branch("GW",GHit.GW,"GW[Gfold]/D");
+      Gtree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
+      Gtree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
+      Gtree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
+      Gtree->Branch("GRingAddBack",GHit.GRingAB,"GRingAB[GfoldAB]/I");
+      Gtree->Branch("GxAddBack",GHit.GxAB,"GxAB[GfoldAB]/D");
+      Gtree->Branch("GyAddBack",GHit.GyAB,"GyAB[GfoldAB]/D");
+      Gtree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
+      Gtree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
+      
       //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
 
-      tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
-      tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
-      tree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
-      tree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
-      tree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
-      tree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
-      tree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
+      Iontree= new TTree("Iontree","Iontree");
+      Iontree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
+      Iontree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
+      Iontree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
+      Iontree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
+      Iontree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
+      Iontree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
+      Iontree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
 
-      tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/I:r/I:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
+      //tree->Branch("partCsIHit",&partHit,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:w/D:Id/I:r/I:path/D:dE/D:dEdx/D:dLdx/D:LY/D"); //particle hit in CsI
       
-      tree->Branch("recoilGammaPhiDiff",&eStat,"recoilGammaPhiDiff/D"); //additional stats (change name in tree back when more stats are added)
-
-   }
+      CsItree= new TTree("CsItree","CsItree");
+      CsItree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
+      CsItree->Branch("x",partHit.x,"x[CsIfold]/D");
+      CsItree->Branch("y",partHit.y,"y[CsIfold]/D");
+      CsItree->Branch("z",partHit.z,"z[CsIfold]/D");
+      CsItree->Branch("px",partHit.px,"px[CsIfold]/D");
+      CsItree->Branch("py",partHit.py,"py[CsIfold]/D");
+      CsItree->Branch("pz",partHit.pz,"pz[CsIfold]/D");
+      CsItree->Branch("E",partHit.E,"E[CsIfold]/D");
+      CsItree->Branch("b",partHit.b,"b[CsIfold]/D");
+      CsItree->Branch("w",partHit.w,"w[CsIfold]/D");
+      CsItree->Branch("Id",partHit.Id,"Id[CsIfold]/I");
+      CsItree->Branch("r",partHit.r,"r[CsIfold]/I");
+      CsItree->Branch("path",partHit.path,"path[CsIfold]/D");
+      CsItree->Branch("dE",partHit.Id,"dE[CsIfold]/D");
+      CsItree->Branch("dEdx",partHit.dEdx,"dEdx[CsIfold]/D");
+      CsItree->Branch("dLdx",partHit.dLdx,"dLdx[CsIfold]/D");
+      CsItree->Branch("LY",partHit.LY,"LY[CsIfold]/D");
+    }
+  else
+    {
+      printf("Trees not deleted, could not create new trees!\n");
+      getc(stdin);
+    }
 
 }
 //---------------------------------------------------------
 void Results::TreeClear()
 {
-  tree->Delete("all");
-  tree=NULL;
+  Gtree->Delete("all");
+  Iontree->Delete("all");
+  CsItree->Delete("all");
+  Gtree=NULL;
+  Iontree=NULL;
+  CsItree=NULL;
   TreeCreate();
 }
 //---------------------------------------------------------
 void Results::TreeReport()
 {
-  tree->Print(); 
-}
-//---------------------------------------------------------
-void Results::TreeView()
-{
-  gStyle->SetPalette(1);
-  tree->StartViewer(); 
+  Gtree->Print();
+  Iontree->Print();
+  CsItree->Print();
 }
 //---------------------------------------------------------
 void Results::TreeSave(G4String name)
@@ -135,10 +157,12 @@ void Results::TreeSave(G4String name)
   f.cd();
   //tree->AutoSave();
   //tree->SetDirectory(dir);
-  tree->Write();
+  Gtree->Write();
+  Iontree->Write();
+  CsItree->Write();
   f.Close();
   dir->cd();
-  G4cout<<"Tree of simulated parameters saved in file "<<name<<G4endl;
+  G4cout<<"Trees of simulated parameters saved in file "<<name<<G4endl;
   
 }
 //---------------------------------------------------------
@@ -160,7 +184,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 
  G4int Nt=IonCollection->entries();
 
- memset(&eStat,0,soes);
  memset(&stat,0,sos);
  memset(&gun,0,soi);
  memset(&pTIn,0,soi);
@@ -170,7 +193,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
  memset(&rBOut,0,soi);
  memset(&partHit,0,soh);
  //memset(&GHit,0,sogh);
- bool decaySeen=false;
 
  if(Nt>0) 
    {
@@ -298,7 +320,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 	   if((*IonCollection)[i]->GetA()==Ar)
 	     if((*IonCollection)[i]->GetZ()==Zr)
 	       {
-	   decaySeen=true;
 		 rDec.x=(*IonCollection)[i]->GetPos().getX()/mm;
 		 rDec.y=(*IonCollection)[i]->GetPos().getY()/mm;
 		 rDec.z=(*IonCollection)[i]->GetPos().getZ()/mm;
@@ -318,65 +339,65 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 	 }
    }//end of ion collection entry saving
 
- // G4cout<<" "<<G4endl;
- 
- // G4cout<<stat.evNb<<" "<<pRIn.px<<
- //   " "<<pRIn.py<<" "<<pRIn.pz<<
- //   " "<<pRIn.E<<G4endl;
- // G4cout<<stat.evNb<<" "<<pROut.px<<
- //   " "<<pROut.py<<" "<<pROut.pz<<
- //   " "<<pROut.E<<G4endl;
- // G4cout<<stat.evNb<<" "<<rROut.px<<
- //   " "<<rROut.py<<" "<<rROut.pz<<
- //   " "<<rROut.E<<G4endl;
- // G4cout<<stat.evNb<<" "<<pRIn.px-pROut.px-rROut.px<<
- //   " "<<pRIn.py-pROut.py-rROut.py<<" "<<pRIn.pz-pROut.pz-rROut.pz<<
- //   " "<<pRIn.E-pROut.E-rROut.E<<G4endl;
- // getc(stdin);
+  partHit.CsIfold=1;
+  memset(&partHit.x,0,sizeof(partHit.x));
+  memset(&partHit.y,0,sizeof(partHit.y));
+  memset(&partHit.z,0,sizeof(partHit.z));
+  memset(&partHit.px,0,sizeof(partHit.px));
+  memset(&partHit.pz,0,sizeof(partHit.pz));
+  memset(&partHit.b,0,sizeof(partHit.b));
+  memset(&partHit.E,0,sizeof(partHit.E));
+  memset(&partHit.dE,0,sizeof(partHit.dE));
+  memset(&partHit.w,0,sizeof(partHit.w));
+  memset(&partHit.Id,0,sizeof(partHit.Id));
+  memset(&partHit.r,0,sizeof(partHit.r));
+  memset(&partHit.path,0,sizeof(partHit.path));
+  memset(&partHit.dEdx,0,sizeof(partHit.dEdx));
+  memset(&partHit.dLdx,0,sizeof(partHit.dLdx));
+  memset(&partHit.LY,0,sizeof(partHit.LY));
  
  G4int Np=CsICollection->entries();
  if(Np>0)
    {
      for(Int_t i=0;i<Np;i++)
        {
-	       // G4cout<<"*"<<(*CsICollection)[i]->GetA()<<" "<<(*CsICollection)[i]->GetZ()<<" "<<(*CsICollection)[i]->GetKE()/MeV<<" "<<(*CsICollection)[i]->GetId()<<" "<<(*CsICollection)[i]->GetPos().getX()<<" "<<(*CsICollection)[i]->GetPos().getY()<<" "<<(*CsICollection)[i]->GetPos().getZ()<<G4endl;
          if((CsITrigId==0)||(CsITrigId==(*CsICollection)[i]->GetId()))//save only data for the detectors we want to see
            {
-             if(partHit.E==0.)
+             if(partHit.E[0]==0.)
                {
-                 partHit.x=(*CsICollection)[i]->GetPos().getX()/mm;
-                 partHit.y=(*CsICollection)[i]->GetPos().getY()/mm;
-                 partHit.z=(*CsICollection)[i]->GetPos().getZ()/mm;
-                 partHit.px=(*CsICollection)[i]->GetMom().getX()/MeV;
-                 partHit.py=(*CsICollection)[i]->GetMom().getY()/MeV;
-                 partHit.pz=(*CsICollection)[i]->GetMom().getZ()/MeV;
-                 partHit.b=(*CsICollection)[i]->GetBeta();
-                 partHit.E=(*CsICollection)[i]->GetKE()/MeV;
-                 partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
-                 partHit.w=(*CsICollection)[i]->GetWeight();
-                 partHit.Id=(*CsICollection)[i]->GetId();
-                 partHit.r=(*CsICollection)[i]->GetRingId();
+                 partHit.x[0]=(*CsICollection)[i]->GetPos().getX()/mm;
+                 partHit.y[0]=(*CsICollection)[i]->GetPos().getY()/mm;
+                 partHit.z[0]=(*CsICollection)[i]->GetPos().getZ()/mm;
+                 partHit.px[0]=(*CsICollection)[i]->GetMom().getX()/MeV;
+                 partHit.py[0]=(*CsICollection)[i]->GetMom().getY()/MeV;
+                 partHit.pz[0]=(*CsICollection)[i]->GetMom().getZ()/MeV;
+                 partHit.b[0]=(*CsICollection)[i]->GetBeta();
+                 partHit.E[0]=(*CsICollection)[i]->GetKE()/MeV;
+                 partHit.dE[0]=(*CsICollection)[i]->GetKE()/MeV;		 
+                 partHit.w[0]=(*CsICollection)[i]->GetWeight();
+                 partHit.Id[0]=(*CsICollection)[i]->GetId();
+                 partHit.r[0]=(*CsICollection)[i]->GetRingId();
                  // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
                  // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
-                 partHit.path=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                 partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                 partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-                 partHit.LY=partHit.dLdx;
+                 partHit.path[0]=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                 partHit.dEdx[0]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                 partHit.dLdx[0]=CalculateBirksLawStep(partHit.Id[0],partHit.dE[0],partHit.dEdx[0]); // make sure to check units of kB!
+                 partHit.LY[0]=partHit.dLdx[0];
                  //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
                  //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
                }
              else
                {
-                 if((*CsICollection)[i]->GetId()==partHit.Id)
+                 if((*CsICollection)[i]->GetId()==partHit.Id[0])
                    {
-                     partHit.E+=(*CsICollection)[i]->GetKE()/MeV;	
-                     partHit.dE=(*CsICollection)[i]->GetKE()/MeV;		 
+                     partHit.E[0]+=(*CsICollection)[i]->GetKE()/MeV;	
+                     partHit.dE[0]=(*CsICollection)[i]->GetKE()/MeV;		 
                      // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
                      // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                     partHit.path+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                     partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                     partHit.dLdx=CalculateBirksLawStep(partHit.Id,partHit.dE,partHit.dEdx); // make sure to check units of kB!
-                     partHit.LY+=partHit.dLdx;
+                     partHit.path[0]+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+                     partHit.dEdx[0]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+                     partHit.dLdx[0]=CalculateBirksLawStep(partHit.Id[0],partHit.dE[0],partHit.dEdx[0]); // make sure to check units of kB!
+                     partHit.LY[0]+=partHit.dLdx[0];
                      //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
                    }
                }
@@ -390,9 +411,9 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   GHit.Gfold=0;
   GHit.GfoldAB=0;
   memset(maxGe,0,sizeof(maxGe));
-  memset(GHit.GId,0,sizeof(GHit.GId));
-  memset(GHit.GSeg,0,sizeof(GHit.GSeg));
-  memset(GHit.GE,0,sizeof(GHit.GE));
+  memset(&GHit.GId,0,sizeof(GHit.GId));
+  memset(&GHit.GSeg,0,sizeof(GHit.GSeg));
+  memset(&GHit.GE,0,sizeof(GHit.GE));
   memset(&GHit.GIdAB,0,sizeof(GHit.GIdAB));
   memset(&GHit.GSegAB,0,sizeof(GHit.GSegAB));
   memset(&GHit.GRingAB,0,sizeof(GHit.GRingAB));
@@ -440,238 +461,14 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
       if(ge[(GHit.GIdAB[i])-1][j]>0)
         GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
         
-  //save additional stats
-  if(decaySeen==true)
-    for(i=0;i<GHit.GfoldAB;i++)
-      eStat.recoilGammaPhiDiff=rDec.phi-(acos(GHit.GxAB[i]/sqrt(GHit.GxAB[i]*GHit.GxAB[i] + GHit.GyAB[i]*GHit.GyAB[i]))/degree);//phiResidual-phiGamma
-
+  //compute an approxiate Doppler shift based on the specific detectors where gamma and evaporated particles were seen
+  //...
     
-  tree->Fill();
+  Gtree->Fill();
+  Iontree->Fill();
+  CsItree->Fill();
   IonFill++;
 }
-//=====================================================================================
-/*void Results::ProjLabScattAngle()
- {
-  
-   Double_t theta;
-   Double_t p;
-
-   memset(&pROut,0,soi);
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
-
-   h=(TH1D *)gROOT->FindObject("Proj. Lab. Scatt. Angle");
-   if(h==NULL)
-     h=new TH1D("Proj. Lab. Scatt. Angle","Proj. Lab. Scatt. Angle",180,0,180);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("Rec. Lab. Scatt. Angle W");
-   if(g==NULL)
-     g=new TH1D("Proj. Lab. Scatt. Angle W","Proj. Lab. Scatt. Angle W",180,0,180);
-   g->Reset();
-  
-   Int_t N=tree->GetEntries();
- 
-    for(Int_t i=0;i<N;i++)
-    {
-      tree->GetEntry(i);     
-      p=sqrt(pROut.px*pROut.px+pROut.py*pROut.py+pROut.pz*pROut.pz);
-      theta=acos(pROut.pz/p);
-      h->Fill(RADIAN*theta);     
-      g->Fill(RADIAN*theta,pROut.w);
-    }
-   h->GetXaxis()->SetTitle("theta LAB [deg.]");
-   h->GetYaxis()->SetTitle("Counts");
-   h->SetLineColor(kBlue);
-   h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw("same");
-   
- }*/
-//=====================================================================================
-void Results::RecLabScattAngle()
- {
- 
-   Double_t theta;
-   Double_t p;
-  
-
-   memset(&rROut,0,soi);
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   h=(TH1D *)gROOT->FindObject("Rec. Lab. Scatt. Angle");
-   if(h==NULL)
-     h=new TH1D("Rec. Lab. Scatt. Angle","Rec. Lab. Scatt. Angle",180,0,180);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("Rec. Lab. Scatt. Angle W");
-   if(g==NULL)
-     g=new TH1D("Rec. Lab. Scatt. Angle W","Rec. Lab. Scatt. Angle W",180,0,180);
-   g->Reset();
-
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-    {
-      tree->GetEntry(i);     
-      p=sqrt(rROut.px*rROut.px+rROut.py*rROut.py+rROut.pz*rROut.pz);
-      theta=acos(rROut.pz/p);
-      h->Fill(RADIAN*theta);     
-      g->Fill(RADIAN*theta,rROut.w);
-    }
-   h->GetXaxis()->SetTitle("theta LAB [deg.]");
-   h->GetYaxis()->SetTitle("Counts");
-   h->SetLineColor(kBlue);
-   h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw("same");
- }
-//=====================================================================================
-void Results::CrossSectionZProfile()
- {
- 
-   Double_t zmin=1000.,zmax=-1000.;
-   Double_t s;
-
-   memset(&rROut,0,soi);
-   memset(&pRIn,0,soi);
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   Int_t N=tree->GetEntries();
-   for(Int_t i=0;i<N;i++)
-    {
-      tree->GetEntry(i); 
-      if(pRIn.z==0) printf("%d\n",i);
-      if(pRIn.z<zmin) zmin=pRIn.z;
-      if(pRIn.z>zmax) zmax=pRIn.z;
-    }
- 
-   s=zmax-zmin;
-   s*=0.1;
-   zmin-=s;
-   zmax+=s;
-   
-   h=(TH1D *)gROOT->FindObject("Cross Section vs. Z");
-   if(h==NULL)
-     h=new TH1D("Cross Section vs. Z","Cross Section vs. Z",100,zmin,zmax);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("Cross Section vs. Z W");
-   if(g==NULL)
-     g=new TH1D("Cross Section vs. Z W","Cross Section vs. Z W",100,zmin,zmax);
-   g->Reset();
-
-   
-  
-   for(Int_t i=0;i<N;i++)
-    {
-      tree->GetEntry(i);     
-      h->Fill(rROut.z);     
-      g->Fill(rROut.z,rROut.w);
-    }
-
-   g->Divide(h);
-   h->Divide(h);
-   g->Scale(TargetFaceCrossSection);
-   h->Scale(TargetFaceCrossSection);
-   h->GetXaxis()->SetTitle("Z");
-   h->GetYaxis()->SetTitle("Cross section [b]");
-   h->SetLineColor(kBlue);
-   h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw("same");
- }
-//=====================================================================================
-/*void Results::TargetFaceF_CM()
- {
-  Double_t theta;
-  Double_t px,py,pz,p,f,dp;
-  
-   memset(&stat,0,sos);
-   memset(&pRIn,0,soi);
-   memset(&pROut,0,soi);
-   memset(&rROut,0,soi);
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   h=(TH1D *)gROOT->FindObject("CM Scatt. Angle");
-   if(h==NULL)
-     h=new TH1D("CM Scatt. Angle","CM Scatt. Angle",180,0,180);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("CM Scatt. Angle W");
-   if(g==NULL)
-     g=new TH1D("CM Scatt. Angle W","CM Scatt. Angle W",180,0,180);
-   g->Reset();
-
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-    {
-      tree->GetEntry(i);
-      f=(Double_t)stat.Ap/((Double_t)(stat.Ap+stat.Ar));
-      px=pROut.px-f*pRIn.px;
-      py=pROut.py-f*pRIn.py;
-      pz=pROut.pz-f*pRIn.pz;
-      p=sqrt(px*px+py*py+pz*pz);
-      dp=px*pRIn.px+py*pRIn.py+pz*pRIn.pz;
-      f=sqrt(pRIn.px*pRIn.px+pRIn.py*pRIn.py+pRIn.pz*pRIn.pz);
-      theta=RADIAN*acos(dp/p/f);
-      h->Fill(theta);     
-      g->Fill(theta,rROut.w);
-    }
-   g->GetXaxis()->SetTitle("theta CM [deg.]");
-   g->GetYaxis()->SetTitle("Counts");
-   //  h->SetLineColor(kBlue);
-   // h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw();
-
-   vector <G4double> *th=new vector <G4double>;
-   vector <G4double> *ff=new vector <G4double>;
-   th=theProjectile->getth();
-   ff=theProjectile->getf();
-   
-   vector<G4double>::iterator it=th->begin();
-
-  
-   Int_t n=0,i;
-   for(;it<th->end();it++) n++;
-   Double_t x[20],y[20];
-   if(n>20) n=20;
-   Double_t tn=theProjectile->getthef();
-   Double_t norm=0.5*tn*RADIAN/PI;
-   norm=N/norm;
-   for(i=0;i<n;i++)
-     {
-       x[i]=(*th)[i];
-       y[i]=norm*(*ff)[i]*sin((*th)[i]/RADIAN);
-     }
-   TGraph *gr1 = new TGraph (n, x, y);
-   gr1->Draw("same");
-
- }*/
 //=====================================================================================
 G4int Results::RingMap(G4int id,G4int seg)
  {
@@ -709,240 +506,6 @@ G4int Results::RingMap(G4int id,G4int seg)
    return r+s;
  }
 //=====================================================================================
-void Results::CsIRingSpectrum(G4int ring)
- {
- 
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   h=(TH1D *)gROOT->FindObject("CsI");
-   if(h==NULL)
-     h=new TH1D("CsI","CsI",256,0,256);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("CsI W");
-   if(g==NULL)
-     g=new TH1D("CsI W","CsI W",256,0,256);
-   g->Reset();
-
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-        if(partHit.r==ring)
-        	   {
-        	     h->Fill(partHit.E);     
-        	     g->Fill(partHit.E,partHit.w);
-        	   }
-     }
-	   
-   g->GetXaxis()->SetTitle("Energy [MeV]");
-   g->GetYaxis()->SetTitle("Counts");
-   h->SetLineColor(kBlue);
-   h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw();
-
- }
-//=====================================================================================
-void Results::GammaRingSpectrum(G4int ring)
- {
- 
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   h=(TH1D *)gROOT->FindObject("Gamma");
-   if(h==NULL)
-     h=new TH1D("Gamma","Gamma",4096,0,4096);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("Gamma W");
-   if(g==NULL)
-     g=new TH1D("Gamma W","Gamma W",4096,0,4096);
-   g->Reset();
-
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-       for(Int_t j=0;j<GHit.Gfold;j++)
-	 if(RingMap(GHit.GId[j],GHit.GSeg[j])==ring)
-	   {
-	     h->Fill(FWHM_response(GHit.GE[j]));     
-	     g->Fill(FWHM_response(GHit.GE[j]),GHit.GW[j]);
-	   }
-     }
-	   
-   g->GetXaxis()->SetTitle("Energy [keV]");
-   g->GetYaxis()->SetTitle("Counts");
-   //  h->SetLineColor(kBlue);
-   // h->Draw();
-   g->SetLineColor(kRed);
-   g->Draw();
-
- }
- //=====================================================================================
-void Results::DetCryCsIGammaSpectrum(G4int det,G4int cry, G4int pin)
- {
-   G4String name="Det. ";
-   
-   name.append((G4String)det);
-   name.append(" Cry. ");
-   name.append((G4String)cry);
-   name.append(" CsI ");
-   name.append((G4String)pin);
-
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv","StdCanv",700,500);
-   c->Clear();
-   c->cd();
- 
-   h=(TH1D *)gROOT->FindObject("Gamma");
-   if(h==NULL)
-     h=new TH1D("Gamma","Gamma",4096,0,4096);
-   h->Reset();
-
-   g=(TH1D *)gROOT->FindObject("Gamma W");
-   if(g==NULL)
-     g=new TH1D("Gamma W","Gamma W",4096,0,4096);
-   g->Reset();
-
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-       if(partHit.Id==pin)
-	 for(Int_t j=0;j<GHit.Gfold;j++)
-	   if(GHit.GId[j]==det)
-	     if(GHit.GSeg[j]==cry)
-	       {
-		 h->Fill(FWHM_response(GHit.GE[j]));     
-		 g->Fill(FWHM_response(GHit.GE[j]),GHit.GW[j]);
-	       }
-     }
-	   
-   h->GetXaxis()->SetTitle("Energy [keV]");
-   h->GetYaxis()->SetTitle("Counts");
-   h->SetLineColor(kBlue);
-   h->SetTitle(name);
-   h->Draw();
-   g->SetLineColor(kRed);
-   g->SetTitle(name);
-   g->Draw("same");
-
- }
-  //=====================================================================================
-void Results::DetRingCsIRingGammaSpectrum(G4int detRing,G4int pinRing,G4double coeff)
- {
-   char name[132];
-   G4double eg,ec;
-
-   sprintf(name,"Gamma Ring %1d CsI Ring %1d",detRing,pinRing);
-   c=(TCanvas *)gROOT->FindObject("StdCanv");
-   if(c!=NULL)
-     c->Close();
-
-   c=new TCanvas("StdCanv1","StdCanv1",700,500);
-   c->Clear();
-   c->Divide(1,2);
-
- 
-
- 
-   correlation=(TH2D *)gROOT->FindObject("ECsI_EGamma");
-   if(correlation==NULL)
-     correlation=new TH2D("ECsI_EGamma","ECsI_EGamma",256,0,256,256,0,1024);
-   correlation->Reset();
-
-   h=(TH1D *)gROOT->FindObject("Gamma");
-   if(h==NULL)
-     h=new TH1D("Gamma","Gamma",256,0,1024);
-   h->Reset();
-
-  
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-       if(partHit.r==pinRing)
-	 for(Int_t j=0;j<GHit.Gfold;j++)
-	   if(RingMap(GHit.GId[j],GHit.GSeg[j])==detRing)
-	       {
-		 ec=partHit.E/MeV;
-		 eg=FWHM_response(GHit.GE[j])-coeff*ec;
-		 correlation->Fill(ec,eg,GHit.GW[j]);
-		 h->Fill(eg,GHit.GW[j]);
-	       }
-     }
-
-   c->cd(1);
-   gStyle->SetPalette(1);
-   correlation->GetXaxis()->SetTitle("ECsI [MeV]");
-   correlation->GetYaxis()->SetTitle("EGamma [keV]");
-   correlation->SetTitle(name);
-   correlation->Draw("COLZ");
-   c->cd(2);
-   h->GetXaxis()->SetTitle("Uncorrelated Energy [arb.]");
-   h->GetYaxis()->SetTitle("Counts");
-   h->SetLineColor(kBlue);
-   h->SetTitle(name);
-   h->Draw();  
- }
- 
-//=====================================================================================
-void Results::CalculateCrystalPositions()
- {
-   Double_t x[GN][GS],y[GN][GS],z[GN][GS],n[GN][GS];
-   Double_t xx,yy,zz;
-   size_t sod=GN*4*sizeof(Double_t);
-   memset(x,0,sod);
-   memset(y,0,sod);
-   memset(z,0,sod);
-   memset(n,0,sod);
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-       for(Int_t j=0;j<GHit.Gfold;j++)
-	 {
-	   x[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gx[j];
-	   y[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gy[j];
-	   z[GHit.GId[j]-1][GHit.GSeg[j]]+=GHit.Gz[j];
-	   n[GHit.GId[j]-1][GHit.GSeg[j]]++;
-	 }
-     }
-
-   for(Int_t det=0;det<GN;det++)
-     for(Int_t cry=0;cry<GS;cry++)
-       {
-	 xx=x[det][cry]/n[det][cry];
-	 yy=y[det][cry]/n[det][cry];
-	 zz=z[det][cry]/n[det][cry];
-	 CP[det][cry].setX(xx);
-	 CP[det][cry].setY(yy);
-	 CP[det][cry].setZ(zz);
-       }
-   ReportCrystalPositions();
- }
-//=====================================================================================
 void Results::ReportCrystalPositions()
  {
    Double_t xx,yy,zz,rr,cc;
@@ -960,40 +523,19 @@ void Results::ReportCrystalPositions()
        
  } 
 //=====================================================================================
-void Results::CalculateCsIPositions()
- {
-   Double_t x[NCsI],y[NCsI],z[NCsI],n[NCsI];
-   Double_t xx,yy,zz;
-   size_t sod=NCsI*sizeof(Double_t);
-   memset(x,0,sod);
-   memset(y,0,sod);
-   memset(z,0,sod);
-   memset(n,0,sod);
-   Int_t N=tree->GetEntries();
-  
-   for(Int_t i=0;i<N;i++)
-     {
-       tree->GetEntry(i);
-       if(partHit.E>0)
-	 {
-	   x[(Int_t)partHit.Id-1]+=partHit.x;
-	   y[(Int_t)partHit.Id-1]+=partHit.y;
-	   z[(Int_t)partHit.Id-1]+=partHit.z;
-	   n[(Int_t)partHit.Id-1]++;
-	 }
-     }
-
-   for(Int_t det=0;det<NCsI;det++)
-       {
-	 xx=x[det]/n[det];
-	 yy=y[det]/n[det];
-	 zz=z[det]/n[det];
-	 PP[det].setX(xx);
-	 PP[det].setY(yy);
-	 PP[det].setZ(zz);
-       }
-   ReportCsIPositions();
- }
+void Results::GetCsIPositions()
+{
+  Double_t xx,yy,zz;
+  for(Int_t det=0;det<NCsI;det++)
+    {
+	    xx=theDetector->GetCsIArray()->GetXPos(det+1);
+	    yy=theDetector->GetCsIArray()->GetYPos(det+1);
+	    zz=theDetector->GetCsIArray()->GetZPos();
+	    PP[det].setX(xx);
+	    PP[det].setY(yy);
+	    PP[det].setZ(zz);
+    }
+}
 //=====================================================================================
 void Results::ReportCsIPositions()
  {
@@ -1009,7 +551,7 @@ void Results::ReportCsIPositions()
 	 printf(" %2d  %8.3f %8.3f %8.3f %8.3f %8.3f\n",det+1,xx,yy,zz,rr,cc);
        }
        
- } 
+ }
 //=====================================================================================
 void Results::GroupCosDist()
  {
