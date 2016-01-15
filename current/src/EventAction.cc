@@ -13,6 +13,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   Zt=2;
   SetTriggerParticleSing();
   CsIThreshold=2*MeV;
+  memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
 
 }
 
@@ -154,6 +155,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 //*********************************************************************//
 void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry) 
 {
+  if(GriffinCrystDisabled[det][cry]==1)
+    return;//don't do anything if the crystal is disabled
+    
   //G4cout<<" Detector "<<det<<" crystal "<<cry<<" weight "<<w<<G4endl;
   if(GriffinCrystWeightDet[det][cry]==0.)
     {

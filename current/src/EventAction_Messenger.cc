@@ -32,6 +32,14 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
 
   TIDCmd = new G4UIcmdWithAnInteger("/Trigger/CsIDetectorID",this);
   TIDCmd->SetGuidance("Select the CsI detector (1-24) to trigger on.  A value of 0 means all detectors are used.");
+  
+  TDGCCmd = new G4UIcmdWithAString("/Trigger/DisableGriffinDetCol",this);
+  TDGCCmd->SetGuidance("Disable the specified crystal of the specified HPGe.");
+  TDGCCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  TDGCmd = new G4UIcmdWithAString("/Trigger/DisableGriffin",this);
+  TDGCmd->SetGuidance("Disable all crystals of the specified HPGe.");
+  TDGCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
 }
@@ -49,6 +57,8 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TAZCCmd;
   delete TAZCGCmd;
   delete TIDCmd;
+  delete TDGCCmd;
+  delete TDGCmd;
 }
 
 
@@ -79,5 +89,34 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
  if( command == TIDCmd )
    { aEventAction->setTID(TIDCmd->GetNewIntValue(newValue));}
+   
+  if( command == TDGCCmd )
+    {
+      int det,col;
+      if(sscanf(newValue,"%i %i",&det,&col)==2)
+        if(((det-1)>=0)&&(col>=0))
+          if((det-1)<16)
+            if(col<4)
+              {
+                aEventAction->DisableGriffinCryst(det-1,col);
+                G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< col << "." <<G4endl;
+              }
+          
+    }
+
+  if( command == TDGCmd )
+    {
+      int det;
+      if(sscanf(newValue,"%i",&det)==1)
+        if((det-1)>=0)
+          if((det-1)<16)
+            for(int i=0;i<4;i++)
+              {
+                aEventAction->DisableGriffinCryst(det-1,i);
+                G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< i << "." <<G4endl;
+              }
+          
+    }
+
 }
 

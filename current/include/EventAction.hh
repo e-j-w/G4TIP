@@ -35,6 +35,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
+  void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
 
 
   void setTriggerA(G4int);
@@ -49,6 +50,7 @@ class EventAction : public G4UserEventAction
   timeval       tc,ts,td;
   double        t,rate;
   RunAction*    run_action;
+  G4int         GriffinCrystDisabled[16][4];
   G4double      GriffinCrystEnergyDet[16][4];
   G4double      GriffinCrystWeightDet[16][4];
   G4ThreeVector GriffinCrystPosDet[16][4];

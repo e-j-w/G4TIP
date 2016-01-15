@@ -132,7 +132,7 @@ public:
 private:
   
  // ROOT Tree stuff
-  TTree *Gtree,*CsItree,*Iontree,*Stattree;
+  TTree *tree;
 
   Projectile*           theProjectile;
   Recoil*               theRecoil;

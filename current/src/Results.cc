@@ -28,10 +28,7 @@ Results::Results(Projectile* proj,DetectorConstruction* det):theProjectile(proj)
 
 Results::~Results()
 {
-  Gtree->Delete();
-  CsItree->Delete();
-  Iontree->Delete();
-  Stattree->Delete();
+  tree->Delete();
 }
 //---------------------------------------------------------
 void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
@@ -63,7 +60,7 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
     for(int j=0; j<GS; j++)
       {
 	      CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
-	      //printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
+	      printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
       }
     
   //getc(stdin);
@@ -71,65 +68,56 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
 //---------------------------------------------------------
 void Results::TreeCreate()
 {
-  if((Gtree==NULL)&&(Iontree==NULL)&&(CsItree==NULL)&&(Stattree==NULL))
+  if(tree==NULL)
     {
-      Gtree= new TTree("Gtree","Gtree");
-      Gtree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
-      Gtree->Branch("GId",GHit.GId,"GId[Gfold]/I");
-      Gtree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
-      Gtree->Branch("GRing",GHit.GRing,"GRing[Gfold]/I");
-      Gtree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
-      Gtree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
-      Gtree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
-      Gtree->Branch("GE",GHit.GE,"GE[Gfold]/D");
-      Gtree->Branch("GW",GHit.GW,"GW[Gfold]/D");
-      Gtree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
-      Gtree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
-      Gtree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
-      Gtree->Branch("GRingAddBack",GHit.GRingAB,"GRingAB[GfoldAB]/I");
-      Gtree->Branch("GxAddBack",GHit.GxAB,"GxAB[GfoldAB]/D");
-      Gtree->Branch("GyAddBack",GHit.GyAB,"GyAB[GfoldAB]/D");
-      Gtree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
-      Gtree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
-      
-      CsItree= new TTree("CsItree","CsItree");
-      CsItree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
-      CsItree->Branch("x",partHit.x,"x[CsIfold]/D");
-      CsItree->Branch("y",partHit.y,"y[CsIfold]/D");
-      CsItree->Branch("z",partHit.z,"z[CsIfold]/D");
-      CsItree->Branch("px",partHit.px,"px[CsIfold]/D");
-      CsItree->Branch("py",partHit.py,"py[CsIfold]/D");
-      CsItree->Branch("pz",partHit.pz,"pz[CsIfold]/D");
-      CsItree->Branch("E",partHit.E,"E[CsIfold]/D");
-      CsItree->Branch("b",partHit.b,"b[CsIfold]/D");
-      CsItree->Branch("w",partHit.w,"w[CsIfold]/D");
-      CsItree->Branch("Id",partHit.Id,"Id[CsIfold]/I");
-      CsItree->Branch("r",partHit.r,"r[CsIfold]/I");
-      CsItree->Branch("path",partHit.path,"path[CsIfold]/D");
-      CsItree->Branch("dE",partHit.Id,"dE[CsIfold]/D");
-      CsItree->Branch("dEdx",partHit.dEdx,"dEdx[CsIfold]/D");
-      CsItree->Branch("dLdx",partHit.dLdx,"dLdx[CsIfold]/D");
-      CsItree->Branch("LY",partHit.LY,"LY[CsIfold]/D");
-      
+      tree= new TTree("tree","tree");
+      tree->Branch("Gfold",&GHit.Gfold,"Gfold/I");
+      tree->Branch("GId",GHit.GId,"GId[Gfold]/I");
+      tree->Branch("GSeg",GHit.GSeg,"GSeg[Gfold]/I");
+      tree->Branch("GRing",GHit.GRing,"GRing[Gfold]/I");
+      tree->Branch("Gx",GHit.Gx,"Gx[Gfold]/D");
+      tree->Branch("Gy",GHit.Gy,"Gy[Gfold]/D");
+      tree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
+      tree->Branch("GE",GHit.GE,"GE[Gfold]/D");
+      tree->Branch("GW",GHit.GW,"GW[Gfold]/D");
+      tree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
+      tree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
+      tree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
+      tree->Branch("GRingAddBack",GHit.GRingAB,"GRingAB[GfoldAB]/I");
+      tree->Branch("GxAddBack",GHit.GxAB,"GxAB[GfoldAB]/D");
+      tree->Branch("GyAddBack",GHit.GyAB,"GyAB[GfoldAB]/D");
+      tree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
+      tree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
+      tree->Branch("ds",&eStat,"ds/D");
+      tree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
+      tree->Branch("CsIx",partHit.x,"x[CsIfold]/D");
+      tree->Branch("CsIy",partHit.y,"y[CsIfold]/D");
+      tree->Branch("CsIz",partHit.z,"z[CsIfold]/D");
+      tree->Branch("CsIpx",partHit.px,"px[CsIfold]/D");
+      tree->Branch("CsIpy",partHit.py,"py[CsIfold]/D");
+      tree->Branch("CsIpz",partHit.pz,"pz[CsIfold]/D");
+      tree->Branch("CsIE",partHit.E,"E[CsIfold]/D");
+      tree->Branch("CsIb",partHit.b,"b[CsIfold]/D");
+      tree->Branch("CsIw",partHit.w,"w[CsIfold]/D");
+      tree->Branch("CsIId",partHit.Id,"Id[CsIfold]/I");
+      tree->Branch("CsIr",partHit.r,"r[CsIfold]/I");
+      tree->Branch("CsIpath",partHit.path,"path[CsIfold]/D");
+      tree->Branch("CsIdE",partHit.Id,"dE[CsIfold]/D");
+      tree->Branch("CsIdEdx",partHit.dEdx,"dEdx[CsIfold]/D");
+      tree->Branch("CsIdLdx",partHit.dLdx,"dLdx[CsIfold]/D");
+      tree->Branch("CsILY",partHit.LY,"LY[CsIfold]/D");
       //tree->Branch("stat",&stat,"evNb/I:Ap/I:Zp/I:Ar/I:Zr/I");
-
-      Iontree= new TTree("Iontree","Iontree");
-      Iontree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
-      Iontree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
-      Iontree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
-      Iontree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
-      Iontree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
-      Iontree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
-      Iontree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
-      
-      Stattree= new TTree("EventStats","EventStats");
-      Stattree->Branch("ds",&eStat,"ds/D");
-      
-      
+      tree->Branch("projGun",&gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile when shot from the particle gun
+      tree->Branch("projTargetIn",&pTIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile upon entering the target
+      tree->Branch("projReactionIn",&pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //projectile at the reaction point
+      tree->Branch("resReactionOut",&rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual at the reaction point
+      tree->Branch("resBackingIn",&rBIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the target/entering the backing
+      tree->Branch("resBackingOut",&rBOut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon leaving the backing (if it makes it that far)
+      tree->Branch("resDec",&rDec,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
     }
   else
     {
-      printf("Trees not deleted, could not create new trees!\n");
+      printf("Tree not deleted, could not create new tree!\n");
       getc(stdin);
     }
 
@@ -137,23 +125,14 @@ void Results::TreeCreate()
 //---------------------------------------------------------
 void Results::TreeClear()
 {
-  Gtree->Delete("all");
-  CsItree->Delete("all");
-  Iontree->Delete("all");
-  Stattree->Delete("all");
-  Gtree=NULL;
-  CsItree=NULL;
-  Iontree=NULL;
-  Stattree=NULL;
+  tree->Delete("all");
+  tree=NULL;
   TreeCreate();
 }
 //---------------------------------------------------------
 void Results::TreeReport()
 {
-  Gtree->Print();
-  CsItree->Print();
-  Iontree->Print();
-  Stattree->Print();
+  tree->Print();
 }
 //---------------------------------------------------------
 void Results::TreeSave(G4String name)
@@ -164,10 +143,7 @@ void Results::TreeSave(G4String name)
   f.cd();
   //tree->AutoSave();
   //tree->SetDirectory(dir);
-  Gtree->Write();
-  Iontree->Write();
-  CsItree->Write();
-  Stattree->Write();
+  tree->Write();
   f.Close();
   dir->cd();
   G4cout<<"Trees of simulated parameters saved in file "<<name<<G4endl;
@@ -475,11 +451,11 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
         GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
         
   //compute an approxiate Doppler shift based on the specific detectors where gamma and evaporated particles were seen
-  G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[0],GHit.GSegAB[0]); //what about fold>1 events?
+  G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[0]-1,GHit.GSegAB[0]); //what about fold>1 events?
   if(gammaVec.mag()!=0)
     gammaVec.setMag(1.0);
   //G4cout << "gammaVec: " << gammaVec << G4endl; 
-  G4ThreeVector resMom,partMom;
+  G4ThreeVector resMom,partMom,partDir;
   resMom.setX(gun.px);
   resMom.setY(gun.py);
   resMom.setZ(gun.pz);
@@ -488,16 +464,20 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
       partMom.setX(partHit.px[i]);
       partMom.setY(partHit.py[i]);
       partMom.setZ(partHit.pz[i]);
-      resMom -= partMom;
+      partDir = PP[partHit.Id[i]-1]; //get direction to CsI detector
+      partDir.setMag(partMom.mag()); //turn direction vector into momentum vector
+      resMom -= partDir;
     }
   if(resMom.mag()!=0)
     resMom.setMag(1.0);
+  
+  
   eStat.ds = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
-    
-  Gtree->Fill();
-  CsItree->Fill();
-  Iontree->Fill();
-  Stattree->Fill();
+  //printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);
+  //printf("Gun momentum: [%10.10f %10.10f %10.10f]\n",gun.px,gun.py,gun.pz);
+  //getc(stdin);
+
+  tree->Fill();
 }
 //=====================================================================================
 G4int Results::RingMap(G4int id,G4int seg)
