@@ -21,7 +21,7 @@ class Reaction_Messenger: public G4UImessenger
     void SetNewValue(G4UIcommand*, G4String);
     
   private:
-    Reaction* theReaction;    
+    Reaction* theReaction;
     G4UIdirectory*      theReactionDir;
    
     G4UIcmdWithADoubleAndUnit* TauCmd;

@@ -156,6 +156,7 @@ G4VParticleChange* Reaction::PostStepDoIt(
             aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
 
       }
+      
     }
 
 
