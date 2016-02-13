@@ -21,6 +21,7 @@
   CsI particle-particle coinc       11
   trigger 10 AND 11                 12 (defined particle-particle coinc)
   trigger 1 AND 12                  13 (defined particle-particle coinc AND gamma singles)
+  2 unsupp Griffin cores and 2 CsI  14
  */
 
 class EventAction : public G4UserEventAction
@@ -35,6 +36,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
+  void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
 
 
@@ -55,10 +57,12 @@ class EventAction : public G4UserEventAction
   G4double      GriffinCrystWeightDet[16][4];
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4int         GriffinFold;
-  size_t        soa,sov;
+  size_t        soa,sov,soc,soi;
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
   G4double      CsIThreshold;
   G4int         CsIIDTrigger;
+  TrackerCsIHitsCollection* CsI;
+  TrackerIonHitsCollection* HI;
   
 
   // Info for CsI trigger

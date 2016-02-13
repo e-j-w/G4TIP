@@ -9,12 +9,15 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   CsICollectionID=-1;
   soa=16*4*sizeof(G4double);
   sov=16*4*sizeof(G4ThreeVector);
+  soc=sizeof(TrackerCsIHitsCollection);
+  soi=sizeof(TrackerIonHitsCollection);
   At=4;
   Zt=2;
   SetTriggerParticleSing();
   CsIThreshold=2*MeV;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
-
+  CsI=new TrackerCsIHitsCollection();
+  HI=new TrackerIonHitsCollection();
 }
 
 
@@ -38,6 +41,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
   memset(GriffinCrystWeightDet,0,soa);
   memset(GriffinCrystPosDet,0,sov);
   GriffinFold=0;
+
   // G4cout<<"+++++ Begin of event "<<evt->GetEventID()<<G4endl;
 
  }
@@ -63,25 +67,21 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 
   one=1;
   eventTrigger=1;
-
-  G4HCofThisEvent * HCE = evt->GetHCofThisEvent();
-  TrackerCsIHitsCollection* CsI=new TrackerCsIHitsCollection();
-  TrackerIonHitsCollection* HI=new TrackerIonHitsCollection();
   G4int Np;
 
   numP=run_action->GetNumberOfProtons();
   numN=run_action->GetNumberOfNeutrons();
   numA=run_action->GetNumberOfAlphas();
-
-  // CsI trigger
-  if(HCE!=NULL) 
+  
+  if(evt->GetHCofThisEvent()!=NULL) 
     {  
-      CsI=(TrackerCsIHitsCollection*)(HCE->GetHC(CsICollectionID)); 
-      HI=(TrackerIonHitsCollection*)(HCE->GetHC(ionCollectionID));
+      CsI=(TrackerCsIHitsCollection*)(evt->GetHCofThisEvent()->GetHC(CsICollectionID)); 
+      HI=(TrackerIonHitsCollection*)(evt->GetHCofThisEvent()->GetHC(ionCollectionID));
       Np=CsI->entries();
       //G4cout<<" Number of entries: "<<Np<<G4endl;
       G4bool allHitsInOne=true;
 
+      // CsI trigger
       if(Np>0) 
 	      {
 	        G4double partECsI=0.; //energy of user defined particle
@@ -119,36 +119,51 @@ void EventAction::EndOfEventAction(const G4Event* evt)
           printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
           printf("CsI eventTrigger is %d\n",eventTrigger);
           getc(stdin);*/ 
-	      }
+	      } // end CsI trigger
 	      
-    } // end CsI trigger
+     
   
-  // HPGe trigger
-  if(GriffinFold>0)
-    eventTrigger|=(one<<1);
-  // end HPGe trigger
-  
-  //particle-particle coincidence AND gamma singles trigger
-  if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
-    eventTrigger|=(one<<13);
+      // HPGe trigger
+      if(GriffinFold>0)
+        eventTrigger|=(one<<1);
+      // end HPGe trigger
+      
+      //particle-particle coincidence AND gamma singles trigger
+      if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
+        eventTrigger|=(one<<13);
+      
+      //2+ unsupressed Griffin cores and 2 CsI (Nov 2013 S1232 trigger)  
+      if((eventTrigger&(one<<12))&&(GriffinFold>1))
+        eventTrigger|=(one<<14);
 
-  /*printf("HPGe fold is %d\n",GriffinFold);
-  for(testTrigger=1;testTrigger<=13;testTrigger++)
-    {
-      //int i=(int)testTrigger;
-      if(eventTrigger&(one<<testTrigger))
-        G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
-    }*/
+      /*printf("HPGe fold is %d\n",GriffinFold);
+      for(testTrigger=1;testTrigger<=14;testTrigger++)
+        {
+          //int i=(int)testTrigger;
+          if(eventTrigger&(one<<testTrigger))
+            G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
+        }*/
   
-  if(eventTrigger&(one<<setTrigger))
-    {
-	    if(GriffinFold>0)
-	      for(G4int det=0;det<16;det++)
-	        for(G4int cry=0;cry<4;cry++)
-	          if( GriffinCrystEnergyDet[det][cry]>0)
-		          GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
-	    results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
-      //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
+      if(eventTrigger&(one<<setTrigger))
+        {
+        
+          /*printf("HPGe fold is %d\n",GriffinFold);
+          for(testTrigger=1;testTrigger<=14;testTrigger++)
+            {
+              //int i=(int)testTrigger;
+              if(eventTrigger&(one<<testTrigger))
+                G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
+            }*/
+        
+	        if(GriffinFold>0)
+	          for(G4int det=0;det<16;det++)
+	            for(G4int cry=0;cry<4;cry++)
+	              if( GriffinCrystEnergyDet[det][cry]>0)
+		              GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
+	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
+          //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
+        }
+
     }
     // getc(stdin);
 }

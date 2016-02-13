@@ -47,65 +47,59 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
       strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
       sscanf(name,"%s %s %s",s1,s2,s3);
 
-      G4StepPoint*   vi=new G4StepPoint();
-      G4StepPoint*   vf=new G4StepPoint();
-
-      vi=aStep->GetPreStepPoint(); 
-      vf=aStep->GetPostStepPoint(); 
       if(strcmp(s1,"CsI")==0)
-	{
-	  if(len>0.)
-	    {
-	      TrackerCsIHit* newHitI = new TrackerCsIHit();
-	      
-	      newHitI->SetBeta(vi->GetBeta());
-	      newHitI->SetKE(aStep->GetTotalEnergyDeposit());
-	      newHitI->SetPos(vi->GetPosition());
-	      newHitI->SetMom(vi->GetMomentum());
-	      newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
-	      newHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
-	      newHitI->SetWeight(aStep->GetTrack()->GetWeight());
-	      newHitI->SetId(atoi(s2));
-	      newHitI->SetRingId(atoi(s3));
-	      newHitI->SetPathLength(len);
-	      CsICollection->insert( newHitI );
-	      newHitI->Draw();
-	      //  printf("newHitI len %f\n",len/um);
-	      // newHitI->Print(); 
-	      // getc(stdin);
-	    }
-	  G4TrackStatus TrackStatus;
-	  TrackStatus=aStep->GetTrack()->GetTrackStatus();
-	  if((TrackStatus==fStopButAlive) || (TrackStatus==fStopAndKill))
-	    {
-	      TrackerCsIHit* newHitF = new TrackerCsIHit();
-	      newHitF->SetBeta(vf->GetBeta());
-	      newHitF->SetKE(vf->GetKineticEnergy());
-	      newHitF->SetMom(vf->GetMomentum());
-	      newHitF->SetPos(vf->GetPosition());
-	      newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
-	      newHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
-	      newHitF->SetWeight(aStep->GetTrack()->GetWeight());
-	      newHitF->SetId(atoi(s2));
-	      newHitF->SetRingId(atoi(s3));
-	      newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?
-	      CsICollection->insert( newHitF );
-	      newHitF->Draw();
-	      // printf("newHitF\n");
-	      // newHitF->Print(); 
-	      // getc(stdin);
-	    }
-
-	    return true;
-	}
+	      {
+	        if(len>0.)
+	          {
+	            TrackerCsIHit* newHitI = new TrackerCsIHit();
+	            
+	            newHitI->SetBeta(aStep->GetPreStepPoint()->GetBeta());
+	            newHitI->SetKE(aStep->GetTotalEnergyDeposit());
+	            newHitI->SetPos(aStep->GetPreStepPoint()->GetPosition());
+	            newHitI->SetMom(aStep->GetPreStepPoint()->GetMomentum());
+	            newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
+	            newHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
+	            newHitI->SetWeight(aStep->GetTrack()->GetWeight());
+	            newHitI->SetId(atoi(s2));
+	            newHitI->SetRingId(atoi(s3));
+	            newHitI->SetPathLength(len);
+	            CsICollection->insert( newHitI );
+	            newHitI->Draw();
+	            //  printf("newHitI len %f\n",len/um);
+	            // newHitI->Print(); 
+	            // getc(stdin);
+	          }
+	        G4TrackStatus TrackStatus;
+	        TrackStatus=aStep->GetTrack()->GetTrackStatus();
+	        if((TrackStatus==fStopButAlive) || (TrackStatus==fStopAndKill))
+	          {
+	            TrackerCsIHit* newHitF = new TrackerCsIHit();
+	            newHitF->SetBeta(aStep->GetPostStepPoint()->GetBeta());
+	            newHitF->SetKE(aStep->GetPostStepPoint()->GetKineticEnergy());
+	            newHitF->SetMom(aStep->GetPostStepPoint()->GetMomentum());
+	            newHitF->SetPos(aStep->GetPostStepPoint()->GetPosition());
+	            newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
+	            newHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
+	            newHitF->SetWeight(aStep->GetTrack()->GetWeight());
+	            newHitF->SetId(atoi(s2));
+	            newHitF->SetRingId(atoi(s3));
+	            newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?
+	            CsICollection->insert( newHitF );
+	            newHitF->Draw();
+	            // printf("newHitF\n");
+	            // newHitF->Print(); 
+	            // getc(stdin);
+	          }
+	        return true;
+	      }
       else
-	{
-	      //G4cout << "Energy deposit in the " << name << G4endl;
-	      //G4cout << "E="<<G4BestUnit(edep,"Energy")<<G4endl;
-	      //G4cout <<"Event ignored" <<G4endl;
-	      //getc(stdin);
-	  return false;
-	}
+	      {
+          //G4cout << "Energy deposit in the " << name << G4endl;
+          //G4cout << "E="<<G4BestUnit(edep,"Energy")<<G4endl;
+          //G4cout <<"Event ignored" <<G4endl;
+          //getc(stdin);
+	        return false;
+	      }
     }
   return false;
 }

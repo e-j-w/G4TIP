@@ -4,7 +4,6 @@
 #include "Reaction.hh"
 
 
-
 Reaction::Reaction(Projectile* Proj, const G4String& aName)
   : G4VProcess(aName),theProjectile(Proj)
 {
@@ -26,35 +25,29 @@ Reaction::~Reaction()
 //---------------------------------------------------------------------
 G4Decay Reaction::decay;                                    
 //---------------------------------------------------------------------
-G4VParticleChange* Reaction::PostStepDoIt(
-			     const G4Track& aTrack,
-			     const G4Step& 
-			    )
-			    			    			    
+G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
 {
 
-
   aParticleChange.Initialize(aTrack);
-//
-// Stop the current particle, if requested by G4UserLimits 
-// 
+
+  //define all dynamic particles
+  G4DynamicParticle* RecoilOut;
+  G4DynamicParticle* EvapP [MAXNUMEVAP];
+  G4DynamicParticle* EvapN [MAXNUMEVAP];
+  G4DynamicParticle* EvapA [MAXNUMEVAP];
+  RecoilOut =new G4DynamicParticle();
+  for(int i=0; i<MAXNUMEVAP; i++)
+    {
+      EvapP[i]=new G4DynamicParticle();
+      EvapN[i]=new G4DynamicParticle();
+      EvapA[i]=new G4DynamicParticle();
+    }
+
+
   if(reaction_here)
     {
       reaction_here=false;
       killTrack=false;
-
-      //define all dynamic particles
-      G4DynamicParticle* RecoilOut;
-      G4DynamicParticle* EvapP [MAXNUMEVAP];
-      G4DynamicParticle* EvapN [MAXNUMEVAP];
-      G4DynamicParticle* EvapA [MAXNUMEVAP];
-      RecoilOut =new G4DynamicParticle();
-      for(int i=0; i<MAXNUMEVAP; i++)
-        {
-          EvapP[i]=new G4DynamicParticle();
-          EvapN[i]=new G4DynamicParticle();
-          EvapA[i]=new G4DynamicParticle();
-        }
 
       //get properties of the beam-target system
       G4ThreeVector pIn=aTrack.GetMomentum();
@@ -85,35 +78,29 @@ G4VParticleChange* Reaction::PostStepDoIt(
           //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
           //and correct the momentum of the recoiling nucleus
           for(int i=0; i<nP; i++) //protons
-            {
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
-            }
+            if(i<MAXNUMEVAP) //check that the particle can be evaporated
+              {
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
+                aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+              }
+            else
+              killTrack=true; //this is no longer the desired reaction channel, kill it
           for(int i=0; i<nN; i++) //neutrons
-            {
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
-            }
+            if(i<MAXNUMEVAP) //check that the particle can be evaporated
+              {
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
+                aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+              }
+            else
+              killTrack=true; //this is no longer the desired reaction channel, kill it
           for(int i=0; i<nA; i++) //alphas
-            {
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
-            }
+            if(i<MAXNUMEVAP) //check that the particle can be evaporated
+              {
+                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
+                aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+              }
+            else
+              killTrack=true; //this is no longer the desired reaction channel, kill it
 
           //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
           //Otherwise, kill the track.
@@ -124,17 +111,17 @@ G4VParticleChange* Reaction::PostStepDoIt(
                 {
                   if((i<nP)&&(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle))
                     {
-                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
                       break;
                     }
                   if((i<nN)&&(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle))
                     {
-                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
                       break;
                     }
                   if((i<nA)&&(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle))
                     {
-                      goodEvapAngle=true;//at least one of the emitted particles satasifies the specified angular range
+                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
                       break;
                     }
                 }
@@ -155,12 +142,10 @@ G4VParticleChange* Reaction::PostStepDoIt(
           if(killTrack==true)
             aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
 
-      }
+        }
       
     }
-
-
-   
+  
   return &aParticleChange;
 }
 //-----------------------------------------------------------------
@@ -185,28 +170,28 @@ G4double Reaction::PostStepGetPhysicalInteractionLength(
       G4double ZCurrent=aTrack.GetPosition().getZ();
       G4double Z=ZReaction-ZCurrent;
       if(Z<0)
-	{
-	  // 	      G4cout<<" Past the reaction point"<<G4endl;
-	  // 	      G4cout<<" Volume "<<name<<G4endl;
-	  // 	      G4cout<<" Z[mm]: reaction "<<ZReaction/mm<<" current "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
-	  return DBL_MAX;
-	}
+	      {
+	        // 	      G4cout<<" Past the reaction point"<<G4endl;
+	        // 	      G4cout<<" Volume "<<name<<G4endl;
+	        // 	      G4cout<<" Z[mm]: reaction "<<ZReaction/mm<<" current "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
+	        return DBL_MAX;
+	      }
       if(Z>eps)
-	{
-	  G4ThreeVector dir=aTrack.GetDynamicParticle()->GetMomentumDirection();
-	      
-	  dir*=(ZReaction-ZCurrent);
-	  // 	      G4cout<<" Before the reaction point"<<G4endl;
-	  // 	      G4cout<<" Volume "<<name<<G4endl;
-	  // 	      G4cout<<" Z[mm]: reaction "<<ZReaction/mm<<" current "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
-	  return dir.mag();
-	}
+	      {
+	        G4ThreeVector dir=aTrack.GetDynamicParticle()->GetMomentumDirection();
+	            
+	        dir*=(ZReaction-ZCurrent);
+	        // 	      G4cout<<" Before the reaction point"<<G4endl;
+	        // 	      G4cout<<" Volume "<<name<<G4endl;
+	        // 	      G4cout<<" Z[mm]: reaction "<<ZReaction/mm<<" current "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
+	        return dir.mag();
+	      }
       if(Z<=eps)
-	{	   
-	  reaction_here=true;
-	  aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits()->SetUserMinRange(-DBL_MAX);
-	  return 0.;
-	}
+	      {	   
+	        reaction_here=true;
+	        aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits()->SetUserMinRange(-DBL_MAX);
+	        return 0.;
+	      }
     }
   
 
@@ -371,18 +356,5 @@ void Reaction::TargetFaceCrossSection()
   }
   //residual_pm->DumpInfo();
   //getc(stdin);
-
-}
-//---------------------------------------------------------------------
-void Reaction::AddEvaporation(G4String particle, G4double energy, G4double fwhm)
-{
-  evaporation *ev;
-  
-  ev=new evaporation;
-
-  ev->particle=particle;
-  ev->energy=energy;
-  ev->fwhm=fwhm;
-  history->push_back(*ev);
 
 }

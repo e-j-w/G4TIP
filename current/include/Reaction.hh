@@ -42,13 +42,6 @@ using namespace std;
 #define  MAXNUMEVAP 8
 #define  MAXNUMDISTS 2
 
-typedef struct
-{
-  G4String particle;
-  G4double energy;
-  G4double fwhm;
-} evaporation;
-
 class Reaction : public G4VProcess 
 {
   public:     
@@ -124,13 +117,16 @@ class Reaction : public G4VProcess
   void SetMaxAngle(G4double x){maxEvapAngle=x;};
   void SetMinAngle(G4double x){minEvapAngle=x;};
 
-  void AddEvaporation(G4String,G4double,G4double);
   void EvaporateWithMomentumCorrection(G4DynamicParticle*,G4DynamicParticle*,G4DynamicParticle*,G4ParticleDefinition*,G4double,G4double,G4ThreeVector);
   G4ThreeVector GetCMVelocity(const G4Track &);
   G4int GetNumberOfProtons(){return nP;};
   G4int GetNumberOfAlphas(){return nA;};
-  G4int GetNumberOfNeutrons(){return nN;}; 
- 
+  G4int GetNumberOfNeutrons(){return nN;};
+
+  G4DynamicParticle RecoilOut;
+  G4DynamicParticle EvapP [MAXNUMEVAP];
+  G4DynamicParticle EvapN [MAXNUMEVAP];
+  G4DynamicParticle EvapA [MAXNUMEVAP];
 
   private:
  
@@ -150,7 +146,7 @@ class Reaction : public G4VProcess
   G4double Egamma,tau;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
   G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi,rho,lambda,dExiShift; //excitation energy parameters
-  vector<evaporation> *history;
+  
   
   G4int  loopCounter;
 };

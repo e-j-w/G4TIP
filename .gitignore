@@ -4,6 +4,7 @@
 *.mca
 *.mac
 *.macro
+*.out
 1
 gnuplot*
 testfiles

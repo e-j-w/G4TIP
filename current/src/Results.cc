@@ -166,163 +166,162 @@ void Results::TreeAdd(G4String )
 void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,TrackerCsIHitsCollection* CsICollection,G4double gw[GN][GS],G4double ge[GN][GS],G4ThreeVector gp[GN][GS])
 {
 
- G4int Nt=IonCollection->entries();
+  G4int Nt=IonCollection->entries();
 
- memset(&eStat,0,soes);
- memset(&stat,0,sos);
- memset(&gun,0,soi);
- memset(&pTIn,0,soi);
- memset(&pRIn,0,soi);
- memset(&rROut,0,soi);
- memset(&rBIn,0,soi);
- memset(&rBOut,0,soi);
- memset(&partHit,0,soh);
- //memset(&GHit,0,sogh);
+  memset(&eStat,0,soes);
+  memset(&stat,0,sos);
+  memset(&gun,0,soi);
+  memset(&pTIn,0,soi);
+  memset(&pRIn,0,soi);
+  memset(&rROut,0,soi);
+  memset(&rBIn,0,soi);
+  memset(&rBOut,0,soi);
+  memset(&partHit,0,soh);
+  //memset(&GHit,0,sogh);
 
- if(Nt>0) 
-   {
-     //G4cout << "Saving ion collection data..." << G4endl; 
-     stat.evNb=evtNb;
-     stat.Ap=Ap;
-     stat.Zp=Zp;
+  if(Nt>0) 
+    {
+      //G4cout << "Saving ion collection data..." << G4endl; 
+      stat.evNb=evtNb;
+      stat.Ap=Ap;
+      stat.Zp=Zp;
  
-     for(Int_t i=0;i<Nt;i++)
-       switch((*IonCollection)[i]->GetFlag())
-	 {
-	 case GUN_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ap)
-	     if((*IonCollection)[i]->GetZ()==Zp)
-	       {
-		 gun.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 gun.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 gun.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 gun.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 gun.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 gun.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 gun.b=(*IonCollection)[i]->GetBeta();
-		 gun.E=(*IonCollection)[i]->GetKE()/MeV;
-		 gun.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 gun.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
-		 gun.w=(*IonCollection)[i]->GetWeight();
+      for(Int_t i=0;i<Nt;i++)
+        switch((*IonCollection)[i]->GetFlag())
+	        {
+	          case GUN_FLAG:
+	            if((*IonCollection)[i]->GetA()==Ap)
+	              if((*IonCollection)[i]->GetZ()==Zp)
+	                {
+		                gun.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                gun.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                gun.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                gun.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                gun.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                gun.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                gun.b=(*IonCollection)[i]->GetBeta();
+		                gun.E=(*IonCollection)[i]->GetKE()/MeV;
+		                gun.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                gun.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                gun.w=(*IonCollection)[i]->GetWeight();
+	               }
+	          break;
 
-	       }
-	   break;
+            case TARGET_IN_FLAG:
+	            if((*IonCollection)[i]->GetA()==Ap)
+	              if((*IonCollection)[i]->GetZ()==Zp)
+	                {
+		                pTIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                pTIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                pTIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                pTIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                pTIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                pTIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                pTIn.b=(*IonCollection)[i]->GetBeta();
+		                pTIn.E=(*IonCollection)[i]->GetKE()/MeV;
+		                pTIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                pTIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y	 
+		                pTIn.w=(*IonCollection)[i]->GetWeight();
+	                }
+	          break;
+            case BACKING_IN_FLAG:
+              if((*IonCollection)[i]->GetA()==Ar)
+                if((*IonCollection)[i]->GetZ()==Zr)
+                  {
+		                rBIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                rBIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                rBIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                rBIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                rBIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                rBIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                rBIn.b=(*IonCollection)[i]->GetBeta();
+		                rBIn.E=(*IonCollection)[i]->GetKE()/MeV;
+		                rBIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                rBIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y 
+		                rBIn.w=(*IonCollection)[i]->GetWeight();
+	                }
+            break;
+            case BACKING_OUT_FLAG:
+	            if((*IonCollection)[i]->GetA()==Ar)
+	              if((*IonCollection)[i]->GetZ()==Zr)
+	                {
+		                rBOut.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                rBOut.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                rBOut.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                rBOut.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                rBOut.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                rBOut.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                rBOut.b=(*IonCollection)[i]->GetBeta();
+		                rBOut.E=(*IonCollection)[i]->GetKE()/MeV;
+		                rBOut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                rBOut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                rBOut.w=(*IonCollection)[i]->GetWeight();
+	                }
+	          break;
 
-	 case TARGET_IN_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ap)
-	     if((*IonCollection)[i]->GetZ()==Zp)
-	       {
-		 pTIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 pTIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 pTIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 pTIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 pTIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 pTIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 pTIn.b=(*IonCollection)[i]->GetBeta();
-		 pTIn.E=(*IonCollection)[i]->GetKE()/MeV;
-		 pTIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 pTIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y	 
-		 pTIn.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
-	 case BACKING_IN_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ar)
-	     if((*IonCollection)[i]->GetZ()==Zr)
-	       {
-		 rBIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 rBIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 rBIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 rBIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 rBIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 rBIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 rBIn.b=(*IonCollection)[i]->GetBeta();
-		 rBIn.E=(*IonCollection)[i]->GetKE()/MeV;
-		 rBIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 rBIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y 
-		 rBIn.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
-	 case BACKING_OUT_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ar)
-	     if((*IonCollection)[i]->GetZ()==Zr)
-	       {
-		 rBOut.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 rBOut.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 rBOut.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 rBOut.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 rBOut.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 rBOut.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 rBOut.b=(*IonCollection)[i]->GetBeta();
-		 rBOut.E=(*IonCollection)[i]->GetKE()/MeV;
-		 rBOut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 rBOut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
-		 rBOut.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
+	          default:
+	            break;
+	        }
 
-	 default:
-	   break;
-	 }
+      for(Int_t i=0;i<Nt;i++)
+        switch((*IonCollection)[i]->GetPFlag())
+	        {
+	          case REACTION_IN_FLAG:
+	            if((*IonCollection)[i]->GetA()==Ap)
+	              if((*IonCollection)[i]->GetZ()==Zp)
+	                {
+		                pRIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                pRIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                pRIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                pRIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                pRIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                pRIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                pRIn.b=(*IonCollection)[i]->GetBeta();
+		                pRIn.E=(*IonCollection)[i]->GetKE()/MeV;
+		                pRIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                pRIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                pRIn.w=(*IonCollection)[i]->GetWeight();
+	                }
+	          break;
+	          case REACTION_OUT_FLAG:
+	            if((*IonCollection)[i]->GetA()==Ar)
+	              if((*IonCollection)[i]->GetZ()==Zr)
+	                {
+		                rROut.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                rROut.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                rROut.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                rROut.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                rROut.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                rROut.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                rROut.b=(*IonCollection)[i]->GetBeta();
+		                rROut.E=(*IonCollection)[i]->GetKE()/MeV;
+		                rROut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                rROut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                rROut.w=(*IonCollection)[i]->GetWeight();
+	                }
+	          break;
+	          case DECAY_FLAG:	   
+	            if((*IonCollection)[i]->GetA()==Ar)
+	              if((*IonCollection)[i]->GetZ()==Zr)
+	                {
+		                rDec.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                rDec.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                rDec.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                rDec.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                rDec.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                rDec.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                rDec.b=(*IonCollection)[i]->GetBeta();
+		                rDec.E=(*IonCollection)[i]->GetKE()/MeV;
+		                rDec.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                rDec.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                rDec.w=(*IonCollection)[i]->GetWeight();
+	                }
+	          break;
 
-    for(Int_t i=0;i<Nt;i++)
-       switch((*IonCollection)[i]->GetPFlag())
-	 {
-	 case REACTION_IN_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ap)
-	     if((*IonCollection)[i]->GetZ()==Zp)
-	       {
-		 pRIn.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 pRIn.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 pRIn.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 pRIn.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 pRIn.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 pRIn.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 pRIn.b=(*IonCollection)[i]->GetBeta();
-		 pRIn.E=(*IonCollection)[i]->GetKE()/MeV;
-		 pRIn.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 pRIn.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
-		 pRIn.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
-	 case REACTION_OUT_FLAG:
-	   if((*IonCollection)[i]->GetA()==Ar)
-	     if((*IonCollection)[i]->GetZ()==Zr)
-	       {
-		 rROut.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 rROut.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 rROut.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 rROut.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 rROut.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 rROut.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 rROut.b=(*IonCollection)[i]->GetBeta();
-		 rROut.E=(*IonCollection)[i]->GetKE()/MeV;
-		 rROut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 rROut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
-		 rROut.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
-	 case DECAY_FLAG:	   
-	   if((*IonCollection)[i]->GetA()==Ar)
-	     if((*IonCollection)[i]->GetZ()==Zr)
-	       {
-		 rDec.x=(*IonCollection)[i]->GetPos().getX()/mm;
-		 rDec.y=(*IonCollection)[i]->GetPos().getY()/mm;
-		 rDec.z=(*IonCollection)[i]->GetPos().getZ()/mm;
-		 rDec.px=(*IonCollection)[i]->GetMom().getX()/MeV;
-		 rDec.py=(*IonCollection)[i]->GetMom().getY()/MeV;
-		 rDec.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
-		 rDec.b=(*IonCollection)[i]->GetBeta();
-		 rDec.E=(*IonCollection)[i]->GetKE()/MeV;
-		 rDec.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
-		 rDec.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
-		 rDec.w=(*IonCollection)[i]->GetWeight();
-	       }
-	   break;
-
-	 default:
-	   break;
-	 }
-   }//end of ion collection entry saving
+	          default:
+	            break;
+	        }
+    }//end of ion collection entry saving
 
   partHit.CsIfold=0;
   memset(&partHit.x,0,sizeof(partHit.x));
