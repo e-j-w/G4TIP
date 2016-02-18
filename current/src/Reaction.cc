@@ -10,6 +10,8 @@ Reaction::Reaction(Projectile* Proj, const G4String& aName)
   proton=G4Proton::ProtonDefinition();
   neutron=G4Neutron::NeutronDefinition();
   alpha=G4Alpha::AlphaDefinition();
+  numDecays=0;
+  memset(Egamma,0,sizeof(Egamma));
   reaction_here=false;
 
   if (verboseLevel>1) {
@@ -23,7 +25,7 @@ Reaction::~Reaction()
   ;                                     
 }  
 //---------------------------------------------------------------------
-G4Decay Reaction::decay;                                    
+//G4Decay Reaction::decay;                                    
 //---------------------------------------------------------------------
 G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
 {
@@ -36,12 +38,15 @@ G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
   G4DynamicParticle* EvapN [MAXNUMEVAP];
   G4DynamicParticle* EvapA [MAXNUMEVAP];
   RecoilOut =new G4DynamicParticle();
-  for(int i=0; i<MAXNUMEVAP; i++)
-    {
+  for(int i=0; i<nP; i++) //protons
+    if(i<MAXNUMEVAP)
       EvapP[i]=new G4DynamicParticle();
+  for(int i=0; i<nN; i++) //neutrons
+    if(i<MAXNUMEVAP)
       EvapN[i]=new G4DynamicParticle();
+  for(int i=0; i<nA; i++) //alphas
+    if(i<MAXNUMEVAP)
       EvapA[i]=new G4DynamicParticle();
-    }
 
 
   if(reaction_here)
@@ -69,80 +74,80 @@ G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
           totalEvapdeltaExi+=evapdeltaExi[i];
       if(totalEvapdeltaExi>initExi) //not physically possible!
         killTrack=true;
-        
-      if(SetupReactionProducts(aTrack,RecoilOut))
-	      {
-	        aParticleChange.ProposeTrackStatus(fStopAndKill);
-          aParticleChange.SetNumberOfSecondaries(1+nP+nN+nA);
+      
+      if(killTrack==false)  
+        if(SetupReactionProducts(aTrack,RecoilOut))
+	        {
+	          aParticleChange.ProposeTrackStatus(fStopAndKill);
+            aParticleChange.SetNumberOfSecondaries(1+nP+nN+nA);
 
-          //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
-          //and correct the momentum of the recoiling nucleus
-          for(int i=0; i<nP; i++) //protons
-            if(i<MAXNUMEVAP) //check that the particle can be evaporated
-              {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
-                aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else
-              killTrack=true; //this is no longer the desired reaction channel, kill it
-          for(int i=0; i<nN; i++) //neutrons
-            if(i<MAXNUMEVAP) //check that the particle can be evaporated
-              {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
-                aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else
-              killTrack=true; //this is no longer the desired reaction channel, kill it
-          for(int i=0; i<nA; i++) //alphas
-            if(i<MAXNUMEVAP) //check that the particle can be evaporated
-              {
-                EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
-                aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-              }
-            else
-              killTrack=true; //this is no longer the desired reaction channel, kill it
-
-          //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
-          //Otherwise, kill the track.
-          if(constrainedAngle==true)
-            {
-              G4bool goodEvapAngle=false;
-              for(int i=0; i<MAXNUMEVAP; i++) //alphas
+            //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
+            //and correct the momentum of the recoiling nucleus
+            for(int i=0; i<nP; i++) //protons
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
                 {
-                  if((i<nP)&&(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle))
-                    {
-                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                      break;
-                    }
-                  if((i<nN)&&(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle))
-                    {
-                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                      break;
-                    }
-                  if((i<nA)&&(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)&&(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle))
-                    {
-                      goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                      break;
-                    }
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
+                  aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
                 }
-              if(goodEvapAngle==false)
-                killTrack=true;
-            }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
+            for(int i=0; i<nN; i++) //neutrons
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
+                {
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
+                  aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
+            for(int i=0; i<nA; i++) //alphas
+              if(i<MAXNUMEVAP) //check that the particle can be evaporated
+                {
+                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
+                  aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+                }
+              else
+                killTrack=true; //this is no longer the desired reaction channel, kill it
 
-          //generate the residual nucleus
-          RecoilOut->SetDefinition(residual); //give the residual the gamma decay process specified in TargetFaceCrossSection()
-	        aParticleChange.AddSecondary(RecoilOut,posIn,true);
+            //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
+            //Otherwise, kill the track.
+            if((constrainedAngle==true)&&(killTrack==false))
+              {
+                G4bool goodEvapAngle=false;
+                for(int i=0; i<nP; i++)
+                  if(goodEvapAngle==false)
+                    if(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+                      if(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+                for(int i=0; i<nN; i++)
+                  if(goodEvapAngle==false)
+                    if(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+                      if(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+                for(int i=0; i<nA; i++)
+                  if(goodEvapAngle==false)    
+                    if(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+                      if(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+                if(goodEvapAngle==false)
+                  killTrack=true;
+              }
+            
+            if(killTrack==false)
+              {
+                //generate the residual nucleus
+                RecoilOut->SetDefinition(residual[0]); //give the residual the gamma decay process specified in TargetFaceCrossSection()
+	              aParticleChange.AddSecondary(RecoilOut,posIn,true);
 
-          //debug
-          //G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
-          //G4cout << "Residual KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
-          //G4cout << "Residual A: " << RecoilOut->GetMass()/931.5 << ", Residual Z: " << RecoilOut->GetCharge() <<G4endl;
-
-          //get rid of the track if neccessary
-          if(killTrack==true)
-            aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
-
-        }
+                //debug
+                //G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
+                //G4cout << "Residual KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
+                //G4cout << "Residual A: " << RecoilOut->GetMass()/931.5 << ", Residual Z: " << RecoilOut->GetCharge() <<G4endl;
+              }
+          }
+        
+      //get rid of the track if neccessary
+      if(killTrack==true)
+        aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
       
     }
   
@@ -313,48 +318,110 @@ G4ThreeVector Reaction::GetCMVelocity(const G4Track & aTrack)
 //---------------------------------------------------------
 void Reaction::TargetFaceCrossSection()
 {
+  G4cout << "---------- SETUP OF DECAY PRODUCTS ----------" << G4endl;
+  
+  numDecays=1;//adding gammas to cascade doesn't work?
+  //AddDecay(2.0,0.001);
+  //AddDecay(3.0,0.001);
+  //Eexcit=0.;
+  for(int i=0;i<numDecays;i++)
+    Eexcit+=Egamma[i];
+  //G4cout << "Total excitation of residual nucleus: " << Eexcit/keV << " keV, number of decays: " << numDecays << G4endl;
+  //getc(stdin);
 
   G4int DA=0,DZ=0;
   A1=theProjectile->getA();
   Z1=theProjectile->getZ(); 
   
-  //set properties of the compound (which we assume does not gamma decay) 
+  //set properties of the compound (which we assume does not gamma decay)
   compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
 
   //set properties (including gamma decay processes) of the residual
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
-  residual=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Egamma);
+  residual[0]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);//setting excitation to Esum doesn't work?
   
-  /*G4IonParametrisedLossModel* theModel= new G4IonParametrisedLossModel(); // ICRU 73 based model, valid for Z = 3 to 26
-  theModel->RemoveDEDXTable("ICRU73");
-  theModel->AddDEDXTable("SRIM",new G4IonStoppingData("ion_stopping_data/SRIM"),new G4IonDEDXScalingICRU73());
-  G4NistManager* man = G4NistManager::Instance();
-	theModel->PrintDEDXTable(G4ParticleTable::GetParticleTable()->GetIon(10,22,Egamma),man->FindOrBuildMaterial("G4_Au"), 0.1/MeV, 10./MeV, 100, false);
-  getc(stdin);*/
+  tau[0]=0.000050;//for testing
   
-  residual->SetPDGStable(false);
-  residual->SetPDGLifeTime(tau);
-  G4cout << "Decay lifetime of the residual species: " << tau << " ns, gamma energy " << Egamma << " MeV." <<G4endl;
-  G4DecayTable *ResDecTab = residual->GetDecayTable(); 
-  if (ResDecTab == NULL) {
-    ResDecTab = new G4DecayTable();
-    residual->SetDecayTable(ResDecTab);
+  residual[0]->SetPDGStable(false);
+  residual[0]->SetPDGLifeTime(tau[0]);
+  G4cout << "Decay lifetime of the residual species: " << tau[0] << " ns, gamma energy " << Egamma[0]/keV << " keV." <<G4endl;
+  G4DecayTable *ResDecTab[MAXNUMDECAYS]; 
+  ResDecTab[0] = residual[0]->GetDecayTable(); 
+  if (ResDecTab[0] == NULL) {
+    ResDecTab[0] = new G4DecayTable();
+    residual[0]->SetDecayTable(ResDecTab[0]);
   }
-  GammaDecayChannel *ResDec = new GammaDecayChannel(-1,residual,1,Egamma);
-  ResDecTab->Insert(ResDec);
+  GammaDecayChannel *ResDec[MAXNUMDECAYS];
+  ResDec[0] = new GammaDecayChannel(-1,residual[0],1,Egamma[0],Eexcit);
+  ResDecTab[0]->Insert(ResDec[0]);
   //RecDecTab->DumpInfo();
   // make sure that the residual has the decay process in its manager
-  G4ProcessManager *residual_pm = residual->GetProcessManager();
-  if (residual_pm == NULL) {
-    G4cerr << "Could not find process manager for the residual nucleus." << G4endl;
+  G4ProcessManager *residual_pm[MAXNUMDECAYS];
+  residual_pm[0] = residual[0]->GetProcessManager();
+  if (residual_pm[0] == NULL) {
+    G4cerr << "Could not find process manager for the (initial) residual nucleus." << G4endl;
     exit(EXIT_FAILURE);
   }
-  if (residual_pm->GetProcessActivation(&decay) == false) {
+  G4Decay *decay[MAXNUMDECAYS];
+  decay[0] = new G4Decay();
+  if (residual_pm[0]->GetProcessActivation(decay[0]) == false) {
     G4cout<<"-> adding the residual nucleus decay process."<<G4endl;
-    residual_pm->AddProcess(&decay,1,-1,5);
+    residual_pm[0]->AddProcess(decay[0],1,-1,5);
   }
+  
+  
+  /*//set up cascade
+  for(int i=1;i<numDecays;i++)
+    {
+      Eexcit-=Egamma[i-1];
+      residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
+      
+      residual[i]->SetPDGStable(false);
+      residual[i]->SetPDGLifeTime(tau[i]);
+      
+      G4cout << "Step "<< i+1 <<" of the cascade - residual lifetime: " << residual[i]->GetPDGLifeTime()/ns << " ns, remaining excitation energy: " << ResDec[i-1]->GetDaughterExcitation()/keV << " keV, gamma decay energy: " << Egamma[i]/keV << " keV." << G4endl;
+      getc(stdin);
+      
+      ResDecTab[i] = residual[i]->GetDecayTable();
+      if(ResDecTab[i]==NULL)
+        {
+          ResDecTab[i] = new G4DecayTable();
+          residual[i]->SetDecayTable(ResDecTab[i]);
+        }
+      ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);
+      ResDecTab[i]->Insert(ResDec[i]);
+      
+      residual_pm[i] = residual[i]->GetProcessManager();
+      if (residual_pm[i] == NULL) {
+        G4cerr << "Could not find process manager for gamma cascade step " << i << " of the residual nucleus." << G4endl;
+        exit(EXIT_FAILURE);
+      }
+      decay[i] = new G4Decay();
+      if (residual_pm[i]->GetProcessActivation(decay[i]) == false) {
+        G4cout<<"-> adding the residual nucleus decay process for step "<< i <<" of the cascade."<<G4endl;
+        residual_pm[i]->AddProcess(decay[i],1,-1,5);
+      }
+      
+    }*/
+
   //residual_pm->DumpInfo();
   //getc(stdin);
 
+}
+//---------------------------------------------------------
+//Adds a decay to the residual nucleus gamma cascade.  Must be called before TargetFaceCrossSection()
+void Reaction::AddDecay(G4double E,G4double T)
+{
+  if(numDecays<MAXNUMDECAYS)
+    {
+      Egamma[numDecays]=E;
+      tau[numDecays]=T;
+      numDecays++;
+    }
+  else
+    {
+      G4cout << "WARNING: Too many gammas added to the residual nucleus cascade, maximum number is " << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
+      getc(stdin);
+    }
 }

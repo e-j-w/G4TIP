@@ -39,8 +39,9 @@
 using namespace std;
 
 #define  eps 0.00001
-#define  MAXNUMEVAP 8
+#define  MAXNUMEVAP 2
 #define  MAXNUMDISTS 2
+#define  MAXNUMDECAYS 5
 
 class Reaction : public G4VProcess 
 {
@@ -96,8 +97,8 @@ class Reaction : public G4VProcess
   void TargetFaceCrossSection();
   void SetTargetMassAndCharge(G4double At,G4double Zt){A2=At;Z2=Zt;};
   void SetEvaporationChannel(G4int n, G4int p, G4int a){nN=n;nP=p;nA=a;};
-  void SetEgamma(G4double Eg){Egamma=Eg;};
-  void SetTau(G4double t){tau=t;};
+  void SetEgamma(G4double Eg){Egamma[0]=Eg;};
+  void SetTau(G4double t){tau[0]=t;};
   void SetNumberOfProtons(G4int p){nP=p;};
   void SetNumberOfAlphas(G4int a){nA=a;};
   void SetNumberOfNeutrons(G4int n){nN=n;};
@@ -122,6 +123,8 @@ class Reaction : public G4VProcess
   G4int GetNumberOfProtons(){return nP;};
   G4int GetNumberOfAlphas(){return nA;};
   G4int GetNumberOfNeutrons(){return nN;};
+  
+  void AddDecay(G4double,G4double);
 
   G4DynamicParticle RecoilOut;
   G4DynamicParticle EvapP [MAXNUMEVAP];
@@ -133,7 +136,7 @@ class Reaction : public G4VProcess
   Projectile *theProjectile;
 
   G4ParticleDefinition* compound; //the nucleus formed directly after beam-target reaction
-  G4ParticleDefinition* residual; //the residual nucleus after particles have evaporated from the compund nucleus
+  G4ParticleDefinition* residual[MAXNUMDECAYS]; //the residual nucleus after particles have evaporated from the compund nucleus (indexed by position on the gamma cascade)
   G4ParticleDefinition* proton,*alpha,*neutron;
   G4bool killTrack;
   static G4Decay decay;
@@ -143,7 +146,8 @@ class Reaction : public G4VProcess
   G4int  maxNumEvap;
   G4bool constrainedAngle; //whether to constrain direction of emitted particles
   G4double maxEvapAngle, minEvapAngle; //at least one evaporated particle must be in this angular range with respect to the beam axis
-  G4double Egamma,tau;
+  G4double Egamma[MAXNUMDECAYS],tau[MAXNUMDECAYS],Eexcit;
+  G4int numDecays;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
   G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi,rho,lambda,dExiShift; //excitation energy parameters
   

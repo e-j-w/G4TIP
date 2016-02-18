@@ -61,8 +61,6 @@ class EventAction : public G4UserEventAction
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
   G4double      CsIThreshold;
   G4int         CsIIDTrigger;
-  TrackerCsIHitsCollection* CsI;
-  TrackerIonHitsCollection* HI;
   
 
   // Info for CsI trigger

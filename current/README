@@ -1,0 +1,8 @@
+TIP Fusion-Evaporation DSAM GEANT4 Code
+Maintainer: Jonathan Williams
+
+Tested with GEANT4.9.4 on Scientific Linux 6, Ubuntu 14.04, and Ubuntu 15.10.
+
+Acknowledgements
+K. Starosta - Initial TIP codebase.
+C. Morse - Finding and fixing memory leaks.

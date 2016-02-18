@@ -33,7 +33,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   G4double DE = - aStep->GetDeltaEnergy();
   if(DE<0.001*eV) return false;
 
-  G4Track* theTrack=new G4Track();
+  G4Track* theTrack;
   theTrack=aStep->GetTrack();
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();

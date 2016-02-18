@@ -35,7 +35,7 @@ G4bool TrackerPINSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   G4double DE = - aStep->GetDeltaEnergy();
   if(DE<0.001*eV) return false;
 
-  G4Track* theTrack=new G4Track();
+  G4Track* theTrack;
   theTrack=aStep->GetTrack();
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();
@@ -48,8 +48,8 @@ G4bool TrackerPINSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
       strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
       sscanf(name,"%s %s %s",s1,s2,s3);
 
-      G4StepPoint*   vi=new G4StepPoint();
-      G4StepPoint*   vf=new G4StepPoint();
+      G4StepPoint*   vi;
+      G4StepPoint*   vf;
 
       vi=aStep->GetPreStepPoint(); 
       vf=aStep->GetPostStepPoint(); 

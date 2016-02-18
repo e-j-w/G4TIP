@@ -18,11 +18,11 @@ class GammaDecayChannel : public G4NuclearDecayChannel
   public:
     GammaDecayChannel (G4int Verbose,
                       const G4ParticleDefinition *theParentNucleus,
-                      G4double theBR, G4double Egamma) :
+                      G4double theBR, G4double Egamma,G4double EexcitInitial) :
       G4NuclearDecayChannel (IT, Verbose, theParentNucleus, theBR, Egamma,
 			     theParentNucleus->GetBaryonNumber(),
 			     int(theParentNucleus->GetPDGCharge()/eplus),
-			     0,"gamma")
+			     EexcitInitial-Egamma,"gamma")
     {
 #ifdef G4VERBOSE
       if (GetVerboseLevel()>1)

@@ -2,7 +2,6 @@
 
  
 EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE),run_action(RA),theProjectile(proj)
-//EventAction::EventAction(Results* RE,RunAction* RA):results(RE),run_action(RA)
 { 
 
   ionCollectionID=-1;
@@ -16,8 +15,6 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   SetTriggerParticleSing();
   CsIThreshold=2*MeV;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
-  CsI=new TrackerCsIHitsCollection();
-  HI=new TrackerIonHitsCollection();
 }
 
 
@@ -54,7 +51,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 
   G4int evtNb=evt->GetEventID();
 
-  if (evtNb%1000 == 0) 
+  if (evtNb%100 == 0) 
     {
       gettimeofday(&tc,NULL);
       ts=run_action->GetStartTime();
@@ -68,6 +65,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   one=1;
   eventTrigger=1;
   G4int Np;
+
+  TrackerCsIHitsCollection* CsI;
+  TrackerIonHitsCollection* HI;
 
   numP=run_action->GetNumberOfProtons();
   numN=run_action->GetNumberOfNeutrons();
