@@ -33,7 +33,7 @@ void TrackerIonHit::Draw()
 void TrackerIonHit::Print()
 {
 
-  G4cout << std::setw(2)<< std::right <<flag<<" "<<pflag<<" "
+  G4cout << std::setw(2) << ionName << std::setw(2)<< std::right <<flag<<" "<<pflag<<" "
    	     << std::setw(2)<< A<<" "
 	  << std::setw(2)<< Z<<" "<<std::setw(7)
 	  << std::setprecision(2)

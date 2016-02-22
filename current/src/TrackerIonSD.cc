@@ -35,12 +35,14 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
   G4Track* theTrack;
   theTrack=aStep->GetTrack();
+
   
   G4StepPoint*   vi;
   G4StepPoint*   vf;
 
   const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
   const G4String type =  aParticle->GetDefinition()->GetParticleType();
+  const G4String particleName =  aParticle->GetDefinition()->GetParticleName();
   const G4double len=aStep->GetStepLength();
 
   G4String pName;
@@ -65,6 +67,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	            {
 		            newIonHitI->SetReactionOutFlag();
 	            }
+	        newIonHitI->SetIonName(particleName);
 	        newIonHitI->SetVolName(vname);
 	        newIonHitI->SetBeta(vi->GetBeta());
 	        newIonHitI->SetKE(vi->GetKineticEnergy());
@@ -87,6 +90,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	          newIonHitF->SetDecayFlag();
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Reaction")
 	          newIonHitF->SetReactionInFlag();
+	        newIonHitF->SetIonName(particleName);
 	        newIonHitF->SetVolName(vname);
 	        newIonHitF->SetBeta(vf->GetBeta());
 	        newIonHitF->SetKE(vf->GetKineticEnergy());
@@ -148,7 +152,7 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
           G4cout<<G4endl;
           G4cout << "-------->Hits Collection: in this event there are " << NbHits << " hits for ion tracking: " << G4endl;
 
-          G4cout << " F  A  Z  KE/MeV   beta" <<" "
+          G4cout << "name     F  A  Z  KE/MeV   beta" <<" "
             << std::setw(9)<<std::fixed
             <<std::setprecision(4)<<std::right	 
             <<" X/mm " <<" "<<std::setw(9)<<std::right

@@ -25,7 +25,8 @@ class Reaction_Messenger: public G4UImessenger
     G4UIdirectory*      theReactionDir;
    
     G4UIcmdWithADoubleAndUnit* TauCmd;
-    G4UIcmdWithADoubleAndUnit* EneCmd; 
+    G4UIcmdWithADoubleAndUnit* EneCmd;
+    G4UIcmdWithAString* ADecCmd;
     G4UIcmdWithAnInteger*      NNCmd;
     G4UIcmdWithAnInteger*      NPCmd;
     G4UIcmdWithAnInteger*      NACmd;

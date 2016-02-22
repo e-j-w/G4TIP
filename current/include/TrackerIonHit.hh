@@ -44,6 +44,7 @@ class TrackerIonHit : public G4VHit
       void SetMom      (G4ThreeVector xyz){ p = xyz; };
       void SetGunFlag(){flag=GUN_FLAG;}
       void SetVolName(G4String name){volumeName=name;};
+      void SetIonName(G4String name){ionName=name;};
       void SetFlagZero(){flag=0;}
       void SetDecayFlag(){pflag=DECAY_FLAG;}
       void SetReactionInFlag(){pflag=REACTION_IN_FLAG;}
@@ -62,6 +63,7 @@ class TrackerIonHit : public G4VHit
       G4int    GetFlag(){return flag;}
       G4int    GetPFlag(){return pflag;}
       G4String GetVolName(){return volumeName;};
+      G4String GetIonName(){return ionName;};
   private:
       G4int         A;
       G4int         Z;
@@ -73,6 +75,7 @@ class TrackerIonHit : public G4VHit
       G4int         flag;
       G4int         pflag;
       G4String      volumeName;
+      G4String      ionName;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

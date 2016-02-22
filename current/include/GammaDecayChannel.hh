@@ -28,8 +28,12 @@ class GammaDecayChannel : public G4NuclearDecayChannel
       if (GetVerboseLevel()>1)
          G4cout <<"GammaDecayChannel constructor" << G4endl;
 #endif
+      E=Egamma;
     }
     ~GammaDecayChannel () {;}
+    
+    G4double GetEGamma(){return E;}
+    G4double E;
 };
 #endif
 

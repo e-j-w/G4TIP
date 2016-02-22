@@ -320,14 +320,9 @@ void Reaction::TargetFaceCrossSection()
 {
   G4cout << "---------- SETUP OF DECAY PRODUCTS ----------" << G4endl;
   
-  numDecays=1;//adding gammas to cascade doesn't work?
-  //AddDecay(2.0,0.001);
-  //AddDecay(3.0,0.001);
-  //Eexcit=0.;
+  Eexcit=0.;
   for(int i=0;i<numDecays;i++)
     Eexcit+=Egamma[i];
-  //G4cout << "Total excitation of residual nucleus: " << Eexcit/keV << " keV, number of decays: " << numDecays << G4endl;
-  //getc(stdin);
 
   G4int DA=0,DZ=0;
   A1=theProjectile->getA();
@@ -336,77 +331,60 @@ void Reaction::TargetFaceCrossSection()
   //set properties of the compound (which we assume does not gamma decay)
   compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
 
-  //set properties (including gamma decay processes) of the residual
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
-  residual[0]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);//setting excitation to Esum doesn't work?
   
-  tau[0]=0.000050;//for testing
-  
-  residual[0]->SetPDGStable(false);
-  residual[0]->SetPDGLifeTime(tau[0]);
-  G4cout << "Decay lifetime of the residual species: " << tau[0] << " ns, gamma energy " << Egamma[0]/keV << " keV." <<G4endl;
-  G4DecayTable *ResDecTab[MAXNUMDECAYS]; 
-  ResDecTab[0] = residual[0]->GetDecayTable(); 
-  if (ResDecTab[0] == NULL) {
-    ResDecTab[0] = new G4DecayTable();
-    residual[0]->SetDecayTable(ResDecTab[0]);
-  }
+  G4DecayTable *ResDecTab[MAXNUMDECAYS];
   GammaDecayChannel *ResDec[MAXNUMDECAYS];
-  ResDec[0] = new GammaDecayChannel(-1,residual[0],1,Egamma[0],Eexcit);
-  ResDecTab[0]->Insert(ResDec[0]);
-  //RecDecTab->DumpInfo();
-  // make sure that the residual has the decay process in its manager
   G4ProcessManager *residual_pm[MAXNUMDECAYS];
-  residual_pm[0] = residual[0]->GetProcessManager();
-  if (residual_pm[0] == NULL) {
-    G4cerr << "Could not find process manager for the (initial) residual nucleus." << G4endl;
-    exit(EXIT_FAILURE);
-  }
   G4Decay *decay[MAXNUMDECAYS];
-  decay[0] = new G4Decay();
-  if (residual_pm[0]->GetProcessActivation(decay[0]) == false) {
-    G4cout<<"-> adding the residual nucleus decay process."<<G4endl;
-    residual_pm[0]->AddProcess(decay[0],1,-1,5);
-  }
   
-  
-  /*//set up cascade
-  for(int i=1;i<numDecays;i++)
-    {
-      Eexcit-=Egamma[i-1];
-      residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
-      
-      residual[i]->SetPDGStable(false);
-      residual[i]->SetPDGLifeTime(tau[i]);
-      
-      G4cout << "Step "<< i+1 <<" of the cascade - residual lifetime: " << residual[i]->GetPDGLifeTime()/ns << " ns, remaining excitation energy: " << ResDec[i-1]->GetDaughterExcitation()/keV << " keV, gamma decay energy: " << Egamma[i]/keV << " keV." << G4endl;
-      getc(stdin);
-      
-      ResDecTab[i] = residual[i]->GetDecayTable();
-      if(ResDecTab[i]==NULL)
-        {
-          ResDecTab[i] = new G4DecayTable();
-          residual[i]->SetDecayTable(ResDecTab[i]);
+  //set properties (including gamma decay processes) of the residual species in the cascade
+  if(numDecays>0)
+    for(int i=0;i<numDecays;i++)
+      {
+        
+        //define the residual species
+        if(i==0)
+          residual[0]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit); //define the initial residual
+        else
+            residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
+        
+        residual[i]->SetPDGStable(false);
+        residual[i]->SetPDGLifeTime(tau[i]);
+        
+        //set up gamma decay channel
+        ResDecTab[i] = new G4DecayTable();
+        residual[i]->SetDecayTable(ResDecTab[i]);
+        ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);      
+        ResDecTab[i]->Insert(ResDec[i]);
+        
+        //make sure that the residual has the decay process in its manager
+        residual_pm[i] = residual[i]->GetProcessManager();
+        if (residual_pm[i] == NULL) {
+          G4cerr << "Could not find process manager for gamma cascade step " << i+1 << " of the residual nucleus." << G4endl;
+          exit(EXIT_FAILURE);
         }
-      ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);
-      ResDecTab[i]->Insert(ResDec[i]);
-      
-      residual_pm[i] = residual[i]->GetProcessManager();
-      if (residual_pm[i] == NULL) {
-        G4cerr << "Could not find process manager for gamma cascade step " << i << " of the residual nucleus." << G4endl;
-        exit(EXIT_FAILURE);
+        decay[i] = new G4Decay();
+        if (residual_pm[i]->GetProcessActivation(decay[i]) == false) {
+          G4cout<<"-> adding the residual nucleus decay process for step "<< i+1 <<" of the cascade."<<G4endl;
+          residual_pm[i]->AddProcess(decay[i],1,-1,5);
+        }
+        
+        //Print info
+        //ResDecTab[i]->DumpInfo();
+        //residual_pm[i]->DumpInfo();
+        G4cout << "STEP " << i+1 << " OF THE CASCADE" << G4endl << "Residual lifetime: " << residual[i]->GetPDGLifeTime()/ns << " ns" << G4endl << "Initial excitation energy: " << ((G4Ions*)residual[i])->GetExcitationEnergy()/keV << " keV" << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma()/keV << " keV" << G4endl << "Final excitation energy: " << ResDec[i]->GetDaughterExcitation()/keV << " keV" << G4endl;
+        
+        Eexcit-=Egamma[i];//modify total excitation energy for the next residual species     
       }
-      decay[i] = new G4Decay();
-      if (residual_pm[i]->GetProcessActivation(decay[i]) == false) {
-        G4cout<<"-> adding the residual nucleus decay process for step "<< i <<" of the cascade."<<G4endl;
-        residual_pm[i]->AddProcess(decay[i],1,-1,5);
-      }
-      
-    }*/
+  else
+    {
+      G4cout << "No decay process specified for the residual nucleus!" << G4endl;
+      residual[0]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+    }
 
-  //residual_pm->DumpInfo();
-  //getc(stdin);
+  G4cout << "---------- END OF DECAY PRODUCT SETUP ----------" << G4endl;
 
 }
 //---------------------------------------------------------

@@ -23,15 +23,19 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   NNCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   EneCmd = new G4UIcmdWithADoubleAndUnit("/Reaction/E_gamma",this);
-  EneCmd->SetGuidance("Gamma ray energy for the simulated transition.");
+  EneCmd->SetGuidance("(DEPRECATED, use /Reaction/AddDecay) Gamma ray energy for the simulated transition.");
   EneCmd->SetParameterName("E_gamma",false);
   EneCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
  
   TauCmd = new G4UIcmdWithADoubleAndUnit("/Reaction/Tau",this);
-  TauCmd->SetGuidance("Lifetime for the simulated transition.");
+  TauCmd->SetGuidance("(DEPRECATED, use /Reaction/AddDecay) Lifetime for the simulated transition.");
   TauCmd->SetParameterName("Tau",false);
   TauCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  ADecCmd = new G4UIcmdWithAString("/Reaction/AddDecay",this);
+  ADecCmd->SetGuidance("Adds a transition to the residual nucleus.  Format: '/Reaction/AddDecay ENERGY LIFETIME', with ENERGY in MeV, LIFETIME in ns.");
+  ADecCmd->SetParameterName("Tau",false);
+  ADecCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   theCompoundDir = new G4UIdirectory("/CompoundFormation/");
   theCompoundDir->SetGuidance("Beam-target reaction parameters.");
@@ -98,6 +102,7 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  theReactionDir;
   delete  EneCmd;
   delete  TauCmd;
+  delete  ADecCmd;
   delete  NPCmd;
   delete  NACmd;
   delete  NNCmd;
@@ -137,6 +142,19 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == TauCmd )
     { theReaction->SetTau(TauCmd->GetNewDoubleValue(newValue));}
 
+  if( command == ADecCmd )
+    {
+      G4double E,T;
+      if(sscanf(newValue,"%lf %lf",&E,&T)==2)
+        {
+          theReaction->AddDecay(E,T);
+        }
+      else
+        {
+          G4cerr << "Reaction Messenger: Incorrect parameters for command /Reaction/AddDecay.  Aborting." << G4endl;
+          exit(EXIT_FAILURE);
+        }
+    }
 
   if( command == QCmd )
     { theReaction->SetRxnQ(QCmd->GetNewDoubleValue(newValue));}

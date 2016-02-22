@@ -3,6 +3,11 @@ Maintainer: Jonathan Williams
 
 Tested with GEANT4.9.4 on Scientific Linux 6, Ubuntu 14.04, and Ubuntu 15.10.
 
+Reimplemented GEANT4 classes:
+G4IonParametrisedLossModel (GEANT4.9.4) - reimplemented as G4IonCustomModel to allow for user defined stopping powers
+G4IonStoppingData (GEANT4.9.4) - reimplemented as G4IonCustomStoppingData to allow for user defined stopping powers
+G4NuclearDecayChannel (GEANT4.9.4) - minimally modified to allow gamma cascades
+
 Acknowledgements
 K. Starosta - Initial TIP codebase.
 C. Morse - Finding and fixing memory leaks.
