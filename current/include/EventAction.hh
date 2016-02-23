@@ -31,7 +31,7 @@ class EventAction : public G4UserEventAction
    ~EventAction();
   void BeginOfEventAction(const G4Event*);
   void EndOfEventAction(const G4Event*);
-  void AddGriffinCrystDet(G4double, G4double,G4ThreeVector, G4int, G4int);
+  void AddGriffinCrystDet(G4double, G4double, G4ThreeVector, G4int, G4int, G4double);
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
@@ -56,6 +56,7 @@ class EventAction : public G4UserEventAction
   G4double      GriffinCrystEnergyDet[16][4];
   G4double      GriffinCrystWeightDet[16][4];
   G4ThreeVector GriffinCrystPosDet[16][4];
+  G4double      GriffinCrystTimeDet[16][4];
   G4int         GriffinFold;
   size_t        soa,sov,soc,soi;
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;

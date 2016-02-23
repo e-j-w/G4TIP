@@ -160,7 +160,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	            for(G4int cry=0;cry<4;cry++)
 	              if( GriffinCrystEnergyDet[det][cry]>0)
 		              GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
-	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet);
+	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet);
           //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
         }
 
@@ -168,7 +168,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
     // getc(stdin);
 }
 //*********************************************************************//
-void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry) 
+void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry, G4double t) 
 {
   if(GriffinCrystDisabled[det][cry]==1)
     return;//don't do anything if the crystal is disabled
@@ -179,6 +179,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
       GriffinCrystWeightDet[det][cry]=w;
       GriffinCrystEnergyDet[det][cry]=de;
       GriffinCrystPosDet[det][cry]=de*pos;
+      GriffinCrystTimeDet[det][cry]=t;
       GriffinFold++;
       return;
     }

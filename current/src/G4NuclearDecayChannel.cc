@@ -183,6 +183,9 @@ G4NuclearDecayChannel::G4NuclearDecayChannel
 void G4NuclearDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
   G4double theDaughterExcitation)
 {
+  //J. Williams: get rid of rounding errors resulting in negative numbers
+  if((theDaughterExcitation<0.0)&&(theDaughterExcitation>-0.00001))
+    theDaughterExcitation=0.0;
   //
   //
   // Determine if the proposed daughter nucleus has a sensible A, Z and excitation
@@ -354,8 +357,9 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // f.lei (03/01/03) this is needed to fix the crach in test18 
       if (finalDaughterExcitation <= 1.0*keV) finalDaughterExcitation = 0 ;
       
-      // f.lei (07/03/05) added the delete to fix bug#711
-      /*if (dynamicDaughter) delete dynamicDaughter;
+      //J. Williams: commented out since this breaks cascades
+      /*// f.lei (07/03/05) added the delete to fix bug#711
+      if (dynamicDaughter) delete dynamicDaughter;
       
       G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
       dynamicDaughter = new G4DynamicParticle

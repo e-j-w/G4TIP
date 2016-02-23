@@ -76,6 +76,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        newIonHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
 	        newIonHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
 	        newIonHitI->SetWeight(aStep->GetTrack()->GetWeight());
+	        newIonHitI->SetTime(vi->GetGlobalTime());
 	        newIonHitI->Draw();
 	        ionCollection->insert(newIonHitI);
         }
@@ -99,6 +100,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        newIonHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
 	        newIonHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
 	        newIonHitF->SetWeight(aStep->GetTrack()->GetWeight());
+	        newIonHitF->SetTime(vf->GetGlobalTime());
 	        newIonHitF->Draw();
 	        ionCollection->insert(newIonHitF);
         }
@@ -152,7 +154,7 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
           G4cout<<G4endl;
           G4cout << "-------->Hits Collection: in this event there are " << NbHits << " hits for ion tracking: " << G4endl;
 
-          G4cout << "name     F  A  Z  KE/MeV   beta" <<" "
+          G4cout << "name         F   A   Z  KE/MeV   beta" <<" "
             << std::setw(9)<<std::fixed
             <<std::setprecision(4)<<std::right	 
             <<" X/mm " <<" "<<std::setw(9)<<std::right
@@ -161,7 +163,8 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
             <<"px/MeV" <<" "<<std::setw(9)<<std::right
             <<"py/MeV"<<" "<<std::setw(9)<<std::right
             <<"pz/MeV"<<" "<<std::setw(8)<<std::right
-            <<"weight"<< G4endl;
+            <<"weight"<<" "<<std::setw(8)<<std::right
+            <<"time/ns"<< G4endl;
 
            for (i=0;i<NbHits;i++) (*ionCollection)[i]->Print();
 	      

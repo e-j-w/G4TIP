@@ -266,8 +266,8 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   deltaExi = deltaExi + Qevap; //amount of the excitation energy that goes into KE of the products
   if(deltaExi<0.0)
     {
-      G4cout << "ERROR!  Excitation energy is smaller than the Q value!  Evaporation should not occur!" << G4endl;
-      G4cout << "Please check the reaction PostStepDoIt code and correct this!" << G4endl;
+      G4cerr << "ERROR!  Excitation energy is smaller than the Q value!  Evaporation should not occur!" << G4endl;
+      G4cerr << "Please check the reaction PostStepDoIt code and correct this!" << G4endl;
     }
 
   //derive the center of mass energy of the evaporated particle from the change in excitation energy of the compound

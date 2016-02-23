@@ -80,6 +80,7 @@ void Results::TreeCreate()
       tree->Branch("Gz",GHit.Gz,"Gz[Gfold]/D");
       tree->Branch("GE",GHit.GE,"GE[Gfold]/D");
       tree->Branch("GW",GHit.GW,"GW[Gfold]/D");
+      tree->Branch("GT",GHit.GT,"GT[Gfold]/D");
       tree->Branch("GfoldAddBack",&GHit.GfoldAB,"GfoldAB/I");
       tree->Branch("GIdAddBack",GHit.GIdAB,"GIdAB[GfoldAB]/I");
       tree->Branch("GSegAddBack",GHit.GSegAB,"GSegAB[GfoldAB]/I");
@@ -163,7 +164,7 @@ void Results::TreeAdd(G4String )
 
 }
 //---------------------------------------------------------
-void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,TrackerCsIHitsCollection* CsICollection,G4double gw[GN][GS],G4double ge[GN][GS],G4ThreeVector gp[GN][GS])
+void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,TrackerCsIHitsCollection* CsICollection,G4double gw[GN][GS],G4double ge[GN][GS],G4ThreeVector gp[GN][GS],G4double gt[GN][GS])
 {
 
   G4int Nt=IonCollection->entries();
@@ -402,6 +403,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   memset(&GHit.GId,0,sizeof(GHit.GId));
   memset(&GHit.GSeg,0,sizeof(GHit.GSeg));
   memset(&GHit.GE,0,sizeof(GHit.GE));
+  memset(&GHit.GT,0,sizeof(GHit.GT));
   memset(&GHit.GIdAB,0,sizeof(GHit.GIdAB));
   memset(&GHit.GSegAB,0,sizeof(GHit.GSegAB));
   memset(&GHit.GRingAB,0,sizeof(GHit.GRingAB));
@@ -423,6 +425,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   	      GHit.Gz[GHit.Gfold]=gp[i][j].getZ();
   	      GHit.GE[GHit.Gfold]=ge[i][j];
   	      GHit.GW[GHit.Gfold]=gw[i][j];
+  	      GHit.GT[GHit.Gfold]=gt[i][j];
           GHit.Gfold++;
   	    } 
 

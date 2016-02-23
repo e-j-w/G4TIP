@@ -88,6 +88,7 @@ typedef struct{
     Double_t Gz[GN*GS];
     Double_t GE[GN*GS];
     Double_t GW[GN*GS];
+    Double_t GT[GN*GS];
     Int_t    GfoldAB;
     Int_t    GIdAB[GN*GS];
     Int_t    GSegAB[GN*GS];
@@ -109,7 +110,7 @@ public:
   
   void SetupRun(Int_t, Int_t, Int_t);
 
-  void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4]);
+  void FillTree(G4int,TrackerIonHitsCollection*,TrackerCsIHitsCollection*,G4double[16][4], G4double[16][4],G4ThreeVector[16][4],G4double[16][4]);
   void TreeSave(G4String);
   void TreeRead(G4String);
   void TreeAdd(G4String);

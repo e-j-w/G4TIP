@@ -52,6 +52,7 @@ class TrackerIonHit : public G4VHit
       void SetTargetInFlag(){flag=TARGET_IN_FLAG;}
       void SetBackingInFlag(){flag=BACKING_IN_FLAG;}
       void SetBackingOutFlag(){flag=BACKING_OUT_FLAG;}
+      void SetTime(G4double t){time=t;};
   
       G4int    GetA(){return A;}
       G4int    GetZ(){return Z;}
@@ -64,12 +65,14 @@ class TrackerIonHit : public G4VHit
       G4int    GetPFlag(){return pflag;}
       G4String GetVolName(){return volumeName;};
       G4String GetIonName(){return ionName;};
+      G4double GetTime(){return time;};
   private:
       G4int         A;
       G4int         Z;
       G4double      beta;
       G4double      KE;
       G4double      weight;
+      G4double      time;
       G4ThreeVector pos;
       G4ThreeVector p;
       G4int         flag;
