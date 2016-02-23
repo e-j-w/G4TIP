@@ -1,3 +1,4 @@
+#Simulates the 6+->4+->2+->0+ ground state band of 22Ne, following 2-a evaporation from 30Si.
 /Griffin/UseTIGRESSPositions true
 /Griffin/addGriffinBack 16
 /Projectile/A 18
@@ -15,10 +16,9 @@
 /Target/Thickness 1.91 um
 /Target/Report
 /Target/NStep 1
-#/Reaction/Tau 1.876e-5 ns
-#/Reaction/E_gamma 2987.7 keV
-/Reaction/Tau 7.0e-5 ns
-/Reaction/E_gamma 2953.6 keV
+/Reaction/AddDecay 2.9536 70.692e-6
+/Reaction/AddDecay 2.0826 324.61e-6
+/Reaction/AddDecay 1.274537 5.1937e-3
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2
@@ -36,13 +36,19 @@
 /Trigger/A 4
 /Trigger/Z 2
 /Trigger/DefinedParticleCoincAndGamma
-#/Trigger/DefinedParticleCoinc
-#/Trigger/DefinedParticleSingles
+#/Trigger/DefinedParticleCoincAnd2GammaCores
+/Trigger/DisableGriffin 1
+/Trigger/DisableGriffin 2
+/Trigger/DisableGriffin 3
+/Trigger/DisableGriffin 4
+/Trigger/DisableGriffinDetCol 9 2
+/Trigger/DisableGriffinDetCol 12 2
 #/Print/CsI_Track_Set
 #/Print/Track_Set
 #need to run this AFTER adjusting the target/backing parameters!
-/Construction/TIPChamberZShift 0.0 mm
-/run/beamOn 400000
+/Construction/TIPChamberZShift -0.0 mm
+#/Print/Track_Set
+/run/beamOn 500000
 /Results/Tree/Report
-/Results/Tree/Save run1.root
+/Results/Tree/Save cascade_kineticslonglivedrun1.root
 /Projectile/Report

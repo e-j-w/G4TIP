@@ -5,6 +5,8 @@
 *.mac
 *.macro
 *.out
+*.sh
+*.plot
 1
 gnuplot*
 testfiles
