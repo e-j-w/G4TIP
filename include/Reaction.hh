@@ -146,7 +146,7 @@ class Reaction : public G4VProcess
   G4int  maxNumEvap;
   G4bool constrainedAngle; //whether to constrain direction of emitted particles
   G4double maxEvapAngle, minEvapAngle; //at least one evaporated particle must be in this angular range with respect to the beam axis
-  G4double Egamma[MAXNUMDECAYS],tau[MAXNUMDECAYS],Eexcit;
+  G4double Egamma[MAXNUMDECAYS],tau[MAXNUMDECAYS],Eexcit,Egammatot;
   G4int numDecays;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
   G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi,rho,lambda,dExiShift; //excitation energy parameters

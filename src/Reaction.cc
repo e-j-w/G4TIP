@@ -74,6 +74,8 @@ G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
           totalEvapdeltaExi+=evapdeltaExi[i];
       if(totalEvapdeltaExi>initExi) //not physically possible!
         killTrack=true;
+      if((initExi-totalEvapdeltaExi)<Egammatot) //not enough energy to emit gamma cascade
+        killTrack=true;
       
       if(killTrack==false)  
         if(SetupReactionProducts(aTrack,RecoilOut))
@@ -323,6 +325,7 @@ void Reaction::TargetFaceCrossSection()
   Eexcit=0.;
   for(int i=0;i<numDecays;i++)
     Eexcit+=Egamma[i];
+  Egammatot=Eexcit;//store the total energy used by gamma emission
 
   G4int DA=0,DZ=0;
   A1=theProjectile->getA();
