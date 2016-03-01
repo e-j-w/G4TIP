@@ -18,6 +18,7 @@
 #include "Flags.hh"
 #include "DetectorConstruction.hh"
 #include "Materials.hh"
+#include "PhysicsList.hh"
 #include "TH1.h"
 #include "TH2.h"
 #include "TGraph.h"
@@ -28,6 +29,8 @@
 #define PI     3.14159
 #define S16K   16384
 #define RADIAN 57.29583
+
+#define  MAXNUMDECAYS 5
 
 typedef struct{
   Double_t ds;//doppler shift
@@ -50,6 +53,7 @@ typedef struct{
     Double_t pz;
     Double_t E;
     Double_t b;//beta
+    Double_t t;//time
     Double_t theta;//angle of emission from beam (z) axis
     Double_t phi;//angle between plane of emission and horizontal (x) axis plane
     Double_t w;
@@ -102,8 +106,7 @@ typedef struct{
 class Results
 {
 public:
-  //Results(Projectile*,Recoil*,DetectorConstruction*);
-  Results(Projectile*,DetectorConstruction*);
+  Results(Projectile*,DetectorConstruction*,PhysicsList*);
   ~Results();
 
 public:
@@ -136,12 +139,12 @@ private:
   TTree *tree;
 
   Projectile*           theProjectile;
-  Recoil*               theRecoil;
   DetectorConstruction* theDetector;
+  PhysicsList*          thePhysicsList;
 
   EventStat     eStat;
   IonStat       stat;
-  IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec; //ion tracking (projectile, residual)
+  IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec[MAXNUMDECAYS]; //ion tracking (projectile, residual)
   CsIInf        partHit; //particle hit
   GInf          GHit; //gamma hit
   G4double      maxGe[GN]; //maximum single gamma energy deposit in a given detector (used to get position of hits when using addback)
@@ -161,6 +164,8 @@ private:
   //CsI parameters outside of structure
   //Double_t PE;
   //Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx
+  
+  G4int numDec;
 
   TH1D     *h,*g;
   TCanvas  *c,*c1;
@@ -169,8 +174,6 @@ private:
  
   G4ThreeVector CP[GN][GS];
   G4ThreeVector PP[NCsI];
-
-  G4double A,B,C,F,G,H;
 
   G4Material* a;
 };

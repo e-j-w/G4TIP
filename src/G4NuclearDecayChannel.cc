@@ -319,11 +319,11 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // will be outputed as meta-stable isotope
       //
       deexcitation->SetMaxHalfLife(halflifethreshold);
-      // but in IT mode, we need to force the transition 
+      // but in IT mode, we need to force the transition
       if (decayMode == 0) {
-	deexcitation->RDMForced(true);
+	      deexcitation->RDMForced(true);
       } else {
-	deexcitation->RDMForced(false);
+	      deexcitation->RDMForced(false);
       }
       //
       // Now apply the photo-evaporation
@@ -344,13 +344,13 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // any recoil as a result of this de-excitation.
       //
       for (G4int ig=0; ig<nGammas; ig++)
-	{
-	  G4DynamicParticle *theGammaRay = new
-	    G4DynamicParticle (gammas->operator[](ig)->GetParticleDefinition(),
-			       gammas->operator[](ig)->GetMomentum());
-	  theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
-	  products->PushProducts (theGammaRay);
-	}
+	      {
+	        G4DynamicParticle *theGammaRay = new
+	          G4DynamicParticle (gammas->operator[](ig)->GetParticleDefinition(),
+			             gammas->operator[](ig)->GetMomentum());
+	        theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
+	        products->PushProducts (theGammaRay);
+	      }
       //
       // now the nucleus
       G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
@@ -374,8 +374,8 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // Delete/reset variables associated with the gammas.
       //
       while (!gammas->empty()) {
-	delete *(gammas->end()-1);
-	gammas->pop_back();
+	      delete *(gammas->end()-1);
+	      gammas->pop_back();
       }
       //    gammas->clearAndDestroy();
       delete gammas;

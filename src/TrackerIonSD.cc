@@ -33,9 +33,7 @@ void TrackerIonSD::Initialize(G4HCofThisEvent*)
 G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
 
-  G4Track* theTrack;
-  theTrack=aStep->GetTrack();
-
+  G4Track* theTrack=aStep->GetTrack();
   
   G4StepPoint*   vi;
   G4StepPoint*   vf;
@@ -88,7 +86,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        TrackerIonHit* newIonHitF= new TrackerIonHit();   	
 	 
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Decay")
-	          newIonHitF->SetDecayFlag();
+            newIonHitF->SetDecayFlag();
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Reaction")
 	          newIonHitF->SetReactionInFlag();
 	        newIonHitF->SetIonName(particleName);
@@ -119,7 +117,7 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
  
  
   G4int i;
-  G4int NbHits = ionCollection->entries();  
+  G4int NbHits = ionCollection->entries();
 
   if(NbHits>0)
     {
@@ -137,9 +135,8 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
 	          if ((*ionCollection)[i]->GetZ()==(*ionCollection)[i+1]->GetZ())
 	            if ((*ionCollection)[i]->GetVolName()=="target"&&(*ionCollection)[i+1]->GetVolName()=="backing")
 		            (*ionCollection)[i+1]->SetBackingInFlag();
-     	  }
-
-	
+		      
+     	  }	
 
       for (i=1;i<NbHits;i++) 
         {   
@@ -148,13 +145,23 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
               if ((*ionCollection)[i-1]->GetVolName()=="backing"&&(*ionCollection)[i]->GetVolName()=="expHall")
                 (*ionCollection)[i]->SetBackingOutFlag();
         }
+        
+      //increment the decay counter if neccesary (for cascades)
+      G4int decayCounter=0;
+      for (i=1;i<NbHits;i++)   
+        if ((*ionCollection)[i]->GetPFlag()>=DECAY_FLAG)
+          {
+            decayCounter++;
+            (*ionCollection)[i]->SetPFlag(DECAY_FLAG+decayCounter-1);
+            //G4cout << "Entry # "<< i<< " has a decay with flag: "<< (*ionCollection)[i]->GetPFlag() << G4endl;
+          }
 
       if (print) 
         {	
           G4cout<<G4endl;
           G4cout << "-------->Hits Collection: in this event there are " << NbHits << " hits for ion tracking: " << G4endl;
 
-          G4cout << "name         F   A   Z  KE/MeV   beta" <<" "
+          G4cout << "name         Flag   A   Z  KE/MeV   beta" <<" "
             << std::setw(9)<<std::fixed
             <<std::setprecision(4)<<std::right	 
             <<" X/mm " <<" "<<std::setw(9)<<std::right

@@ -123,6 +123,7 @@ class Reaction : public G4VProcess
   G4int GetNumberOfProtons(){return nP;};
   G4int GetNumberOfAlphas(){return nA;};
   G4int GetNumberOfNeutrons(){return nN;};
+  G4int GetNumDecays(){return numDecays;};
   
   void AddDecay(G4double,G4double);
 

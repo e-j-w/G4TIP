@@ -11,7 +11,7 @@
 #define DEGRADER_OUT_FLAG    8
 #define REACTION_IN_FLAG     9
 #define REACTION_OUT_FLAG   10
-#define DECAY_FLAG          11
-#define MAX_FLAGS           12
+#define DECAY_FLAG          100
+#define MAX_FLAGS           256
 
 #endif
