@@ -64,20 +64,20 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   Q2Cmd->SetParameterName("Q2",false);
   Q2Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExiSCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Shift",this);
-  dExiSCmd->SetGuidance("Scaling factor of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExiSCmd->SetParameterName("dExiS",false);
-  dExiSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExix0Cmd = new G4UIcmdWithADouble("/ParticleEvaporation/Centroid",this);
+  dExix0Cmd->SetGuidance("Centroid of the Gaussian used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExix0Cmd->SetParameterName("dExix0",false);
+  dExix0Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExiRhoCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Rho",this);
-  dExiRhoCmd->SetGuidance("Rho of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExiRhoCmd->SetParameterName("dExiRho",false);
-  dExiRhoCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExiwCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Width",this);
+  dExiwCmd->SetGuidance("Width of the Gaussian used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExiwCmd->SetParameterName("dExiw",false);
+  dExiwCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  dExiLambdaCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Lambda",this);
-  dExiLambdaCmd->SetGuidance("Lambda of the gamma distribution used to characterize change in compound nucleus excitation energy following particle evaporation.");
-  dExiLambdaCmd->SetParameterName("dExiLambda",false);
-  dExiLambdaCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  dExitauCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Tau",this);
+  dExitauCmd->SetGuidance("Tau of the high energy exponential tail used to characterize change in compound nucleus excitation energy following particle evaporation.");
+  dExitauCmd->SetParameterName("dExitau",false);
+  dExitauCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
   CARCmd = new G4UIcmdWithoutParameter("/ParticleEvaporation/ConstrainAngularRange",this);
@@ -114,9 +114,9 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  theEvaporationDir;
   delete  Q1Cmd;
   delete  Q2Cmd;
-  delete  dExiSCmd;
-  delete  dExiRhoCmd;
-  delete  dExiLambdaCmd;
+  delete  dExix0Cmd;
+  delete  dExiwCmd;
+  delete  dExitauCmd;
 
   delete  CARCmd;
   delete  CARMaxCmd;
@@ -168,14 +168,14 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == Q2Cmd )
     { theReaction->SetEvapQ2(Q2Cmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExiSCmd )
-    { theReaction->SetShift(dExiSCmd->GetNewDoubleValue(newValue));}
+  if( command == dExix0Cmd )
+    { theReaction->SetExix0(dExix0Cmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExiRhoCmd )
-    { theReaction->SetRho(dExiRhoCmd->GetNewDoubleValue(newValue));}
+  if( command == dExiwCmd )
+    { theReaction->SetExiw(dExiwCmd->GetNewDoubleValue(newValue));}
 
-  if( command == dExiLambdaCmd )
-    { theReaction->SetLambda(dExiLambdaCmd->GetNewDoubleValue(newValue));}
+  if( command == dExitauCmd )
+    { theReaction->SetExitau(dExitauCmd->GetNewDoubleValue(newValue));}
 
 
   if( command == CARCmd )

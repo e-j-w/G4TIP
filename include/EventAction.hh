@@ -14,6 +14,8 @@
 #include <sys/time.h>
 #include "RunAction.hh"
 
+
+
 /*
   Trigger settings notes:
   Gamma singles                      1
@@ -38,6 +40,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
   void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
+  void SetCsIThreshold(G4double x){CsIThreshold=x;};
 
 
   void setTriggerA(G4int);

@@ -111,7 +111,7 @@ void Results::TreeCreate()
       for(int i=0 ; i<numDec ; i++) //make branch for each decay
         if(i<MAXNUMDECAYS)
           {
-            sprintf(branchName,"resDec%i",i);
+            sprintf(branchName,"resDec%i",i+1);
             tree->Branch(branchName,&rDec[i],"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
           }
     }

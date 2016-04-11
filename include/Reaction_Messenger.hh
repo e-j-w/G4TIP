@@ -38,9 +38,9 @@ class Reaction_Messenger: public G4UImessenger
     G4UIdirectory*      theEvaporationDir;
     G4UIcmdWithADoubleAndUnit* Q1Cmd;
     G4UIcmdWithADoubleAndUnit* Q2Cmd;
-    G4UIcmdWithADouble* dExiSCmd;
-    G4UIcmdWithADouble* dExiRhoCmd;
-    G4UIcmdWithADouble* dExiLambdaCmd;
+    G4UIcmdWithADouble* dExix0Cmd;
+    G4UIcmdWithADouble* dExiwCmd;
+    G4UIcmdWithADouble* dExitauCmd;
 
     G4UIcmdWithoutParameter*   CARCmd;
     G4UIcmdWithADoubleAndUnit* CARMaxCmd;

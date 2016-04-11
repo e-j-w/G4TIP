@@ -13,7 +13,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   At=4;
   Zt=2;
   SetTriggerParticleSing();
-  CsIThreshold=2*MeV;
+  CsIThreshold=0;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
 }
 
@@ -79,12 +79,13 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       HI=(TrackerIonHitsCollection*)(evt->GetHCofThisEvent()->GetHC(ionCollectionID));
       Np=CsI->entries();
       //G4cout<<" Number of entries: "<<Np<<G4endl;
-      G4bool allHitsInOne=true;
+      //G4bool allHitsInOne=true;
 
       // CsI trigger
       if(Np>0) 
 	      {
-	        G4double partECsI=0.; //energy of user defined particle
+	        G4double partECsI[NCsI]; //energy of user defined particle
+	        memset(partECsI,0,sizeof(partECsI));
 	        for(int i=0;i<Np;i++)
 	          {
               //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
@@ -92,24 +93,29 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 		            if((*CsI)[i]->GetA()==At) // user defined particle trigger
 		              if((*CsI)[i]->GetZ()==Zt)
 		                {
-		                  partECsI+=(*CsI)[i]->GetKE();
+		                  partECsI[(*CsI)[i]->GetId()]+=(*CsI)[i]->GetKE();
 		                  //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
 		                }
 	          }
-          //check whether all hits in the CsI hit collection are in one detector
-	        for(int i=1;i<Np;i++)
-            if((*CsI)[i]->GetId()!=(*CsI)[0]->GetId())
-              {
-                allHitsInOne=false;
-                break;
-              }
-    
-	        if(partECsI>CsIThreshold)
+          
+          //determine the number of CsI hits 
+          int numDetHits=0;
+          for(int i=0;i<NCsI;i++)
+	          if(partECsI[i]>=CsIThreshold)
+	            numDetHits++;
+	        
+	        //set entries in detectors below energy threshold to 0
+	        for(int i=0;i<Np;i++)
+            if((partECsI[(*CsI)[i]->GetId()]<CsIThreshold))
+	            (*CsI)[i]->SetKE(0.0);    
+	        
+	        //CsI singles trigger
+	        if(numDetHits>0)  
 	          eventTrigger|=(one<<10);
 
           //particle-particle coincidence trigger
           //ie. particle hits in two or more different detectors
-          if(((numP+numN+numA)>1)&&(allHitsInOne==false))
+          if(numDetHits>1)
             eventTrigger|=(one<<11);
 
           if((eventTrigger&(one<<10))&&(eventTrigger&(one<<11)))

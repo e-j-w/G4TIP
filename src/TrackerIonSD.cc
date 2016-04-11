@@ -147,12 +147,12 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent* HCE)
         }
         
       //increment the decay counter if neccesary (for cascades)
-      G4int decayCounter=0;
-      for (i=1;i<NbHits;i++)   
-        if ((*ionCollection)[i]->GetPFlag()>=DECAY_FLAG)
+      G4int decayCounter=-1;
+      for (i=0;i<NbHits;i++)
+        if ((*ionCollection)[i]->GetPFlag()==DECAY_FLAG)
           {
             decayCounter++;
-            (*ionCollection)[i]->SetPFlag(DECAY_FLAG+decayCounter-1);
+            (*ionCollection)[i]->SetPFlag(DECAY_FLAG+decayCounter);
             //G4cout << "Entry # "<< i<< " has a decay with flag: "<< (*ionCollection)[i]->GetPFlag() << G4endl;
           }
 

@@ -108,9 +108,9 @@ class Reaction : public G4VProcess
   void SetExi(G4double x){initExi=x;};
   void SetEvapQ1(G4double x){QEvap[0]=x;};
   void SetEvapQ2(G4double x){QEvap[1]=x;};
-  void SetShift(G4double x){dExiShift=x;};
-  void SetRho(G4double x){rho=x;};
-  void SetLambda(G4double x){lambda=x;};
+  void SetExix0(G4double x){exix0=x;};
+  void SetExiw(G4double x){exiw=x;};
+  void SetExitau(G4double x){exitau=x;};
 
   //set angular constraints of emitted particles
   void SetConstrainedAngle(){constrainedAngle=true;};
@@ -126,6 +126,7 @@ class Reaction : public G4VProcess
   G4int GetNumDecays(){return numDecays;};
   
   void AddDecay(G4double,G4double);
+  G4double getExi(G4double,G4double,G4double);
 
   G4DynamicParticle RecoilOut;
   G4DynamicParticle EvapP [MAXNUMEVAP];
@@ -150,7 +151,9 @@ class Reaction : public G4VProcess
   G4double Egamma[MAXNUMDECAYS],tau[MAXNUMDECAYS],Eexcit,Egammatot;
   G4int numDecays;
   G4double QRxn, QEvap[MAXNUMEVAP]; //Q values for the beam-target reaction and evaporation process(es)
-  G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi,rho,lambda,dExiShift; //excitation energy parameters
+  G4double initExi,evapdeltaExi[MAXNUMEVAP],totalEvapdeltaExi; //excitation energy parameters
+  
+  G4double exix0,exiw,exitau;//evaporated particle excitation energy distribution parameters
   
   
   G4int  loopCounter;

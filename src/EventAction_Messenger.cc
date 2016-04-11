@@ -43,6 +43,11 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   TDGCmd = new G4UIcmdWithAString("/Trigger/DisableGriffin",this);
   TDGCmd->SetGuidance("Disable all crystals of the specified HPGe.");
   TDGCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  CETCmd = new G4UIcmdWithADoubleAndUnit("/Trigger/CsIThreshold",this);
+  CETCmd->SetGuidance("Set a low energy threshold for the CsI detector(s).");
+  CETCmd->SetParameterName("CET",false);
+  CETCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 
 }
@@ -63,6 +68,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TIDCmd;
   delete TDGCCmd;
   delete TDGCmd;
+  delete CETCmd;
 }
 
 
@@ -122,6 +128,12 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
                 G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< i << "." <<G4endl;
               }
           
+    }
+
+  if( command == CETCmd )
+    {
+      aEventAction->SetCsIThreshold(CETCmd->GetNewDoubleValue(newValue));
+      G4cout << "Setting CsI low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
     }
 
 }

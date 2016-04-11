@@ -64,7 +64,8 @@ G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
           {
             evapdeltaExi[i]=0.;
             while(((evapdeltaExi[i]+QEvap[i]) <= 0.0) || ((evapdeltaExi[i]+QEvap[i]) > initExi)) //clamp delta Exi values to physically possible values
-              evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+              evapdeltaExi[i]=getExi(exix0,exiw,exitau);
+              //evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
           }
           
       //check that sum of delta Exi values is in bounds
@@ -405,4 +406,12 @@ void Reaction::AddDecay(G4double E,G4double T)
       G4cout << "WARNING: Too many gammas added to the residual nucleus cascade, maximum number is " << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
       getc(stdin);
     }
+}
+//---------------------------------------------------------
+//Computes an Exi value based on a Gaussian distribution with high energy exponential tail
+G4double Reaction::getExi(G4double x0,G4double w,G4double tau)
+{  
+  G4double exi=CLHEP::RandGauss::shoot(x0,w);
+  exi+=CLHEP::RandExponential::shoot(tau);  
+  return exi;
 }
