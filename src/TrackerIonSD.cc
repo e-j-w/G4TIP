@@ -86,7 +86,10 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        TrackerIonHit* newIonHitF= new TrackerIonHit();   	
 	 
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Decay")
-            newIonHitF->SetDecayFlag();
+            {
+              newIonHitF->SetDecayFlag();
+              //G4cout << "Lifetime: " << std::setprecision(10) << aStep->GetTrack()->GetDefinition()->GetPDGLifeTime()/ns << " ns." << G4endl;
+            }
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Reaction")
 	          newIonHitF->SetReactionInFlag();
 	        newIonHitF->SetIonName(particleName);

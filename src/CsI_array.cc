@@ -2,9 +2,9 @@
 
 CsI_array::CsI_array(G4LogicalVolume* experimentalHall_log,Materials* mat)
 {
-  //zpos=5.7*mm;
-  //zpos=28.7*mm;
-  zpos=51.7*mm;
+  //zpos=5.7*mm + 1.5*mm;
+  //zpos=28.7*mm + 1.5*mm;
+  zpos=51.7*mm + 1.5*mm;//1.5mm is half-length of the detector 
   materials=mat;
   expHall_log=experimentalHall_log;
   id[ 0]= 1;pos[ 0].setX( 15.2*mm);pos[ 0].setY( 00.0*mm);pos[ 0].setZ(zpos);ring[ 0]=1;kB[ 0]=17.077;S[ 0]=1513.105;
