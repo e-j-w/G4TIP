@@ -33,7 +33,8 @@
 #define  MAXNUMDECAYS 5
 
 typedef struct{
-  Double_t ds;//doppler shift
+  Int_t    dsfold;
+  Double_t ds[GN*GS];//doppler shift
  } EventStat;
 
 typedef struct{

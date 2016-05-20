@@ -84,7 +84,8 @@ void Results::TreeCreate()
       tree->Branch("GyAddBack",GHit.GyAB,"GyAB[GfoldAB]/D");
       tree->Branch("GzAddBack",GHit.GzAB,"GzAB[GfoldAB]/D");
       tree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
-      tree->Branch("ds",&eStat,"ds/D");
+      tree->Branch("dsfold",&eStat.dsfold,"dsfold/I");
+      tree->Branch("ds",&eStat.ds,"ds[dsfold]/D");
       tree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
       tree->Branch("CsIx",partHit.x,"x[CsIfold]/D");
       tree->Branch("CsIy",partHit.y,"y[CsIfold]/D");
@@ -459,28 +460,33 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
         GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
         
   //compute an approxiate Doppler shift based on the specific detectors where gamma and evaporated particles were seen
-  G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[0]-1,GHit.GSegAB[0]); //what about fold>1 events?
-  if(gammaVec.mag()!=0)
-    gammaVec.setMag(1.0);
-  //G4cout << "gammaVec: " << gammaVec << G4endl; 
-  G4ThreeVector resMom,partMom,partDir;
-  resMom.setX(gun.px);
-  resMom.setY(gun.py);
-  resMom.setZ(gun.pz);
-  for(i=0;i<partHit.CsIfold;i++)
+  eStat.dsfold=0;
+  for(i=0;i<GHit.GfoldAB;i++)//number of addback hits in the event
     {
-      partMom.setX(partHit.px[i]);
-      partMom.setY(partHit.py[i]);
-      partMom.setZ(partHit.pz[i]);
-      partDir = PP[partHit.Id[i]-1]; //get direction to CsI detector
-      partDir.setMag(partMom.mag()); //turn direction vector into momentum vector
-      resMom -= partDir;
-    }
-  if(resMom.mag()!=0)
-    resMom.setMag(1.0);
-  
-  
-  eStat.ds = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
+      G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[eStat.dsfold]-1,GHit.GSegAB[eStat.dsfold]);
+      if(gammaVec.mag()!=0)
+        gammaVec.setMag(1.0);
+      //G4cout << "gammaVec: " << gammaVec << G4endl; 
+      G4ThreeVector resMom,partMom,partDir;
+      resMom.setX(gun.px);
+      resMom.setY(gun.py);
+      resMom.setZ(gun.pz);
+      //get residual momentum by subtracting evaporated particle momenta from beam momentum
+      for(j=0;j<partHit.CsIfold;j++)
+        {
+          partMom.setX(partHit.px[j]);
+          partMom.setY(partHit.py[j]);
+          partMom.setZ(partHit.pz[j]);
+          partDir = PP[partHit.Id[j]-1]; //get direction to CsI detector
+          partDir.setMag(partMom.mag()); //turn direction vector into momentum vector
+          resMom -= partDir;
+        }
+      if(resMom.mag()!=0)
+        resMom.setMag(1.0);    
+      
+      eStat.ds[eStat.dsfold] = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
+      eStat.dsfold++;
+  }
   //printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);
   //printf("Gun momentum: [%10.10f %10.10f %10.10f]\n",gun.px,gun.py,gun.pz);
   //getc(stdin);
