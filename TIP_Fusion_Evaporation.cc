@@ -1,4 +1,4 @@
-//DSAM PROGRAM for TIP/PIN wall fusion-evaporation 
+//DSAM PROGRAM for TIP/CsI wall fusion-evaporation 
 
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
@@ -30,6 +30,7 @@
 #include "Results_Messenger.hh"
 #include "Projectile.hh"
 #include "Projectile_Messenger.hh"
+#include "Run_Messenger.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 
@@ -41,7 +42,6 @@ int main(int argc,char** argv)
   //myseed=1388637269;
   CLHEP::HepRandom::setTheSeed(myseed);
   G4cout<<" Seed set to  "<<myseed<<G4endl;
-
 
   // Construct the default run manager
   G4RunManager* runManager = new G4RunManager;
@@ -62,6 +62,8 @@ int main(int argc,char** argv)
   PhysicsList *thePhysicsList = new PhysicsList(theProjectile);
   runManager->SetUserInitialization(thePhysicsList);
  
+  Run_Messenger* runMessenger;
+  runMessenger = new Run_Messenger(runManager,thePhysicsList);
  
   PrimaryGeneratorAction* generatorAction= new PrimaryGeneratorAction(theDetector,theProjectile);
   runManager->SetUserAction(generatorAction);
@@ -73,7 +75,6 @@ int main(int argc,char** argv)
   RunAction* theRunAction=new RunAction(thePhysicsList,results,theDetector);
   runManager->SetUserAction(theRunAction);
  
-  //EventAction* eventAction = new EventAction(results,theRunAction);
   EventAction* eventAction = new EventAction(results,theRunAction,theProjectile);
   runManager->SetUserAction(eventAction);
   EventAction_Messenger* eventActionMessenger;
@@ -82,9 +83,10 @@ int main(int argc,char** argv)
   SteppingAction* stepAction = new SteppingAction(theDetector,eventAction);
   runManager->SetUserAction(stepAction);
 
- 
+  G4UIsession* session=0;
 
- G4UIsession* session=0;
+// get the pointer to the UI manager and set verbosities
+  G4UImanager* UI = G4UImanager::GetUIpointer();
 
   #ifdef G4VIS_USE  
  G4VisManager* visManager = new VisManager; 
@@ -113,16 +115,8 @@ int main(int argc,char** argv)
       #endif
       #endif
       #endif
-    
-  
 
     }
-
-  // Initialize G4 kernel
-  runManager->Initialize();
-
-  // get the pointer to the UI manager and set verbosities
-  G4UImanager* UI = G4UImanager::GetUIpointer();
 
   if (session)   // Define UI session for interactive mode.
     {
@@ -142,10 +136,6 @@ int main(int argc,char** argv)
       UI->ApplyCommand(command+fileName);
     }
 
-
-
-
-
   // job termination
   if(argc==1)
     {
@@ -157,6 +147,7 @@ int main(int argc,char** argv)
   delete detectorMessenger;
   delete ProjectileMessenger;
   delete resultsMessenger;
+  delete runMessenger;
   delete eventActionMessenger;
   delete runManager;
 

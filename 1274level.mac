@@ -1,3 +1,6 @@
+/Physics/Step 0.05 um
+#INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
+/Run/Initialize
 /Griffin/UseTIGRESSPositions true
 /Griffin/addGriffinBack 16
 /Projectile/A 18

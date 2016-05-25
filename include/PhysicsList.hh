@@ -61,6 +61,7 @@ class PhysicsList: public G4VUserPhysicsList
     ~PhysicsList();
   
   Reaction* getReaction(){return theReaction;};
+  void setStepSize(double ss){stepSize=ss;};
 
   protected:
     // Construct particle and physics process
@@ -73,7 +74,8 @@ class PhysicsList: public G4VUserPhysicsList
  private:
   Projectile *theProjectile;
   Reaction *theReaction; 
-  Reaction_Messenger *theReactionMessenger; 
+  Reaction_Messenger *theReactionMessenger;
+  double stepSize;
 };
 
 #endif

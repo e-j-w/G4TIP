@@ -2,7 +2,7 @@
 
 PhysicsList::PhysicsList(Projectile*Proj):theProjectile(Proj)
 {
-  
+  stepSize=0.05*um;
 }
 
 
@@ -29,8 +29,6 @@ void PhysicsList::ConstructParticle()
   //  ions
   G4IonConstructor iConstructor;
   iConstructor.ConstructParticle();
-
-  
   
 }
 
@@ -44,9 +42,10 @@ void PhysicsList::ConstructProcess()
 
 void PhysicsList::ConstructEM()
 {
-
+  G4cout<<"Setting up physics..."<<G4endl;
+  G4cout<<"Step size: "<< stepSize/um << " um" << G4endl;
+  
   theParticleIterator->reset();
-
 
   while( (*theParticleIterator)() ){
 
@@ -108,7 +107,7 @@ void PhysicsList::ConstructEM()
       G4IonCustomModel* theModel= new G4IonCustomModel(); // Custom replacement for G4IonParametrisedLossModel
       //theModel->RemoveDEDXTable("ICRU73");
       //theModel->AddDEDXTable("SRIM",new G4IonCustomStoppingData("stopping_data/SRIM"),new G4IonDEDXScalingICRU73()); //add stopping power data from data files      
-	    ionIoni->SetStepFunction(0.05, 0.05*um);
+	    ionIoni->SetStepFunction(0.05, stepSize);//small step size needed for short lifetimes?
 	    ionIoni->SetEmModel(theModel);
 	    pmanager->AddProcess(ionIoni,                   -1, 3, 2);
       pmanager->AddProcess(new G4NuclearStopping(),   -1, 4,-1);
