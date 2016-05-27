@@ -62,6 +62,8 @@ class PhysicsList: public G4VUserPhysicsList
   
   Reaction* getReaction(){return theReaction;};
   void setStepSize(double ss){stepSize=ss;};
+  void setcs(){customStopping=true;};
+  void setcspath(const char * csp){strcpy(cspath,csp);};
 
   protected:
     // Construct particle and physics process
@@ -76,6 +78,8 @@ class PhysicsList: public G4VUserPhysicsList
   Reaction *theReaction; 
   Reaction_Messenger *theReactionMessenger;
   double stepSize;
+  bool customStopping;
+  char cspath[256];
 };
 
 #endif

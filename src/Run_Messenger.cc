@@ -18,6 +18,11 @@ Run_Messenger::Run_Messenger(G4RunManager* rm, PhysicsList* physl)
   
   ICmd = new G4UIcmdWithoutParameter("/Run/Initialize",this);
   ICmd->SetGuidance("Initialize the run.");
+  
+  CSCmd = new G4UIcmdWithAString("/Physics/StoppingTable",this);
+  CSCmd->SetGuidance("Use stopping power tables from the path specified.");
+  CSCmd->SetParameterName("File path",false);
+  CSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -26,6 +31,7 @@ Run_Messenger::Run_Messenger(G4RunManager* rm, PhysicsList* physl)
 Run_Messenger::~Run_Messenger()
 {
   delete PLSCmd;
+  delete CSCmd;
 }
 
 
@@ -35,14 +41,17 @@ void Run_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == PLSCmd )
     {
       thePhysicsList->setStepSize(PLSCmd->GetNewDoubleValue(newValue));
-      //theRunManager->PhysicsHasBeenModified();
-      //theRunManager->SetUserInitialization(thePhysicsList);
     }
   if( command == ICmd )
     {
       G4cout << "---------- INITIALIZING RUN ----------"<< G4endl;
       theRunManager->Initialize();
       G4cout << "---------- DONE RUN INITIALIZATION ----------"<< G4endl;
+    }
+  if( command == CSCmd )
+    {
+      thePhysicsList->setcspath(newValue);
+      thePhysicsList->setcs();
     }
 
 }

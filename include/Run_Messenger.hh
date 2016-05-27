@@ -6,11 +6,9 @@
 #include "globals.hh"
 #include "G4UImessenger.hh"
 #include "G4UIdirectory.hh"
-//#include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
-//#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithoutParameter.hh"
-//#include "G4UIcmdWithAnInteger.hh"
 
 
 class Run_Messenger: public G4UImessenger
@@ -27,6 +25,7 @@ class Run_Messenger: public G4UImessenger
     G4UIdirectory             *thePLDir,*theRDir;
     G4UIcmdWithADoubleAndUnit* PLSCmd;
     G4UIcmdWithoutParameter* ICmd;
+    G4UIcmdWithAString* CSCmd;
 };
 
 
