@@ -34,6 +34,7 @@
 
 typedef struct{
   Int_t    dsfold;
+  Double_t calcERes[GN*GS];//Residual energy (inferred)
   Double_t ds[GN*GS];//doppler shift
  } EventStat;
 

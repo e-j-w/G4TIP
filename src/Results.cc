@@ -86,6 +86,7 @@ void Results::TreeCreate()
       tree->Branch("GEAddBack",GHit.GEAB,"GEAB[GfoldAB]/D");
       tree->Branch("dsfold",&eStat.dsfold,"dsfold/I");
       tree->Branch("ds",&eStat.ds,"ds[dsfold]/D");
+      tree->Branch("calcERes",&eStat.calcERes,"calcERes[dsfold]/D");
       tree->Branch("CsIfold",&partHit.CsIfold,"CsIfold/I");
       tree->Branch("CsIx",partHit.x,"x[CsIfold]/D");
       tree->Branch("CsIy",partHit.y,"y[CsIfold]/D");
@@ -481,8 +482,13 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
           partDir.setMag(partMom.mag()); //turn direction vector into momentum vector
           resMom -= partDir;
         }
+      eStat.calcERes[eStat.dsfold]=resMom*resMom/(2.*931.45*Ar);
+      //Print debug
+      /*G4cout<<"Residual momentum (calc), hit #"<<i+1<<": "<<resMom;
+      G4cout<<", magnitude:"<<resMom.mag()<<G4endl;
+      G4cout<<"Energy (calc): "<<resE/MeV<<", (sim): "<<rROut.E/MeV<<G4endl;*/
       if(resMom.mag()!=0)
-        resMom.setMag(1.0);    
+        resMom.setMag(1.0);
       
       eStat.ds[eStat.dsfold] = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
       eStat.dsfold++;
