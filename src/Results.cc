@@ -461,6 +461,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
         GHit.GEAB[i]+=ge[(GHit.GIdAB[i])-1][j];
         
   //compute an approxiate Doppler shift based on the specific detectors where gamma and evaporated particles were seen
+  Double_t beta;//speed of residual (calculated)
   eStat.dsfold=0;
   for(i=0;i<GHit.GfoldAB;i++)//number of addback hits in the event
     {
@@ -487,10 +488,12 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
       /*G4cout<<"Residual momentum (calc), hit #"<<i+1<<": "<<resMom;
       G4cout<<", magnitude:"<<resMom.mag()<<G4endl;
       G4cout<<"Energy (calc): "<<resE/MeV<<", (sim): "<<rROut.E/MeV<<G4endl;*/
+      beta=resMom.mag()/(931.45*Ar);
+      //G4cout<<"Residual beta (calc): "<<beta<<", (sim): "<<rROut.b<<G4endl;
       if(resMom.mag()!=0)
         resMom.setMag(1.0);
       
-      eStat.ds[eStat.dsfold] = sqrt(1-gun.b*gun.b)/(1 - gun.b*resMom*gammaVec);
+      eStat.ds[eStat.dsfold] = sqrt(1-beta*beta)/(1 - beta*resMom*gammaVec);
       eStat.dsfold++;
   }
   //printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);

@@ -49,7 +49,6 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   else
     pName="Unknown";
 
-
   if(type=="nucleus")
     {     
 
@@ -88,6 +87,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Decay")
             {
               newIonHitF->SetDecayFlag();
+              //G4cout << "Particle name: " << aStep->GetTrack()->GetDefinition()->GetParticleName() << G4endl;
               //G4cout << "Lifetime: " << std::setprecision(10) << aStep->GetTrack()->GetDefinition()->GetPDGLifeTime()/ns << " ns." << G4endl;
             }
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Reaction")

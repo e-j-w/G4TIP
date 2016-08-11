@@ -138,10 +138,9 @@ class Reaction : public G4VProcess
   Projectile *theProjectile;
 
   G4ParticleDefinition* compound; //the nucleus formed directly after beam-target reaction
-  G4ParticleDefinition* residual[MAXNUMDECAYS]; //the residual nucleus after particles have evaporated from the compund nucleus (indexed by position on the gamma cascade)
+  
   G4ParticleDefinition* proton,*alpha,*neutron;
   G4bool killTrack;
-  static G4Decay decay;
   G4ThreeVector posIn;
   G4double A1,Z1,A2,Z2;
   G4int  nP,nN,nA;
@@ -155,6 +154,11 @@ class Reaction : public G4VProcess
   
   G4double exix0,exiw,exitau;//evaporated particle excitation energy distribution parameters
   
+  //residuals and cascade
+  G4ParticleDefinition* residual[MAXNUMDECAYS]; //the residual nucleus after particles have evaporated from the compund nucleus (indexed by position on the gamma cascade)
+  G4Decay *decay[MAXNUMDECAYS];
+  G4DecayTable *ResDecTab[MAXNUMDECAYS];
+  GammaDecayChannel *ResDec[MAXNUMDECAYS];
   
   G4int  loopCounter;
 };
