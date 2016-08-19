@@ -23,13 +23,13 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: G4IonCustomModel.hh,v 1.8 2010-11-04 12:21:47 vnivanch Exp $
+// $Id: G4IonParametrisedLossModel.hh,v 1.8 2010-11-04 12:21:47 vnivanch Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 // ===========================================================================
 // GEANT4 class header file
 //
-// Class:                G4IonCustomModel
+// Class:                G4IonParametrisedLossModel
 //
 // Base class:           G4VEmModel (utils)
 // 
@@ -65,8 +65,8 @@
 // =========================================================================== 
 
 
-#ifndef G4IonCustomModel_HH
-#define G4IonCustomModel_HH
+#ifndef G4IonParametrisedLossModel_HH
+#define G4IonParametrisedLossModel_HH
 
 #include "G4VEmModel.hh"
 #include "G4EmCorrections.hh"
@@ -89,13 +89,13 @@ typedef std::pair<const G4ParticleDefinition*,
                   const G4MaterialCutsCouple*> IonMatCouple;
 
 
-class G4IonCustomModel : public G4VEmModel {
+class G4IonParametrisedLossModel : public G4VEmModel {
 
  public:
-   G4IonCustomModel(const G4ParticleDefinition* particle = 0,
+   G4IonParametrisedLossModel(const G4ParticleDefinition* particle = 0,
                               const G4String& name = "ParamICRU73");
 
-   virtual ~G4IonCustomModel();
+   virtual ~G4IonParametrisedLossModel();
 
    virtual void Initialise(
                            const G4ParticleDefinition*, // Projectile
@@ -243,9 +243,9 @@ class G4IonCustomModel : public G4VEmModel {
                   const G4MaterialCutsCouple*);  // Material cuts couple
 
    // Assignment operator and copy constructor are hidden:
-   G4IonCustomModel & operator=(
-                              const G4IonCustomModel &right);
-   G4IonCustomModel(const G4IonCustomModel &);
+   G4IonParametrisedLossModel & operator=(
+                              const G4IonParametrisedLossModel &right);
+   G4IonParametrisedLossModel(const G4IonParametrisedLossModel &);
    
    // ######################################################################
    // # Models and dE/dx tables for computing the energy loss 
@@ -359,6 +359,6 @@ class G4IonCustomModel : public G4VEmModel {
 };
 
 
-#include "G4IonCustomModel.icc"
+#include "G4IonParametrisedLossModel.icc"
 
 #endif

@@ -152,19 +152,6 @@ void Results::TreeSave(G4String name)
   
 }
 //---------------------------------------------------------
-void Results::TreeRead(G4String)
-{
- 
-}
-
-//---------------------------------------------------------
-void Results::TreeAdd(G4String )
-{
-
- 
-
-}
-//---------------------------------------------------------
 void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,TrackerCsIHitsCollection* CsICollection,G4double gw[GN][GS],G4double ge[GN][GS],G4ThreeVector gp[GN][GS],G4double gt[GN][GS])
 {
 
@@ -178,6 +165,9 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   memset(&rROut,0,soi);
   memset(&rBIn,0,soi);
   memset(&rBOut,0,soi);
+  for(int i=0 ; i<numDec ; i++)
+		if(i<MAXNUMDECAYS)
+		  memset(&rDec[i],0,soi);
   memset(&partHit,0,soh);
   //memset(&GHit,0,sogh);
 
@@ -327,6 +317,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 		                rDec[flag-DECAY_FLAG].theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
 		                rDec[flag-DECAY_FLAG].phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
 		                rDec[flag-DECAY_FLAG].w=(*IonCollection)[i]->GetWeight();
+		                
 	                }
             }
 	      }
@@ -496,11 +487,10 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
       eStat.ds[eStat.dsfold] = sqrt(1-beta*beta)/(1 - beta*resMom*gammaVec);
       eStat.dsfold++;
   }
-  //printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);
-  //printf("Gun momentum: [%10.10f %10.10f %10.10f]\n",gun.px,gun.py,gun.pz);
-  //getc(stdin);
-
-  tree->Fill();
+	//printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);
+	//printf("Gun momentum: [%10.10f %10.10f %10.10f]\n",gun.px,gun.py,gun.pz);
+	//getc(stdin);
+	tree->Fill();
 }
 //=====================================================================================
 G4int Results::RingMap(G4int id,G4int seg)
@@ -540,21 +530,21 @@ G4int Results::RingMap(G4int id,G4int seg)
  }
 //=====================================================================================
 void Results::ReportCrystalPositions()
- {
-   Double_t xx,yy,zz,rr,cc;
-   printf("det cry ring     x        y        z        r       cos\n");
-   for(Int_t det=0;det<GN;det++)
-     for(Int_t cry=0;cry<GS;cry++)
-       {
-	 xx=CP[det][cry].getX();
-	 yy=CP[det][cry].getY();
-	 zz=CP[det][cry].getZ();
-	 rr=sqrt(xx*xx+yy*yy+zz*zz);
-	 cc=zz/rr;
-	 printf(" %2d  %2d  %3d %8.3f %8.3f %8.3f %8.3f %8.3f\n",det+1,cry,RingMap(det+1,cry),xx,yy,zz,rr,cc);
-       }
-       
- } 
+{
+	Double_t xx,yy,zz,rr,cc;
+	printf("det cry ring     x        y        z        r       cos\n");
+	for(Int_t det=0;det<GN;det++)
+		for(Int_t cry=0;cry<GS;cry++)
+			{
+				xx=CP[det][cry].getX();
+				yy=CP[det][cry].getY();
+				zz=CP[det][cry].getZ();
+				rr=sqrt(xx*xx+yy*yy+zz*zz);
+				cc=zz/rr;
+				printf(" %2d  %2d  %3d %8.3f %8.3f %8.3f %8.3f %8.3f\n",det+1,cry,RingMap(det+1,cry),xx,yy,zz,rr,cc);
+			}
+
+} 
 //=====================================================================================
 void Results::GetCsIPositions()
 {
@@ -571,20 +561,20 @@ void Results::GetCsIPositions()
 }
 //=====================================================================================
 void Results::ReportCsIPositions()
- {
-   Double_t xx,yy,zz,rr,cc;
-   printf("pin      x        y        z        r       cos \n");
-   for(Int_t det=0;det<NCsI;det++)
-       {
-	 xx=PP[det].getX();
-	 yy=PP[det].getY();
-	 zz=PP[det].getZ();
-	 rr=sqrt(xx*xx+yy*yy+zz*zz);
-	 cc=zz/rr;
-	 printf(" %2d  %8.3f %8.3f %8.3f %8.3f %8.3f\n",det+1,xx,yy,zz,rr,cc);
-       }
-       
- }
+{
+	Double_t xx,yy,zz,rr,cc;
+	printf("pin      x        y        z        r       cos \n");
+	for(Int_t det=0;det<NCsI;det++)
+		{
+			xx=PP[det].getX();
+			yy=PP[det].getY();
+			zz=PP[det].getZ();
+			rr=sqrt(xx*xx+yy*yy+zz*zz);
+			cc=zz/rr;
+			printf(" %2d  %8.3f %8.3f %8.3f %8.3f %8.3f\n",det+1,xx,yy,zz,rr,cc);
+		}
+
+}
 //=====================================================================================
 void Results::GroupCosDist()
  {
@@ -605,14 +595,14 @@ void Results::GroupCosDist()
      h=new TH1D("GroupCos","GroupCos",1000,0.0,1.0);
    h->Reset();
  
-   for(pin=0;pin<NCsI;pin++)
-     for(det=0;det<GN;det++)
-       for(cry=0;cry<GS;cry++)
-	 {
-	   cos=PP[pin].dot(CP[det][cry])/PP[pin].mag()/CP[det][cry].mag();
-	   h->Fill(cos);
-	 }
-  
+	for(pin=0;pin<NCsI;pin++)
+		for(det=0;det<GN;det++)
+			for(cry=0;cry<GS;cry++)
+				{
+					cos=PP[pin].dot(CP[det][cry])/PP[pin].mag()/CP[det][cry].mag();
+					h->Fill(cos);
+				}
+		
    h->GetXaxis()->SetTitle("cos(theta)");
    h->GetYaxis()->SetTitle("Counts");
    h->SetLineColor(kRed);

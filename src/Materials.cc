@@ -10,6 +10,10 @@
   Ge = man->FindOrBuildMaterial("G4_Ge"); 
   Cu = man->FindOrBuildMaterial("G4_Cu");
   C = man->FindOrBuildMaterial("G4_C");
+  Mg = man->FindOrBuildMaterial("G4_Mg");
+  Al = man->FindOrBuildMaterial("G4_Al");
+  In = man->FindOrBuildMaterial("G4_In");
+  Hf = man->FindOrBuildMaterial("G4_Hf");
   Au = man->FindOrBuildMaterial("G4_Au");
   
   // Compounds

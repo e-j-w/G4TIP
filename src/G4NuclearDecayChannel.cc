@@ -53,8 +53,8 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 //
-#include "G4NuclearLevelManager.hh"
-#include "G4NuclearLevelStore.hh"
+//#include "G4NuclearLevelManager.hh"
+//#include "G4NuclearLevelStore.hh"
 #include "G4NuclearDecayChannel.hh"
 #include "G4DynamicParticle.hh"
 #include "G4DecayProducts.hh"
@@ -241,7 +241,7 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
   theParentMass = 0.0;
   for( G4int index=0; index < numberOfDaughters; index++)
     {theParentMass += daughters[index]->GetPDGMass();}
-  theParentMass += Qtransition  ;
+  theParentMass += Qtransition;
   // bug fix for beta+ decay (flei 25/09/01)
   if (decayMode == 2) theParentMass -= 2*0.511 * MeV;
   //
@@ -264,6 +264,7 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
   // Depending upon the number of daughters, select the appropriate decay
   // kinematics scheme.
   //
+  //G4cout << "Number of daughters: " << numberOfDaughters << G4endl;
   switch (numberOfDaughters)
     {
     case 0:
@@ -274,7 +275,7 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       products =  OneBodyDecayIt();
       break;
     case 2:
-      products =  TwoBodyDecayIt();
+      products =  TwoBodyDecayIt(); //IT decays go here, see G4GeneralPhaseSpaceDecay
       break;
     case 3:
       products =  BetaDecayIt();
@@ -330,11 +331,11 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // Use BreakUp() so limit to one transition at a time, if ICM is requested
       // this change is realted to bug#1001  (F.Lei 07/05/2010)
       G4FragmentVector* gammas = 0;	
-      if (applyICM) {
-	gammas = deexcitation->BreakUp(nucleus);	
-      } else {
-	gammas = deexcitation->BreakItUp(nucleus);
-      }
+			if (applyICM) {
+				gammas = deexcitation->BreakUp(nucleus);
+			} else {
+				gammas = deexcitation->BreakItUp(nucleus);
+			}
       // the returned G4FragmentVector contains the residual nuclide
       // as its last entry.
       G4int nGammas=gammas->size()-1;
@@ -351,36 +352,37 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
 	        theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
 	        products->PushProducts (theGammaRay);
 	      }
-      //
-      // now the nucleus
-      G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
-      // f.lei (03/01/03) this is needed to fix the crach in test18 
-      if (finalDaughterExcitation <= 1.0*keV) finalDaughterExcitation = 0 ;
-      
-      //J. Williams: commented out since this breaks cascades
-      /*// f.lei (07/03/05) added the delete to fix bug#711
-      if (dynamicDaughter) delete dynamicDaughter;
-      
-      G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
-      dynamicDaughter = new G4DynamicParticle
-	(theIonTable->GetIon(daughterZ,daughterA,finalDaughterExcitation),
-	 daughterMomentum1);*/
-      products->PushProducts (dynamicDaughter); 
-      
-      // retrive the ICM shell index
-      shellIndex = deexcitation->GetVacantShellNumber();
-      
-      //
-      // Delete/reset variables associated with the gammas.
-      //
-      while (!gammas->empty()) {
-	      delete *(gammas->end()-1);
-	      gammas->pop_back();
-      }
-      //    gammas->clearAndDestroy();
-      delete gammas;
-      delete deexcitation;
-    }
+			//
+			// now the nucleus
+			G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
+			//J. Williams: added this to produce excited daughter nucleus (needed for cascades)
+			finalDaughterExcitation+=GetDaughterExcitation();
+			//G4cout << "Daughter excitation: " << finalDaughterExcitation << ", parent mass: " << theParentMass<<G4endl;
+			//
+			// f.lei (03/01/03) this is needed to fix the crach in test18 
+			if (finalDaughterExcitation <= 1.0*keV) finalDaughterExcitation = 0 ;
+
+			//J. Williams: commented out since this breaks cascades
+			//// f.lei (07/03/05) added the delete to fix bug#711
+			//if (dynamicDaughter) delete dynamicDaughter;
+			G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
+			dynamicDaughter = new G4DynamicParticle(theIonTable->GetIon(daughterZ,daughterA,finalDaughterExcitation),daughterMomentum1);
+			products->PushProducts (dynamicDaughter); 
+
+			// retrive the ICM shell index
+			shellIndex = deexcitation->GetVacantShellNumber();
+
+			//
+			// Delete/reset variables associated with the gammas.
+			//
+			while (!gammas->empty()) {
+				delete *(gammas->end()-1);
+				gammas->pop_back();
+			}
+			//gammas->clearAndDestroy();
+			delete gammas;
+			delete deexcitation;
+		}
   //
   // now we have to take care of the EC product which have to go through the ARM
   // 

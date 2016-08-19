@@ -160,12 +160,7 @@ private:
   G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV
   G4double S[NCsI]; // scaling factor from LY to channel
 
-
   size_t soh,sogh,soi,sos,soes;
-
-  //CsI parameters outside of structure
-  //Double_t PE;
-  //Double_t PLY;   // Birks Law light yield. LY = sum over dL/dx
   
   G4int numDec;
 

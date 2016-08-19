@@ -23,13 +23,13 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: G4IonCustomModel.cc,v 1.10 2010-11-04 12:21:48 vnivanch Exp $
+// $Id: G4IonParametrisedLossModel.cc,v 1.10 2010-11-04 12:21:48 vnivanch Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 // ===========================================================================
 // GEANT4 class source file
 //
-// Class:                G4IonCustomModel
+// Class:                G4IonParametrisedLossModel
 //
 // Base class:           G4VEmModel (utils)
 // 
@@ -45,7 +45,7 @@
 //                11. 05. 2009 - Introduced scaling algorithm for heavier ions:
 //                               G4IonDEDXScalingICRU73 (AL)
 //                12. 11. 2009 - Moved from original ICRU 73 classes to new
-//                               class (G4IonCustomStoppingData), which is capable
+//                               class (G4IonStoppingData), which is capable
 //                               of reading stopping power data files stored
 //                               in G4LEDATA (requires G4EMLOW6.8 or higher).
 //                               Simultanesouly, the upper energy limit of 
@@ -79,10 +79,10 @@
 // =========================================================================== 
 
 
-#include "G4IonCustomModel.hh"
+#include "G4IonParametrisedLossModel.hh"
 #include "G4LPhysicsFreeVector.hh"
 #include "G4IonStoppingData.hh"
-#include "G4IonCustomStoppingData.hh"
+#include "G4IonStoppingData.hh"
 #include "G4VIonDEDXTable.hh"
 #include "G4VIonDEDXScalingAlgorithm.hh"
 #include "G4IonDEDXScalingICRU73.hh"
@@ -100,7 +100,7 @@
 
 // #########################################################################
 
-G4IonCustomModel::G4IonCustomModel(
+G4IonParametrisedLossModel::G4IonParametrisedLossModel(
              const G4ParticleDefinition*, 
              const G4String& name)
   : G4VEmModel(name),
@@ -157,7 +157,7 @@ G4IonCustomModel::G4IonCustomModel(
 
 // #########################################################################
 
-G4IonCustomModel::~G4IonCustomModel() {
+G4IonParametrisedLossModel::~G4IonParametrisedLossModel() {
 
   // Range vs energy table objects are deleted and the container is cleared
   RangeEnergyTable::iterator iterRange = r.begin();
@@ -187,7 +187,7 @@ G4IonCustomModel::~G4IonCustomModel() {
 
 // #########################################################################
 
-G4double G4IonCustomModel::MinEnergyCut(
+G4double G4IonParametrisedLossModel::MinEnergyCut(
                                        const G4ParticleDefinition*,
                                        const G4MaterialCutsCouple* couple) {
 
@@ -197,7 +197,7 @@ G4double G4IonCustomModel::MinEnergyCut(
 
 // #########################################################################
 
-G4double G4IonCustomModel::MaxSecondaryEnergy(
+G4double G4IonParametrisedLossModel::MaxSecondaryEnergy(
                              const G4ParticleDefinition* particle,
                              G4double kineticEnergy) {
 
@@ -225,7 +225,7 @@ G4double G4IonCustomModel::MaxSecondaryEnergy(
 
 // #########################################################################
 
-G4double G4IonCustomModel::GetChargeSquareRatio(
+G4double G4IonParametrisedLossModel::GetChargeSquareRatio(
                              const G4ParticleDefinition* particle,
 	 	 	     const G4Material* material,
                              G4double kineticEnergy) {    // Kinetic energy
@@ -243,7 +243,7 @@ G4double G4IonCustomModel::GetChargeSquareRatio(
 
 // #########################################################################
 
-G4double G4IonCustomModel::GetParticleCharge(
+G4double G4IonParametrisedLossModel::GetParticleCharge(
                              const G4ParticleDefinition* particle,
 			     const G4Material* material,
                              G4double kineticEnergy) {   // Kinetic energy 
@@ -253,7 +253,7 @@ G4double G4IonCustomModel::GetParticleCharge(
 
 // #########################################################################
 
-void G4IonCustomModel::Initialise(
+void G4IonParametrisedLossModel::Initialise(
                                        const G4ParticleDefinition* particle,
                                        const G4DataVector& cuts) {
 
@@ -310,7 +310,7 @@ void G4IonCustomModel::Initialise(
   size_t nmbCouples = coupleTable -> GetTableSize();
 
 #ifdef PRINT_TABLE_BUILT
-    G4cout << "G4IonCustomModel::Initialise():"
+    G4cout << "G4IonParametrisedLossModel::Initialise():"
            << " Building dE/dx vectors:"
            << G4endl;         
 #endif
@@ -331,7 +331,7 @@ void G4IonCustomModel::Initialise(
        for(;iter != iter_end; iter++) { 
 
           if(*iter == 0) {
-              G4cout << "G4IonCustomModel::Initialise():"
+              G4cout << "G4IonParametrisedLossModel::Initialise():"
                      << " Skipping illegal table."
                      << G4endl;         
           }
@@ -365,7 +365,7 @@ void G4IonCustomModel::Initialise(
 
 // #########################################################################
 
-G4double G4IonCustomModel::ComputeCrossSectionPerAtom(
+G4double G4IonParametrisedLossModel::ComputeCrossSectionPerAtom(
                                    const G4ParticleDefinition* particle,
                                    G4double kineticEnergy,
 				   G4double atomicNumber, 
@@ -402,7 +402,7 @@ G4double G4IonCustomModel::ComputeCrossSectionPerAtom(
 #ifdef PRINT_DEBUG_CS
   G4cout << "########################################################"
          << G4endl
-         << "# G4IonCustomModel::ComputeCrossSectionPerAtom"
+         << "# G4IonParametrisedLossModel::ComputeCrossSectionPerAtom"
          << G4endl
          << "# particle =" << particle -> GetParticleName() 
          <<  G4endl
@@ -430,7 +430,7 @@ G4double G4IonCustomModel::ComputeCrossSectionPerAtom(
 
 // #########################################################################
 
-G4double G4IonCustomModel::CrossSectionPerVolume(
+G4double G4IonParametrisedLossModel::CrossSectionPerVolume(
 				   const G4Material* material,
                                    const G4ParticleDefinition* particle,
                                    G4double kineticEnergy,
@@ -449,7 +449,7 @@ G4double G4IonCustomModel::CrossSectionPerVolume(
 
 // #########################################################################
 
-G4double G4IonCustomModel::ComputeDEDXPerVolume(
+G4double G4IonParametrisedLossModel::ComputeDEDXPerVolume(
                                       const G4Material* material,
 			              const G4ParticleDefinition* particle,
 				      G4double kineticEnergy,
@@ -598,7 +598,7 @@ G4double G4IonCustomModel::ComputeDEDXPerVolume(
 
 // #########################################################################
 
-void G4IonCustomModel::PrintDEDXTable(
+void G4IonParametrisedLossModel::PrintDEDXTable(
                    const G4ParticleDefinition* particle,  // Projectile (ion) 
                    const G4Material* material,  // Absorber material
                    G4double lowerBoundary,      // Minimum energy per nucleon
@@ -662,7 +662,7 @@ void G4IonCustomModel::PrintDEDXTable(
 
 // #########################################################################
 
-void G4IonCustomModel::PrintDEDXTableHandlers(
+void G4IonParametrisedLossModel::PrintDEDXTableHandlers(
                    const G4ParticleDefinition* particle,  // Projectile (ion) 
                    const G4Material* material,  // Absorber material
                    G4double lowerBoundary,      // Minimum energy per nucleon
@@ -686,7 +686,7 @@ void G4IonCustomModel::PrintDEDXTableHandlers(
 
 // #########################################################################
 
-void G4IonCustomModel::SampleSecondaries(
+void G4IonParametrisedLossModel::SampleSecondaries(
                              std::vector<G4DynamicParticle*>* secondaries,
 			     const G4MaterialCutsCouple*,
 			     const G4DynamicParticle* particle,
@@ -747,7 +747,7 @@ void G4IonCustomModel::SampleSecondaries(
     g = 1.0 - betaSquared * kinEnergySec / rossiMaxKinEnergySec;
 
     if(g > 1.0) {
-        G4cout << "G4IonCustomModel::SampleSecondary Warning: "
+        G4cout << "G4IonParametrisedLossModel::SampleSecondary Warning: "
                << "Majorant 1.0 < "
                << g << " for e= " << kinEnergySec
                << G4endl;
@@ -787,7 +787,7 @@ void G4IonCustomModel::SampleSecondaries(
 
 // #########################################################################
 
-void G4IonCustomModel::UpdateRangeCache(
+void G4IonParametrisedLossModel::UpdateRangeCache(
                      const G4ParticleDefinition* particle,
                      const G4MaterialCutsCouple* matCutsCouple) {
 
@@ -826,7 +826,7 @@ void G4IonCustomModel::UpdateRangeCache(
 
 // #########################################################################
 
-void G4IonCustomModel::UpdateDEDXCache(
+void G4IonParametrisedLossModel::UpdateDEDXCache(
                      const G4ParticleDefinition* particle,
                      const G4Material* material,
                      G4double cutEnergy) {
@@ -914,7 +914,7 @@ void G4IonCustomModel::UpdateDEDXCache(
 
 // #########################################################################
 
-void G4IonCustomModel::CorrectionsAlongStep(
+void G4IonParametrisedLossModel::CorrectionsAlongStep(
                              const G4MaterialCutsCouple* couple,
 			     const G4DynamicParticle* dynamicParticle,
 			     G4double& eloss,
@@ -963,7 +963,7 @@ void G4IonCustomModel::CorrectionsAlongStep(
   G4cout.precision(6);      
   G4cout << "########################################################"
          << G4endl
-         << "# G4IonCustomModel::CorrectionsAlongStep"
+         << "# G4IonParametrisedLossModel::CorrectionsAlongStep"
          << G4endl
          << "# cut(MeV) = " << cutEnergy/MeV 
          << G4endl;
@@ -1061,7 +1061,7 @@ void G4IonCustomModel::CorrectionsAlongStep(
 
 // #########################################################################
 
-void G4IonCustomModel::BuildRangeVector(
+void G4IonParametrisedLossModel::BuildRangeVector(
                      const G4ParticleDefinition* particle,
                      const G4MaterialCutsCouple* matCutsCouple) {
 
@@ -1139,7 +1139,7 @@ void G4IonCustomModel::BuildRangeVector(
       energyRangeVector -> PutValues(i, energy, range);
 
 #ifdef PRINT_DEBUG_DETAILS
-      G4cout << "G4IonCustomModel::BuildRangeVector() bin = " 
+      G4cout << "G4IonParametrisedLossModel::BuildRangeVector() bin = " 
              << i <<", E = "
              << energy / MeV << " MeV, R = " 
              << range / mm << " mm"
@@ -1181,7 +1181,7 @@ void G4IonCustomModel::BuildRangeVector(
 
 // #########################################################################
 
-G4double G4IonCustomModel::ComputeLossForStep(
+G4double G4IonParametrisedLossModel::ComputeLossForStep(
                      const G4MaterialCutsCouple* matCutsCouple,
                      const G4ParticleDefinition* particle,
                      G4double kineticEnergy,
@@ -1211,7 +1211,7 @@ G4double G4IonCustomModel::ComputeLossForStep(
      }
 
 #ifdef PRINT_DEBUG
-     G4cout << "G4IonCustomModel::ComputeLossForStep() range = " 
+     G4cout << "G4IonParametrisedLossModel::ComputeLossForStep() range = " 
             << range / mm << " mm, step = " << stepLength / mm << " mm" 
             << G4endl;
 #endif
@@ -1241,13 +1241,13 @@ G4double G4IonCustomModel::ComputeLossForStep(
 
 // #########################################################################
 
-G4bool G4IonCustomModel::AddDEDXTable(
+G4bool G4IonParametrisedLossModel::AddDEDXTable(
                                 const G4String& name,
                                 G4VIonDEDXTable* table, 
                                 G4VIonDEDXScalingAlgorithm* algorithm) {
 
   if(table == 0) {
-     G4cerr << "G4IonCustomModel::AddDEDXTable() Cannot "
+     G4cerr << "G4IonParametrisedLossModel::AddDEDXTable() Cannot "
             << " add table: Invalid pointer."
             << G4endl;      
 
@@ -1262,7 +1262,7 @@ G4bool G4IonCustomModel::AddDEDXTable(
      G4String tableName = (*iter) -> GetName();
 
      if(tableName == name) { 
-        G4cerr << "G4IonCustomModel::AddDEDXTable() Cannot "
+        G4cerr << "G4IonParametrisedLossModel::AddDEDXTable() Cannot "
                << " add table: Name already exists."      
                << G4endl;
 
@@ -1284,7 +1284,7 @@ G4bool G4IonCustomModel::AddDEDXTable(
 
 // #########################################################################
 
-G4bool G4IonCustomModel::RemoveDEDXTable(
+G4bool G4IonParametrisedLossModel::RemoveDEDXTable(
 				 const G4String& name) {
 
   LossTableList::iterator iter = lossTableList.begin();
@@ -1323,10 +1323,10 @@ G4bool G4IonCustomModel::RemoveDEDXTable(
 
 // #########################################################################
 
-void G4IonCustomModel::DeactivateICRU73Scaling() {
+void G4IonParametrisedLossModel::DeactivateICRU73Scaling() {
 
   RemoveDEDXTable("ICRU73");
-  AddDEDXTable("ICRU73", new G4IonCustomStoppingData("ion_stopping_data/icru73"));
+  AddDEDXTable("ICRU73", new G4IonStoppingData("ion_stopping_data/icru73"));
 }
 
 // #########################################################################

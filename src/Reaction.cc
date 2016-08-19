@@ -324,6 +324,12 @@ G4ThreeVector Reaction::GetCMVelocity(const G4Track & aTrack)
 //BUT IT LOOKS AS THOUGH GAMMAS ARE NOT BEING EMITTED AT THE PROPER TIME
 //OR PERHAPS GAMMAS ARE BEING EMITTED WITH LIFETIME FROM A DIFFERENT STEP IN THE
 //CASCADE (OR PERHAPS A MIXTURE OF THE LIFETIMES OF THE DIFFERENT STEPS?)
+//actually, it still happens even with 1 gamma
+//the lifetime appears to match the 1st excited state of 22Ne.  Perhaps Geant4 is automatically inserting the decay from a table somewhere?
+//cheesing excitation energy of residual to 0 doesn't seem to get rid of the 2nd peak
+//check other nuclei?
+//possibly the time recorded in the feature is simply the time of the final step in the ion track?
+//When changing the backing to G4_C, 2nd peak seems to go away
 void Reaction::TargetFaceCrossSection()
 {
   G4cout << "---------- SETUP OF DECAY PRODUCTS ----------" << G4endl;
@@ -335,7 +341,7 @@ void Reaction::TargetFaceCrossSection()
 
   G4int DA=0,DZ=0;
   A1=theProjectile->getA();
-  Z1=theProjectile->getZ(); 
+  Z1=theProjectile->getZ();
   
   //set properties of the compound (which we assume does not gamma decay)
   compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
@@ -349,7 +355,8 @@ void Reaction::TargetFaceCrossSection()
       {
         
 				//define the residual species
-				residual[i]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+				//residual[i]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+				residual[i]=G4ParticleTable::GetParticleTable()->GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
 				if(i>0)
 					residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
             
@@ -384,7 +391,6 @@ void Reaction::TargetFaceCrossSection()
   else
     {
       G4cout << "No decay process specified for the residual nucleus!" << G4endl;
-      residual[0]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
     }
   
   //print cascade info
@@ -392,8 +398,9 @@ void Reaction::TargetFaceCrossSection()
   	{
   		//Print info
   		G4cout << "STEP " << i+1 << " OF THE CASCADE" << G4endl << "Residual lifetime: " << residual[i]->GetPDGLifeTime()/ns << " ns" << G4endl << "Initial excitation energy: " << ((G4Ions*)residual[i])->GetExcitationEnergy()/keV << " keV" << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma()/keV << " keV" << G4endl << "Final excitation energy: " << ResDec[i]->GetDaughterExcitation()/keV << " keV" << G4endl;
-  		//ResDecTab[i]->DumpInfo();
-  		//residual[i]->GetProcessManager()->DumpInfo();
+  		G4cout << "Number of decay table entries: " << residual[i]->GetDecayTable()->entries() << G4endl;
+  		ResDecTab[i]->DumpInfo();
+  		residual[i]->GetProcessManager()->DumpInfo();
   	}
 
   G4cout << "---------- END OF DECAY PRODUCT SETUP ----------" << G4endl;

@@ -15,6 +15,15 @@ class GammaDecayChannel : public G4NuclearDecayChannel
   //   Isomeric Transitions 
   //
   // class  description - end
+  /*public:
+    GammaDecayChannel (G4int Verbose,
+                      const G4ParticleDefinition *theParentNucleus,
+                      G4double theBR, G4double Egamma,G4double EexcitInitial) :
+      G4NuclearDecayChannel (IT, Verbose, theParentNucleus, theBR, Egamma,
+			     theParentNucleus->GetBaryonNumber(),
+			     int(theParentNucleus->GetPDGCharge()/eplus),
+			     1.3,"gamma")
+    {*/
   public:
     GammaDecayChannel (G4int Verbose,
                       const G4ParticleDefinition *theParentNucleus,
@@ -22,7 +31,7 @@ class GammaDecayChannel : public G4NuclearDecayChannel
       G4NuclearDecayChannel (IT, Verbose, theParentNucleus, theBR, Egamma,
 			     theParentNucleus->GetBaryonNumber(),
 			     int(theParentNucleus->GetPDGCharge()/eplus),
-			     EexcitInitial-Egamma,"gamma")
+			     EexcitInitial-Egamma,"gamma")//2nd to last argument gives improper lifetimes?
     {
 #ifdef G4VERBOSE
       if (GetVerboseLevel()>1)

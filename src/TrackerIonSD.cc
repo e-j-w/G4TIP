@@ -78,10 +78,10 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        ionCollection->insert(newIonHitI);
         }
 
-      G4TrackStatus TrackStatus;
-      TrackStatus=aStep->GetTrack()->GetTrackStatus();
-      if(TrackStatus==fStopButAlive||TrackStatus==fStopAndKill)
-        {
+      //G4TrackStatus TrackStatus;
+      //TrackStatus=aStep->GetTrack()->GetTrackStatus();
+      //if(TrackStatus==fStopButAlive||TrackStatus==fStopAndKill)
+      //  {
 	        TrackerIonHit* newIonHitF= new TrackerIonHit();   	
 	 
           if(vf->GetProcessDefinedStep()->GetProcessName()=="Decay")
@@ -104,7 +104,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	        newIonHitF->SetTime(vf->GetGlobalTime());
 	        newIonHitF->Draw();
 	        ionCollection->insert(newIonHitF);
-        }
+      //  }
 
    
     }

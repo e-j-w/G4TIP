@@ -23,13 +23,13 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: G4IonCustomStoppingData.hh,v 1.2 2010-10-25 08:41:39 vnivanch Exp $
+// $Id: G4IonStoppingData.hh,v 1.2 2010-10-25 08:41:39 vnivanch Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 // ===========================================================================
 // GEANT4 class header file
 //
-// Class:                G4IonCustomStoppingData
+// Class:                G4IonStoppingData
 //
 // Base class:           G4VIonDEDXTable 
 // 
@@ -48,8 +48,8 @@
 // =========================================================================== 
 //
 
-#ifndef G4IonCustomStoppingData_HH
-#define G4IonCustomStoppingData_HH
+#ifndef G4IonStoppingData_HH
+#define G4IonStoppingData_HH
 
 #include "globals.hh"
 #include "G4VIonDEDXTable.hh"
@@ -58,11 +58,11 @@
 #include <map>
 
 
-class G4IonCustomStoppingData : public G4VIonDEDXTable {
+class G4IonStoppingData : public G4VIonDEDXTable {
 
  public:
-   G4IonCustomStoppingData(const G4String& leDirectory);
-   virtual ~G4IonCustomStoppingData();
+   G4IonStoppingData(const G4String& leDirectory);
+   virtual ~G4IonStoppingData();
 
    // Function for checking the availability of stopping power tables
    // for a given ion-material couple, where the material consists of
@@ -166,4 +166,4 @@ class G4IonCustomStoppingData : public G4VIonDEDXTable {
    G4IonDEDXMapMat dedxMapMaterials;
 };
 
-#endif // G4IonCustomStoppingData_HH
+#endif // G4IonStoppingData_HH

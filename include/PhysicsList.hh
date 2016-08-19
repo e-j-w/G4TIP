@@ -27,11 +27,9 @@
 #include "G4CoulombScattering.hh"
 #include "G4IonCoulombScatteringModel.hh"
 //#include "G4ScreenedNuclearRecoil.hh" //only in newer GEANT4 versions?
-#include "G4IonCustomModel.hh"
-//#include "G4IonParametrisedLossModel.hh"
+#include "G4IonParametrisedLossModel.hh"
 #include "G4NuclearStopping.hh"
-#include "G4IonCustomStoppingData.hh"
-//#include "G4IonStoppingData.hh"
+#include "G4IonStoppingData.hh"
 #include "G4IonDEDXScalingICRU73.hh"
 
 //neutrons

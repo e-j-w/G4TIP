@@ -21,6 +21,10 @@ class Materials
   G4Material* Ge;
   G4Material* Cu;
   G4Material* C;
+  G4Material* Mg;
+  G4Material* al;
+  G4Material* In;
+  G4Material* Hf;
   G4Material* Au;
   
   // Compounds
