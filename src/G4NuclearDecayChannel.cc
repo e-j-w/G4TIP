@@ -354,10 +354,11 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
 	      }
 			//
 			// now the nucleus
-			G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
+			//J. Williams: commented this out as it doesn't give proper excitation for cascade.
+			//G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
 			//J. Williams: added this to produce excited daughter nucleus (needed for cascades)
-			finalDaughterExcitation+=GetDaughterExcitation();
-			//G4cout << "Daughter excitation: " << finalDaughterExcitation << ", parent mass: " << theParentMass<<G4endl;
+			G4double finalDaughterExcitation=GetDaughterExcitation();
+			//G4cout << "Daughter excitation: " << finalDaughterExcitation << ", parent mass: " << theParentMass<< G4endl;
 			//
 			// f.lei (03/01/03) this is needed to fix the crach in test18 
 			if (finalDaughterExcitation <= 1.0*keV) finalDaughterExcitation = 0 ;

@@ -367,7 +367,7 @@ void Reaction::TargetFaceCrossSection()
 				//set up gamma decay channel
 				ResDecTab[i] = new G4DecayTable();
 				residual[i]->SetDecayTable(ResDecTab[i]);
-				ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);      
+				ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);
 				ResDecTab[i]->Insert(ResDec[i]);
 				//ResDecTab[i]->DumpInfo();
 				
