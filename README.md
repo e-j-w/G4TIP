@@ -12,7 +12,7 @@ At present, the TIP CsI wall and GRIFFIN/TIGRESS array geometries are implemente
 
 This code has been tested with GEANT4.9.4 on Scientific Linux 6, Ubuntu 14.04, and Ubuntu 15.10.
 
-Depends on GEANT4, CLHEP, and ROOT v5.x (results are saved to ROOT tree files).  Requires proper setup of environment variables for each, for example by adding the follwing lines to ~/.bashrc (substituting the appropriate paths):
+Depends on GEANT4.9.4, CLHEP 2.1.0.1, and ROOT v5.x (results are saved to ROOT tree files).  Requires proper setup of environment variables for each, for example by adding the follwing lines to ~/.bashrc (substituting the appropriate paths):
 
 ```
 #ROOT configuration
@@ -36,11 +36,13 @@ source /path/to/env.sh
 export G4INSTALL=/path/to/geant4_install_directory
 ```
 
-
 Modified GEANT4 classes included in this code:
+
 G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers
+
 G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers
-G4NuclearDecayChannel (from GEANT4.9.4) - minimally modified to allow gamma cascades
+
+G4NuclearDecayChannel (from GEANT4.9.4) - modified to properly compute properties of daughter nuclei when considering a cascade of internal conversion decays
 
 ## Acknowledgements
 
