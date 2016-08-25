@@ -294,7 +294,7 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
   // If the decay is to an excited state of the daughter nuclide, we need
   // to apply the photo-evaporation process. This includes the IT decay mode itself.
   //
-  // needed to hold the shell idex after ICM
+  // needed to hold the shell index after ICM
   G4int shellIndex = -1;
   //
   if (daughterExcitation > 0.0) 
@@ -310,48 +310,48 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       //
       // Now define a G4Fragment with the correct A, Z and excitation, and declare and
       // initialise a G4PhotonEvaporation object.
-      //    
+      //   
       G4Fragment nucleus(daughterA, daughterZ, daughterMomentum);
-      G4PhotonEvaporation* deexcitation = new G4PhotonEvaporation;
-      deexcitation->SetVerboseLevel(GetVerboseLevel());
+      //G4PhotonEvaporation* deexcitation = new G4PhotonEvaporation;
+      //deexcitation->SetVerboseLevel(GetVerboseLevel());
       // switch on/off internal electron conversion
-      deexcitation->SetICM(applyICM);
+      //deexcitation->SetICM(applyICM);
       // set the maximum life-time for a level that will be treated. Level with life-time longer than this
       // will be outputed as meta-stable isotope
       //
-      deexcitation->SetMaxHalfLife(halflifethreshold);
+      //deexcitation->SetMaxHalfLife(halflifethreshold);
       // but in IT mode, we need to force the transition
-      if (decayMode == 0) {
+      /*if (decayMode == 0) {
 	      deexcitation->RDMForced(true);
       } else {
 	      deexcitation->RDMForced(false);
-      }
+      }*/
       //
       // Now apply the photo-evaporation
       // Use BreakUp() so limit to one transition at a time, if ICM is requested
       // this change is realted to bug#1001  (F.Lei 07/05/2010)
-      G4FragmentVector* gammas = 0;	
-			if (applyICM) {
+      //G4FragmentVector* gammas = 0;	
+      
+			/*if (applyICM) {
 				gammas = deexcitation->BreakUp(nucleus);
 			} else {
 				gammas = deexcitation->BreakItUp(nucleus);
-			}
+			}*/
       // the returned G4FragmentVector contains the residual nuclide
       // as its last entry.
-      G4int nGammas=gammas->size()-1;
+      //G4int nGammas=gammas->size()-1;
       //
       // Go through each gamma/e- and add it to the decay product.  The angular distribution
       // of the gammas is isotropic, and the residual nucleus is assumed not to have suffered
       // any recoil as a result of this de-excitation.
       //
-      for (G4int ig=0; ig<nGammas; ig++)
+      /*for (G4int ig=0; ig<nGammas; ig++)
 	      {
-	        G4DynamicParticle *theGammaRay = new
-	          G4DynamicParticle (gammas->operator[](ig)->GetParticleDefinition(),
-			             gammas->operator[](ig)->GetMomentum());
-	        theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
+	        G4DynamicParticle *theGammaRay = new G4DynamicParticle (gammas->operator[](ig)->GetParticleDefinition(), gammas->operator[](ig)->GetMomentum());*/
+	        G4DynamicParticle *theGammaRay = new G4DynamicParticle (G4Gamma::GammaDefinition(),G4RandomDirection(),Qtransition);//JW: just make one gamma ray at each step
+	        //theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
 	        products->PushProducts (theGammaRay);
-	      }
+	      //}
 			//
 			// now the nucleus
 			//J. Williams: commented this out as it doesn't give proper excitation for cascade.
@@ -369,20 +369,20 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
 			G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
 			dynamicDaughter = new G4DynamicParticle(theIonTable->GetIon(daughterZ,daughterA,finalDaughterExcitation),daughterMomentum1);
 			products->PushProducts (dynamicDaughter); 
-
+			
 			// retrive the ICM shell index
-			shellIndex = deexcitation->GetVacantShellNumber();
+			//shellIndex = deexcitation->GetVacantShellNumber();
 
 			//
 			// Delete/reset variables associated with the gammas.
 			//
-			while (!gammas->empty()) {
+			/*while (!gammas->empty()) {
 				delete *(gammas->end()-1);
 				gammas->pop_back();
-			}
+			}*/
 			//gammas->clearAndDestroy();
-			delete gammas;
-			delete deexcitation;
+			//delete gammas;
+			//delete deexcitation;
 		}
   //
   // now we have to take care of the EC product which have to go through the ARM

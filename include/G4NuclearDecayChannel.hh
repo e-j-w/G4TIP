@@ -35,6 +35,10 @@
 #include "G4GeneralPhaseSpaceDecay.hh"
 #include "G4RadioactiveDecayMode.hh"
 
+//added by JW
+#include "G4RandomDirection.hh"
+#include "G4Gamma.hh"
+
 #include <CLHEP/Random/RandGeneral.h>
 
 ////////////////////////////////////////////////////////////////////////////////
