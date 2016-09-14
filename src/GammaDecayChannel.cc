@@ -25,7 +25,7 @@
 //
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //
-// MODULES:              G4NuclearDecayChannel.cc
+// MODULES:              GammaDecayChannel.cc (Derived from G4NuclearDecayChannel.cc)
 //
 // Version:             0.b.4
 // Date:                14/04/00
@@ -55,7 +55,7 @@
 //
 //#include "G4NuclearLevelManager.hh"
 //#include "G4NuclearLevelStore.hh"
-#include "G4NuclearDecayChannel.hh"
+#include "GammaDecayChannel.hh"
 #include "G4DynamicParticle.hh"
 #include "G4DecayProducts.hh"
 #include "G4DecayTable.hh"
@@ -69,118 +69,47 @@
 #include "G4AtomicShell.hh"
 #include "G4AtomicDeexcitation.hh"
 
-const G4double G4NuclearDecayChannel:: pTolerance = 0.001;
-const G4double G4NuclearDecayChannel:: levelTolerance = 2.0*keV;
-//const G4bool G4NuclearDecayChannel:: FermiOn = true;
+const G4double GammaDecayChannel:: pTolerance = 0.001;
+const G4double GammaDecayChannel:: levelTolerance = 2.0*keV;
+//const G4bool GammaDecayChannel:: FermiOn = true;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
-// Constructor for one decay product (the nucleus).
+// Constructor for a daughter nucleus and a gamma ray (IT).
+// Derived from G4NuclearDecayChannel constuctors by J. Williams 
 //
-G4NuclearDecayChannel::G4NuclearDecayChannel
-                      (const G4RadioactiveDecayMode &theMode,
-                       G4int Verbose,
-                       const G4ParticleDefinition *theParentNucleus,
-                       G4double theBR,
-                       G4double theQtransition,
-                       G4int A,
-                       G4int Z,
-                       G4double theDaughterExcitation) :
-  G4GeneralPhaseSpaceDecay(Verbose), decayMode(theMode)
+GammaDecayChannel::GammaDecayChannel (G4int Verbose,
+		const G4ParticleDefinition *theParentNucleus,
+		G4double theBR, G4double Egamma,G4double EexcitInitial) :
+			G4GeneralPhaseSpaceDecay(Verbose), decayMode(IT)
 {
 #ifdef G4VERBOSE
   if (GetVerboseLevel()>1)
-    {G4cout <<"G4NuclearDecayChannel constructor for " <<G4int(theMode) <<G4endl;}
+    {G4cout <<"GammaDecayChannel constructor for " <<G4int(IT) <<G4endl;}
 #endif
-  SetParent(theParentNucleus);
-  FillParent();
-  parent_mass = theParentNucleus->GetPDGMass();
-  SetBR (theBR);
-  SetNumberOfDaughters (1);
-  FillDaughterNucleus (0, A, Z, theDaughterExcitation);
-  Qtransition = theQtransition;
-  halflifethreshold = 1e-6*second;
-  applyICM = true;
-  applyARM = true;
-}
-///////////////////////////////////////////////////////////////////////////////
-//
-//
-// Constructor for a daughter nucleus and one other particle.
-//
-G4NuclearDecayChannel::G4NuclearDecayChannel
-                      (const G4RadioactiveDecayMode &theMode,
-                       G4int Verbose,
-                       const G4ParticleDefinition *theParentNucleus,
-                       G4double theBR,
-                       G4double theQtransition,
-                       G4int A,
-                       G4int Z,
-                       G4double theDaughterExcitation,
-                       const G4String theDaughterName1) :
-			G4GeneralPhaseSpaceDecay(Verbose), decayMode(theMode)
-{
-#ifdef G4VERBOSE
-  if (GetVerboseLevel()>1)
-    {G4cout <<"G4NuclearDecayChannel constructor for " <<G4int(theMode) <<G4endl;}
-#endif
+	E=Egamma;
   SetParent (theParentNucleus);
   FillParent();
   parent_mass = theParentNucleus->GetPDGMass();
   SetBR (theBR);
   SetNumberOfDaughters (2);
-  SetDaughter(0, theDaughterName1);
-  FillDaughterNucleus (1, A, Z, theDaughterExcitation);
-  Qtransition = theQtransition;
+  SetDaughter(0, "gamma");
+  FillDaughterNucleus (1, theParentNucleus->GetBaryonNumber(), int(theParentNucleus->GetPDGCharge()/eplus), EexcitInitial-Egamma);
+  Qtransition = Egamma;
   halflifethreshold = 1e-6*second;
   applyICM = true;
   applyARM = true;
 }
 
-//
-// Constructor for a daughter nucleus and two other particles
-//
-G4NuclearDecayChannel::G4NuclearDecayChannel
-                      (const G4RadioactiveDecayMode &theMode,
-                       G4int Verbose,
-                       const G4ParticleDefinition *theParentNucleus,
-                       G4double theBR,
-                       G4double /* theFFN */,
-		       G4bool /* betaS */, 
-		       CLHEP::RandGeneral* randBeta,
-                       G4double theQtransition,
-                       G4int A,
-                       G4int Z,
-                       G4double theDaughterExcitation,
-                       const G4String theDaughterName1,
-                       const G4String theDaughterName2)
- : G4GeneralPhaseSpaceDecay(Verbose), decayMode(theMode)
-{
-#ifdef G4VERBOSE
-  if (GetVerboseLevel()>1)
-    {G4cout <<"G4NuclearDecayChannel constructor for " <<G4int(theMode) <<G4endl;}
-#endif
-  SetParent (theParentNucleus);
-  FillParent();
-  parent_mass = theParentNucleus->GetPDGMass();
-  SetBR (theBR);
-  SetNumberOfDaughters (3);
-  SetDaughter(0, theDaughterName1);
-  SetDaughter(2, theDaughterName2);
-  FillDaughterNucleus(1, A, Z, theDaughterExcitation);
-  RandomEnergy = randBeta;
-  Qtransition = theQtransition;
-  halflifethreshold = 1e-6*second;
-  applyICM = true;
-  applyARM = true;
-}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 #include "G4HadTmpUtil.hh"
 
-void G4NuclearDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
+void GammaDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
   G4double theDaughterExcitation)
 {
   //J. Williams: get rid of rounding errors resulting in negative numbers
@@ -193,11 +122,11 @@ void G4NuclearDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
   //
   if (A<1 || Z<0 || theDaughterExcitation <0.0)
   {
-    G4cerr <<"Error in G4NuclearDecayChannel::FillDaughterNucleus";
+    G4cerr <<"Error in GammaDecayChannel::FillDaughterNucleus";
     G4cerr <<"Inappropriate values of daughter A, Z or excitation" <<G4endl;
     G4cerr <<"A = " <<A <<" and Z = " <<Z;
     G4cerr <<" Ex = " <<theDaughterExcitation*MeV  <<"MeV" <<G4endl;
-    G4Exception(__FILE__, G4inttostring(__LINE__), FatalException, "G4NuclearDecayChannel::FillDaughterNucleus");
+    G4Exception(__FILE__, G4inttostring(__LINE__), FatalException, "GammaDecayChannel::FillDaughterNucleus");
   }
   //
   //
@@ -219,12 +148,13 @@ void G4NuclearDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
   SetDaughter(index, daughterNucleus);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 //
 //
 //
-G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
+G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
 {
   //
   //
@@ -242,12 +172,10 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
   for( G4int index=0; index < numberOfDaughters; index++)
     {theParentMass += daughters[index]->GetPDGMass();}
   theParentMass += Qtransition;
-  // bug fix for beta+ decay (flei 25/09/01)
-  if (decayMode == 2) theParentMass -= 2*0.511 * MeV;
-  //
+  
 #ifdef G4VERBOSE
   if (GetVerboseLevel()>1) {
-    G4cout << "G4NuclearDecayChannel::DecayIt "<< G4endl;
+    G4cout << "GammaDecayChannel::DecayIt "<< G4endl;
     G4cout << "the decay mass = " << theParentMass << G4endl;
   }
 #endif
@@ -267,35 +195,22 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
   //G4cout << "Number of daughters: " << numberOfDaughters << G4endl;
   switch (numberOfDaughters)
     {
-    case 0:
-      G4cerr << "G4NuclearDecayChannel::DecayIt ";
-      G4cerr << " daughters not defined " <<G4endl;
-      break;
-    case 1:
-      products =  OneBodyDecayIt();
-      break;
     case 2:
       products =  TwoBodyDecayIt(); //IT decays go here, see G4GeneralPhaseSpaceDecay
       break;
-    case 3:
-      products =  BetaDecayIt();
-      break;
     default:
-      G4cerr <<"Error in G4NuclearDecayChannel::DecayIt" <<G4endl;
+      G4cerr <<"Error in GammaDecayChannel::DecayIt" <<G4endl;
       G4cerr <<"Number of daughters in decay = " <<numberOfDaughters <<G4endl;
-      G4Exception(__FILE__, G4inttostring(__LINE__), FatalException,  "G4NuclearDecayChannel::DecayIt");
+      G4Exception(__FILE__, G4inttostring(__LINE__), FatalException,  "GammaDecayChannel::DecayIt");
     }
   if (products == 0) {
-    G4cerr << "G4NuclearDecayChannel::DecayIt ";
+    G4cerr << "GammaDecayChannel::DecayIt ";
     G4cerr << *parent_name << " can not decay " << G4endl;
     DumpInfo();
   }
   //
   // If the decay is to an excited state of the daughter nuclide, we need
   // to apply the photo-evaporation process. This includes the IT decay mode itself.
-  //
-  // needed to hold the shell index after ICM
-  G4int shellIndex = -1;
   //
   if (daughterExcitation > 0.0) 
     {
@@ -312,50 +227,12 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
       // initialise a G4PhotonEvaporation object.
       //   
       G4Fragment nucleus(daughterA, daughterZ, daughterMomentum);
-      //G4PhotonEvaporation* deexcitation = new G4PhotonEvaporation;
-      //deexcitation->SetVerboseLevel(GetVerboseLevel());
-      // switch on/off internal electron conversion
-      //deexcitation->SetICM(applyICM);
-      // set the maximum life-time for a level that will be treated. Level with life-time longer than this
-      // will be outputed as meta-stable isotope
-      //
-      //deexcitation->SetMaxHalfLife(halflifethreshold);
-      // but in IT mode, we need to force the transition
-      /*if (decayMode == 0) {
-	      deexcitation->RDMForced(true);
-      } else {
-	      deexcitation->RDMForced(false);
-      }*/
-      //
-      // Now apply the photo-evaporation
-      // Use BreakUp() so limit to one transition at a time, if ICM is requested
-      // this change is realted to bug#1001  (F.Lei 07/05/2010)
-      //G4FragmentVector* gammas = 0;	
       
-			/*if (applyICM) {
-				gammas = deexcitation->BreakUp(nucleus);
-			} else {
-				gammas = deexcitation->BreakItUp(nucleus);
-			}*/
-      // the returned G4FragmentVector contains the residual nuclide
-      // as its last entry.
-      //G4int nGammas=gammas->size()-1;
-      //
-      // Go through each gamma/e- and add it to the decay product.  The angular distribution
-      // of the gammas is isotropic, and the residual nucleus is assumed not to have suffered
-      // any recoil as a result of this de-excitation.
-      //
-      /*for (G4int ig=0; ig<nGammas; ig++)
-	      {
-	        G4DynamicParticle *theGammaRay = new G4DynamicParticle (gammas->operator[](ig)->GetParticleDefinition(), gammas->operator[](ig)->GetMomentum());*/
-	        G4DynamicParticle *theGammaRay = new G4DynamicParticle (G4Gamma::GammaDefinition(),G4RandomDirection(),Qtransition);//JW: just make one gamma ray at each step
-	        //theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
-	        products->PushProducts (theGammaRay);
-	      //}
-			//
+	    G4DynamicParticle *theGammaRay = new G4DynamicParticle (G4Gamma::GammaDefinition(),G4RandomDirection(),Qtransition);//JW: just make one gamma ray at each step
+      //theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
+      products->PushProducts (theGammaRay);
+	    
 			// now the nucleus
-			//J. Williams: commented this out as it doesn't give proper excitation for cascade.
-			//G4double finalDaughterExcitation = gammas->operator[](nGammas)->GetExcitationEnergy();
 			//J. Williams: added this to produce excited daughter nucleus (needed for cascades)
 			G4double finalDaughterExcitation=GetDaughterExcitation();
 			//G4cout << "Daughter excitation: " << finalDaughterExcitation << ", parent mass: " << theParentMass<< G4endl;
@@ -368,121 +245,15 @@ G4DecayProducts *G4NuclearDecayChannel::DecayIt (G4double theParentMass)
 			//if (dynamicDaughter) delete dynamicDaughter;
 			G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
 			dynamicDaughter = new G4DynamicParticle(theIonTable->GetIon(daughterZ,daughterA,finalDaughterExcitation),daughterMomentum1);
-			products->PushProducts (dynamicDaughter); 
-			
-			// retrive the ICM shell index
-			//shellIndex = deexcitation->GetVacantShellNumber();
-
-			//
-			// Delete/reset variables associated with the gammas.
-			//
-			/*while (!gammas->empty()) {
-				delete *(gammas->end()-1);
-				gammas->pop_back();
-			}*/
-			//gammas->clearAndDestroy();
-			//delete gammas;
-			//delete deexcitation;
+			products->PushProducts (dynamicDaughter);
 		}
-  //
-  // now we have to take care of the EC product which have to go through the ARM
-  // 
-  G4int eShell = -1;
-  if (decayMode == 3 || decayMode == 4 || decayMode == 5) {
-    switch (decayMode)
-      {
-      case KshellEC:
-	//
-	{
-	  eShell = 0; // --> 0 from 1 (f.lei 30/4/2008)
-	}
-	break;
-      case LshellEC:
-	//
-	{
-	  eShell = G4int(G4UniformRand()*3)+1;
-	}
-	break;
-      case MshellEC:
-	//
-	{
-	// limit the shell index to 6 as specified by the ARM (F.Lei 06/05/2010)
-	// eShell = G4int(G4UniformRand()*5)+4;
-	  eShell = G4int(G4UniformRand()*3)+4;
-	}
-	break;
-      case ERROR:
-      default:
-        G4Exception("G4NuclearDecayChannel::DecayIt()", "601",
-                    FatalException, "Error in decay mode selection");
-      }
-  }
-  // Also have to deal with the IT case where ICM may have been applied
-  //
-  if (decayMode == 0) {
-    eShell = shellIndex;
-  }
-  //
-  // now apply ARM if it is requested and there is a vaccancy
-  //
-  if (applyARM && eShell != -1) {
-    G4int aZ = daughterZ;
-    if (aZ > 5 && aZ < 100) {  // only applies to 5< Z <100 
-      // Retrieve the corresponding identifier and binding energy of the selected shell
-      const G4AtomicTransitionManager* transitionManager = G4AtomicTransitionManager::Instance();
-
-      //check that eShell is smaller than the max number of shells
-      //this to avoid a warning from transitionManager(otherwise the output is the same)
-      //Correction to Bug 1662. L Desorgher (04/02/2011)
-      if (eShell >= transitionManager->NumberOfShells(aZ)){
-    	  eShell=transitionManager->NumberOfShells(aZ)-1;
-      }
-
-      const G4AtomicShell* shell = transitionManager->Shell(aZ, eShell);
-      G4double bindingEnergy = shell->BindingEnergy();
-      G4int shellId = shell->ShellId();
-
-      G4AtomicDeexcitation* atomDeex = new G4AtomicDeexcitation();  
-      //the default is no Auger electron generation. 
-      // Switch it on/off here! 
-      atomDeex->ActivateAugerElectronProduction(true);
-      std::vector<G4DynamicParticle*>* armProducts = atomDeex->GenerateParticles(aZ,shellId);
-
-      // pop up the daughter before insertion; 
-      // f.lei (30/04/2008) check if the total kinetic energy is less than 
-      // the shell binding energy; if true add the difference to the daughter to conserve the energy 
-      dynamicDaughter = products->PopProducts();
-      G4double tARMEnergy = 0.0; 
-      for (size_t i = 0;  i < armProducts->size(); i++) {
-	products->PushProducts ((*armProducts)[i]);
-	tARMEnergy += (*armProducts)[i]->GetKineticEnergy();
-      }
-      if ((bindingEnergy - tARMEnergy) > 0.1*keV){
-	G4double dEnergy = dynamicDaughter->GetKineticEnergy() + (bindingEnergy - tARMEnergy);
-	dynamicDaughter->SetKineticEnergy(dEnergy);
-      }
-      products->PushProducts(dynamicDaughter); 
-
-#ifdef G4VERBOSE
-      if (GetVerboseLevel()>0)
-	{
-      	  G4cout <<"G4NuclearDecayChannel::Selected shell number for ARM =  " <<shellId <<G4endl;
-	  G4cout <<"G4NuclearDecayChannel::ARM products =  " <<armProducts->size()<<G4endl;
-	  G4cout <<"                 The binding energy =  " << bindingEnergy << G4endl;              
-	  G4cout <<"  Total ARM particle kinetic energy =  " << tARMEnergy << G4endl;              
-	}
-#endif   
-
-      delete armProducts;
-      delete atomDeex;
-    }
-  }
+  
 
   return products;
 }
 
 
-G4DecayProducts* G4NuclearDecayChannel::BetaDecayIt()
+G4DecayProducts* GammaDecayChannel::BetaDecayIt()
 {
   if (GetVerboseLevel()>1) G4cout << "G4Decay::BetaDecayIt()"<<G4endl;
 
@@ -578,7 +349,7 @@ G4DecayProducts* G4NuclearDecayChannel::BetaDecayIt()
   products->PushProducts(daughterparticle);
   
   if (GetVerboseLevel()>1) {
-    G4cout << "G4NuclearDecayChannel::BetaDecayIt ";
+    G4cout << "GammaDecayChannel::BetaDecayIt ";
     G4cout << "  create decay products in rest frame " <<G4endl;
     products->DumpInfo();
   }

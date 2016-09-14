@@ -19,7 +19,7 @@ Depends on GEANT4.9.4, CLHEP 2.1.0.1, and ROOT v5.x (results are saved to ROOT t
 export ROOTSYS=/path/to/root
 export ROOTINC=/path/to/root/include
 export ROOTLIB=/path/to/root/lib
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTSYS/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTLIB
 export PATH=$PATH:$ROOTSYS/bin
 ```
 
@@ -38,11 +38,11 @@ export G4INSTALL=/path/to/geant4_install_directory
 
 Modified GEANT4 classes included in this code:
 
-G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers
+G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers.
 
-G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers
+G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
 
-G4NuclearDecayChannel (from GEANT4.9.4) - modified to properly compute properties of daughter nuclei when considering a cascade of internal conversion decays
+G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only internal conversion.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
 
 ## Acknowledgements
 

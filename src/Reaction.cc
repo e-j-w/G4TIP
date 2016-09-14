@@ -398,7 +398,6 @@ void Reaction::TargetFaceCrossSection()
   	{
   		//Print info
   		G4cout << "STEP " << i+1 << " OF THE CASCADE" << G4endl << "Residual lifetime: " << residual[i]->GetPDGLifeTime()/ns << " ns" << G4endl << "Initial excitation energy: " << ((G4Ions*)residual[i])->GetExcitationEnergy()/keV << " keV" << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma()/keV << " keV" << G4endl << "Final excitation energy: " << ResDec[i]->GetDaughterExcitation()/keV << " keV" << G4endl;
-  		G4cout << "Number of decay table entries: " << residual[i]->GetDecayTable()->entries() << G4endl;
   		//ResDecTab[i]->DumpInfo();
   		//residual[i]->GetProcessManager()->DumpInfo();
   	}
