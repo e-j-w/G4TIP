@@ -33,7 +33,7 @@ DetectorConstruction::DetectorConstruction()
 
   detectorShieldSelect = 1 ; // Include suppressors by default. 
   extensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
-  hevimetSelector = 0 ; // Chooses whether or not to include a hevimet
+  hevimetSelector = 1 ; // Chooses whether or not to include a hevimet
 
   customDetectorNumber 		= 1 ; // det_num
   customDetectorPosition  = 1 ; // pos_num

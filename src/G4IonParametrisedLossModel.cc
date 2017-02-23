@@ -1287,6 +1287,7 @@ G4bool G4IonParametrisedLossModel::AddDEDXTable(
 G4bool G4IonParametrisedLossModel::RemoveDEDXTable(
 				 const G4String& name) {
 
+	G4cout << "Removing stopping power dataset: " << name << G4endl;
   LossTableList::iterator iter = lossTableList.begin();
   LossTableList::iterator iter_end = lossTableList.end();
   

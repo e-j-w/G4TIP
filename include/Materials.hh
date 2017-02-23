@@ -26,6 +26,7 @@ class Materials
   G4Material* In;
   G4Material* Hf;
   G4Material* Au;
+  G4Material* Ca;
   
   // Compounds
   G4Material* Vacuum;

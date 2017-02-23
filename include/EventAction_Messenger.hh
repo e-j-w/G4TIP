@@ -28,6 +28,7 @@ class EventAction_Messenger: public G4UImessenger
     G4UIcmdWithAnInteger*      TACmd;
     G4UIcmdWithAnInteger*      TZCmd;
     G4UIcmdWithoutParameter*   TAZCmd;
+    G4UIcmdWithoutParameter*   TAZ1Cmd;
     G4UIcmdWithoutParameter*   TAZCCmd;
     G4UIcmdWithoutParameter*   TAZCGCmd;
     G4UIcmdWithoutParameter*   TAZC2GCmd;

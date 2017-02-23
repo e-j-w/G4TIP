@@ -2443,7 +2443,19 @@ G4UnionSolid* DetectionSystemGriffin::interCrystalelectrodeMatFront()
 ///////////////////////////////////////////////////////////////////////
 void DetectionSystemGriffin::ConstructNewHeavyMet()
 {
-  G4Material* materialHevimetal = G4Material::GetMaterial("Hevimetal");
+  // define hevimet material
+  // composition based on info from tungsten allow distributors
+  // 90% W, 6% Ni, 4% Cu by mass, 17 g/cm3 density
+  double a = 183.84*g/mole;
+  G4Element* elW = new G4Element("Tungsten","W",  74., a);
+  a = 58.69*g/mole;
+  G4Element* elNi = new G4Element("Nickel" ,"Ni", 28., a);
+  a = 63.54*g/mole;
+  G4Element* elCu = new G4Element("Copper" ,"Cu", 29., a);
+  G4Material* materialHevimetal = new G4Material("Heavimetal",17.0*g/cm3,3);
+  materialHevimetal->AddElement(elW , 48);
+  materialHevimetal->AddElement(elNi, 11);
+  materialHevimetal->AddElement(elCu,  7);
   if( !materialHevimetal ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);

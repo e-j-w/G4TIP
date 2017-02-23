@@ -15,6 +15,7 @@
   In = man->FindOrBuildMaterial("G4_In");
   Hf = man->FindOrBuildMaterial("G4_Hf");
   Au = man->FindOrBuildMaterial("G4_Au");
+  Ca = man->FindOrBuildMaterial("G4_Ca");
   
   // Compounds
   Vacuum = man->FindOrBuildMaterial("G4_Galactic");

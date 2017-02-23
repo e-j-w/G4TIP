@@ -24,6 +24,7 @@
   trigger 10 AND 11                 12 (defined particle-particle coinc)
   trigger 1 AND 12                  13 (defined particle-particle coinc AND gamma singles)
   2 unsupp Griffin cores and 2 CsI  14
+  only one defined particle         15 (particle singles with 1 hit restriction)
  */
 
 class EventAction : public G4UserEventAction
@@ -36,6 +37,7 @@ class EventAction : public G4UserEventAction
   void AddGriffinCrystDet(G4double, G4double, G4ThreeVector, G4int, G4int, G4double);
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
+  void SetTriggerParticleSing1Hit(){setTrigger=15;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
   void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};

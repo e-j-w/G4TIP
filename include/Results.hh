@@ -146,7 +146,7 @@ private:
 
   EventStat     eStat;
   IonStat       stat;
-  IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec[MAXNUMDECAYS]; //ion tracking (projectile, residual)
+  IonInf        gun,pTIn,pRIn,rROut,rBIn,rBOut,rDec[MAXNUMDECAYS],alphaROut; //ion tracking (projectile, residual)
   CsIInf        partHit; //particle hit
   GInf          GHit; //gamma hit
   G4double      maxGe[GN]; //maximum single gamma energy deposit in a given detector (used to get position of hits when using addback)

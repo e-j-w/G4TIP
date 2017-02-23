@@ -13,7 +13,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE)
   At=4;
   Zt=2;
   SetTriggerParticleSing();
-  CsIThreshold=0;
+  CsIThreshold=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
 }
 
@@ -58,7 +58,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       timersub(&tc,&ts,&td);
       t=td.tv_sec;
       rate=(float)evtNb/t;
-      G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<t<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
+      //G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<t<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
 
   }
 
@@ -72,6 +72,8 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   numP=run_action->GetNumberOfProtons();
   numN=run_action->GetNumberOfNeutrons();
   numA=run_action->GetNumberOfAlphas();
+  
+  int numDetHits;
   
   if(evt->GetHCofThisEvent()!=NULL) 
     {  
@@ -99,7 +101,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	          }
           
           //determine the number of CsI hits 
-          int numDetHits=0;
+          numDetHits=0;
           for(int i=0;i<NCsI;i++)
 	          if(partECsI[i]>=CsIThreshold)
 	            numDetHits++;
@@ -107,11 +109,13 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	        //set entries in detectors below energy threshold to 0
 	        for(int i=0;i<Np;i++)
             if((partECsI[(*CsI)[i]->GetId()]<CsIThreshold))
-	            (*CsI)[i]->SetKE(0.0);    
+	            (*CsI)[i]->SetKE(0.0);
 	        
 	        //CsI singles trigger
 	        if(numDetHits>0)  
 	          eventTrigger|=(one<<10);
+	        if(numDetHits==1)  
+	          eventTrigger|=(one<<15);
 
           //particle-particle coincidence trigger
           //ie. particle hits in two or more different detectors
@@ -153,8 +157,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       if(eventTrigger&(one<<setTrigger))
         {
         
-          /*printf("HPGe fold is %d\n",GriffinFold);
-          for(testTrigger=1;testTrigger<=14;testTrigger++)
+          /*printf("CsI fold is %d\n",numDetHits);
+          printf("HPGe fold is %d\n",GriffinFold);
+          for(testTrigger=1;testTrigger<=15;testTrigger++)
             {
               //int i=(int)testTrigger;
               if(eventTrigger&(one<<testTrigger))

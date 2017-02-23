@@ -116,6 +116,7 @@ void Results::TreeCreate()
             sprintf(branchName,"resDec%i",i+1);
             tree->Branch(branchName,&rDec[i],"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/D"); //residual upon decaying via gamma emission
           }
+      tree->Branch("alphaReactionOut",&alphaROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/D"); //evaporated particle at the reaction point
     }
   else
     {
@@ -168,6 +169,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   for(int i=0 ; i<numDec ; i++)
 		if(i<MAXNUMDECAYS)
 		  memset(&rDec[i],0,soi);
+	memset(&alphaROut,0,soi);
   memset(&partHit,0,soh);
   //memset(&GHit,0,sogh);
 
@@ -282,6 +284,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
             }
 	        else if((*IonCollection)[i]->GetPFlag()==REACTION_OUT_FLAG)
 	          {
+	          	//residual nucleus tracking
 	            if((*IonCollection)[i]->GetA()==Ar)
 	              if((*IonCollection)[i]->GetZ()==Zr)
 	                {
@@ -297,6 +300,23 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
 		                rROut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
 		                rROut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
 		                rROut.w=(*IonCollection)[i]->GetWeight();
+	                }
+	            //evaporated alpha tracking
+	            if((*IonCollection)[i]->GetA()==4)
+	              if((*IonCollection)[i]->GetZ()==2)
+	                {
+		                alphaROut.x=(*IonCollection)[i]->GetPos().getX()/mm;
+		                alphaROut.y=(*IonCollection)[i]->GetPos().getY()/mm;
+		                alphaROut.z=(*IonCollection)[i]->GetPos().getZ()/mm;
+		                alphaROut.px=(*IonCollection)[i]->GetMom().getX()/MeV;
+		                alphaROut.py=(*IonCollection)[i]->GetMom().getY()/MeV;
+		                alphaROut.pz=(*IonCollection)[i]->GetMom().getZ()/MeV;
+		                alphaROut.b=(*IonCollection)[i]->GetBeta();
+		                alphaROut.E=(*IonCollection)[i]->GetKE()/MeV;
+		                alphaROut.t=(*IonCollection)[i]->GetTime()/ns;
+		                alphaROut.theta=acos(((*IonCollection)[i]->GetMom().getZ())/((*IonCollection)[i]->GetMom().mag()))/degree;//angle between (0,0,1) and momentum vector
+		                alphaROut.phi=acos((*IonCollection)[i]->GetMom().getX()/sqrt((*IonCollection)[i]->GetMom().getX()*(*IonCollection)[i]->GetMom().getX() + (*IonCollection)[i]->GetMom().getY()*(*IonCollection)[i]->GetMom().getY()))/degree;//angle between (1,0,0) and momentum vector in x and y
+		                alphaROut.w=(*IonCollection)[i]->GetWeight();
 	                }
 	          }      
 	        else if((*IonCollection)[i]->GetPFlag()>=DECAY_FLAG)

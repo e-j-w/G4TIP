@@ -301,6 +301,8 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   ResidualOut->SetDefinition(RecoilResidual);
   ResidualOut->SetMomentum(pRec);
 
+  //G4cout << "Evaporated particle energy (MeV): " << EvaporatedParticle->GetKineticEnergy() << ", angle (deg): " << acos((EvaporatedParticle->GetMomentum().getZ())/(EvaporatedParticle->GetMomentum().mag()))/degree << G4endl;
+  //G4cout << "0 0 0 0 0 0 0 0 0 0 0 0 0 0 " << EvaporatedParticle->GetKineticEnergy() << " " << acos((EvaporatedParticle->GetMomentum().getZ())/(EvaporatedParticle->GetMomentum().mag()))/degree << G4endl; //formatted like PACE4 .patricles files
   /*if(ResidualOut->GetKineticEnergy() == 0)
     {
        G4cout << "cmv: " <<  cmv << ", deltaExi: " << deltaExi << ", Q: " << Qevap << G4endl;
