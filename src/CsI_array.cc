@@ -96,8 +96,7 @@ void CsI_array::Construct()
 //-----------------------------------------------------------------------------
 void CsI_array::Report()
 {
-;
- 
+	G4cout << "CsI wall constructed." << endl;
 }
 //-----------------------------------------------------------------------------
 void CsI_array::MakeSensitive(TrackerCsISD* TrackerCsI)

@@ -14,6 +14,7 @@
 //#include "PIN_array.hh"
 //#include "TrackerPINSD.hh"
 #include "CsI_array.hh"
+#include "CsI_array_spherical.hh"
 #include "TrackerCsISD.hh"
 #include "TrackerCsISD_Messenger.hh"
 #include "DetectionSystemGriffin.hh"
@@ -36,7 +37,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
  
     Chamber* GetChamber(){return theChamber;};
     Target* GetTarget(){return theTarget;};
-    CsI_array* GetCsIArray(){return aCsI_array;};
+    CsI_array* GetCsIWall(){return aCsI_wall;};
+    G4bool usingCsIWall(){return useCsIball;};
 
     G4int griffinDetectorsMapIndex;
     G4int griffinDetectorsMap[16];
@@ -54,6 +56,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
     void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ; 
     void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
+    void UseCsIBall( G4bool input ) {useCsIball = input;};
     void UpdateGeometry();
     G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
     
@@ -65,7 +68,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4LogicalVolume* ExpHall_log;
   G4VPhysicalVolume* ExpHall_phys;
   Target* theTarget;
-  CsI_array *aCsI_array;
+  CsI_array *aCsI_wall;
+  CsI_array_spherical *aCsI_ball;
   //PIN_array *aPIN_array;
   TrackerCsISD* TrackerCsI;
   TrackerCsISD_Messenger* TrackerCsISDMessenger;
@@ -92,6 +96,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4int     customDetectorVal ; 
   G4int     hevimetSelector ; 
   G4bool    useTigressPositions;
+  G4bool    useCsIball;
 
   GriffinMessenger* griffinMessenger;
 };

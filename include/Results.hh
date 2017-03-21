@@ -129,8 +129,8 @@ public:
   void SetTargetFaceCrossSection(G4double xs){TargetFaceCrossSection=xs;};
   G4int RingMap(G4int,G4int);
   void ReportCrystalPositions();
-  void ReportCsIPositions();
-  void GetCsIPositions();
+  void ReportCsIWallPositions();
+  void GetCsIWallPositions();
   void GroupCosDist();
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector,G4ThreeVector);

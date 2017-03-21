@@ -24,6 +24,8 @@ class DetectorConstruction_Messenger: public G4UImessenger
     
     G4UIdirectory*             DetConDir;
     G4UIcmdWithADoubleAndUnit*  ShiftCmd;
+    
+    G4UIcmdWithoutParameter*   BallCmd;
 
 };
 

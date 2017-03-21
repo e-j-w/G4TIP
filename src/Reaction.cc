@@ -46,7 +46,6 @@ G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
     if(i<MAXNUMEVAP)
       EvapA[i]=new G4DynamicParticle();
 
-
   if(reaction_here)
     {
       reaction_here=false;

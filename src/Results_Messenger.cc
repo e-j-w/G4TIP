@@ -45,11 +45,11 @@ Results_Messenger::Results_Messenger(Results* Res) :results(Res)
   RRSPCmd = new G4UIcmdWithoutParameter("/Results/Groups/ReportCrystalPositions",this);
   RRSPCmd->SetGuidance("Reports position of TIGRESS crystals");
 
-  PCSPCmd = new G4UIcmdWithoutParameter("/Results/Groups/CalculateCsIPositions",this);
-  PCSPCmd->SetGuidance("Calculates position of CsI diodes");
+  PCSPCmd = new G4UIcmdWithoutParameter("/Results/Groups/CalculateCsIWallPositions",this);
+  PCSPCmd->SetGuidance("Calculates position of CsI wall diodes");
 
-  PRSPCmd = new G4UIcmdWithoutParameter("/Results/Groups/ReportCsIPositions",this);
-  PRSPCmd->SetGuidance("Reports position of CsI diodes");
+  PRSPCmd = new G4UIcmdWithoutParameter("/Results/Groups/ReportCsIWallPositions",this);
+  PRSPCmd->SetGuidance("Reports position of CsI wall diodes");
 
   RCSDCmd = new G4UIcmdWithoutParameter("/Results/Groups/CosineDistribution",this);
   RCSDCmd->SetGuidance("Histogram of cosines between CsI and TIGRESS crystals");
@@ -98,10 +98,10 @@ void Results_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
     { results->ReportCrystalPositions();}
 
   if( command == PCSPCmd )
-    { results->GetCsIPositions();}
+    { results->GetCsIWallPositions();}
 
   if( command == PRSPCmd )
-    { results->ReportCsIPositions();}
+    { results->ReportCsIWallPositions();}
 
   if( command == RCSDCmd )
     { results->GroupCosDist();}

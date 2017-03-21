@@ -27,10 +27,11 @@ DetectorConstruction::DetectorConstruction()
   griffinFwdBackPosition = 11.0*cm;
   detectorRadialDistance = 11.0*cm ;
   
-  // Shield Selection Default
-
+  // Detector System Default
   useTigressPositions = true;
-
+	useCsIball=false;
+  
+  // Shield Selection Default
   detectorShieldSelect = 1 ; // Include suppressors by default. 
   extensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
   hevimetSelector = 1 ; // Chooses whether or not to include a hevimet
@@ -46,6 +47,8 @@ DetectorConstruction::DetectorConstruction()
   {
       griffinDetectorsMap[i] = 0;
   }
+	
+	
 
 }
 
@@ -58,77 +61,95 @@ DetectorConstruction::~DetectorConstruction()
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 
-  Materials* materials=new Materials();
+	Materials* materials=new Materials();
 
-//Experimental Hall
+	//Experimental Hall
 
-   Experimental_Hall* ExperimentalHall = new Experimental_Hall(materials);
-   ExpHall_phys=ExperimentalHall->Construct();
-   ExpHall_log=ExperimentalHall->GetLogVolume();
-   ExperimentalHall->Report();
-   ExperimentalHallMessenger = new Experimental_Hall_Messenger(ExperimentalHall);
-  
-   theChamber = new Chamber(ExpHall_log,materials);
-   theChamber->Construct();
-   theChamber->Report();
-   ChamberMessenger = new Chamber_Messenger(theChamber); 
-   
-   theTarget = new Target(ExpHall_log,materials);
-   theTarget->Construct();
-   theTarget->Report();
-   TargetMessenger = new Target_Messenger(theTarget);
+	Experimental_Hall* ExperimentalHall = new Experimental_Hall(materials);
+	ExpHall_phys=ExperimentalHall->Construct();
+	ExpHall_log=ExperimentalHall->GetLogVolume();
+	ExperimentalHall->Report();
+	ExperimentalHallMessenger = new Experimental_Hall_Messenger(ExperimentalHall);
 
-   aCsI_array = new CsI_array(ExpHall_log,materials);
-   aCsI_array->Construct();
-   aCsI_array->Report();
-  //------------------------------------------------ 
-  // Sensitive detectors
-  //------------------------------------------------ 
+	theChamber = new Chamber(ExpHall_log,materials);
+	theChamber->Construct();
+	theChamber->Report();
+	ChamberMessenger = new Chamber_Messenger(theChamber); 
 
-   G4SDManager* SDman = G4SDManager::GetSDMpointer();
- 
-   //------------------------------------------------
-   // Detectors sensitive for ion tracking
-   //------------------------------------------------
-   TrackerIon = new TrackerIonSD("IonTracker");
-   TrackerIonSDMessenger = new TrackerIonSD_Messenger(TrackerIon);
-   SDman->AddNewDetector( TrackerIon );
-   
-   theTarget->GetTargetLog()->SetSensitiveDetector(TrackerIon);
-   theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
-   ExpHall_log->SetSensitiveDetector(TrackerIon);
+	theTarget = new Target(ExpHall_log,materials);
+	theTarget->Construct();
+	theTarget->Report();
+	TargetMessenger = new Target_Messenger(theTarget);
 
-   TrackerCsI = new TrackerCsISD("CsITracker");
-   TrackerCsISDMessenger = new TrackerCsISD_Messenger(TrackerCsI);
-   SDman->AddNewDetector( TrackerCsI );
-   aCsI_array->MakeSensitive(TrackerCsI);
+	if(useCsIball)
+		{
+			aCsI_ball = new CsI_array_spherical(ExpHall_log,materials);
+			aCsI_ball->Construct();
+			aCsI_ball->Report();
+		}
+	else
+		{
+			aCsI_wall = new CsI_array(ExpHall_log,materials);
+			aCsI_wall->Construct();
+			aCsI_wall->Report();
+		}
+	//------------------------------------------------ 
+	// Sensitive detectors
+	//------------------------------------------------ 
 
-   /*TrackerPIN = new TrackerPINSD("PINTracker");
-   SDman->AddNewDetector( TrackerPIN );
-   aPIN_array->MakeSensitive(TrackerPIN);*/
- 
-   return ExpHall_phys;
+	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+	//------------------------------------------------
+	// Detectors sensitive for ion tracking
+	//------------------------------------------------
+	TrackerIon = new TrackerIonSD("IonTracker");
+	TrackerIonSDMessenger = new TrackerIonSD_Messenger(TrackerIon);
+	SDman->AddNewDetector( TrackerIon );
+
+	theTarget->GetTargetLog()->SetSensitiveDetector(TrackerIon);
+	theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
+	ExpHall_log->SetSensitiveDetector(TrackerIon);
+
+	TrackerCsI = new TrackerCsISD("CsITracker");
+	TrackerCsISDMessenger = new TrackerCsISD_Messenger(TrackerCsI);
+	SDman->AddNewDetector( TrackerCsI );
+	if(useCsIball)
+		aCsI_ball->MakeSensitive(TrackerCsI);
+	else
+		aCsI_wall->MakeSensitive(TrackerCsI);
+	/*TrackerPIN = new TrackerPINSD("PINTracker");
+	SDman->AddNewDetector( TrackerPIN );
+	aPIN_array->MakeSensitive(TrackerPIN);*/
+
+	return ExpHall_phys;
 }
 void DetectorConstruction::setZShift(G4double zshift)
 {
-  //shift the chamber
-  G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
-  shift.setZ(shift.getZ() + zshift);
-  theChamber->GetChamberPlacement()->SetTranslation(shift);
-  //shift the target
-  shift = theTarget->GetTargetPlacement()->GetTranslation();
-  shift.setZ(shift.getZ() + zshift);
-  theTarget->GetTargetPlacement()->SetTranslation(shift);
-  //shift the backing
-  shift = theTarget->GetBackingPlacement()->GetTranslation();
-  shift.setZ(shift.getZ() + zshift);
-  theTarget->GetBackingPlacement()->SetTranslation(shift);
-  //shift the CsI array
-  aCsI_array->SetZPos(aCsI_array->GetZPos() + zshift);
-  aCsI_array->MakeSensitive(TrackerCsI);
-  G4RunManager::GetRunManager()->GeometryHasBeenModified();
-  G4cout<<"----> TIP chamber, target, and CsI array have been shifted by   "<<zshift<<" mm"<<G4endl;
-  
+	//shift the chamber
+	G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
+	shift.setZ(shift.getZ() + zshift);
+	theChamber->GetChamberPlacement()->SetTranslation(shift);
+	//shift the target
+	shift = theTarget->GetTargetPlacement()->GetTranslation();
+	shift.setZ(shift.getZ() + zshift);
+	theTarget->GetTargetPlacement()->SetTranslation(shift);
+	//shift the backing
+	shift = theTarget->GetBackingPlacement()->GetTranslation();
+	shift.setZ(shift.getZ() + zshift);
+	theTarget->GetBackingPlacement()->SetTranslation(shift);
+	//shift the CsI array
+	if(useCsIball)
+		{
+			aCsI_ball->SetZPos(aCsI_ball->GetZPos() + zshift);
+			aCsI_ball->MakeSensitive(TrackerCsI);
+		}
+	else
+		{
+			aCsI_wall->SetZPos(aCsI_wall->GetZPos() + zshift);
+			aCsI_wall->MakeSensitive(TrackerCsI);
+		}
+	G4RunManager::GetRunManager()->GeometryHasBeenModified();
+	G4cout<<"----> TIP chamber, target, and CsI array have been shifted by   "<<zshift<<" mm"<<G4endl;
 }
 /*====================================================================*/
 void DetectorConstruction::UpdateGeometry()

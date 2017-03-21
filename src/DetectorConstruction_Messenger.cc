@@ -12,14 +12,18 @@ DetectorConstruction_Messenger::DetectorConstruction_Messenger(DetectorConstruct
   ShiftCmd->SetGuidance("Shift the TIP chamber (and target, CsI array inside) by the given distance in the z direction.");
   ShiftCmd->SetParameterName("choice",false);
   ShiftCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+	
+	BallCmd = new G4UIcmdWithoutParameter("/Construction/UseCsIBall",this);
+  BallCmd->SetGuidance("Use the CsI ball array instead of the wall array (which is default).");
 
 }
 
 
 DetectorConstruction_Messenger::~DetectorConstruction_Messenger()
 {
-  delete DetConDir;
-  delete ShiftCmd;
+	delete DetConDir;
+	delete ShiftCmd;
+	delete BallCmd;
 }
 
 
@@ -27,6 +31,9 @@ void DetectorConstruction_Messenger::SetNewValue(G4UIcommand* command,G4String n
 { 
   if( command == ShiftCmd )
     { aDetCon->setZShift(ShiftCmd->GetNewDoubleValue(newValue));}
+
+	if( command == BallCmd )
+    { aDetCon->UseCsIBall(true);}
 
 }
 

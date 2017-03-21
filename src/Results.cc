@@ -26,21 +26,9 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
   //G4cout << "Results: target A: " << theDetector->GetTarget()->getTargetMass() << ", target Z: " << theDetector->GetTarget()->getTargetCharge() << G4endl; 
   //G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ", recoil A: " << Ar << ", recoil Z: " << Zr << G4endl; 
   
-  CsIDensity=theDetector->GetCsIArray()->GetCsIDensity();
-  // printf("CsI density is     %9.3f g/cm^3\n",CsIDensity);
-  // getc(stdin);
-
-  // setup Birks constant for LY calculation
-  for(int i=0 ; i<NCsI ; i++)
-    {
-      kB[i]=theDetector->GetCsIArray()->GetBirksConstant(i); // Birks constant in um/MeV
-      kBm[i]=kB[i]*CsIDensity/10;                            // Birks constant in (mg/cm^2)/MeV
-      S[i]=theDetector->GetCsIArray()->GetLYScaling(i);
-      //printf("Birks constant for position %2d set to %6.3f um/MeV %6.3f (mg/cm^2)/MeV\n",i+1,kB[i],kBm[i]);
-    }
     
   //get HPGe and CsI crystal positions
-  GetCsIPositions();
+  GetCsIWallPositions();
   /*for(int i=0; i<GN; i++)
     for(int j=0; j<GS; j++)
       {
@@ -566,21 +554,21 @@ void Results::ReportCrystalPositions()
 
 } 
 //=====================================================================================
-void Results::GetCsIPositions()
+void Results::GetCsIWallPositions()
 {
   Double_t xx,yy,zz;
   for(Int_t det=0;det<NCsI;det++)
     {
-	    xx=theDetector->GetCsIArray()->GetXPos(det+1);
-	    yy=theDetector->GetCsIArray()->GetYPos(det+1);
-	    zz=theDetector->GetCsIArray()->GetZPos();
+	    xx=theDetector->GetCsIWall()->GetXPos(det+1);
+	    yy=theDetector->GetCsIWall()->GetYPos(det+1);
+	    zz=theDetector->GetCsIWall()->GetZPos();
 	    PP[det].setX(xx);
 	    PP[det].setY(yy);
 	    PP[det].setZ(zz);
     }
 }
 //=====================================================================================
-void Results::ReportCsIPositions()
+void Results::ReportCsIWallPositions()
 {
 	Double_t xx,yy,zz,rr,cc;
 	printf("pin      x        y        z        r       cos \n");

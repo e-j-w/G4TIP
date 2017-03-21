@@ -58,7 +58,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       timersub(&tc,&ts,&td);
       t=td.tv_sec;
       rate=(float)evtNb/t;
-      //G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<t<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
+      G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<t<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
 
   }
 
