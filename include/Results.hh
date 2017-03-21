@@ -131,6 +131,7 @@ public:
   void ReportCrystalPositions();
   void ReportCsIWallPositions();
   void GetCsIWallPositions();
+  void GetCsIBallPositions();
   void GroupCosDist();
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector,G4ThreeVector);
@@ -170,7 +171,7 @@ private:
   G4double TargetFaceCrossSection;
  
   G4ThreeVector CP[GN][GS];
-  G4ThreeVector PP[NCsI];
+  G4ThreeVector PP[NCsISph];
 
   G4Material* a;
 };

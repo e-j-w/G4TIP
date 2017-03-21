@@ -13,6 +13,7 @@
 #include "Results.hh"
 #include <sys/time.h>
 #include "RunAction.hh"
+#include "DetectorConstruction.hh"
 
 
 
@@ -30,7 +31,7 @@
 class EventAction : public G4UserEventAction
 {
   public:
-  EventAction(Results*,RunAction*,Projectile*);
+  EventAction(Results*,RunAction*,Projectile*,DetectorConstruction*);
    ~EventAction();
   void BeginOfEventAction(const G4Event*);
   void EndOfEventAction(const G4Event*);
@@ -71,6 +72,7 @@ class EventAction : public G4UserEventAction
 
   // Info for CsI trigger
   Projectile* theProjectile;
+  DetectorConstruction* theDetector;
   Int_t       At,Zt; //A and Z of particle to trigger on
   G4int numP,numN,numA;//number of each type of recoil particle
 };

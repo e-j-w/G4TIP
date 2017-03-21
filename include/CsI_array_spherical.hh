@@ -29,6 +29,8 @@ class CsI_array_spherical
   void MakeSensitive(TrackerCsISD*);
   void SetZPos(G4double z){zpos=z;Construct();};
   G4double GetZPos(){return zpos;};
+  G4double GetXPos(G4int id){return pos[id-1].getX();}; //detector position = id-1
+  G4double GetYPos(G4int id){return pos[id-1].getY();};
   G4int getRingID(G4int i){return ring[i];};
     private:
  

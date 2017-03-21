@@ -28,13 +28,16 @@ void Results::SetupRun(Int_t numP, Int_t numN, Int_t numA)
   
     
   //get HPGe and CsI crystal positions
-  GetCsIWallPositions();
-  /*for(int i=0; i<GN; i++)
-    for(int j=0; j<GS; j++)
-      {
-	      CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
-	      printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
-      }*/
+  if(theDetector->usingCsIBall())
+  	GetCsIBallPositions();
+	else
+  	GetCsIWallPositions();
+	/*for(int i=0; i<GN; i++)
+	  for(int j=0; j<GS; j++)
+	    {
+		    CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
+		    printf("HPGe position %d crystal %d x %f y %f z %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
+	    }*/
       
   numDec = thePhysicsList->getReaction()->GetNumDecays();
   G4cout << "Results - number of decays: " << numDec << G4endl;
@@ -348,59 +351,60 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection* IonCollection,Trac
   memset(&partHit.dLdx,0,sizeof(partHit.dLdx));
   memset(&partHit.LY,0,sizeof(partHit.LY));
  
-  G4int i,j;
-  G4int Np=CsICollection->entries();
-  if(Np>0)
-    {
-      for(j=1;j<NCsI+1;j++)//loop through CsI detector IDs (1 indexed)
-        {
-          if((CsITrigId==0)||(CsITrigId==j))//save only data for the detectors we want to see
-            for(i=0;i<Np;i++)//loop through all entries in the collection
-              {
-                if((*CsICollection)[i]->GetId()==j)//check whether entry belongs to the detector we are looking at
-                  {
-                    if((partHit.E[partHit.CsIfold]==0.)&&((*CsICollection)[i]->GetKE()>0.)) //first entry for a given detector with nonzero energy
-                      {
-                        partHit.x[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getX()/mm;
-                        partHit.y[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getY()/mm;
-                        partHit.z[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getZ()/mm;
-                        partHit.px[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getX()/MeV;
-                        partHit.py[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getY()/MeV;
-                        partHit.pz[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getZ()/MeV;
-                        partHit.b[partHit.CsIfold]=(*CsICollection)[i]->GetBeta();
-                        partHit.E[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;
-                        partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
-                        partHit.w[partHit.CsIfold]=(*CsICollection)[i]->GetWeight();
-                        partHit.Id[partHit.CsIfold]=(*CsICollection)[i]->GetId();
-                        partHit.r[partHit.CsIfold]=(*CsICollection)[i]->GetRingId();
-                        // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
-                        // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
-                        partHit.path[partHit.CsIfold]=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                        partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                        partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
-                        partHit.LY[partHit.CsIfold]=partHit.dLdx[partHit.CsIfold];
-                        //G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
-                        //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-                      }
-                    else if((*CsICollection)[i]->GetKE()>0.) //later entries for a given detector with nonzero energy
-                      {
-                        partHit.E[partHit.CsIfold]+=(*CsICollection)[i]->GetKE()/MeV;	
-                        partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
-                        // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
-                        // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                        partHit.path[partHit.CsIfold]+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
-                        partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
-                        partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
-                        partHit.LY[partHit.CsIfold]+=partHit.dLdx[partHit.CsIfold];
-                        //printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-                      }
-                  }
-                //getc(stdin);
-              }
-          if(partHit.E[partHit.CsIfold]>0.)
-            partHit.CsIfold++;//increase fold if energy in a given detector is greater than 0
-        }
-    }//end of CsI collection entry saving
+	G4int i,j;
+	G4int Np=CsICollection->entries();
+	if(Np>0)
+		{
+			for(j=1;j<NCsISph+1;j++)//loop through CsI detector IDs (1 indexed)
+				{
+					if((j<NCsI+1)||(theDetector->usingCsIBall()))//check whether index is valid for wall/ball
+						if((CsITrigId==0)||(CsITrigId==j))//save only data for the detectors we want to see
+							for(i=0;i<Np;i++)//loop through all entries in the collection
+								{
+									if((*CsICollection)[i]->GetId()==j)//check whether entry belongs to the detector we are looking at
+										{
+											if((partHit.E[partHit.CsIfold]==0.)&&((*CsICollection)[i]->GetKE()>0.)) //first entry for a given detector with nonzero energy
+												{
+													partHit.x[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getX()/mm;
+													partHit.y[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getY()/mm;
+													partHit.z[partHit.CsIfold]=(*CsICollection)[i]->GetPos().getZ()/mm;
+													partHit.px[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getX()/MeV;
+													partHit.py[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getY()/MeV;
+													partHit.pz[partHit.CsIfold]=(*CsICollection)[i]->GetMom().getZ()/MeV;
+													partHit.b[partHit.CsIfold]=(*CsICollection)[i]->GetBeta();
+													partHit.E[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;
+													partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
+													partHit.w[partHit.CsIfold]=(*CsICollection)[i]->GetWeight();
+													partHit.Id[partHit.CsIfold]=(*CsICollection)[i]->GetId();
+													partHit.r[partHit.CsIfold]=(*CsICollection)[i]->GetRingId();
+													// partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in microns
+													// partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um); 
+													partHit.path[partHit.CsIfold]=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+													partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+													partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
+													partHit.LY[partHit.CsIfold]=partHit.dLdx[partHit.CsIfold];
+													//G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
+													//printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+												}
+											else if((*CsICollection)[i]->GetKE()>0.) //later entries for a given detector with nonzero energy
+												{
+													partHit.E[partHit.CsIfold]+=(*CsICollection)[i]->GetKE()/MeV;	
+													partHit.dE[partHit.CsIfold]=(*CsICollection)[i]->GetKE()/MeV;		 
+													// partHit.path+=(*CsICollection)[i]->GetPathLength()/um; // in microns
+													// partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+													partHit.path[partHit.CsIfold]+=((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000; // in mg/cm^2
+													partHit.dEdx[partHit.CsIfold]=((*CsICollection)[i]->GetKE()/MeV)/(((*CsICollection)[i]->GetPathLength()/cm)*CsIDensity*1000);
+													partHit.dLdx[partHit.CsIfold]=CalculateBirksLawStep(partHit.Id[partHit.CsIfold],partHit.dE[partHit.CsIfold],partHit.dEdx[partHit.CsIfold]); // make sure to check units of kB!
+													partHit.LY[partHit.CsIfold]+=partHit.dLdx[partHit.CsIfold];
+													//printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL %9.3f  LY %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+												}
+										}
+								//getc(stdin);
+								}
+					if(partHit.E[partHit.CsIfold]>0.)
+					partHit.CsIfold++;//increase fold if energy in a given detector is greater than 0
+				}
+		}//end of CsI collection entry saving
 
 
   
@@ -562,6 +566,20 @@ void Results::GetCsIWallPositions()
 	    xx=theDetector->GetCsIWall()->GetXPos(det+1);
 	    yy=theDetector->GetCsIWall()->GetYPos(det+1);
 	    zz=theDetector->GetCsIWall()->GetZPos();
+	    PP[det].setX(xx);
+	    PP[det].setY(yy);
+	    PP[det].setZ(zz);
+    }
+}
+//=====================================================================================
+void Results::GetCsIBallPositions()
+{
+  Double_t xx,yy,zz;
+  for(Int_t det=0;det<NCsISph;det++)
+    {
+	    xx=theDetector->GetCsIBall()->GetXPos(det+1);
+	    yy=theDetector->GetCsIBall()->GetYPos(det+1);
+	    zz=theDetector->GetCsIBall()->GetZPos();
 	    PP[det].setX(xx);
 	    PP[det].setY(yy);
 	    PP[det].setZ(zz);

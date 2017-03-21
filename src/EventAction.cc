@@ -1,7 +1,7 @@
 #include "EventAction.hh"
 
  
-EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj):results(RE),run_action(RA),theProjectile(proj)
+EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorConstruction* det):results(RE),run_action(RA),theProjectile(proj),theDetector(det)
 { 
 
   ionCollectionID=-1;
@@ -86,7 +86,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       // CsI trigger
       if(Np>0) 
 	      {
-	        G4double partECsI[NCsI]; //energy of user defined particle
+	        G4double partECsI[NCsISph]; //energy of user defined particle
 	        memset(partECsI,0,sizeof(partECsI));
 	        for(int i=0;i<Np;i++)
 	          {
@@ -102,9 +102,18 @@ void EventAction::EndOfEventAction(const G4Event* evt)
           
           //determine the number of CsI hits 
           numDetHits=0;
-          for(int i=0;i<NCsI;i++)
-	          if(partECsI[i]>=CsIThreshold)
-	            numDetHits++;
+          if(theDetector->usingCsIBall())
+          	{
+				      for(int i=0;i<NCsISph;i++)
+					      if(partECsI[i]>=CsIThreshold)
+					        numDetHits++;
+					  }
+	        else
+	        	{
+	        		for(int i=0;i<NCsI;i++)
+					      if(partECsI[i]>=CsIThreshold)
+					        numDetHits++;
+	        	}
 	        
 	        //set entries in detectors below energy threshold to 0
 	        for(int i=0;i<Np;i++)

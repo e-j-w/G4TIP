@@ -75,7 +75,7 @@ int main(int argc,char** argv)
   RunAction* theRunAction=new RunAction(thePhysicsList,results,theDetector);
   runManager->SetUserAction(theRunAction);
  
-  EventAction* eventAction = new EventAction(results,theRunAction,theProjectile);
+  EventAction* eventAction = new EventAction(results,theRunAction,theProjectile,theDetector);
   runManager->SetUserAction(eventAction);
   EventAction_Messenger* eventActionMessenger;
   eventActionMessenger = new EventAction_Messenger(eventAction);

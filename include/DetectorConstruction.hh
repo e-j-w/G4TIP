@@ -38,7 +38,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     Chamber* GetChamber(){return theChamber;};
     Target* GetTarget(){return theTarget;};
     CsI_array* GetCsIWall(){return aCsI_wall;};
-    G4bool usingCsIWall(){return useCsIball;};
+    CsI_array_spherical* GetCsIBall(){return aCsI_ball;};
+    G4bool usingCsIBall(){return useCsIball;};
 
     G4int griffinDetectorsMapIndex;
     G4int griffinDetectorsMap[16];

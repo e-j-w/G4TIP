@@ -84,12 +84,10 @@ void CsI_array_spherical::Construct()
 void CsI_array_spherical::Report()
 {
 	G4cout << "CsI ball constructed." << endl;
-	G4cout << "Ball detector positions:" << endl;
+	/*G4cout << "Ball detector positions:" << endl;
 	G4cout << "pos x y z" << endl;
 	for(int i=0;i<NCsISph;i++)
-		G4cout << i+1 << " " << pos[i].getX() << " " << pos[i].getY() << " " << pos[i].getZ() << endl;
-;
- 
+		G4cout << i+1 << " " << pos[i].getX() << " " << pos[i].getY() << " " << pos[i].getZ() << endl;*/
 }
 //-----------------------------------------------------------------------------
 void CsI_array_spherical::MakeSensitive(TrackerCsISD* TrackerCsI)
