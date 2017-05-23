@@ -8,7 +8,7 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   EventActionDir = new G4UIdirectory("/Trigger/");
   EventActionDir->SetGuidance("Trigger control.");
  
-  GSCmd = new G4UIcmdWithoutParameter("/Trigger/GammaSingles",this);
+  GSCmd = new G4UIcmdWithoutParameter("/Trigger/GammaSingles",this); //THIS TRIGGER HAS ISSUES WHEN THE BEAM IS THE SAME SPECIES AS THE PARTICLE DEFINED IN /Trigger/A, /Trigger/Z
   GSCmd->SetGuidance("Select gamma singles events");  
 
   TACmd = new G4UIcmdWithAnInteger("/Trigger/A",this);

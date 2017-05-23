@@ -12,7 +12,7 @@ At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are imple
 
 This code has been tested with GEANT4.9.4 on Scientific Linux 6, Ubuntu 14.04, Ubuntu 15.10, and Ubuntu 16.04.  On Ubuntu 16.04 this program throws memory allocation errors when compiled using the default version of the `g++` compiler, it is recommended to install and use `g++-4.8` instead.
 
-This program depends on GEANT4.9.4, CLHEP 2.1.0.1, and ROOT v5.x (results are saved to ROOT tree files), and requires proper setup of environment variables for each, for example by adding the follwing lines to ~/.bashrc (substituting the appropriate paths):
+This program depends on GEANT4.9.4 (https://goo.gl/HLTLGX), CLHEP 2.1.0.1, and ROOT v5.x (results are saved to ROOT tree files), and requires proper setup of environment variables for each, for example by adding the follwing lines to ~/.bashrc (substituting the appropriate paths):
 
 ```
 #ROOT configuration
