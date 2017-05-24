@@ -95,6 +95,11 @@
 #include "G4Electron.hh"
 #include "Randomize.hh"
 
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
+
+using namespace CLHEP;
+
 //#define PRINT_TABLE_BUILT
 
 

@@ -33,10 +33,16 @@
 #include "G4IonDEDXScalingICRU73.hh"
 
 //neutrons
-#include "G4LElastic.hh"
+//#include "G4LElastic.hh"
+#include "G4NeutronHPElastic.hh"
+#include "G4NeutronHPElasticData.hh"
+#include "G4NeutronHPThermalScattering.hh"
+#include "G4NeutronHPThermalScatteringData.hh"
 #include "G4LFission.hh"
-#include "G4LCapture.hh"
-#include "G4LENeutronInelastic.hh"
+//#include "G4LCapture.hh"
+#include "G4NeutronHPCapture.hh"
+//#include "G4LENeutronInelastic.hh"
+#include "G4NeutronHPInelastic.hh"
 #include "G4NeutronInelasticProcess.hh"
 #include "G4HadronFissionProcess.hh"
 #include "G4HadronCaptureProcess.hh"
@@ -51,6 +57,8 @@
 #include "Projectile.hh"
 #include "Reaction.hh"
 #include "Reaction_Messenger.hh"
+
+using namespace CLHEP;
 
 class PhysicsList: public G4VUserPhysicsList
 {

@@ -12,6 +12,8 @@
 #include "G4Colour.hh"
 #include "G4VisAttributes.hh"
 
+using namespace CLHEP;
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class TrackerCsIHit : public G4VHit

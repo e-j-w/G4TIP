@@ -49,11 +49,13 @@ void PhysicsList::ConstructEM()
 	else
 		G4cout<<"Will use default GenericIon stopping power tables."<<G4endl;  
 	
-	theParticleIterator->reset();
+	//theParticleIterator->reset();
+	GetParticleIterator()->reset();
 
-	while( (*theParticleIterator)() ){
 
-		G4ParticleDefinition* particle = theParticleIterator->value();
+	while( (*GetParticleIterator())() ){
+
+		G4ParticleDefinition* particle = GetParticleIterator()->value();
 		G4ProcessManager* pmanager = particle->GetProcessManager();
 		G4String particleName = particle->GetParticleName();
 
@@ -125,26 +127,48 @@ void PhysicsList::ConstructEM()
 		else if (particleName == "neutron")
 			{
 				// elastic scattering
-				G4HadronElasticProcess* theElasticProcess = new G4HadronElasticProcess();
-				G4LElastic* theElasticModel = new G4LElastic;
-				theElasticProcess->RegisterMe(theElasticModel);
-				pmanager->AddDiscreteProcess(theElasticProcess);
-				// inelastic scattering
-				G4NeutronInelasticProcess* theInelasticProcess = new G4NeutronInelasticProcess("inelastic");
-				G4LENeutronInelastic* theInelasticModel = new G4LENeutronInelastic;
-				theInelasticProcess->RegisterMe(theInelasticModel);
-				pmanager->AddDiscreteProcess(theInelasticProcess);
-				// fission
-				G4HadronFissionProcess* theFissionProcess = new G4HadronFissionProcess;
-				G4LFission* theFissionModel = new G4LFission;
-				theFissionProcess->RegisterMe(theFissionModel);
-				pmanager->AddDiscreteProcess(theFissionProcess);
-				// capture
-				G4HadronCaptureProcess* theCaptureProcess = new G4HadronCaptureProcess;
-				G4LCapture* theCaptureModel = new G4LCapture;
-				theCaptureProcess->RegisterMe(theCaptureModel);
-				pmanager->AddDiscreteProcess(theCaptureProcess);
-			}
+		    // This scheme copied from geant4 application developer guide sec 5.2.2.4.
+		    // Old scheme from geant4.9.4 which doesn't compile anymore was commented out.
+		    G4HadronElasticProcess* theElasticProcess = new G4HadronElasticProcess;
+		    // Cross Section Data set
+		    G4NeutronHPElasticData* theHPElasticData = new G4NeutronHPElasticData;
+		    theElasticProcess->AddDataSet(theHPElasticData);
+		    G4NeutronHPThermalScatteringData* theHPThermalScatteringData = new G4NeutronHPThermalScatteringData;
+		    theElasticProcess->AddDataSet(theHPThermalScatteringData);
+		    // Models
+		    G4NeutronHPElastic* theElasticModel = new G4NeutronHPElastic;
+		    theElasticModel->SetMinEnergy(4.0*eV);
+		    theElasticProcess->RegisterMe(theElasticModel);
+		    G4NeutronHPThermalScattering* theNeutronThermalElasticModel = new G4NeutronHPThermalScattering;
+		    theNeutronThermalElasticModel->SetMaxEnergy(4.0*eV);
+		    theElasticProcess->RegisterMe(theNeutronThermalElasticModel);
+         
+       /*G4HadronElasticProcess* theElasticProcess = new G4HadronElasticProcess();
+         G4LElastic* theElasticModel = new G4LElastic;
+         theElasticProcess->RegisterMe(theElasticModel);*/
+         pmanager->AddDiscreteProcess(theElasticProcess);
+          // inelastic scattering
+         G4NeutronInelasticProcess* theInelasticProcess = 
+                                    new G4NeutronInelasticProcess("inelastic");
+         G4NeutronHPInelastic* theInelasticModel = new G4NeutronHPInelastic; //new for geant4.10.1
+         //G4LENeutronInelastic* theInelasticModel = new G4LENeutronInelastic; //for geant4.9.4
+         theInelasticProcess->RegisterMe(theInelasticModel);
+         pmanager->AddDiscreteProcess(theInelasticProcess);
+          // fission
+         G4HadronFissionProcess* theFissionProcess =
+                                    new G4HadronFissionProcess;
+         G4LFission* theFissionModel = new G4LFission;
+         theFissionProcess->RegisterMe(theFissionModel);
+         pmanager->AddDiscreteProcess(theFissionProcess);
+         // capture
+         G4HadronCaptureProcess* theCaptureProcess =
+                                    new G4HadronCaptureProcess;
+                                    
+         G4NeutronHPCapture* theCaptureModel = new G4NeutronHPCapture; //new for geant4.10.1
+         //G4LCapture* theCaptureModel = new G4LCapture; //for geant4.9.4
+         theCaptureProcess->RegisterMe(theCaptureModel);
+         pmanager->AddDiscreteProcess(theCaptureProcess);
+      } 
 
 	}
 

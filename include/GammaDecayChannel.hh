@@ -43,6 +43,8 @@
 
 #include <CLHEP/Random/RandGeneral.h>
 
+using namespace CLHEP;
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 class GammaDecayChannel : public G4GeneralPhaseSpaceDecay

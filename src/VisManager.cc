@@ -100,7 +100,7 @@ void VisManager::RegisterGraphicsSystems () {
     G4cout <<
       "\nYou have successfully chosen to use the following graphics systems."
 	 << G4endl;
-    PrintAvailableGraphicsSystems ();
+    PrintAvailableGraphicsSystems (errors);
   }
 }
 

@@ -16,6 +16,9 @@
 #include "G4UnitsTable.hh"
 #include "G4RunManager.hh"
 #include "G4SubtractionSolid.hh"
+
+using namespace CLHEP;
+
 class CsI_detector 
 {
   public:

@@ -57,7 +57,6 @@
 #include <vector>
 #include <map>
 
-
 class G4IonStoppingData : public G4VIonDEDXTable {
 
  public:

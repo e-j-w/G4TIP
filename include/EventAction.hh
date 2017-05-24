@@ -15,7 +15,7 @@
 #include "RunAction.hh"
 #include "DetectorConstruction.hh"
 
-
+using namespace CLHEP;
 
 /*
   Trigger settings notes:

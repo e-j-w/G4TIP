@@ -10,6 +10,7 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
+using namespace CLHEP;
 
 class Run_Messenger: public G4UImessenger
 {

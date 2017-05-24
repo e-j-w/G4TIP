@@ -57,6 +57,11 @@
 #include <iomanip>
 
 
+#include <CLHEP/Units/PhysicalConstants.h>
+#include <CLHEP/Units/SystemOfUnits.h>
+
+using namespace CLHEP;
+
 // #########################################################################
 
 G4IonStoppingData::G4IonStoppingData(const G4String& leDirectory) :

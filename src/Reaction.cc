@@ -260,7 +260,7 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   G4ParticleDefinition* RecoilResidual;
   G4int rrecA=Compound->GetDefinition()->GetAtomicMass() - EvaporatedParticleDef->GetAtomicMass();
   G4int rrecZ=Compound->GetDefinition()->GetAtomicNumber() - EvaporatedParticleDef->GetAtomicNumber();
-  RecoilResidual=G4ParticleTable::GetParticleTable()->GetIon(rrecZ,rrecA,0);//3rd parameter is excitation energy - what does this do?
+  RecoilResidual=G4IonTable::GetIonTable()->GetIon(rrecZ,rrecA,0);//3rd parameter is excitation energy - what does this do?
   //G4cout << "Residual mass: " << RecoilResidual->GetPDGMass() << G4endl;
 
   deltaExi = deltaExi + Qevap; //amount of the excitation energy that goes into KE of the products
@@ -345,7 +345,7 @@ void Reaction::TargetFaceCrossSection()
   Z1=theProjectile->getZ();
   
   //set properties of the compound (which we assume does not gamma decay)
-  compound=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
+  compound=G4IonTable::GetIonTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
 
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
@@ -356,8 +356,8 @@ void Reaction::TargetFaceCrossSection()
       {
         
 				//define the residual species
-				//residual[i]=G4ParticleTable::GetParticleTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
-				residual[i]=G4ParticleTable::GetParticleTable()->GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+				//residual[i]=G4IonTable::GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+				residual[i]=G4IonTable::GetIonTable()->GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
 				if(i>0)
 					residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
             

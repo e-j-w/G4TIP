@@ -17,6 +17,8 @@
 #include "G4UnitsTable.hh"
 #include "G4UserLimits.hh"
 
+using namespace CLHEP;
+
 class Target 
 {
   public:

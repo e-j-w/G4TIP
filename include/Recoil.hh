@@ -15,7 +15,7 @@ using namespace std;
 #include "G4Decay.hh"
 #include "Randomize.hh"
 
-
+using namespace CLHEP;
 
 // this is?
 //#define  eps 0.00001

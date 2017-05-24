@@ -7,7 +7,9 @@
 #include "G4ParticleDefinition.hh"
 #include "G4DynamicParticle.hh"
 #include "Randomize.hh"
+
 using namespace std;
+using namespace CLHEP;
 
 class Projectile
 {

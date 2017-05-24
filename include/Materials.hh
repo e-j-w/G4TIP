@@ -5,6 +5,8 @@
 #include "G4Material.hh"
 #include "G4NistManager.hh"
 
+using namespace CLHEP;
+
 class Materials 
 {
   public:

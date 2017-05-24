@@ -19,6 +19,9 @@
 #include "G4RunManager.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4IntersectionSolid.hh"
+
+using namespace CLHEP;
+
 class CsI_detector_spherical
 {
   public:

@@ -16,7 +16,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
 using namespace std;
+using namespace CLHEP;
 
 class G4Step;
 class G4HCofThisEvent;

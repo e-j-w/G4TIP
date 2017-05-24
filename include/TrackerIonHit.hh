@@ -15,7 +15,7 @@
 #include <iomanip>
 #include "Flags.hh"
 
-
+using namespace CLHEP;
 
 class TrackerIonHit : public G4VHit
 {

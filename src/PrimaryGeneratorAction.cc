@@ -18,13 +18,9 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   
+	ionTable = G4IonTable::GetIonTable();
 
-
-
-  particleTable = G4ParticleTable::GetParticleTable();
-
- 
-  ion =  particleTable->GetIon(theProjectile->getZ(),theProjectile->getA(),0.);
+  ion =  ionTable->GetIon(theProjectile->getZ(),theProjectile->getA(),0.);
   particleGun->SetParticleDefinition(ion);
   
   

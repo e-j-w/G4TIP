@@ -16,6 +16,9 @@
 #include "G4Transform3D.hh"
 #include "G4UnitsTable.hh"
 #include "G4SubtractionSolid.hh"
+
+using namespace CLHEP;
+
 class Chamber 
 {
   public:
