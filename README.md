@@ -14,7 +14,9 @@ This version uses GEANT4 version 10.x, and is a work in progress that is still b
 
 This code has been tested with GEANT4.10.3 on Ubuntu 16.04.
 
-This program depends on GEANT4.10.3 and ROOT v5.x (results are saved to ROOT tree files), and requires proper setup of environment variables for each, for example by adding the follwing lines to ~/.bashrc (substituting the appropriate paths):
+This program depends on GEANT4.10.3, ROOT v5.x (results are saved to ROOT tree files), and cmake.  These programs should be compiled from source and installed according to the install guides on their respective websites.  GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.
+
+Environment variables must be properly set up for all dependencies, for example by adding the following lines to ~/.bashrc (substituting the appropriate paths):
 
 ```
 #ROOT configuration
@@ -27,22 +29,22 @@ export PATH=$PATH:$ROOTSYS/bin
 
 ```
 #for GEANT4
-#the next line should point to the env.sh file generated upon installation/configuration of GEANT4
-source /path/to/env.sh
 export G4INSTALL=/path/to/geant4_install_directory
+source $G4INSTALL/bin/geant4.sh
+#substitute GEANT4_VERSION in the next line with the appropriate directory
+source $G4INSTALL/share/GEANT4_VERSION/geant4make/geant4make.sh
 ```
 
-Modified GEANT4 classes included in this code:
+The program is then compiled from source using the following commands (substituting the appropriate directories):
 
-G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers.
-
-G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
-
-G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only internal conversion.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
+```
+cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION
+make
+```
 
 ## Using the program
 
-The program `TIP_Fusion_Evaporation` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch file `1274level.mac` for an example of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
+The program `TIP_Fusion_Evaporation` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files `1274level.mac` and `3357cascade.mac` for examples of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -55,6 +57,16 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Reaction/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
 | /run/beamOn NUMBER | Runs the simulation for the specified number of events (primary beam tracks). |
 | /Results/Tree/Save FILENAME | Saves the results of the simulation to a ROOT tree in the specified file. |
+
+## Other
+
+Some GEANT4 classes have been backported from version 9.4 for use in this code:
+
+G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers.
+
+G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
+
+G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only internal conversion.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
 
 ## Acknowledgements
 
