@@ -572,6 +572,33 @@ src/Experimental_Hall_Messenger.cc.s:
 	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/Experimental_Hall_Messenger.cc.s
 .PHONY : src/Experimental_Hall_Messenger.cc.s
 
+src/G4BetaFermiFunction.o: src/G4BetaFermiFunction.cc.o
+
+.PHONY : src/G4BetaFermiFunction.o
+
+# target to build an object file
+src/G4BetaFermiFunction.cc.o:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4BetaFermiFunction.cc.o
+.PHONY : src/G4BetaFermiFunction.cc.o
+
+src/G4BetaFermiFunction.i: src/G4BetaFermiFunction.cc.i
+
+.PHONY : src/G4BetaFermiFunction.i
+
+# target to preprocess a source file
+src/G4BetaFermiFunction.cc.i:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4BetaFermiFunction.cc.i
+.PHONY : src/G4BetaFermiFunction.cc.i
+
+src/G4BetaFermiFunction.s: src/G4BetaFermiFunction.cc.s
+
+.PHONY : src/G4BetaFermiFunction.s
+
+# target to generate assembly for a file
+src/G4BetaFermiFunction.cc.s:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4BetaFermiFunction.cc.s
+.PHONY : src/G4BetaFermiFunction.cc.s
+
 src/G4IonParametrisedLossModel.o: src/G4IonParametrisedLossModel.cc.o
 
 .PHONY : src/G4IonParametrisedLossModel.o
@@ -1359,6 +1386,9 @@ help:
 	@echo "... src/Experimental_Hall_Messenger.o"
 	@echo "... src/Experimental_Hall_Messenger.i"
 	@echo "... src/Experimental_Hall_Messenger.s"
+	@echo "... src/G4BetaFermiFunction.o"
+	@echo "... src/G4BetaFermiFunction.i"
+	@echo "... src/G4BetaFermiFunction.s"
 	@echo "... src/G4IonParametrisedLossModel.o"
 	@echo "... src/G4IonParametrisedLossModel.i"
 	@echo "... src/G4IonParametrisedLossModel.s"

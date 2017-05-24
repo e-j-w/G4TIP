@@ -33,7 +33,7 @@
 #include "G4Ions.hh"
 #include "G4IonTable.hh"
 #include "G4DynamicParticle.hh"
-#include "G4ParticleTable.hh"
+//#include "G4ParticleTable.hh"
 #include "G4GeneralPhaseSpaceDecay.hh"
 #include "G4RadioactiveDecayMode.hh"
 

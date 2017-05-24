@@ -155,10 +155,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       if((eventTrigger&(one<<12))&&(GriffinFold>1))
         eventTrigger|=(one<<14);
 
-      //printf("HPGe fold is %d\n",GriffinFold);
-      /*for(testTrigger=1;testTrigger<=14;testTrigger++)
+      /*printf("HPGe fold is %d\n",GriffinFold);
+      for(testTrigger=1;testTrigger<=14;testTrigger++)
         {
-          //int i=(int)testTrigger;
           if(eventTrigger&(one<<testTrigger))
             G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
         }*/
@@ -170,7 +169,6 @@ void EventAction::EndOfEventAction(const G4Event* evt)
           printf("HPGe fold is %d\n",GriffinFold);
           for(testTrigger=1;testTrigger<=15;testTrigger++)
             {
-              //int i=(int)testTrigger;
               if(eventTrigger&(one<<testTrigger))
                 G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
             }*/

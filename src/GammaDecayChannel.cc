@@ -91,8 +91,8 @@ GammaDecayChannel::GammaDecayChannel (G4int Verbose,
 #endif
 	E=Egamma;
   SetParent (theParentNucleus);
-  FillParent();
-  parent_mass = theParentNucleus->GetPDGMass();
+  CheckAndFillParent();
+  G4MT_parent_mass = theParentNucleus->GetPDGMass();
   SetBR (theBR);
   SetNumberOfDaughters (2);
   SetDaughter(0, "gamma");
@@ -140,8 +140,7 @@ void GammaDecayChannel::FillDaughterNucleus (G4int index, G4int A, G4int Z,
   } else if (Z == 0 && A == 1) {
     daughterNucleus = G4Neutron::Definition();
   } else {
-    G4IonTable *theIonTable =
-      (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());
+    G4IonTable *theIonTable = G4IonTable::GetIonTable();
     daughterNucleus = theIonTable->GetIon(daughterZ, daughterA, theDaughterExcitation*MeV);
   }
   daughterExcitation = theDaughterExcitation;
@@ -161,8 +160,8 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
   // Load-up the details of the parent and daughter particles if they have not
   // been defined properly.
   //
-  if (parent == 0) FillParent();
-  if (daughters == 0) FillDaughters();
+  if (G4MT_parent == 0) CheckAndFillParent();
+  if (G4MT_daughters == 0) CheckAndFillDaughters();
   //
   //
   // We want to ensure that the difference between the total
@@ -170,7 +169,7 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
   //
   theParentMass = 0.0;
   for( G4int index=0; index < numberOfDaughters; index++)
-    {theParentMass += daughters[index]->GetPDGMass();}
+    {theParentMass += G4MT_daughters[index]->GetPDGMass();}
   theParentMass += Qtransition;
   
 #ifdef G4VERBOSE
@@ -243,11 +242,13 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
 			//J. Williams: commented out since this breaks cascades
 			//// f.lei (07/03/05) added the delete to fix bug#711
 			//if (dynamicDaughter) delete dynamicDaughter;
-			G4IonTable *theIonTable =  (G4IonTable*)(G4ParticleTable::GetParticleTable()->GetIonTable());      
+			G4IonTable *theIonTable =  G4IonTable::GetIonTable();      
 			dynamicDaughter = new G4DynamicParticle(theIonTable->GetIon(daughterZ,daughterA,finalDaughterExcitation),daughterMomentum1);
 			products->PushProducts (dynamicDaughter);
 		}
   
+  //G4cout << "Gamma decay done!" << G4endl;
+	//getc(stdin);
 
   return products;
 }
@@ -263,13 +264,13 @@ G4DecayProducts* GammaDecayChannel::BetaDecayIt()
   G4double pmass = GetParentMass();
   for (G4int index=0; index<3; index++)
     {
-     daughtermass[index] = daughters[index]->GetPDGMass();
+     daughtermass[index] = G4MT_daughters[index]->GetPDGMass();
      sumofdaughtermass += daughtermass[index];
     }
 
   //create parent G4DynamicParticle at rest
   G4ParticleMomentum dummy;
-  G4DynamicParticle * parentparticle = new G4DynamicParticle( parent, dummy, 0.0);
+  G4DynamicParticle * parentparticle = new G4DynamicParticle( G4MT_parent, dummy, 0.0);
 
   //create G4Decayproducts
   G4DecayProducts *products = new G4DecayProducts(*parentparticle);
@@ -317,7 +318,7 @@ G4DecayProducts* GammaDecayChannel::BetaDecayIt()
   cosphi = std::cos(phi);
   G4ParticleMomentum direction0(sintheta*cosphi,sintheta*sinphi,costheta);
   G4DynamicParticle * daughterparticle
-      = new G4DynamicParticle( daughters[0], direction0*daughtermomentum[0]);
+      = new G4DynamicParticle( G4MT_daughters[0], direction0*daughtermomentum[0]);
   products->PushProducts(daughterparticle);
     
   costhetan = (daughtermomentum[1]*daughtermomentum[1]-
@@ -338,12 +339,12 @@ G4DecayProducts* GammaDecayChannel::BetaDecayIt()
   direction2.setY(sinthetan*cosphin*costheta*sinphi +
                   sinthetan*sinphin*cosphi + costhetan*sintheta*sinphi);
   direction2.setZ(-sinthetan*cosphin*sintheta + costhetan*costheta);
-  daughterparticle = new G4DynamicParticle(daughters[2],
+  daughterparticle = new G4DynamicParticle(G4MT_daughters[2],
                           direction2*(daughtermomentum[2]/direction2.mag()));
   products->PushProducts(daughterparticle);
     
   daughterparticle =
-    new G4DynamicParticle(daughters[1],
+    new G4DynamicParticle(G4MT_daughters[1],
                          (direction0*daughtermomentum[0] +
 			  direction2*(daughtermomentum[2]/direction2.mag()))*(-1.0));
   products->PushProducts(daughterparticle);
