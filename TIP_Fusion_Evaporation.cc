@@ -3,21 +3,21 @@
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 
-#ifdef G4UI_USE_ROOT
+/*#ifdef G4UI_USE_ROOT
 #include "G4UIRoot.hh"
-#else
+#else*/
 #include "G4UIterminal.hh"
 #include "G4UItcsh.hh"
-#endif
+//#endif
 
 #ifdef G4UI_USE_XM
 #include "G4UIXm.hh"
 #endif
 
 
-#ifdef G4VIS_USE
+/*#ifdef G4VIS_USE
 #include "VisManager.hh"
-#endif
+#endif*/
 
 
 #include "DetectorConstruction.hh"
@@ -83,19 +83,19 @@ int main(int argc,char** argv)
   SteppingAction* stepAction = new SteppingAction(theDetector,eventAction);
   runManager->SetUserAction(stepAction);
 
-  G4UIsession* session=0;
+  //G4UIsession* session=0;
 
-// get the pointer to the UI manager and set verbosities
+	// get the pointer to the UI manager and set verbosities
   G4UImanager* UI = G4UImanager::GetUIpointer();
 
-  #ifdef G4VIS_USE  
- G4VisManager* visManager = new VisManager; 
-  #endif  
+  /*#ifdef G4VIS_USE  
+ 	G4VisManager* visManager = new VisManager; 
+  #endif  */
 
   if (argc==1)   // Define UI session for interactive mode.
     {
 
-      #ifdef G4VIS_USE
+      /*#ifdef G4VIS_USE
       // visualization manager
       visManager->Initialize();
       #endif
@@ -114,11 +114,15 @@ int main(int argc,char** argv)
       session = new G4UIterminal();
       #endif
       #endif
-      #endif
+      #endif*/
+      G4cout << "TIP_Fusion_Evaporation macro_file" << G4endl;
+      G4cout << "---------------------------------" << G4endl;
+      G4cout << "Please specify a macro file (.mac) to run as an argument." << G4endl;
+      exit(-1);
 
     }
 
-  if (session)   // Define UI session for interactive mode.
+  /*if (session)   // Define UI session for interactive mode.
     {
       // G4UIterminal is a (dumb) terminal.
       
@@ -142,7 +146,11 @@ int main(int argc,char** argv)
       #ifdef G4VIS_USE
       delete visManager;
       #endif
-    }
+    }*/
+
+	G4String command = "/control/execute ";
+	G4String fileName = argv[1];
+	UI->ApplyCommand(command+fileName);
 
   delete detectorMessenger;
   delete ProjectileMessenger;

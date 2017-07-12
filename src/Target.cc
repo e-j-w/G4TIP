@@ -12,12 +12,12 @@ Target::Target(G4LogicalVolume* experimentalHall_log,Materials* mat)
   BackingA=197;
   BackingEx=547.5*keV;
   BackingTau=6.65/1000.*ns;//4.61 ps half life
-  TargetZ=6;
-  TargetA=12;
+  TargetZ=20;
+  TargetA=40;
   TargetEx=4.43891*MeV;
   TargetTau=1e-9*ns;
   Pos = new G4ThreeVector(0.,0.,0.);
-  TargetMaterial = materials->FindMaterial("G4_C");//carbon
+  TargetMaterial = materials->FindMaterial("Ca");//carbon
   BackingMaterial = materials->FindMaterial("G4_Au");//gold
   NTStep=20;
   NBStep=20;

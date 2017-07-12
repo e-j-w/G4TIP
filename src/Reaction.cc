@@ -272,7 +272,7 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
 
   //derive the center of mass energy of the evaporated particle from the change in excitation energy of the compound
   //G4double particleCMEnergy = deltaExi - ( deltaExi / ( ((RecoilResidual->GetAtomicMass()) / (EvaporatedParticleDef->GetAtomicMass())) + 1.0));
-  G4double particleCMEnergy = deltaExi * ( 1.0 / ( ((EvaporatedParticleDef->GetAtomicMass()) / (RecoilResidual->GetAtomicMass())) + 1.0));
+  G4double particleCMEnergy = deltaExi * ( 1.0 / ( ((1.0*EvaporatedParticleDef->GetAtomicMass()) / (1.0*RecoilResidual->GetAtomicMass())) + 1.0));
   //G4cout << "CM energy of evaporated particle: " << particleCMEnergy << " MeV." << G4endl;
   //G4cout << "CM energy of recoil particle: " << deltaExi - particleCMEnergy << " MeV." << G4endl;
   
