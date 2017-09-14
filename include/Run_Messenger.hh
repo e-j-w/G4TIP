@@ -27,6 +27,7 @@ class Run_Messenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit* PLSCmd;
     G4UIcmdWithoutParameter* ICmd;
     G4UIcmdWithAString* CSCmd;
+    G4UIcmdWithoutParameter* NCmd;
 };
 
 

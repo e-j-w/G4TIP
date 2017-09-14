@@ -23,6 +23,9 @@ Run_Messenger::Run_Messenger(G4RunManager* rm, PhysicsList* physl)
   CSCmd->SetGuidance("Use stopping power tables from the path specified.");
   CSCmd->SetParameterName("File path",false);
   CSCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  NCmd = new G4UIcmdWithoutParameter("/Physics/IgnoreNeutrons",this);
+  NCmd->SetGuidance("Ignore neutron interactions when constructing physics (makes things faster).");
 
 }
 
@@ -32,6 +35,7 @@ Run_Messenger::~Run_Messenger()
 {
   delete PLSCmd;
   delete CSCmd;
+  delete NCmd;
 }
 
 
@@ -52,6 +56,10 @@ void Run_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
     {
       thePhysicsList->setcspath(newValue);
       thePhysicsList->setcs();
+    }
+  if( command == NCmd )
+    {
+      thePhysicsList->setUseNeutrons(false);
     }
 
 }

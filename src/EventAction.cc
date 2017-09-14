@@ -15,6 +15,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   SetTriggerParticleSing();
   CsIThreshold=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
+  memset(CsIDisabled,0,sizeof(CsIDisabled));
 }
 
 
@@ -86,38 +87,48 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       // CsI trigger
       if(Np>0) 
 	      {
+	      
+	      	//nullify hits in disabled CsI detectors
+	      	for(int i=0;i<Np;i++)
+          	if(CsIDisabled[(*CsI)[i]->GetId()-1]==1)
+	          	(*CsI)[i]->SetDisabled();
+	        
+	      
 	        G4double partECsI[NCsISph]; //energy of user defined particle
 	        memset(partECsI,0,sizeof(partECsI));
 	        for(int i=0;i<Np;i++)
-	          {
-              //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
-              if((CsIIDTrigger==0)||((*CsI)[i]->GetId()==CsIIDTrigger)) //CsI detector ID trigger
-		            if((*CsI)[i]->GetA()==At) // user defined particle trigger
-		              if((*CsI)[i]->GetZ()==Zt)
-		                {
-		                  partECsI[(*CsI)[i]->GetId()]+=(*CsI)[i]->GetKE();
-		                  //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
-		                }
-	          }
+	        	if((*CsI)[i]->GetDisabled()==0)
+			        {
+		            //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
+		            if((CsIIDTrigger==0)||(((*CsI)[i]->GetId()-1)==CsIIDTrigger)) //CsI detector ID trigger
+				          if((*CsI)[i]->GetA()==At) // user defined particle trigger
+				            if((*CsI)[i]->GetZ()==Zt)
+				              {
+				                partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+				                //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
+				              }
+			        }
           
           //determine the number of CsI hits 
           numDetHits=0;
           if(theDetector->usingCsIBall())
           	{
 				      for(int i=0;i<NCsISph;i++)
-					      if(partECsI[i]>=CsIThreshold)
-					        numDetHits++;
+				      	if(CsIDisabled[i]==0) //check if detector is disabled
+							    if(partECsI[i]>=CsIThreshold)
+							      numDetHits++;
 					  }
 	        else
 	        	{
 	        		for(int i=0;i<NCsI;i++)
-					      if(partECsI[i]>=CsIThreshold)
-					        numDetHits++;
+	        			if(CsIDisabled[i]==0) //check if detector is disabled
+							    if(partECsI[i]>=CsIThreshold)
+							      numDetHits++;
 	        	}
 	        
 	        //set entries in detectors below energy threshold to 0
 	        for(int i=0;i<Np;i++)
-            if((partECsI[(*CsI)[i]->GetId()]<CsIThreshold))
+            if((partECsI[(*CsI)[i]->GetId()-1]<CsIThreshold))
 	            (*CsI)[i]->SetKE(0.0);
 	        
 	        //CsI singles trigger

@@ -8,7 +8,7 @@ GEANT4 code implementing TIP/TIGRESS DSAM using a fusion-evaporation reaction pr
 
 At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  Step-wise decay of the residual nucleus (gamma ray cascade) is also availaible.
 
-This version uses GEANT4 version 10.x, and is a work in progress that is still being evaluated (see the version 9.4 branch for the most recent stable version).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead. 
+This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead. 
 
 ## Installation
 
@@ -46,19 +46,54 @@ make
 
 The program `TIP_Fusion_Evaporation` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files `1274level.mac` and `3357cascade.mac` for examples of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
 
+### Detectors and Geometry
+
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
+
+### Physics Parameters
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
+| /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
+
+### Reaction Parameters
+
+|**Command**|**Effect**|
+|:---:|:---:|
 | /Projectile/A NUMBER | The mass number of the beam species. |
 | /Projectile/Z NUMBER | The proton number of the beam species. |
 | /Reaction/N_protons | In fusion-evaporation, the number of protons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
+
+### Trigger Parameters
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Trigger/GammaSingles | Trigger on events containing at least one hit in the TIGRESS/GRIFFIN array. |
+| /Trigger/A NUMBER | If using a particle trigger, this is the mass number of the particle to trigger on. |
+| /Trigger/Z NUMBER | If using a particle trigger, this is the proton number of the particle to trigger on. |
+| /Trigger/DefinedParticleSingles | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z. |
+| /Trigger/DefinedParticleCoincAndGamma | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
+| /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and two hits in the TIGRESS/GRIFFIN array. |
+| /Trigger/DisableGriffin NUM | Removes the TIGRESS/GRIFFIN detector with index NUM from the trigger. |
+| /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET and core index COL from the trigger. |
+| /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM from the trigger. |
+| /Trigger/DisableCsIRange LOW HIGH | Removes CsI detectors with index between LOW and HIGH (inclusive) from the trigger. |
+
+### Data Generation and Saving
+
+|**Command**|**Effect**|
+|:---:|:---:|
 | /run/beamOn NUMBER | Runs the simulation for the specified number of events (primary beam tracks). |
 | /Results/Tree/Save FILENAME | Saves the results of the simulation to a ROOT tree in the specified file. |
 
-## Other
+
+## Other Notes
 
 Some GEANT4 classes have been backported from version 9.4 for use in this code:
 

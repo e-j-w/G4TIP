@@ -70,6 +70,7 @@ class PhysicsList: public G4VUserPhysicsList
   void setStepSize(double ss){stepSize=ss;};
   void setcs(){customStopping=true;};
   void setcspath(const char * csp){strcpy(cspath,csp);};
+  void setUseNeutrons(bool val){useNeutrons=val;};
 
   protected:
     // Construct particle and physics process
@@ -85,6 +86,7 @@ class PhysicsList: public G4VUserPhysicsList
   Reaction_Messenger *theReactionMessenger;
   double stepSize;
   bool customStopping;
+  bool useNeutrons=true;
   char cspath[256];
 };
 

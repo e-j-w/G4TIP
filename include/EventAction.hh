@@ -43,6 +43,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
   void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
+  void DisableCsI(int det){CsIDisabled[det]=1;};
   void SetCsIThreshold(G4double x){CsIThreshold=x;};
 
 
@@ -63,6 +64,7 @@ class EventAction : public G4UserEventAction
   G4double      GriffinCrystWeightDet[16][4];
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4double      GriffinCrystTimeDet[16][4];
+  G4int         CsIDisabled[NCsISph];
   G4int         GriffinFold;
   size_t        soa,sov,soc,soi;
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;

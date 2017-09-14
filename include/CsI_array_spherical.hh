@@ -1,7 +1,11 @@
 #ifndef CsI_array_spherical_H
 #define CsI_array_spherical_H 1
 
+//full array
 #define NCsISph 128
+//reduced array
+//#define NCsISph 38
+
 #define PI 3.14159
 #include "G4Material.hh"
 #include "Materials.hh"

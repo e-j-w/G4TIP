@@ -4,7 +4,9 @@
 G4Allocator<TrackerCsIHit> TrackerCsIHitAllocator;
 
 
-TrackerCsIHit::TrackerCsIHit() {}
+TrackerCsIHit::TrackerCsIHit() {
+	disabled=0;
+}
 
 
 

@@ -35,6 +35,8 @@ class EventAction_Messenger: public G4UImessenger
     G4UIcmdWithAnInteger*      TIDCmd;
     G4UIcmdWithAString*        TDGCCmd;
     G4UIcmdWithAString*        TDGCmd;
+    G4UIcmdWithAString*        TDCCmd;
+    G4UIcmdWithAString*        TDCRCmd;
     G4UIcmdWithADoubleAndUnit* CETCmd;
 
 };
