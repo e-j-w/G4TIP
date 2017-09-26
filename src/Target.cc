@@ -164,7 +164,9 @@ void Target::setTargetMaterial(G4String materialName)
   // search the material by its name 
   TargetMaterial = materials->FindMaterial(materialName);  
   Target_log->SetMaterial(TargetMaterial);
-  G4cout<<"----> Target material set to     "<<Target_log->GetMaterial()->GetName()<< G4endl;                 
+  TargetZ=TargetMaterial->GetZ();
+  TargetA=TargetMaterial->GetA();
+  G4cout<<"----> Target material set to     "<<Target_log->GetMaterial()->GetName()<< G4endl;         
 }
 //---------------------------------------------------------------------
 void Target::setBackingMaterial(G4String materialName)
@@ -172,6 +174,8 @@ void Target::setBackingMaterial(G4String materialName)
   // search the material by its name 
   BackingMaterial = materials->FindMaterial(materialName);  
   Backing_log->SetMaterial(BackingMaterial);
+  BackingZ=BackingMaterial->GetZ();
+  BackingA=BackingMaterial->GetA();
   G4cout<<"----> Backing material set to     "<<Backing_log->GetMaterial()->GetName()<< G4endl;                 
 }
 //-------------------------------------------------------------------

@@ -16,12 +16,12 @@ Target_Messenger::Target_Messenger(Target* Tar)
   TMatCmd->SetParameterName("choice",false);
   TMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  TMCmd = new G4UIcmdWithAnInteger("/Target/MassNumber",this);
+  TMCmd = new G4UIcmdWithAnInteger("/Target/A",this);
   TMCmd->SetGuidance("Set the mass number A for the target");
   TMCmd->SetParameterName("choice",false);
   TMCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  TQCmd = new G4UIcmdWithAnInteger("/Target/AtomicNumber",this);
+  TQCmd = new G4UIcmdWithAnInteger("/Target/Z",this);
   TQCmd->SetGuidance("Set the atomic number Z for the target");
   TQCmd->SetParameterName("choice",false);
   TQCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -47,8 +47,8 @@ Target_Messenger::Target_Messenger(Target* Tar)
   TZCmd->SetParameterName("choice",false);
   TZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  TTarCmd = new G4UIcmdWithADouble("/Target/ThicknessMgCm3",this);
-  TTarCmd->SetGuidance("Select the thickness for the target in mg/cm^3");
+  TTarCmd = new G4UIcmdWithADouble("/Target/ThicknessMgCm2",this);
+  TTarCmd->SetGuidance("Select the thickness for the target in mg/cm^2");
   TTarCmd->SetParameterName("choice",false);
   TTarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -71,12 +71,12 @@ Target_Messenger::Target_Messenger(Target* Tar)
   BMatCmd->SetParameterName("choice",false);
   BMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  BMCmd = new G4UIcmdWithAnInteger("/Backing/MassNumber",this);
+  BMCmd = new G4UIcmdWithAnInteger("/Backing/A",this);
   BMCmd->SetGuidance("Set the mass number A for the target");
   BMCmd->SetParameterName("choice",false);
   BMCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  BQCmd = new G4UIcmdWithAnInteger("/Backing/AtomicNumber",this);
+  BQCmd = new G4UIcmdWithAnInteger("/Backing/Z",this);
   BQCmd->SetGuidance("Set the atomic number Z for the backing");
   BQCmd->SetParameterName("choice",false);
   BQCmd->AvailableForStates(G4State_PreInit,G4State_Idle);

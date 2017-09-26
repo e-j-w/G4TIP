@@ -1,6 +1,6 @@
 #include "PhysicsList.hh"
 
-PhysicsList::PhysicsList(Projectile*Proj):theProjectile(Proj)
+PhysicsList::PhysicsList(Projectile *Proj,DetectorConstruction *Det):theProjectile(Proj),theDetector(Det)
 {
   stepSize=0.05*um;
 }
@@ -119,7 +119,7 @@ void PhysicsList::ConstructEM()
 				ionIoni->SetEmModel(theModel);
 				pmanager->AddProcess(ionIoni,                   -1, 3, 2);
 				pmanager->AddProcess(new G4NuclearStopping(),   -1, 4,-1);
-				theReaction=new Reaction(theProjectile);
+				theReaction=new Reaction(theProjectile,theDetector);
 				theReactionMessenger=new Reaction_Messenger(theReaction); //this line needed here but not in Aaron's RDM code
 				pmanager->AddProcess(theReaction,    -1,-1, 3);
 				pmanager->AddProcess(new G4StepLimiter,        -1,-1, 4);

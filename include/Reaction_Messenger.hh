@@ -30,6 +30,8 @@ class Reaction_Messenger: public G4UImessenger
     G4UIcmdWithAnInteger*      NNCmd;
     G4UIcmdWithAnInteger*      NPCmd;
     G4UIcmdWithAnInteger*      NACmd;
+    
+    G4UIcmdWithoutParameter*   SetupCmd;
 
     G4UIdirectory*      theCompoundDir;
     G4UIcmdWithADoubleAndUnit* QCmd; 

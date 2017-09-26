@@ -63,7 +63,7 @@ using namespace CLHEP;
 class PhysicsList: public G4VUserPhysicsList
 {
   public:
-  PhysicsList(Projectile*);
+  PhysicsList(Projectile*,DetectorConstruction*);
     ~PhysicsList();
   
   Reaction* getReaction(){return theReaction;};
@@ -82,6 +82,7 @@ class PhysicsList: public G4VUserPhysicsList
 
  private:
   Projectile *theProjectile;
+  DetectorConstruction *theDetector;
   Reaction *theReaction; 
   Reaction_Messenger *theReactionMessenger;
   double stepSize;

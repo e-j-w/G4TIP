@@ -4,8 +4,8 @@
 #include "Reaction.hh"
 
 
-Reaction::Reaction(Projectile* Proj, const G4String& aName)
-  : G4VProcess(aName),theProjectile(Proj)
+Reaction::Reaction(Projectile* Proj, DetectorConstruction* Det, const G4String& aName)
+  : G4VProcess(aName),theProjectile(Proj),theDetector(Det)
 {
   proton=G4Proton::ProtonDefinition();
   neutron=G4Neutron::NeutronDefinition();
@@ -16,7 +16,6 @@ Reaction::Reaction(Projectile* Proj, const G4String& aName)
 
   if (verboseLevel>1) {
     G4cout <<GetProcessName() << " is created "<< G4endl;};
- 
   
 }
 //---------------------------------------------------------------------
@@ -208,11 +207,7 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
 
   G4double Ain;
   G4double Zin;
-  G4ThreeVector dirIn;
-  G4ThreeVector pIn; //momentum of incoming particle
-
-  //G4DynamicParticle* Compound=new G4DynamicParticle();
-  //Compound->SetDefinition(compound);
+  G4ThreeVector dirIn; //momentum direction of incoming particle
 
   Ain=aTrack.GetDynamicParticle()->GetDefinition()->GetAtomicMass();
   if(Ain!=A1) return FALSE;
@@ -221,23 +216,22 @@ G4bool Reaction::SetupReactionProducts(const G4Track & aTrack,G4DynamicParticle*
 
   dirIn=aTrack.GetMomentumDirection();
   posIn=aTrack.GetPosition();
-  pIn=aTrack.GetMomentum();
-  //G4cout << "KE of beam: " <<  aTrack.GetKineticEnergy() << G4endl;
-
-  //Compound->SetMomentum(pIn);
-  //Compound->SetMomentumDirection(dirIn);
-  //Compound->SetKineticEnergy(aTrack.GetKineticEnergy() + Q - excitation);
-  //G4cout << "KE of compound: " << Compound->GetKineticEnergy() << G4endl;
 
   RecoilOut->SetDefinition(compound);
-  RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
   RecoilOut->SetMomentumDirection(dirIn);
-  //G4cout << "At compound formation - Recoil momentum: " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
-
+  RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
+  
+  /*G4cout << "Before compound formation - Beam momentum (lab): " << aTrack.GetMomentum() << ", Beam KE: " << aTrack.GetKineticEnergy()/MeV << " MeV." << G4endl;
+  G4cout << "At compound formation - Recoil momentum (lab): " << RecoilOut->GetMomentum() << ", Recoil KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV." << G4endl;
+  G4cout << "KE difference: " << aTrack.GetKineticEnergy()/MeV - RecoilOut->GetKineticEnergy()/MeV << " MeV." << G4endl;
+  G4cout << "target A,Z: " << A2 << "," << Z2 << G4endl;
+  G4cout << "compound A,Z: " << compound->GetAtomicMass() << "," << compound->GetAtomicNumber() << G4endl;
+	getc(stdin);*/
+	
   return TRUE;
 }
 //---------------------------------------------------------------------
-//Computes the momentum of the recoil system after the compund has emitted a particle.
+//Computes the momentum of the recoil system after the compound has emitted a particle.
 //particleEnergy in MeV.
 
 //cmv: center of mass velocity vector for the beam-target system
@@ -256,7 +250,7 @@ void Reaction::EvaporateWithMomentumCorrection(G4DynamicParticle* Compound, G4Dy
   //G4cout << "Compound mass: " << Compound->GetDefinition()->GetPDGMass() << G4endl;
 
 
-  //define the recoil particle after evaporation
+  //define the residual particle after evaporation
   G4ParticleDefinition* RecoilResidual;
   G4int rrecA=Compound->GetDefinition()->GetAtomicMass() - EvaporatedParticleDef->GetAtomicMass();
   G4int rrecZ=Compound->GetDefinition()->GetAtomicNumber() - EvaporatedParticleDef->GetAtomicNumber();
@@ -340,15 +334,64 @@ void Reaction::TargetFaceCrossSection()
     Eexcit+=Egamma[i];
   Egammatot=Eexcit;//store the total energy used by gamma emission
 
-  G4int DA=0,DZ=0;
+  DA=0.;
+  DZ=0.;
+  
   A1=theProjectile->getA();
   Z1=theProjectile->getZ();
-  
+
+  A2=theDetector->GetTarget()->getTargetMass();
+  Z2=theDetector->GetTarget()->getTargetCharge();
+
+	A3=theDetector->GetTarget()->getBackingMass();
+  Z3=theDetector->GetTarget()->getBackingCharge();
+
   //set properties of the compound (which we assume does not gamma decay)
-  compound=G4IonTable::GetIonTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc 
+  compound=G4IonTable::GetIonTable()->GetIon(Z1+Z2,A1+A2,0); //Z2,A2 are set to target charge and mass as defined in Target.cc
+	/*G4cout << "target A,Z: " << A2 << "," << Z2 << G4endl;
+  G4cout << "compound A,Z: " << compound->GetAtomicMass() << "," << compound->GetAtomicNumber() << G4endl;
+	getc(stdin);*/
 
   DA=nN*neutron->GetAtomicMass()+nP*proton->GetAtomicMass()+nA*alpha->GetAtomicMass();
   DZ=nN*neutron->GetAtomicNumber()+nP*proton->GetAtomicNumber()+nA*alpha->GetAtomicNumber();
+  
+  //check for invalid ions
+  if((Z1 > 1000)||(Z1 < 1))
+  	{
+  		G4cout << "ERROR: Invalid projectile atomic number: " << Z1 << G4endl;
+  		G4cout << "Set an appropriate value using /Projectile/Z in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
+  if((A1 > 1000)||(A1 < 1))
+  	{
+  		G4cout << "ERROR: Invalid projectile mass number: " << A1 << G4endl;
+  		G4cout << "Set an appropriate value using /Projectile/A in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
+  if((Z2 > 1000)||(Z2 < 1))
+  	{
+  		G4cout << "ERROR: Invalid target atomic number: " << Z2 << G4endl;
+  		G4cout << "Set an appropriate value using /Target/Z in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
+  if((A2 > 1000)||(A2 < 1))
+  	{
+  		G4cout << "ERROR: Invalid target mass number: " << A2 << G4endl;
+  		G4cout << "Set an appropriate value using /Target/A in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
+  if((Z3 > 1000)||(Z3 < 1))
+  	{
+  		G4cout << "ERROR: Invalid backing atomic number: " << Z3 << G4endl;
+  		G4cout << "Set an appropriate value using /Backing/Z in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
+  if((A3 > 1000)||(A3 < 1))
+  	{
+  		G4cout << "ERROR: Invalid backing mass number: " << A3 << G4endl;
+  		G4cout << "Set an appropriate value using /Backing/A in the batch file and try again." << G4endl;
+  		exit(-1);
+  	}
   
   //set properties (including gamma decay processes) of the residual species in the cascade
   if(numDecays>0)
@@ -367,9 +410,9 @@ void Reaction::TargetFaceCrossSection()
 
 				//set up gamma decay channel
 				ResDecTab[i] = new G4DecayTable();
-				residual[i]->SetDecayTable(ResDecTab[i]);
 				ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);
 				ResDecTab[i]->Insert(ResDec[i]);
+				residual[i]->SetDecayTable(ResDecTab[i]);
 				//ResDecTab[i]->DumpInfo();
 				
         //make sure that the residual has the decay process in its manager
@@ -432,3 +475,19 @@ G4double Reaction::getExi(G4double x0,G4double w,G4double tau)
   exi+=CLHEP::RandExponential::shoot(tau);  
   return exi;
 }
+//---------------------------------------------------------
+//Sets up the reaction
+//Call this after all reaction parameters have been set
+void Reaction::SetupReaction()
+{
+	G4cout << "---> Setting up the reaction." << G4endl;
+  TargetFaceCrossSection();
+  G4cout << "---> Reaction setup completed." << G4endl;
+  G4cout << "---> BEAM PROPERTIES:     A = " << A1 << ", Z = " << Z1 << ", N = " << A1-Z1 << G4endl;
+  G4cout << "---> TARGET PROPERTIES:   A = " << A2 << ", Z = " << Z2 << ", N = " << A2-Z2 << G4endl;
+  G4cout << "---> BACKING PROPERTIES:  A = " << A3 << ", Z = " << Z3 << ", N = " << A3-Z3 << G4endl;
+  G4cout << "---> COMPOUND PROPERTIES: A = " << A1+A2 << ", Z = " << Z1+Z2 << ", N = " << A1+A2-Z1-Z2 << G4endl;
+  G4cout << "---> RESIDUAL PROPERTIES: A = " << A1+A2-DA << ", Z = " << Z1+Z2-DZ << ", N = " << A1+A2-DA-Z1-Z2+DZ << G4endl;
+  //getc(stdin);
+}
+

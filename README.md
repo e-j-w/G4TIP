@@ -51,6 +51,13 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
+| /Target/ThicknessMgCm2 NUMBER | The thickness of the reaction target, in mg/cm^2. |
+| /Target/Thickness NUMBER um | The thickness of the reaction target, in micrometers (can be used instead of /Target/ThicknessMgCm2). |
+| /Backing/Thickness NUMBER um | The thickness of the reaction target backing, in micrometers. |
+| /Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
+| /Target/Z NUMBER | The proton number of the reaction target. |
+| /Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
+| /Backing/Z NUMBER | The proton number of the target backing. |
 
 ### Physics Parameters
 
@@ -63,7 +70,7 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Projectile/A NUMBER | The mass number of the beam species. |
+| /Projectile/A NUMBER | The mass number of the beam species (number of nucleons). |
 | /Projectile/Z NUMBER | The proton number of the beam species. |
 | /Reaction/N_protons | In fusion-evaporation, the number of protons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |

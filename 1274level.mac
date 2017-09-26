@@ -1,4 +1,5 @@
 /Physics/Step 0.05 um
+#/Physics/IgnoreNeutrons
 #/Construction/UseCsIBall
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize
@@ -13,11 +14,12 @@
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
 /Backing/Material G4_Au
+/Backing/A 197
 /Backing/Thickness 14.9 um
 /Backing/NStep 1
 /Target/Material G4_C
+/Target/A 12
 /Target/Thickness 1.91 um
-/Target/Report
 /Target/NStep 1
 /Reaction/AddDecay 1.274537 5.1937e-3
 /Reaction/N_protons 0
@@ -32,6 +34,7 @@
 /ParticleEvaporation/Tau 2.286506
 #/ParticleEvaporation/ConstrainAngularRange
 #/ParticleEvaporation/MaxAngle 50.0 deg
+/Target/Report
 /Results/Tree/CsIDetectorID 0
 /Trigger/CsIDetectorID 0
 /Trigger/A 4

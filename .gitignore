@@ -13,5 +13,6 @@ testfiles
 treefiles
 *CMake*
 *cmake*
-tree2mca_parameters
+sed*
+tree2mca_parameter*
 TIP_Fusion_Evaporation

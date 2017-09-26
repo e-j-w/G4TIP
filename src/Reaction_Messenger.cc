@@ -36,6 +36,10 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
   ADecCmd->SetGuidance("Adds a transition to the residual nucleus.  Format: '/Reaction/AddDecay ENERGY LIFETIME', with ENERGY in MeV, LIFETIME in ns.");
   ADecCmd->SetParameterName("Tau",false);
   ADecCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+  
+  SetupCmd = new G4UIcmdWithoutParameter("/Reaction/Setup",this);
+  SetupCmd->SetGuidance("Set up the reaction with the previously specified parameters.  Simulation will fail if this is not called.");  
+  
 
   theCompoundDir = new G4UIdirectory("/CompoundFormation/");
   theCompoundDir->SetGuidance("Beam-target reaction parameters.");
@@ -106,6 +110,8 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  NPCmd;
   delete  NACmd;
   delete  NNCmd;
+  
+  delete  SetupCmd;
 
   delete  theCompoundDir;
   delete  QCmd;
@@ -126,6 +132,9 @@ Reaction_Messenger::~Reaction_Messenger()
 
 void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
+
+	if( command == SetupCmd )
+    { theReaction->SetupReaction();}
 
   if( command == NACmd )
     { theReaction->SetNumberOfAlphas(NACmd->GetNewIntValue(newValue));}

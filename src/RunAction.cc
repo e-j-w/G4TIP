@@ -14,14 +14,10 @@ RunAction::~RunAction()
 
 void RunAction::BeginOfRunAction(const G4Run*)
 {
-  G4double At,Zt;
-  G4cout<<" Beginning of run "<<G4endl;
+  G4cout<<"---> Beginning the run!"<<G4endl;
   gettimeofday(&ts,NULL);
- 
-  At=theDetector->GetTarget()->getTargetMass();
-  Zt=theDetector->GetTarget()->getTargetCharge();
-  thePhysicsList->getReaction()->SetTargetMassAndCharge(At,Zt);
-  thePhysicsList->getReaction()->TargetFaceCrossSection();
+  
+  thePhysicsList->getReaction()->SetupReaction();
   nP=thePhysicsList->getReaction()->GetNumberOfProtons();
   nN=thePhysicsList->getReaction()->GetNumberOfNeutrons();
   nA=thePhysicsList->getReaction()->GetNumberOfAlphas();

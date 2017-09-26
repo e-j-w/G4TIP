@@ -48,7 +48,7 @@ class Reaction : public G4VProcess
   public:     
    G4bool reaction_here;
 
-  Reaction(Projectile*, const G4String& processName ="Reaction" );
+  Reaction(Projectile*, DetectorConstruction*, const G4String& processName ="Reaction" );
 
      virtual ~Reaction();
 
@@ -92,7 +92,6 @@ class Reaction : public G4VProcess
 			     const G4Step& 
 			    ) {return NULL;};
 
-  
   G4bool SetupReactionProducts(const G4Track &,G4DynamicParticle*);
   void TargetFaceCrossSection();
   void SetTargetMassAndCharge(G4double At,G4double Zt){A2=At;Z2=Zt;};
@@ -102,6 +101,7 @@ class Reaction : public G4VProcess
   void SetNumberOfProtons(G4int p){nP=p;};
   void SetNumberOfAlphas(G4int a){nA=a;};
   void SetNumberOfNeutrons(G4int n){nN=n;};
+  void SetupReaction();
 
   //set properties of raction and emitted particles
   void SetRxnQ(G4double x){QRxn=x;};
@@ -136,13 +136,14 @@ class Reaction : public G4VProcess
   private:
  
   Projectile *theProjectile;
+  DetectorConstruction *theDetector;
 
   G4ParticleDefinition* compound; //the nucleus formed directly after beam-target reaction
   
   G4ParticleDefinition* proton,*alpha,*neutron;
   G4bool killTrack;
   G4ThreeVector posIn;
-  G4double A1,Z1,A2,Z2;
+  G4double A1,Z1,A2,Z2,A3,Z3,DA,DZ;
   G4int  nP,nN,nA;
   G4int  maxNumEvap;
   G4bool constrainedAngle; //whether to constrain direction of emitted particles
