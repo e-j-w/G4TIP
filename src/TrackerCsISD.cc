@@ -30,7 +30,8 @@ void TrackerCsISD::Initialize(G4HCofThisEvent*)
 
 G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
-  G4double DE = - aStep->GetDeltaEnergy();
+
+  G4double DE = aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy();
   if(DE<0.001*eV) return false;
 
   G4Track* theTrack;

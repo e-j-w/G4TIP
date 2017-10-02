@@ -599,6 +599,33 @@ src/G4BetaFermiFunction.cc.s:
 	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4BetaFermiFunction.cc.s
 .PHONY : src/G4BetaFermiFunction.cc.s
 
+src/G4Decay.o: src/G4Decay.cc.o
+
+.PHONY : src/G4Decay.o
+
+# target to build an object file
+src/G4Decay.cc.o:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4Decay.cc.o
+.PHONY : src/G4Decay.cc.o
+
+src/G4Decay.i: src/G4Decay.cc.i
+
+.PHONY : src/G4Decay.i
+
+# target to preprocess a source file
+src/G4Decay.cc.i:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4Decay.cc.i
+.PHONY : src/G4Decay.cc.i
+
+src/G4Decay.s: src/G4Decay.cc.s
+
+.PHONY : src/G4Decay.s
+
+# target to generate assembly for a file
+src/G4Decay.cc.s:
+	$(MAKE) -f CMakeFiles/TIP_Fusion_Evaporation.dir/build.make CMakeFiles/TIP_Fusion_Evaporation.dir/src/G4Decay.cc.s
+.PHONY : src/G4Decay.cc.s
+
 src/G4IonParametrisedLossModel.o: src/G4IonParametrisedLossModel.cc.o
 
 .PHONY : src/G4IonParametrisedLossModel.o
@@ -1389,6 +1416,9 @@ help:
 	@echo "... src/G4BetaFermiFunction.o"
 	@echo "... src/G4BetaFermiFunction.i"
 	@echo "... src/G4BetaFermiFunction.s"
+	@echo "... src/G4Decay.o"
+	@echo "... src/G4Decay.i"
+	@echo "... src/G4Decay.s"
 	@echo "... src/G4IonParametrisedLossModel.o"
 	@echo "... src/G4IonParametrisedLossModel.i"
 	@echo "... src/G4IonParametrisedLossModel.s"

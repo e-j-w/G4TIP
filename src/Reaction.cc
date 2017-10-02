@@ -399,7 +399,6 @@ void Reaction::TargetFaceCrossSection()
       {
         
 				//define the residual species
-				//residual[i]=G4IonTable::GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
 				residual[i]=G4IonTable::GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
 				if(i>0)
 					residual[i]=ResDec[i-1]->GetDaughterNucleus(); //the next residual nucleus is the daughter of the previous one
@@ -410,9 +409,10 @@ void Reaction::TargetFaceCrossSection()
 
 				//set up gamma decay channel
 				ResDecTab[i] = new G4DecayTable();
+				residual[i]->SetDecayTable(ResDecTab[i]);
 				ResDec[i] = new GammaDecayChannel(-1,residual[i],1,Egamma[i],Eexcit);
 				ResDecTab[i]->Insert(ResDec[i]);
-				residual[i]->SetDecayTable(ResDecTab[i]);
+				
 				//ResDecTab[i]->DumpInfo();
 				
         //make sure that the residual has the decay process in its manager
