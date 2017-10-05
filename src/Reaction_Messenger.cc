@@ -6,6 +6,11 @@ Reaction_Messenger::Reaction_Messenger(Reaction* EC):theReaction(EC)
  
   theReactionDir = new G4UIdirectory("/Reaction/");
   theReactionDir->SetGuidance("Evaporation channel control.");
+  
+  MACmd = new G4UIcmdWithAnInteger("/Reaction/MaxNumAttempts",this);
+  MACmd->SetGuidance("Set the maximum number of times to attempt a single reaction before giving an error.");
+  MACmd->SetParameterName("N_attempts",false);
+  MACmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
   NACmd = new G4UIcmdWithAnInteger("/Reaction/N_alpha",this);
   NACmd->SetGuidance("Set the number of alphas evaporated.");
@@ -111,6 +116,8 @@ Reaction_Messenger::~Reaction_Messenger()
   delete  NACmd;
   delete  NNCmd;
   
+  delete  MACmd;
+  
   delete  SetupCmd;
 
   delete  theCompoundDir;
@@ -135,6 +142,9 @@ void Reaction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
 	if( command == SetupCmd )
     { theReaction->SetupReaction();}
+	
+	if( command == MACmd )
+    { theReaction->SetNumberOfAttempts(NACmd->GetNewIntValue(newValue));}
 
   if( command == NACmd )
     { theReaction->SetNumberOfAlphas(NACmd->GetNewIntValue(newValue));}

@@ -76,6 +76,7 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Reaction/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
+| /Reaction/MaxNumAttempts NUMBER | When simulating, the program will discard any reactions which are non-physical (eg. residual nucleus not excited high enough to emit the gamma rays requested) and re-attempt the reaction.  This sets the maximum number of times to re-attempt the reaction before giving an error.  Default value is 1000. |
 
 ### Trigger Parameters
 

@@ -102,6 +102,8 @@ class Reaction : public G4VProcess
   void SetNumberOfAlphas(G4int a){nA=a;};
   void SetNumberOfNeutrons(G4int n){nN=n;};
   void SetupReaction();
+  
+  void SetNumberOfAttempts(G4int a){maxNumRepeats=a;};
 
   //set properties of raction and emitted particles
   void SetRxnQ(G4double x){QRxn=x;};
@@ -160,6 +162,8 @@ class Reaction : public G4VProcess
   G4Decay *decay[MAXNUMDECAYS];
   G4DecayTable *ResDecTab[MAXNUMDECAYS];
   GammaDecayChannel *ResDec[MAXNUMDECAYS];
+  G4int  maxNumRepeats,numRepeats;
+  
   
   G4int  loopCounter;
 };

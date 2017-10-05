@@ -13,6 +13,7 @@ Reaction::Reaction(Projectile* Proj, DetectorConstruction* Det, const G4String& 
   numDecays=0;
   memset(Egamma,0,sizeof(Egamma));
   reaction_here=false;
+  maxNumRepeats=1000;//default value
 
   if (verboseLevel>1) {
     G4cout <<GetProcessName() << " is created "<< G4endl;};
@@ -26,128 +27,160 @@ Reaction::~Reaction()
 //---------------------------------------------------------------------
 G4VParticleChange* Reaction::PostStepDoIt(const G4Track& aTrack,const G4Step&)
 {
+	//initialize
+	killTrack=true;
+	numRepeats=0;
 
-  aParticleChange.Initialize(aTrack);
+	while(killTrack==true) //repeat the reaction code until a good event is obtained
+		{
+			if(numRepeats>maxNumRepeats)
+				{
+					G4cout << "ERROR: Maximum number of failed attempts to simulate fusion-evaporation (" << maxNumRepeats << ") was exceeded!" << G4endl;
+					G4cout << "This is likely caused by the reaction parameters being set to non-physical values.  Modify the reaction parameters and try again.  The number of attempts done before displaying this message may be set using /Reaction/MaxNumAttempts" << G4endl;
+					exit(-1);
+				}
 
-  //define all dynamic particles
-  G4DynamicParticle* RecoilOut;
-  G4DynamicParticle* EvapP [MAXNUMEVAP];
-  G4DynamicParticle* EvapN [MAXNUMEVAP];
-  G4DynamicParticle* EvapA [MAXNUMEVAP];
-  RecoilOut =new G4DynamicParticle();
-  for(int i=0; i<nP; i++) //protons
-    if(i<MAXNUMEVAP)
-      EvapP[i]=new G4DynamicParticle();
-  for(int i=0; i<nN; i++) //neutrons
-    if(i<MAXNUMEVAP)
-      EvapN[i]=new G4DynamicParticle();
-  for(int i=0; i<nA; i++) //alphas
-    if(i<MAXNUMEVAP)
-      EvapA[i]=new G4DynamicParticle();
+			killTrack=false;	
+			aParticleChange.Initialize(aTrack);
 
-  if(reaction_here)
-    {
-      reaction_here=false;
-      killTrack=false;
+			//define all dynamic particles
+			G4DynamicParticle* RecoilOut;
+			G4DynamicParticle* EvapP [MAXNUMEVAP];
+			G4DynamicParticle* EvapN [MAXNUMEVAP];
+			G4DynamicParticle* EvapA [MAXNUMEVAP];
+			RecoilOut =new G4DynamicParticle();
+			for(int i=0; i<nP; i++) //protons
+				if(i<MAXNUMEVAP)
+				  EvapP[i]=new G4DynamicParticle();
+			for(int i=0; i<nN; i++) //neutrons
+				if(i<MAXNUMEVAP)
+				  EvapN[i]=new G4DynamicParticle();
+			for(int i=0; i<nA; i++) //alphas
+				if(i<MAXNUMEVAP)
+				  EvapA[i]=new G4DynamicParticle();
 
-      //get properties of the beam-target system
-      G4ThreeVector pIn=aTrack.GetMomentum();
-      G4ThreeVector cmv = GetCMVelocity(aTrack); //center of mass velocity
+			if(reaction_here)
+				{
+				  reaction_here=false;
+				  
 
-      //generate delta Exi values for each particle to be evaporated  
-      for(int i=0; i<(nP+nN+nA); i++)
-        if(i<MAXNUMEVAP)
-          {
-            evapdeltaExi[i]=0.;
-            while(((evapdeltaExi[i]+QEvap[i]) <= 0.0) || ((evapdeltaExi[i]+QEvap[i]) > initExi)) //clamp delta Exi values to physically possible values
-              evapdeltaExi[i]=getExi(exix0,exiw,exitau);
-              //evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
-          }
-          
-      //check that sum of delta Exi values is in bounds
-      totalEvapdeltaExi=0;
-      for(int i=0; i<(nP+nN+nA); i++)
-        if(i<MAXNUMEVAP)
-          totalEvapdeltaExi+=evapdeltaExi[i];
-      if(totalEvapdeltaExi>initExi) //not physically possible!
-        killTrack=true;
-      if((initExi-totalEvapdeltaExi)<Egammatot) //not enough energy to emit gamma cascade
-        killTrack=true;
-      
-      if(killTrack==false)  
-        if(SetupReactionProducts(aTrack,RecoilOut))
-	        {
-	          aParticleChange.ProposeTrackStatus(fStopAndKill);
-            aParticleChange.SetNumberOfSecondaries(1+nP+nN+nA);
+				  //get properties of the beam-target system
+				  G4ThreeVector pIn=aTrack.GetMomentum();
+				  G4ThreeVector cmv = GetCMVelocity(aTrack); //center of mass velocity
 
-            //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
-            //and correct the momentum of the recoiling nucleus
-            for(int i=0; i<nP; i++) //protons
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
-            for(int i=0; i<nN; i++) //neutrons
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
-            for(int i=0; i<nA; i++) //alphas
-              if(i<MAXNUMEVAP) //check that the particle can be evaporated
-                {
-                  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
-                  aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-                }
-              else
-                killTrack=true; //this is no longer the desired reaction channel, kill it
+				  //generate delta Exi values for each particle to be evaporated  
+				  for(int i=0; i<(nP+nN+nA); i++)
+				    if(i<MAXNUMEVAP)
+				      {
+				        evapdeltaExi[i]=0.;
+				        while(((evapdeltaExi[i]+QEvap[i]) <= 0.0) || ((evapdeltaExi[i]+QEvap[i]) > initExi)) //clamp delta Exi values to physically possible values
+				          evapdeltaExi[i]=getExi(exix0,exiw,exitau);
+				          //evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+				      }
+				      
+				  //check that sum of delta Exi values is in bounds
+				  totalEvapdeltaExi=0;
+				  for(int i=0; i<(nP+nN+nA); i++)
+				    if(i<MAXNUMEVAP)
+				      totalEvapdeltaExi+=evapdeltaExi[i];
+				  if(totalEvapdeltaExi>initExi) //not physically possible!
+				    killTrack=true;
+				  if((initExi-totalEvapdeltaExi)<Egammatot) //not enough energy to emit gamma cascade
+				    killTrack=true;
+				  
+				  if(killTrack==false)  
+				    if(SetupReactionProducts(aTrack,RecoilOut))
+					    {
+					      aParticleChange.ProposeTrackStatus(fStopAndKill);
+				        aParticleChange.SetNumberOfSecondaries(1+nP+nN+nA);
 
-            //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
-            //Otherwise, kill the track.
-            if((constrainedAngle==true)&&(killTrack==false))
-              {
-                G4bool goodEvapAngle=false;
-                for(int i=0; i<nP; i++)
-                  if(goodEvapAngle==false)
-                    if(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
-                      if(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle)
-                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                for(int i=0; i<nN; i++)
-                  if(goodEvapAngle==false)
-                    if(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
-                      if(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle)
-                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                for(int i=0; i<nA; i++)
-                  if(goodEvapAngle==false)    
-                    if(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
-                      if(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle)
-                        goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
-                if(goodEvapAngle==false)
-                  killTrack=true;
-              }
-            
-            if(killTrack==false)
-              {
-								//generate the residual nucleus
-								RecoilOut->SetDefinition(residual[0]); //give the residual the gamma decay process specified in TargetFaceCrossSection()
-								aParticleChange.AddSecondary(RecoilOut,posIn,true);
-								//debug
-								//G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
-								//G4cout << "Residual KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
-								//G4cout << "Residual A: " << RecoilOut->GetMass()/931.5 << ", Residual Z: " << RecoilOut->GetCharge() <<G4endl;
-								//G4cout << "Residual stability: " << RecoilOut->GetDefinition()->GetPDGStable() << ", Residual lifetime: " << std::setprecision(10) << RecoilOut->GetDefinition()->GetPDGLifeTime()/ns << " ns" << G4endl; 
-              }
-          }
-        
-      //get rid of the track if neccessary
-      if(killTrack==true)
-        aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
-      
+				        //generate the secondaries (alphas, protons, neutrons) from fusion evaporation
+				        //and correct the momentum of the recoiling nucleus
+				        for(int i=0; i<nP; i++) //protons
+				          if(i<MAXNUMEVAP) //check that the particle can be evaporated
+				            {
+				              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i],cmv);
+				              aParticleChange.AddSecondary(EvapP[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+				            }
+				          else
+				            killTrack=true; //this is no longer the desired reaction channel, kill it
+				        for(int i=0; i<nN; i++) //neutrons
+				          if(i<MAXNUMEVAP) //check that the particle can be evaporated
+				            {
+				              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i+nP], QEvap[i],cmv);
+				              aParticleChange.AddSecondary(EvapN[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+				            }
+				          else
+				            killTrack=true; //this is no longer the desired reaction channel, kill it
+				        for(int i=0; i<nA; i++) //alphas
+				          if(i<MAXNUMEVAP) //check that the particle can be evaporated
+				            {
+				              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i+nP+nN], QEvap[i],cmv);
+				              aParticleChange.AddSecondary(EvapA[i],posIn,true); //evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+				            }
+				          else
+				            killTrack=true; //this is no longer the desired reaction channel, kill it
+
+				        //Check that the angle of at least one of the evaporated particles (in the lab frame) in in the user specified range.
+				        //Otherwise, kill the track.
+				        if((constrainedAngle==true)&&(killTrack==false))
+				          {
+				            G4bool goodEvapAngle=false;
+				            for(int i=0; i<nP; i++)
+				              if(goodEvapAngle==false)
+				                if(EvapP[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+				                  if(EvapP[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+				                    goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+				            for(int i=0; i<nN; i++)
+				              if(goodEvapAngle==false)
+				                if(EvapN[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+				                  if(EvapN[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+				                    goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+				            for(int i=0; i<nA; i++)
+				              if(goodEvapAngle==false)    
+				                if(EvapA[i]->GetMomentumDirection().getTheta()<maxEvapAngle)
+				                  if(EvapA[i]->GetMomentumDirection().getTheta()>minEvapAngle)
+				                    goodEvapAngle=true;//at least one of the emitted particles satisfies the specified angular range
+				            if(goodEvapAngle==false)
+				              killTrack=true;
+				          }
+				        
+				        if(killTrack==false)
+				          {
+										//generate the residual nucleus
+										RecoilOut->SetDefinition(residual[0]); //give the residual the gamma decay process specified in TargetFaceCrossSection()
+										aParticleChange.AddSecondary(RecoilOut,posIn,true);
+										/*//debug
+										G4cout << "Residual type: " <<  RecoilOut->GetDefinition()->GetParticleType() << G4endl;
+										G4cout << "Residual KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV."<<G4endl;
+										G4cout << "Residual A: " << RecoilOut->GetMass()/931.5 << ", Residual Z: " << RecoilOut->GetCharge() <<G4endl;
+										G4cout << "Residual stability: " << RecoilOut->GetDefinition()->GetPDGStable() << ", Residual lifetime: " << std::setprecision(10) << RecoilOut->GetDefinition()->GetPDGLifeTime()/ns << " ns" << G4endl; */
+				          }
+				      }
+				    
+				  //repeat the reaction if neccessary
+				  if(killTrack==true)
+				  	{
+				    	aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+				    	//G4cout << "Track killed, repeating..." << G4endl;
+				    	reaction_here=true; //allow the reaction to repeat
+				    	
+				    	//deallocate (prevent memory leak)
+				    	delete RecoilOut;
+				    	for(int i=0; i<nP; i++) //protons
+								if(i<MAXNUMEVAP)
+									delete EvapP[i];
+							for(int i=0; i<nN; i++) //neutrons
+								if(i<MAXNUMEVAP)
+									delete EvapN[i];
+							for(int i=0; i<nA; i++) //alphas
+								if(i<MAXNUMEVAP)
+									delete EvapA[i];
+									
+				    	numRepeats++;
+				    }
+				  
+				}
     }
   
   return &aParticleChange;
