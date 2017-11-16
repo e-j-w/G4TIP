@@ -16,7 +16,7 @@ if [ "$#" -eq 2 ]; then
 					  sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
 				  fi
 
-				TIP_Fusion_Evaporation $1
+				./TIP_Fusion_Evaporation $1
 				
 		done
 
@@ -41,7 +41,7 @@ if [ "$#" -eq 3 ]; then
 					  sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
 				  fi
 
-				TIP_Fusion_Evaporation $1
+				./TIP_Fusion_Evaporation $1
 				
 		done
 

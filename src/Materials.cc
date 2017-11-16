@@ -15,6 +15,7 @@
   In = man->FindOrBuildMaterial("G4_In");
   Hf = man->FindOrBuildMaterial("G4_Hf");
   Au = man->FindOrBuildMaterial("G4_Au");
+  Ta = man->FindOrBuildMaterial("G4_Ta");
   Ca = new G4Material("Ca", 20., 40.08*g/mole, 1.55*g/cm3);
   
   // Compounds
