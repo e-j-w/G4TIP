@@ -1,4 +1,3 @@
-
 #include "TrackerPINHit.hh"
 
 G4Allocator<TrackerPINHit> TrackerPINHitAllocator;

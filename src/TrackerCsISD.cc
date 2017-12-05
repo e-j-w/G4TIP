@@ -1,4 +1,3 @@
-
 #include "TrackerCsISD.hh"
 
 
@@ -22,7 +21,7 @@ void TrackerCsISD::Initialize(G4HCofThisEvent*)
 
 
   CsICollection = new TrackerCsIHitsCollection
-                          (SensitiveDetectorName,collectionName[0]); 
+                          (SensitiveDetectorName,"CsICollection"); 
  
 }
 
@@ -125,7 +124,7 @@ void TrackerCsISD::EndOfEvent(G4HCofThisEvent* HCE)
 
   static G4int HCID = -1;
   if(HCID<0)
-  { HCID = G4SDManager::GetSDMpointer()->GetCollectionID(collectionName[0]); }
+  { HCID = G4SDManager::GetSDMpointer()->GetCollectionID("CsICollection"); }
   HCE->AddHitsCollection( HCID, CsICollection ); 
  }
 
