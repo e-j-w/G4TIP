@@ -111,28 +111,25 @@ void Results::TreeCreate() {
     tree->Branch("resReactionOut", &rROut,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
                  "D:phi/D:w/D"); // residual at the reaction point
-    tree
-        ->Branch(
-            "resBackingIn", &rBIn,
-            "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
-            "D"); // residual upon leaving the target/entering the backing
-    tree
-        ->Branch(
-            "resBackingOut", &rBOut,
-            "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
-            "D"); // residual upon leaving the backing (if it makes it that far)
+    tree->Branch(
+        "resBackingIn", &rBIn,
+        "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
+        "D"); // residual upon leaving the target/entering the backing
+    tree->Branch(
+        "resBackingOut", &rBOut,
+        "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
+        "D"); // residual upon leaving the backing (if it makes it that far)
     for (int i = 0; i < numDec; i++) // make branch for each decay
       if (i < MAXNUMDECAYS) {
         sprintf(branchName, "resDec%i", i + 1);
-        tree->Branch(branchName, &rDec[i],
-                     "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/"
-                     "D"); // residual upon decaying via gamma emission
+        tree->Branch(
+            branchName, &rDec[i],
+            "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
+            "D"); // residual upon decaying via gamma emission
       }
-    tree
-        ->Branch(
-            "alphaReactionOut",
-            &partROut, "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/"
-                       "D"); // evaporated particle at the reaction point
+    tree->Branch("partReactionOut", &partROut,
+                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/"
+                 "D"); // evaporated particle at the reaction point
   } else {
     printf("Tree not deleted, could not create new tree!\n");
     getc(stdin);
@@ -419,6 +416,16 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   rBOut.tROffset = rBOut.t - pRIn.t;
   rROut.tROffset = rROut.t - pRIn.t;
   partROut.tROffset = partROut.t - pRIn.t;
+  if (gun.tROffset < 0.)
+    gun.tROffset = 0.;
+  if (pTIn.tROffset < 0.)
+    pTIn.tROffset = 0.;
+  if (rBIn.tROffset < 0.)
+    rBIn.tROffset = 0.;
+  if (rBOut.tROffset < 0.)
+    rBOut.tROffset = 0.;
+  if (partROut.tROffset < 0.)
+    partROut.tROffset = 0.;
 
   partHit.CsIfold = 0;
   memset(&partHit.x, 0, sizeof(partHit.x));
@@ -454,9 +461,9 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                                                          // entries which have
                                                          // been disabled due to
                                                          // trigger conditions
-              if ((*CsICollection)[i]->GetId() == j) // check whether entry
-                                                     // belongs to the detector
-                                                     // we are looking at
+              if ((*CsICollection)[i]->GetId() == j)     // check whether entry
+              // belongs to the detector
+              // we are looking at
               {
                 if ((partHit.E[partHit.CsIfold] == 0.) &&
                     ((*CsICollection)[i]->GetKE() > 0.)) // first entry for a
