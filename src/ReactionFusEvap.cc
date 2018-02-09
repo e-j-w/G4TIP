@@ -519,8 +519,10 @@ compound->GetAtomicNumber() << G4endl;
     exit(-1);
   }
 
+
   // set properties (including gamma decay processes) of the residual species in
   // the cascade
+  G4ProcessManager *default_pm = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, 0.0)->GetProcessManager();
   if (numDecays > 0)
     for (int i = 0; i < numDecays; i++) {
 
@@ -532,6 +534,10 @@ compound->GetAtomicNumber() << G4endl;
                                                            // nucleus is the
                                                            // daughter of the
                                                            // previous one
+      
+      //set up process manager (want separate ones for each step since each has its own decay process)
+      ResProcMan[i] = new G4ProcessManager(default_pm[0]);
+      residual[i]->SetProcessManager(ResProcMan[i]);
 
       // set up lifetime
       residual[i]->SetPDGStable(false);
@@ -565,6 +571,7 @@ compound->GetAtomicNumber() << G4endl;
             residual[i]); // neccesary for decay process to be added
                           // successfully
         residual[i]->GetProcessManager()->AddProcess(decay[i], 1, -1, 5);
+        //residual[i]->GetProcessManager()->RemoveProcess( residual[i]->GetProcessManager()->GetProcessListLength()-1 );
       }
       // residual[i]->GetProcessManager()->DumpInfo();
 
@@ -585,8 +592,8 @@ compound->GetAtomicNumber() << G4endl;
            << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma() / keV
            << " keV" << G4endl << "Final excitation energy: "
            << ResDec[i]->GetDaughterExcitation() / keV << " keV" << G4endl;
-    // ResDecTab[i]->DumpInfo();
-    // residual[i]->GetProcessManager()->DumpInfo();
+     //ResDecTab[i]->DumpInfo();
+     //residual[i]->GetProcessManager()->DumpInfo();
   }
 
   G4cout << "---------- END OF DECAY PRODUCT SETUP ----------" << G4endl;

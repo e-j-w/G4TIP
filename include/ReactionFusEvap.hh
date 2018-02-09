@@ -127,6 +127,7 @@ public:
   G4int GetNumberOfAlphas() { return nA; };
   G4int GetNumberOfNeutrons() { return nN; };
   G4int GetNumDecays() { return numDecays; };
+  G4ParticleDefinition* GetResidual(int i) { return residual[i]; };
 
   void AddDecay(G4double, G4double);
   G4double getExi(G4double, G4double, G4double);
@@ -170,6 +171,7 @@ private:
                                                 // from the compund nucleus
                                                 // (indexed by position on the
                                                 // gamma cascade)
+  G4ProcessManager *ResProcMan[MAXNUMDECAYS];
   G4Decay *decay[MAXNUMDECAYS];
   G4DecayTable *ResDecTab[MAXNUMDECAYS];
   GammaDecayChannel *ResDec[MAXNUMDECAYS];

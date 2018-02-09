@@ -15,9 +15,9 @@
 #include "G4UIXm.hh"
 #endif
 
-/*#ifdef G4VIS_USE
+#ifdef G4VIS_USE
 #include "VisManager.hh"
-#endif*/
+#endif
 
 #include "DetectorConstruction.hh"
 #include "DetectorConstruction_Messenger.hh"
@@ -84,14 +84,16 @@ int main(int argc, char **argv) {
   SteppingAction *stepAction = new SteppingAction(theDetector, eventAction);
   runManager->SetUserAction(stepAction);
 
-  // G4UIsession* session=0;
+  //G4UIsession* session=0;
 
   // get the pointer to the UI manager and set verbosities
   G4UImanager *UI = G4UImanager::GetUIpointer();
 
-  /*#ifdef G4VIS_USE
-        G4VisManager* visManager = new VisManager;
-  #endif  */
+  #ifdef G4VIS_USE
+    G4VisManager* visManager = new VisManager;
+    // visualization manager
+    visManager->Initialize();
+  #endif
 
   if (argc == 1) // Define UI session for interactive mode.
   {
@@ -152,8 +154,6 @@ int main(int argc, char **argv) {
       G4String fileName = argv[1];
       UI->ApplyCommand(command+fileName);
     }
-
-  // job termination
   if(argc==1)
     {
       #ifdef G4VIS_USE
@@ -165,12 +165,16 @@ int main(int argc, char **argv) {
   G4String fileName = argv[1];
   UI->ApplyCommand(command + fileName);
 
+  // job termination
   delete detectorMessenger;
   delete ProjectileMessenger;
   delete resultsMessenger;
   delete runMessenger;
   delete eventActionMessenger;
   delete runManager;
+  #ifdef G4VIS_USE
+    delete visManager;
+  #endif
 
   return 0;
 }
