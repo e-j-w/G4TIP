@@ -46,10 +46,11 @@ class EventAction : public G4UserEventAction
   void DisableCsI(int det){CsIDisabled[det]=1;};
   void SetCsIThreshold(G4double x){CsIThreshold=x;};
 
-
   void setTriggerA(G4int);
   void setTriggerZ(G4int);
   void setTID(G4int TID){CsIIDTrigger=TID;};
+
+  void reportTriggers();
 
   private:
   Results*      results;
@@ -77,6 +78,10 @@ class EventAction : public G4UserEventAction
   DetectorConstruction* theDetector;
   Int_t       At,Zt; //A and Z of particle to trigger on
   G4int numP,numN,numA;//number of each type of recoil particle
+
+  //debug info
+  G4int         numEvents,numTriggeredEvents,numCsIhits,numTriggeredCsIHits;
+
 };
 
 #endif //EVENTACTION_H

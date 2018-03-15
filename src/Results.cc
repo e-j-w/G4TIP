@@ -447,8 +447,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   G4int i, j;
   G4int Np = CsICollection->entries();
   if (Np > 0) {
-    for (j = 1; j < NCsISph + 1;
-         j++) // loop through CsI detector IDs (1 indexed)
+    for (j = 1; j < NCsISph + 1; j++) // loop through CsI detector IDs (1 indexed)
     {
       if ((j < NCsI + 1) ||
           (theDetector

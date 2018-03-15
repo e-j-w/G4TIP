@@ -39,7 +39,7 @@
 using namespace std;
 
 #define eps 0.00001
-#define MAXNUMEVAP 2
+#define MAXNUMEVAP 4
 #define MAXNUMDISTS 2
 #define MAXNUMDECAYS 5
 
@@ -108,6 +108,8 @@ public:
   void SetExi(G4double x) { initExi = x; };
   void SetEvapQ1(G4double x) { QEvap[0] = x; };
   void SetEvapQ2(G4double x) { QEvap[1] = x; };
+  void SetEvapQ3(G4double x) { QEvap[2] = x; };
+  void SetEvapQ4(G4double x) { QEvap[3] = x; };
   void SetExix0(G4double x) { exix0 = x; };
   void SetExiw(G4double x) { exiw = x; };
   void SetExitau(G4double x) { exitau = x; };

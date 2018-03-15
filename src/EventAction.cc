@@ -49,6 +49,9 @@ void EventAction::BeginOfEventAction(const G4Event*)
 void EventAction::EndOfEventAction(const G4Event* evt)
 {
   // G4cout<<"+++++ End of event "<<evt->GetEventID()<<G4endl;
+  
+  //increment event counter
+  numEvents++;
 
   G4int evtNb=evt->GetEventID();
 
@@ -125,6 +128,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 							    if(partECsI[i]>=CsIThreshold)
 							      numDetHits++;
 	        	}
+
+          //increment the counter for number of CsI hits (before triggering)
+          numCsIhits+=numDetHits;
 	        
 	        //set entries in detectors below energy threshold to 0
 	        for(int i=0;i<Np;i++)
@@ -175,7 +181,10 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   
       if(eventTrigger&(one<<setTrigger))
         {
-        
+          //increment triggered event and CsI hit counters
+          numTriggeredEvents++;
+          numTriggeredCsIHits+=numDetHits;
+
           /*printf("CsI fold is %d\n",numDetHits);
           printf("HPGe fold is %d\n",GriffinFold);
           for(testTrigger=1;testTrigger<=15;testTrigger++)
@@ -245,4 +254,13 @@ void EventAction::setTriggerZ(G4int Zin)
   Zt=Zin;
   G4cout<<"----> Z of the particle to trigger on set to  "<<Zt<< G4endl;
   
+}
+//---------------------------------------------------------
+void EventAction::reportTriggers()
+{
+  G4cout<<"TRIGGER REPORT"<<G4endl<<"--------------"<<G4endl;
+  G4cout<<"Number of events: "<<numEvents<< G4endl;
+  G4cout<<"Number of triggered events: "<<numTriggeredEvents<< G4endl;
+  G4cout<<"Total number of CsI hits in all events: "<<numCsIhits<< G4endl;
+  G4cout<<"Total number of CsI hits in triggered events: "<<numTriggeredCsIHits<< G4endl;
 }

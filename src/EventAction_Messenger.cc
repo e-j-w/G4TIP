@@ -60,6 +60,9 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   CETCmd->SetParameterName("CET",false);
   CETCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  RTCmd = new G4UIcmdWithoutParameter("/Trigger/ReportNumTriggers",this);
+  RTCmd->SetGuidance("Report the number of triggered events.");
+
 
 }
 
@@ -83,6 +86,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TDCCmd;
   delete TDCRCmd;
   delete CETCmd;
+  delete RTCmd;
 }
 
 
@@ -179,6 +183,9 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
       aEventAction->SetCsIThreshold(CETCmd->GetNewDoubleValue(newValue));
       G4cout << "Setting CsI low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
     }
+
+  if( command == RTCmd )
+   { aEventAction->reportTriggers(); }
 
 }
 

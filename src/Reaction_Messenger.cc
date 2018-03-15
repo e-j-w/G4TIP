@@ -78,6 +78,18 @@ Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
   Q2Cmd->SetParameterName("Q2", false);
   Q2Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+  Q3Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q3", this);
+  Q3Cmd->SetGuidance(
+      "Q for the third particle evaporation process (if necessary).");
+  Q3Cmd->SetParameterName("Q3", false);
+  Q3Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  Q4Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q4", this);
+  Q4Cmd->SetGuidance(
+      "Q for the fourth particle evaporation process (if necessary).");
+  Q4Cmd->SetParameterName("Q4", false);
+  Q4Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
   dExix0Cmd = new G4UIcmdWithADouble("/ParticleEvaporation/Centroid", this);
   dExix0Cmd->SetGuidance("Centroid of the Gaussian used to characterize change "
                          "in compound nucleus excitation energy following "
@@ -141,6 +153,8 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete theEvaporationDir;
   delete Q1Cmd;
   delete Q2Cmd;
+  delete Q3Cmd;
+  delete Q4Cmd;
   delete dExix0Cmd;
   delete dExiwCmd;
   delete dExitauCmd;
@@ -206,6 +220,14 @@ void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
 
   if (command == Q2Cmd) {
     theReaction->SetEvapQ2(Q2Cmd->GetNewDoubleValue(newValue));
+  }
+
+  if (command == Q3Cmd) {
+    theReaction->SetEvapQ3(Q3Cmd->GetNewDoubleValue(newValue));
+  }
+
+  if (command == Q4Cmd) {
+    theReaction->SetEvapQ4(Q4Cmd->GetNewDoubleValue(newValue));
   }
 
   if (command == dExix0Cmd) {

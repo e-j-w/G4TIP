@@ -40,6 +40,8 @@ private:
   G4UIdirectory *theEvaporationDir;
   G4UIcmdWithADoubleAndUnit *Q1Cmd;
   G4UIcmdWithADoubleAndUnit *Q2Cmd;
+  G4UIcmdWithADoubleAndUnit *Q3Cmd;
+  G4UIcmdWithADoubleAndUnit *Q4Cmd;
   G4UIcmdWithADouble *dExix0Cmd;
   G4UIcmdWithADouble *dExiwCmd;
   G4UIcmdWithADouble *dExitauCmd;
