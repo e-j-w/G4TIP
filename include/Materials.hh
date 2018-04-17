@@ -24,13 +24,13 @@ class Materials
   G4Material* Cu;
   G4Material* C;
   G4Material* Mg;
-  G4Material* al;
   G4Material* In;
   G4Material* Hf;
   G4Material* Au;
   G4Material* Ca;
   G4Material* Ta;
-  
+  G4Material* Ni;
+
   // Compounds
   G4Material* Vacuum;
   G4Material* BGO;

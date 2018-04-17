@@ -12,6 +12,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   soi=sizeof(TrackerIonHitsCollection);
   At=4;
   Zt=2;
+  triggerAZ=0;
   SetTriggerParticleSing();
   CsIThreshold=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
@@ -73,11 +74,11 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   TrackerCsIHitsCollection* CsI;
   TrackerIonHitsCollection* HI;
 
-  numP=run_action->GetNumberOfProtons();
+  /*numP=run_action->GetNumberOfProtons();
   numN=run_action->GetNumberOfNeutrons();
-  numA=run_action->GetNumberOfAlphas();
+  numA=run_action->GetNumberOfAlphas();*/
   
-  int numDetHits;
+  int numDetHits=0;
   
   if(evt->GetHCofThisEvent()!=NULL) 
     {  
@@ -97,36 +98,68 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	          	(*CsI)[i]->SetDisabled();
 	        
 	      
-	        G4double partECsI[NCsISph]; //energy of user defined particle
+	        G4double partECsI[NCsISph]; //total energy deposit of particle in each detector
+          G4double partACsI[NCsISph]; //A of particle in each detector
+          G4double partZCsI[NCsISph]; //Z of particle in each detector
 	        memset(partECsI,0,sizeof(partECsI));
 	        for(int i=0;i<Np;i++)
 	        	if((*CsI)[i]->GetDisabled()==0)
 			        {
 		            //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
 		            if((CsIIDTrigger==0)||(((*CsI)[i]->GetId()-1)==CsIIDTrigger)) //CsI detector ID trigger
-				          if((*CsI)[i]->GetA()==At) // user defined particle trigger
-				            if((*CsI)[i]->GetZ()==Zt)
-				              {
-				                partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
-				                //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",At,Zt,partECsI,(*CsI)[i]->GetId());
-				              }
+                  {
+                    if(triggerAZ==1) // user defined particle trigger
+                      {
+                        if((*CsI)[i]->GetA()==At) // user defined particle trigger
+                          if((*CsI)[i]->GetZ()==Zt)
+                            {
+                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                              partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                              //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+                            }
+                      }
+                    else // trigger on any charged particle
+                      {
+                        if((*CsI)[i]->GetA()>0)
+                          {
+                            partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                            partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                            //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+                          }
+                      }
+                  }
 			        }
           
           //determine the number of CsI hits 
-          numDetHits=0;
           if(theDetector->usingCsIBall())
           	{
 				      for(int i=0;i<NCsISph;i++)
 				      	if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
-							      numDetHits++;
+                    {
+                      numDetHits++;
+                      if((partACsI[i]==4)&&(partZCsI[i]==2))
+                        numACsIHits++;
+                      if((partACsI[i]==1)&&(partZCsI[i]==1))
+                        numPCsIHits++;
+                    }
+							      
 					  }
 	        else
 	        	{
 	        		for(int i=0;i<NCsI;i++)
 	        			if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
-							      numDetHits++;
+                    {
+                      numDetHits++;
+                      if((partACsI[i]==4)&&(partZCsI[i]==2))
+                        numACsIHits++;
+                      if((partACsI[i]==1)&&(partZCsI[i]==1))
+                        numPCsIHits++;
+                    }
+							      
 	        	}
 
           //increment the counter for number of CsI hits (before triggering)
@@ -244,6 +277,7 @@ void EventAction::setTriggerA(G4int Ain)
 {
 
   At=Ain;
+  triggerAZ=1;
   G4cout<<"----> A of the particle to trigger on set to  "<<At<< G4endl;
   
 }
@@ -252,6 +286,7 @@ void EventAction::setTriggerZ(G4int Zin)
 {
 
   Zt=Zin;
+  triggerAZ=1;
   G4cout<<"----> Z of the particle to trigger on set to  "<<Zt<< G4endl;
   
 }
@@ -262,5 +297,7 @@ void EventAction::reportTriggers()
   G4cout<<"Number of events: "<<numEvents<< G4endl;
   G4cout<<"Number of triggered events: "<<numTriggeredEvents<< G4endl;
   G4cout<<"Total number of CsI hits in all events: "<<numCsIhits<< G4endl;
+  G4cout<<"Total number of CsI proton hits in all events: "<<numPCsIHits<< G4endl;
+  G4cout<<"Total number of CsI alpha hits in all events: "<<numACsIHits<< G4endl;
   G4cout<<"Total number of CsI hits in triggered events: "<<numTriggeredCsIHits<< G4endl;
 }
