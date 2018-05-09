@@ -77,6 +77,10 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Reaction/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /Reaction/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
 | /Reaction/MaxNumAttempts NUMBER | When simulating, the program will discard any reactions which are non-physical (eg. residual nucleus not excited high enough to emit the gamma rays requested) and re-attempt the reaction.  This sets the maximum number of times to re-attempt the reaction before giving an error.  Default value is 1000. |
+| /CompoundFormation/Q NUMBER | The reaction Q value, in MeV, of the fusion reaction forming the compound system from the beam and target species, based on the difference in mass between the beam + target and the compound nucleus. |
+| /ParticleEvaporation/Q1 NUMBER | The reaction Q value, in MeV, of the first particle evaporation from the compund nucleus, based on the difference in mass between the compound system and the particle + remaining nucleus. |
+| /ParticleEvaporation/Q2 NUMBER | Same as above, except for the second particle evaporation (if applicable).  Use Q3 and Q4 for the third and fourth particle evaporations, if necessary. |
+
 
 ### Trigger Parameters
 
@@ -122,5 +126,7 @@ T. Ma - CsI ball code.
 C. Morse - Finding and fixing memory leaks.
 
 K. Starosta - Initial TIP codebase.
+
+F. Wu - Reaction code work and auditing.
 
 GRIFFIN/TIGRESS code based on code provided by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations

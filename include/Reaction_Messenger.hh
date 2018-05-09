@@ -35,7 +35,6 @@ private:
 
   G4UIdirectory *theCompoundDir;
   G4UIcmdWithADoubleAndUnit *QCmd;
-  G4UIcmdWithADoubleAndUnit *ExiCmd;
 
   G4UIdirectory *theEvaporationDir;
   G4UIcmdWithADoubleAndUnit *Q1Cmd;

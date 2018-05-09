@@ -26,6 +26,9 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
   // initialize
   killTrack = true;
   numRepeats = 0;
+  // Check momentum conservation:
+  //G4ThreeVector pInit = aTrack.GetMomentum();
+  //G4cout << "Initial Momentum (beam):" << pInit << G4endl;
 
   while (killTrack ==
          true) // repeat the reaction code until a good event is obtained
@@ -68,6 +71,10 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
       G4ThreeVector pIn = aTrack.GetMomentum();
       G4ThreeVector cmv = GetCMVelocity(aTrack); // center of mass velocity
 
+      // calculate the initial excitation from momentum conservation:
+      SetupReactionProducts(aTrack,RecoilOut);
+      //G4cout << "Calculated initExi: "<< initExi << MeV <<G4endl;
+
       // generate delta Exi values for each particle to be evaporated
       for (int i = 0; i < (nP + nN + nA); i++)
         if (i < MAXNUMEVAP) {
@@ -95,6 +102,9 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
         if (SetupReactionProducts(aTrack, RecoilOut)) {
           aParticleChange.ProposeTrackStatus(fStopAndKill);
           aParticleChange.SetNumberOfSecondaries(1 + nP + nN + nA);
+
+      //Check compound momentum:
+      //G4cout << "Compound momentum: " << RecoilOut->GetMomentum() << G4endl;
 
           // generate the secondaries (alphas, protons, neutrons) from fusion
           // evaporation
@@ -176,11 +186,20 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
           }
 
           if (killTrack == false) {
-            // generate the residual nucleus
+
+            //G4cout << "Recoil Momentum before ppp: " << RecoilOut->GetMomentum() << G4endl;
+            //G4cout << "Def before: " << (RecoilOut->GetDefinition())->GetParticleName() << G4endl;
+
+            // store the proper momentum from evaporation and generate the residual nucleus
+            pRes_correct = RecoilOut->GetMomentum();
             RecoilOut->SetDefinition(residual[0]); // give the residual the
                                                    // gamma decay process
                                                    // specified in
                                                    // TargetFaceCrossSection()
+            // manually correct momentum (which GEANT may have changed based on excitation energy of the residual)
+            RecoilOut->SetMomentum(pRes_correct);
+            //G4cout << "Recoil Momentum ppp: " << RecoilOut->GetMomentum() << G4endl;
+            //G4cout << "Def after: " << (RecoilOut->GetDefinition())->GetParticleName() << G4endl;
             aParticleChange.AddSecondary(RecoilOut, posIn, true);
             /*//debug
             G4cout << "Residual type: " <<
@@ -217,6 +236,14 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
 
         numRepeats++;
       }
+      /*else {	
+        //Check Final momentum:
+        G4cout << "Recoil Momentum (Ca40): " << RecoilOut->GetMomentum() << G4endl;
+        for (int i = 0; i < nA; i++)
+          {
+            G4cout << "EvapA " << i+1 << " Momentum: " << EvapA[i]->GetMomentum() <<G4endl;
+          }
+      }*/
     }
   }
 
@@ -284,8 +311,9 @@ G4bool ReactionFusEvap::SetupReactionProducts(const G4Track &aTrack,
   posIn = aTrack.GetPosition();
 
   RecoilOut->SetDefinition(compound);
-  RecoilOut->SetMomentumDirection(dirIn);
-  RecoilOut->SetKineticEnergy(aTrack.GetKineticEnergy() + QRxn - initExi);
+  RecoilOut->SetMomentum(aTrack.GetMomentum());
+  initExi = aTrack.GetKineticEnergy() + QRxn - RecoilOut->GetKineticEnergy();
+  //G4cout << "Calculated initExi: "<< initExi << G4endl;
 
   /*G4cout << "Before compound formation - Beam momentum (lab): " <<
   aTrack.GetMomentum() << ", Beam KE: " << aTrack.GetKineticEnergy()/MeV << "
@@ -389,8 +417,8 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(
   // determine the momentum of the residual particle
   pRec = Compound->GetMomentum(); // initially, residual has the same momentum
                                   // as the compound system
-  // G4cout << "Initial recoil momentum: " << pRec << G4endl;
-  // G4cout << "Initial recoil KE: " << Compound->GetKineticEnergy() << G4endl;
+  // G4cout << "Initial compound momentum: " << pRec << G4endl;
+  // G4cout << "Initial compound KE: " << Compound->GetKineticEnergy() << G4endl;
   pRec -=
       pParticle; // subtract momentum of the emitted particle from the residual
 

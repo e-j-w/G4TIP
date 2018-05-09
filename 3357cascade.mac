@@ -27,7 +27,6 @@
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2
 /CompoundFormation/Q 23.651 MeV
-/CompoundFormation/CompoundExi 42.851 MeV
 /ParticleEvaporation/Q1 -10.643 MeV
 /ParticleEvaporation/Q2 -10.615 MeV
 /ParticleEvaporation/Centroid 14.59060

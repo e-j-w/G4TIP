@@ -105,7 +105,6 @@ public:
 
   // set properties of raction and emitted particles
   void SetRxnQ(G4double x) { QRxn = x; };
-  void SetExi(G4double x) { initExi = x; };
   void SetEvapQ1(G4double x) { QEvap[0] = x; };
   void SetEvapQ2(G4double x) { QEvap[1] = x; };
   void SetEvapQ3(G4double x) { QEvap[2] = x; };
@@ -178,6 +177,7 @@ private:
   G4DecayTable *ResDecTab[MAXNUMDECAYS];
   GammaDecayChannel *ResDec[MAXNUMDECAYS];
   G4int maxNumRepeats, numRepeats;
+  G4ThreeVector pRes_correct; // to correct residual momentum after adding excitation
 
   G4int loopCounter;
 };

@@ -58,12 +58,6 @@ Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
   QCmd->SetParameterName("Q", false);
   QCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  ExiCmd =
-      new G4UIcmdWithADoubleAndUnit("/CompoundFormation/CompoundExi", this);
-  ExiCmd->SetGuidance("Initial excitation energy of the compound.");
-  ExiCmd->SetParameterName("Exi", false);
-  ExiCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
   theEvaporationDir = new G4UIdirectory("/ParticleEvaporation/");
   theEvaporationDir->SetGuidance("Beam-target reaction parameters.");
 
@@ -148,7 +142,6 @@ Reaction_Messenger::~Reaction_Messenger() {
 
   delete theCompoundDir;
   delete QCmd;
-  delete ExiCmd;
 
   delete theEvaporationDir;
   delete Q1Cmd;
@@ -208,10 +201,6 @@ void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
 
   if (command == QCmd) {
     theReaction->SetRxnQ(QCmd->GetNewDoubleValue(newValue));
-  }
-
-  if (command == ExiCmd) {
-    theReaction->SetExi(ExiCmd->GetNewDoubleValue(newValue));
   }
 
   if (command == Q1Cmd) {
