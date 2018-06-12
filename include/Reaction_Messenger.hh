@@ -48,6 +48,10 @@ private:
   G4UIcmdWithoutParameter *CARCmd;
   G4UIcmdWithADoubleAndUnit *CARMaxCmd;
   G4UIcmdWithADoubleAndUnit *CARMinCmd;
+
+  G4UIcmdWithoutParameter *GDist0Cmd;
+  G4UIcmdWithoutParameter *GDist2Cmd;
+  G4UIcmdWithoutParameter *GDist4Cmd;
 };
 
 #endif

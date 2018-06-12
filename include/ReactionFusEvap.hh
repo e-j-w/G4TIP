@@ -119,6 +119,10 @@ public:
   void SetMaxAngle(G4double x) { maxEvapAngle = x; };
   void SetMinAngle(G4double x) { minEvapAngle = x; };
 
+  void SetGDist0() { gammaAngDist = 0; };
+  void SetGDist2() { gammaAngDist = 1; };
+  void SetGDist4() { gammaAngDist = 2; };
+
   void EvaporateWithMomentumCorrection(G4DynamicParticle *, G4DynamicParticle *,
                                        G4DynamicParticle *,
                                        G4ParticleDefinition *, G4double,
@@ -180,6 +184,7 @@ private:
   G4ThreeVector pRes_correct; // to correct residual momentum after adding excitation
 
   G4int loopCounter;
+  G4int gammaAngDist;
 };
 
 #endif

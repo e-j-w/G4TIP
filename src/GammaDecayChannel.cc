@@ -69,6 +69,8 @@
 #include "G4AtomicShell.hh"
 #include "G4AtomicDeexcitation.hh"
 
+#include "G4Gamma.hh"
+
 const G4double GammaDecayChannel:: pTolerance = 0.001;
 const G4double GammaDecayChannel:: levelTolerance = 2.0*keV;
 //const G4bool GammaDecayChannel:: FermiOn = true;
@@ -82,7 +84,7 @@ const G4double GammaDecayChannel:: levelTolerance = 2.0*keV;
 //
 GammaDecayChannel::GammaDecayChannel (G4int Verbose,
 		const G4ParticleDefinition *theParentNucleus,
-		G4double theBR, G4double Egamma,G4double EexcitInitial) :
+		G4double theBR, G4double Egamma,G4double EexcitInitial,G4int gammaDist) :
 			G4GeneralPhaseSpaceDecay(Verbose), decayMode(IT)
 {
 #ifdef G4VERBOSE
@@ -101,6 +103,7 @@ GammaDecayChannel::GammaDecayChannel (G4int Verbose,
   halflifethreshold = 1e-6*second;
   applyICM = true;
   applyARM = true;
+  gammaAngDist = gammaDist;
 }
 
 
@@ -211,6 +214,10 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
   // If the decay is to an excited state of the daughter nuclide, we need
   // to apply the photo-evaporation process. This includes the IT decay mode itself.
   //
+  /*G4ThreeVector dir=G4RandomDirection();
+  G4double theta=dir.getTheta()*180./3.14;
+  G4cout << "angle: " << theta << G4endl;
+  G4cout << "daughter excitation: " << daughterExcitation << G4endl;*/
   if (daughterExcitation > 0.0) 
     {
       //
@@ -227,6 +234,8 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
       //   
       G4Fragment nucleus(daughterA, daughterZ, daughterMomentum);
       
+      
+
 	    G4DynamicParticle *theGammaRay = new G4DynamicParticle (G4Gamma::GammaDefinition(),G4RandomDirection(),Qtransition);//JW: just make one gamma ray at each step
       //theGammaRay -> SetProperTime(gammas->operator[](ig)->GetCreationTime());
       products->PushProducts (theGammaRay);
@@ -247,9 +256,44 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
 			products->PushProducts (dynamicDaughter);
 		}
   
-  //G4cout << "Gamma decay done!" << G4endl;
+  if(gammaAngDist!=0){
+    //do biasing
+    for(int i=0;i<products->entries();i++){
+      if(products->operator[](i)->GetDefinition()==G4Gamma::Definition()){
+        //products->operator[](i)->DumpInfo();
+        //G4cout <<  products->operator[](i)->GetMomentum().getTheta()*180./3.14 << G4endl;
+        G4double angle = products->operator[](i)->GetMomentum().getTheta();
+        G4double cosangle = cos(angle);
+        //G4cout <<  cosangle << G4endl;
+        G4double lpval = 0.;
+        if(gammaAngDist==1)
+          lpval = 0.5*(3.*cosangle*cosangle - 1.); //2nd order legendre polynomial
+        else if(gammaAngDist==2)
+          lpval = 0.125*(35.*cosangle*cosangle*cosangle*cosangle - 30.*cosangle*cosangle + 3.); //4th order legendre polynomial
+        else
+          G4cout << "WARNING: bad angular distribution!" << G4endl;
+        //generate random number between -1 and 1 to bias legendre polynomial against 
+        G4double num = CLHEP::RandFlat::shoot(2.0);
+        num=num-1.0;
+        //G4cout <<  num << G4endl;
+        if(num>lpval){
+          //G4cout << "Biasing..." << G4endl;
+          //remove everything from products
+          for(int j=0;j<=products->entries();j++){
+            products->PopProducts();
+          }
+          //G4cout << "entries left: " << products->entries() << G4endl;
+          break;
+        }
+      }
+    }
+  }
+  
+  
 	//getc(stdin);
 
+
+  //G4cout << "Gamma decay done!" << G4endl;
   return products;
 }
 

@@ -13,6 +13,7 @@ ReactionFusEvap::ReactionFusEvap(Projectile *Proj, DetectorConstruction *Det,
   memset(Egamma, 0, sizeof(Egamma));
   reaction_here = false;
   maxNumRepeats = 1000; // default value
+  gammaAngDist = 0;
 
   if (verboseLevel > 1) {
     G4cout << GetProcessName() << " is created " << G4endl;
@@ -574,7 +575,7 @@ compound->GetAtomicNumber() << G4endl;
       // set up gamma decay channel
       ResDecTab[i] = new G4DecayTable();
       residual[i]->SetDecayTable(ResDecTab[i]);
-      ResDec[i] = new GammaDecayChannel(-1, residual[i], 1, Egamma[i], Eexcit);
+      ResDec[i] = new GammaDecayChannel(-1, residual[i], 1, Egamma[i], Eexcit, gammaAngDist);
       ResDecTab[i]->Insert(ResDec[i]);
 
       // ResDecTab[i]->DumpInfo();

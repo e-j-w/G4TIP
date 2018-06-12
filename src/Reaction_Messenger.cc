@@ -125,6 +125,19 @@ Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
                          "emitted.");
   CARMinCmd->SetParameterName("CARMin", false);
   CARMinCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  GDist0Cmd = new G4UIcmdWithoutParameter(
+      "/Reaction/P0", this);
+  GDist0Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to be isotropic.");
+
+  GDist2Cmd = new G4UIcmdWithoutParameter(
+      "/Reaction/P2", this);
+  GDist2Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta).");
+
+  GDist4Cmd = new G4UIcmdWithoutParameter(
+      "/Reaction/P4", this);
+  GDist4Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta).");
+
 }
 
 Reaction_Messenger::~Reaction_Messenger() {
@@ -155,6 +168,10 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete CARCmd;
   delete CARMaxCmd;
   delete CARMinCmd;
+
+  delete GDist0Cmd;
+  delete GDist2Cmd;
+  delete GDist4Cmd;
 }
 
 void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
@@ -241,5 +258,20 @@ void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
 
   if (command == CARMinCmd) {
     theReaction->SetMinAngle(CARMinCmd->GetNewDoubleValue(newValue));
+  }
+
+  if (command == GDist0Cmd) {
+    G4cout << "----> Setting angular distribution of emitted gamma ray(s) to be isotropic." << G4endl;
+    theReaction->SetGDist0();
+  }
+
+  if (command == GDist2Cmd) {
+    G4cout << "----> Setting angular distribution of emitted gamma ray(s) to a 2nd order legendre polynomial in cos(theta)." << G4endl;
+    theReaction->SetGDist2();
+  }
+
+  if (command == GDist4Cmd) {
+    G4cout << "----> Setting angular distribution of emitted gamma ray(s) to a 4th order legendre polynomial in cos(theta)." << G4endl;
+    theReaction->SetGDist4();
   }
 }

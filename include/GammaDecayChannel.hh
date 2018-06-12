@@ -66,7 +66,7 @@ public: // with description
     
 	GammaDecayChannel (G4int Verbose,
 		const G4ParticleDefinition *theParentNucleus,
-		G4double theBR, G4double Egamma,G4double EexcitInitial);
+		G4double theBR, G4double Egamma,G4double EexcitInitial,G4int gammaDist);
 	//constructor for IT
 
   ~GammaDecayChannel(){;} 
@@ -138,7 +138,8 @@ protected:
   G4double               halflifethreshold;
   G4bool                 applyICM;
   G4bool                 applyARM;
-  CLHEP::RandGeneral*    RandomEnergy;    
+  CLHEP::RandGeneral*    RandomEnergy;
+  G4int                  gammaAngDist; //angular distribution of emitted gamma ray, 0=isotropic,1=lp2,2=lp4
 };
 #endif
 
