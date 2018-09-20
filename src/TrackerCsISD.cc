@@ -60,6 +60,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	            newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
 	            newHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
 	            newHitI->SetWeight(aStep->GetTrack()->GetWeight());
+							newHitI->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
 	            newHitI->SetId(atoi(s2));
 	            newHitI->SetRingId(atoi(s3));
 	            newHitI->SetPathLength(len);
@@ -81,6 +82,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	            newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
 	            newHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
 	            newHitF->SetWeight(aStep->GetTrack()->GetWeight());
+							newHitF->SetTime(aStep->GetPostStepPoint()->GetGlobalTime());
 	            newHitF->SetId(atoi(s2));
 	            newHitF->SetRingId(atoi(s3));
 	            newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?

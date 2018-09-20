@@ -3,9 +3,9 @@
 // inelastic collision followed by parametrized evaporation
 #include "ReactionFusEvap.hh"
 
-ReactionFusEvap::ReactionFusEvap(Projectile *Proj, DetectorConstruction *Det,
-                   const G4String &aName)
-    : G4VProcess(aName), theProjectile(Proj), theDetector(Det) {
+ReactionFusEvap::ReactionFusEvap(Projectile *Proj, DetectorConstruction *Det, const G4String &aName)
+  : G4VProcess(aName), theProjectile(Proj), theDetector(Det)
+{
   proton = G4Proton::ProtonDefinition();
   neutron = G4Neutron::NeutronDefinition();
   alpha = G4Alpha::AlphaDefinition();

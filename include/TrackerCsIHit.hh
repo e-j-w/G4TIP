@@ -44,6 +44,7 @@ class TrackerCsIHit : public G4VHit
       void SetRingId    (G4int m)      { ring = m; };
       void SetPathLength(G4double l) { path = l; }; 
       void SetDisabled(){disabled=1;};//used to disable CsI hits 
+      void SetTime(G4double t){time=t;};
     
       G4int    GetA(){return A;}
       G4int    GetZ(){return Z;}
@@ -56,6 +57,7 @@ class TrackerCsIHit : public G4VHit
       G4int    GetRingId()  { return ring; };  
       G4double GetPathLength()  { return path; };
       G4int    GetDisabled() {return disabled;};
+      G4double GetTime(){return time;};
 
   private:
   
@@ -64,6 +66,7 @@ class TrackerCsIHit : public G4VHit
       G4double      beta;
       G4double      KE;
       G4double      weight;
+      G4double      time;
       G4ThreeVector pos;
       G4ThreeVector p;
       G4int         id;

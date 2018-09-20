@@ -179,6 +179,37 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&partHit, 0, soh);
   // memset(&GHit,0,sogh);
 
+  // evaporated particle tracking
+  if (((numA > 0) && ((*CsICollection)[0]->GetA() == 4) &&
+        ((*CsICollection)[0]->GetZ() == 2)) ||
+      ((numP > 0) && ((*CsICollection)[0]->GetA() == 1) &&
+        ((*CsICollection)[0]->GetZ() == 1)) ||
+      ((numN > 0) && ((*CsICollection)[0]->GetA() == 1) &&
+        ((*CsICollection)[0]->GetZ() == 0))) {
+          
+    partROut.x = (*CsICollection)[0]->GetPos().getX() / mm;
+    partROut.y = (*CsICollection)[0]->GetPos().getY() / mm;
+    partROut.z = (*CsICollection)[0]->GetPos().getZ() / mm;
+    partROut.px = (*CsICollection)[0]->GetMom().getX() / MeV;
+    partROut.py = (*CsICollection)[0]->GetMom().getY() / MeV;
+    partROut.pz = (*CsICollection)[0]->GetMom().getZ() / MeV;
+    partROut.b = (*CsICollection)[0]->GetBeta();
+    partROut.E = (*CsICollection)[0]->GetKE() / MeV;
+    partROut.t = (*CsICollection)[0]->GetTime() / ns;
+    partROut.tROffset = 0.;
+    partROut.theta = acos(((*CsICollection)[0]->GetMom().getZ()) /
+                          ((*CsICollection)[0]->GetMom().mag())) /
+                      degree; // angle between (0,0,1) and momentum vector
+    partROut.phi =
+        acos((*CsICollection)[0]->GetMom().getX() /
+              sqrt((*CsICollection)[0]->GetMom().getX() *
+                      (*CsICollection)[0]->GetMom().getX() +
+                  (*CsICollection)[0]->GetMom().getY() *
+                      (*CsICollection)[0]->GetMom().getY())) /
+        degree; // angle between (1,0,0) and momentum vector in x and y
+    partROut.w = (*CsICollection)[0]->GetWeight();
+  }
+
   if (Nt > 0) {
     // G4cout << "Saving ion collection data..." << G4endl;
     stat.evNb = evtNb;
@@ -341,36 +372,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rROut.w = (*IonCollection)[i]->GetWeight();
           }
-        // evaporated alpha tracking
 
-        if (((numA > 0) && ((*IonCollection)[i]->GetA() == 4) &&
-             ((*IonCollection)[i]->GetZ() == 2)) ||
-            ((numP > 0) && ((*IonCollection)[i]->GetA() == 1) &&
-             ((*IonCollection)[i]->GetZ() == 1)) ||
-            ((numN > 0) && ((*IonCollection)[i]->GetA() == 1) &&
-             ((*IonCollection)[i]->GetZ() == 0))) {
-          partROut.x = (*IonCollection)[i]->GetPos().getX() / mm;
-          partROut.y = (*IonCollection)[i]->GetPos().getY() / mm;
-          partROut.z = (*IonCollection)[i]->GetPos().getZ() / mm;
-          partROut.px = (*IonCollection)[i]->GetMom().getX() / MeV;
-          partROut.py = (*IonCollection)[i]->GetMom().getY() / MeV;
-          partROut.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
-          partROut.b = (*IonCollection)[i]->GetBeta();
-          partROut.E = (*IonCollection)[i]->GetKE() / MeV;
-          partROut.t = (*IonCollection)[i]->GetTime() / ns;
-          partROut.tROffset = 0.;
-          partROut.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
-                                ((*IonCollection)[i]->GetMom().mag())) /
-                           degree; // angle between (0,0,1) and momentum vector
-          partROut.phi =
-              acos((*IonCollection)[i]->GetMom().getX() /
-                   sqrt((*IonCollection)[i]->GetMom().getX() *
-                            (*IonCollection)[i]->GetMom().getX() +
-                        (*IonCollection)[i]->GetMom().getY() *
-                            (*IonCollection)[i]->GetMom().getY())) /
-              degree; // angle between (1,0,0) and momentum vector in x and y
-          partROut.w = (*IonCollection)[i]->GetWeight();
-        }
+        
       } else if ((*IonCollection)[i]->GetPFlag() >= DECAY_FLAG) {
         G4int flag = (*IonCollection)[i]->GetPFlag();
         if ((*IonCollection)[i]->GetA() == Ar)
