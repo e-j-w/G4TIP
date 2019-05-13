@@ -105,6 +105,11 @@ Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
   dExitauCmd->SetParameterName("dExitau", false);
   dExitauCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+  dExiDistCmd = new G4UIcmdWithAString("/ParticleEvaporation/DistFile", this);
+  dExiDistCmd->SetGuidance("Specifies a tabulated distribution of dExi values for evaporated particles (containing 2 columns, start-of-bin energy in MeV and counts).");
+  dExiDistCmd->SetParameterName("Tau", false);
+  dExiDistCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
   CARCmd = new G4UIcmdWithoutParameter(
       "/ParticleEvaporation/ConstrainAngularRange", this);
   CARCmd->SetGuidance("Require that at least one evaporated particle be "
@@ -164,6 +169,7 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete dExix0Cmd;
   delete dExiwCmd;
   delete dExitauCmd;
+  delete dExiDistCmd;
 
   delete CARCmd;
   delete CARMaxCmd;
@@ -237,15 +243,23 @@ void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
   }
 
   if (command == dExix0Cmd) {
+    theReaction->SetTabulatedExi(false);
     theReaction->SetExix0(dExix0Cmd->GetNewDoubleValue(newValue));
   }
 
   if (command == dExiwCmd) {
+    theReaction->SetTabulatedExi(false);
     theReaction->SetExiw(dExiwCmd->GetNewDoubleValue(newValue));
   }
 
   if (command == dExitauCmd) {
+    theReaction->SetTabulatedExi(false);
     theReaction->SetExitau(dExitauCmd->GetNewDoubleValue(newValue));
+  }
+
+  if (command == dExiDistCmd) {
+    theReaction->SetTabulatedExi(true);
+    theReaction->ReadTabulatedExi(newValue);
   }
 
   if (command == CARCmd) {

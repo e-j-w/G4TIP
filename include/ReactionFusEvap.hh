@@ -42,6 +42,7 @@ using namespace std;
 #define MAXNUMEVAP 4
 #define MAXNUMDISTS 2
 #define MAXNUMDECAYS 5
+#define MAXEXIDISTENTRIES 50
 
 class ReactionFusEvap : public G4VProcess {
 public:
@@ -112,6 +113,8 @@ public:
   void SetExix0(G4double x) { exix0 = x; };
   void SetExiw(G4double x) { exiw = x; };
   void SetExitau(G4double x) { exitau = x; };
+  void SetTabulatedExi(bool set) { useTabulatedExi = set; };
+  void ReadTabulatedExi(G4String fileName);
 
   // set angular constraints of emitted particles
   void SetConstrainedAngle() { constrainedAngle = true; };
@@ -136,6 +139,7 @@ public:
 
   void AddDecay(G4double, G4double);
   G4double getExi(G4double, G4double, G4double);
+  G4double getTabulatedExi(G4double);
 
   G4DynamicParticle RecoilOut;
   G4DynamicParticle EvapP[MAXNUMEVAP];
@@ -162,13 +166,13 @@ private:
                                        // to the beam axis
   G4double Egamma[MAXNUMDECAYS], tau[MAXNUMDECAYS], Eexcit, Egammatot;
   G4int numDecays;
-  G4double QRxn, QEvap[MAXNUMEVAP]; // Q values for the beam-target reaction and
-                                    // evaporation process(es)
-  G4double initExi, evapdeltaExi[MAXNUMEVAP],
-      totalEvapdeltaExi; // excitation energy parameters
+  G4double QRxn, QEvap[MAXNUMEVAP]; // Q values for the beam-target reaction and evaporation process(es)
+  G4double initExi, evapdeltaExi[MAXNUMEVAP], totalEvapdeltaExi; // excitation energy parameters
 
-  G4double exix0, exiw,
-      exitau; // evaporated particle excitation energy distribution parameters
+  G4double exix0, exiw, exitau; // evaporated particle excitation energy distribution parameters
+  G4double exitDistE[MAXEXIDISTENTRIES], exiDistCounts[MAXEXIDISTENTRIES]; //excitation energy tabulated distribution paramaeters
+  int numTabulatedExiVals;
+  bool useTabulatedExi;
 
   // residuals and cascade
   G4ParticleDefinition *residual[MAXNUMDECAYS]; // the residual nucleus after

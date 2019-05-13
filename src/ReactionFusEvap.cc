@@ -80,12 +80,17 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
       for (int i = 0; i < (nP + nN + nA); i++)
         if (i < MAXNUMEVAP) {
           evapdeltaExi[i] = 0.;
-          while (
-              ((evapdeltaExi[i] + QEvap[i]) <= 0.0) ||
-              ((evapdeltaExi[i] + QEvap[i]) >
-               initExi)) // clamp delta Exi values to physically possible values
-            evapdeltaExi[i] = getExi(exix0, exiw, exitau);
-          // evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+          // clamp delta Exi values to physically possible values
+          while ( ((evapdeltaExi[i] + QEvap[i]) <= 0.0) || ((evapdeltaExi[i] + QEvap[i]) > initExi) ){
+            if(useTabulatedExi){
+              evapdeltaExi[i] = getTabulatedExi(QEvap[i]);
+            }else{
+              evapdeltaExi[i] = getExi(exix0, exiw, exitau);
+              // evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+            }
+            
+          }
+            
         }
 
       // check that sum of delta Exi values is in bounds
@@ -670,4 +675,83 @@ void ReactionFusEvap::SetupReaction() {
          << ", Z = " << Z1 + Z2 - DZ << ", N = " << A1 + A2 - DA - Z1 - Z2 + DZ
          << G4endl;
   // getc(stdin);
+}
+//---------------------------------------------------------
+// Reads in a list of tabulated centre-of-mass energy values
+void ReactionFusEvap::ReadTabulatedExi(G4String fileName){
+  FILE *table;
+  char str[256],str1[256],str2[256];
+  int index=0;
+  numTabulatedExiVals=0;
+  if((table=fopen(fileName.c_str(),"r"))==NULL)
+    {
+      printf("ERROR: Cannot open the tabulated dExi file %s!\n",fileName.c_str());
+      exit(-1);
+    }
+  while(!(feof(table)))//go until the end of file is reached
+    {
+			if(fgets(str,256,table)!=NULL)
+				{
+					sscanf(str,"%s %s",str1,str2);
+					if(strcmp(str1,"<END>")==0)
+          	break;
+          if(index >= MAXEXIDISTENTRIES){
+            printf("WARNING: too many entries in tabulated dExi file %s, truncating...\n",fileName.c_str());
+            break;
+          }
+          exitDistE[index] = atof(str1);
+          exiDistCounts[index] = atof(str2);
+          index++;
+				}
+		}
+  numTabulatedExiVals=index;
+
+  //make cumulative distribution
+  double totalCounts = 0.0;
+  for(int i=0;i<numTabulatedExiVals;i++){
+    totalCounts += exiDistCounts[i];
+  }
+  for(int i=0;i<numTabulatedExiVals;i++){
+    exiDistCounts[i] = exiDistCounts[i]/totalCounts; //normalize
+  }
+  double totalSoFar = 0.0;
+  for(int i=0;i<numTabulatedExiVals;i++){
+    totalSoFar += exiDistCounts[i];
+    exiDistCounts[i] = totalSoFar;
+  }
+
+  /*printf("Energy (MeV)    Dist Value\n");
+  for(int i=0;i<numTabulatedExiVals;i++){
+    printf("%f   %f\n",exitDistE[i],exiDistCounts[i]);
+  }*/
+
+	fclose(table);
+  //getc(stdin);
+
+}
+//---------------------------------------------------------
+// Gets a tabulated Exi value
+// Tabulated values are centre-of-mass energies, must be corrected for the Q value
+G4double ReactionFusEvap::getTabulatedExi(G4double Qval){
+  double roll = CLHEP::RandFlat::shoot();
+  double roll2 = CLHEP::RandFlat::shoot();
+  double exi = 0.0;
+  //printf("roll: %f\n",roll);
+
+  for(int i=0;i<numTabulatedExiVals;i++){
+    if(exiDistCounts[i] >= roll){
+      if(i<(numTabulatedExiVals-1)){
+        //choose a random energy within the bin
+        exi = exitDistE[i] + roll2*(exitDistE[i+1] - exitDistE[i]);
+      }else{
+        //set energy to the final bin energy
+        exi = exitDistE[i];
+      }
+      exi -= Qval;
+      //printf("exi: %f\n",exi);
+      return exi;
+    }
+  }
+
+  return 0.0;
 }

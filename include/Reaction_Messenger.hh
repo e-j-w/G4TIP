@@ -44,6 +44,7 @@ private:
   G4UIcmdWithADouble *dExix0Cmd;
   G4UIcmdWithADouble *dExiwCmd;
   G4UIcmdWithADouble *dExitauCmd;
+  G4UIcmdWithAString *dExiDistCmd;
 
   G4UIcmdWithoutParameter *CARCmd;
   G4UIcmdWithADoubleAndUnit *CARMaxCmd;
