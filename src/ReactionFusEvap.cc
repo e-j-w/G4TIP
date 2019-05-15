@@ -395,8 +395,7 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(
       deltaExi * (1.0 / (((1.0 * EvaporatedParticleDef->GetAtomicMass()) /
                           (1.0 * RecoilResidual->GetAtomicMass())) +
                          1.0));
-  // G4cout << "CM energy of evaporated particle: " << particleCMEnergy << "
-  // MeV." << G4endl;
+  // G4cout << "deltaExi: " << deltaExi << ", CM energy of evaporated particle: " << particleCMEnergy << " MeV." << G4endl;
   // G4cout << "CM energy of recoil particle: " << deltaExi - particleCMEnergy
   // << " MeV." << G4endl;
 

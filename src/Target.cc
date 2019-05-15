@@ -119,6 +119,19 @@ void Target::setBackingZ(G4double Z)
    G4RunManager::GetRunManager()->GeometryHasBeenModified();
 }
 //-----------------------------------------------------------------------------
+void Target::setBackingOffset(G4double Z)
+{
+  G4ThreeVector d;
+  d.setX(Pos->getX());
+  d.setY(Pos->getY());
+  d.setZ(Pos->getZ() + 0.5*aBacking->GetZHalfLength() + Z);
+  Backing_phys->SetTranslation(d);
+  backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
+  Backing_log->SetUserLimits(backing_limits);
+  G4cout<<"----> Backing offset set to "<< G4BestUnit(Backing_phys->GetTranslation().getZ(),"Length")<<G4endl;
+   G4RunManager::GetRunManager()->GeometryHasBeenModified();
+}
+//-----------------------------------------------------------------------------
 void Target::setNTStep(G4int n)
 {
    NTStep=n;

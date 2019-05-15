@@ -33,6 +33,7 @@ class Target
   void setBackingR(G4double);
   void setTargetZ(G4double);
   void setBackingZ(G4double);
+  void setBackingOffset(G4double);
   void setTargetMaterial(G4String);
   void setBackingMaterial(G4String);
   void setBackingCharge(G4int);

@@ -100,6 +100,11 @@ Target_Messenger::Target_Messenger(Target* Tar)
   BZCmd->SetGuidance("Select the thickness for the backing");
   BZCmd->SetParameterName("choice",false);
   BZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  BOCmd = new G4UIcmdWithADoubleAndUnit("/Backing/Offset",this);
+  BOCmd->SetGuidance("Specify an offset for the backing (for use as a degrader)");
+  BOCmd->SetParameterName("choice",false);
+  BOCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
  
 
   BFrCmd = new G4UIcmdWithADouble("/Backing/ReactionFraction",this);
@@ -138,6 +143,7 @@ Target_Messenger::~Target_Messenger()
   delete BTauCmd;
   delete BRCmd;
   delete BZCmd;
+  delete BOCmd;
   delete BMatCmd;
   delete TargetDir;
   delete BackingDir;
@@ -197,6 +203,8 @@ if( command == BFrCmd )
    { aTarget->setBackingR(BRCmd->GetNewDoubleValue(newValue));}
   if( command == BZCmd )
    { aTarget->setBackingZ(BZCmd->GetNewDoubleValue(newValue));}
+  if( command == BOCmd )
+   { aTarget->setBackingOffset(BZCmd->GetNewDoubleValue(newValue));}
 
 }
 

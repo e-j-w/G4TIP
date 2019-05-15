@@ -80,7 +80,7 @@ class EventAction : public G4UserEventAction
   Int_t       triggerAZ; //whether to trigger on a particle with specific A,Z
   G4int numP,numN,numA;//number of each type of recoil particle
 
-  //debug info
+  //trigger reporting info
   G4int         numEvents,numTriggeredEvents,numCsIhits,numPCsIHits,numACsIHits,numTriggeredCsIHits;
 
 };
