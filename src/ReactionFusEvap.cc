@@ -134,7 +134,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
             {
               EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i],
                                               neutron, evapdeltaExi[i + nP],
-                                              QEvap[i], cmv);
+                                              QEvap[i + nP], cmv);
               aParticleChange.AddSecondary(
                   EvapN[i], posIn, true); // evaporate the particle (momentum
                                           // determined by
@@ -148,7 +148,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
             {
               EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i],
                                               alpha, evapdeltaExi[i + nP + nN],
-                                              QEvap[i], cmv);
+                                              QEvap[i + nP + nN], cmv);
               aParticleChange.AddSecondary(
                   EvapA[i], posIn, true); // evaporate the particle (momentum
                                           // determined by
@@ -379,7 +379,7 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(
   deltaExi = deltaExi + Qevap; // amount of the excitation energy that goes into
                                // KE of the products
   if (deltaExi < 0.0) {
-    G4cerr << "ERROR!  Excitation energy is smaller than the Q value!  "
+    G4cerr << "ERROR!  Excitation energy (" << (deltaExi-Qevap) << ") is smaller than the Q value (" << -1.*Qevap << ")!  "
               "Evaporation should not occur!"
            << G4endl;
     G4cerr << "Please check the reaction PostStepDoIt code and correct this!"

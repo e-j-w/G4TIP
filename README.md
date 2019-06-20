@@ -93,11 +93,11 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Trigger/GammaSingles | Trigger on events containing at least one hit in the TIGRESS/GRIFFIN array. |
-| /Trigger/A NUMBER | If using a particle trigger, this is the mass number of the particle to trigger on. |
-| /Trigger/Z NUMBER | If using a particle trigger, this is the proton number of the particle to trigger on. |
+| /Trigger/A NUMBER | If using a particle trigger, this is the mass number of the particle to trigger on.  If both /Trigger/A and /Trigger/Z are unset, the particle trigger will be apply to any charged particle. |
+| /Trigger/Z NUMBER | If using a particle trigger, this is the proton number of the particle to trigger on.  If both /Trigger/A and /Trigger/Z are unset, the particle trigger will be apply to any charged particle. |
 | /Trigger/DefinedParticleSingles | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z. |
 | /Trigger/DefinedParticleCoincAndGamma | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
-| /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and two hits in the TIGRESS/GRIFFIN array. |
+| /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z (or any particle if those commands are not used), and two hits in the TIGRESS/GRIFFIN array. |
 | /Trigger/DisableGriffin NUM | Removes the TIGRESS/GRIFFIN detector with index NUM from the trigger. |
 | /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET and core index COL from the trigger. |
 | /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM from the trigger. |

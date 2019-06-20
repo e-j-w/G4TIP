@@ -17,6 +17,9 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   CsIThreshold=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
   memset(CsIDisabled,0,sizeof(CsIDisabled));
+  for(int i=0;i<NCsISph;i++){
+    CsIWeight[i]=1.0;
+  }
 }
 
 
@@ -139,11 +142,11 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 				      	if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
                     {
-                      numDetHits++;
+                      numDetHits+=1.0*CsIWeight[i];
                       if((partACsI[i]==4)&&(partZCsI[i]==2))
-                        numACsIHits++;
+                        numACsIHits+=1.0*CsIWeight[i];
                       if((partACsI[i]==1)&&(partZCsI[i]==1))
-                        numPCsIHits++;
+                        numPCsIHits+=1.0*CsIWeight[i];
                     }
 							      
 					  }
@@ -153,11 +156,11 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	        			if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
                     {
-                      numDetHits++;
+                      numDetHits+=1.0*CsIWeight[i];
                       if((partACsI[i]==4)&&(partZCsI[i]==2))
-                        numACsIHits++;
+                        numACsIHits+=1.0*CsIWeight[i];
                       if((partACsI[i]==1)&&(partZCsI[i]==1))
-                        numPCsIHits++;
+                        numPCsIHits+=1.0*CsIWeight[i];
                     }
 							      
 	        	}

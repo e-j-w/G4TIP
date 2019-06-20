@@ -44,6 +44,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
   void DisableCsI(int det){CsIDisabled[det]=1;};
+  void WeightCsI(int det, double weight){CsIWeight[det]=weight;};
   void SetCsIThreshold(G4double x){CsIThreshold=x;};
 
   void setTriggerA(G4int);
@@ -66,6 +67,7 @@ class EventAction : public G4UserEventAction
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4double      GriffinCrystTimeDet[16][4];
   G4int         CsIDisabled[NCsISph];
+  G4double      CsIWeight[NCsISph];
   G4int         GriffinFold;
   size_t        soa,sov,soc,soi;
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
@@ -81,7 +83,7 @@ class EventAction : public G4UserEventAction
   G4int numP,numN,numA;//number of each type of recoil particle
 
   //trigger reporting info
-  G4int         numEvents,numTriggeredEvents,numCsIhits,numPCsIHits,numACsIHits,numTriggeredCsIHits;
+  G4double         numEvents,numTriggeredEvents,numCsIhits,numPCsIHits,numACsIHits,numTriggeredCsIHits;
 
 };
 

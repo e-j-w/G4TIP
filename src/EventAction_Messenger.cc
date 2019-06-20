@@ -54,6 +54,10 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   TDCRCmd = new G4UIcmdWithAString("/Trigger/DisableCsIRange",this);
   TDCRCmd->SetGuidance("Disable the CsI detectors within the specified range.");
   TDCRCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  TWCRCmd = new G4UIcmdWithAString("/Trigger/WeightCsIRange",this);
+  TWCRCmd->SetGuidance("Weight the CsI detectors within the specified range.");
+  TWCRCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
   
   CETCmd = new G4UIcmdWithADoubleAndUnit("/Trigger/CsIThreshold",this);
   CETCmd->SetGuidance("Set a low energy threshold for the CsI detector(s).");
@@ -85,6 +89,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TDGCmd;
   delete TDCCmd;
   delete TDCRCmd;
+  delete TWCRCmd;
   delete CETCmd;
   delete RTCmd;
 }
@@ -174,6 +179,21 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
           		G4cout<<"Disabling CsI detectors "<< detLow << " to " << detHigh << "." <<G4endl;
 		        	for(int i=detLow;i<=detHigh;i++)
 				        aEventAction->DisableCsI(i-1);
+		        }
+          
+    }
+  
+  if( command == TWCRCmd )
+    {
+      int detLow,detHigh;
+      double weight=0.0;
+      if(sscanf(newValue,"%i %i %lf",&detLow,&detHigh,&weight)==3)
+        if((detLow>0)&&(detHigh>=detLow))
+          if(detHigh<=NCsISph)
+          	{
+          		G4cout<<"Weighting CsI detectors "<< detLow << " to " << detHigh << " with weight " << weight << "." <<G4endl;
+		        	for(int i=detLow;i<=detHigh;i++)
+				        aEventAction->WeightCsI(i-1,weight);
 		        }
           
     }
