@@ -12,9 +12,9 @@ This code requires GEANT4 version 10.x (see the version 9.4 branch for the most 
 
 ## Installation
 
-This code has been tested with GEANT4.10.3 on Ubuntu 16.04.
+This code has been tested with GEANT4.10.3/4.10.5 on Ubuntu 14.04/16.04.
 
-This program depends on GEANT4.10.3, ROOT v5.x (results are saved to ROOT tree files), and cmake.  These programs should be compiled from source and installed according to the install guides on their respective websites.  GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.
+This program depends on GEANT4, ROOT v5.x (results are saved to ROOT tree files), and cmake.  These programs should be compiled from source and installed according to the install guides on their respective websites.  GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.
 
 Environment variables must be properly set up for all dependencies, for example by adding the following lines to ~/.bashrc (substituting the appropriate paths):
 

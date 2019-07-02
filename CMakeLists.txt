@@ -24,7 +24,7 @@ endif()
 # rather than 'include(CMakeMacroParseArguments)' if an error occurs
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS}/etc/cmake)
 find_package(ROOT REQUIRED)
-include_directories(SYSTEM $ENV{ROOTSYS}/include)
+include_directories(SYSTEM $ENV{ROOTINC})
 
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
