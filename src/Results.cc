@@ -92,6 +92,8 @@ void Results::TreeCreate() {
     tree->Branch("CsIE", partHit.E, "E[CsIfold]/D");
     tree->Branch("CsIb", partHit.b, "b[CsIfold]/D");
     tree->Branch("CsIw", partHit.w, "w[CsIfold]/D");
+    tree->Branch("CsIA", partHit.A, "A[CsIfold]/I");
+    tree->Branch("CsIZ", partHit.Z, "Z[CsIfold]/I");
     tree->Branch("CsIId", partHit.Id, "Id[CsIfold]/I");
     tree->Branch("CsIr", partHit.r, "r[CsIfold]/I");
     tree->Branch("CsIpath", partHit.path, "path[CsIfold]/D");
@@ -440,6 +442,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&partHit.E, 0, sizeof(partHit.E));
   memset(&partHit.dE, 0, sizeof(partHit.dE));
   memset(&partHit.w, 0, sizeof(partHit.w));
+  memset(&partHit.A, 0, sizeof(partHit.A));
+  memset(&partHit.Z, 0, sizeof(partHit.Z));
   memset(&partHit.Id, 0, sizeof(partHit.Id));
   memset(&partHit.r, 0, sizeof(partHit.r));
   memset(&partHit.path, 0, sizeof(partHit.path));
@@ -490,6 +494,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                   partHit.dE[partHit.CsIfold] =
                       (*CsICollection)[i]->GetKE() / MeV;
                   partHit.w[partHit.CsIfold] = (*CsICollection)[i]->GetWeight();
+                  partHit.A[partHit.CsIfold] = (*CsICollection)[i]->GetA();
+                  partHit.Z[partHit.CsIfold] = (*CsICollection)[i]->GetZ();
                   partHit.Id[partHit.CsIfold] = (*CsICollection)[i]->GetId();
                   partHit.r[partHit.CsIfold] = (*CsICollection)[i]->GetRingId();
                   // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in

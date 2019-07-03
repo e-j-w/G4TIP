@@ -49,6 +49,8 @@ class EventAction : public G4UserEventAction
 
   void setTriggerA(G4int);
   void setTriggerZ(G4int);
+  void setTriggerARange(G4int,G4int);
+  void setTriggerZRange(G4int,G4int);
   void setTID(G4int TID){CsIIDTrigger=TID;};
 
   void reportTriggers();
@@ -80,6 +82,7 @@ class EventAction : public G4UserEventAction
   DetectorConstruction* theDetector;
   Int_t       At,Zt; //A and Z of particle to trigger on
   Int_t       triggerAZ; //whether to trigger on a particle with specific A,Z
+  Int_t       Atmin,Atmax,Ztmin,Ztmax;
   G4int numP,numN,numA;//number of each type of recoil particle
 
   //trigger reporting info

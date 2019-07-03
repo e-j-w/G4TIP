@@ -21,6 +21,14 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   //TZCmd->SetParameterName(Trigger Z",false);
   TZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  TARangeCmd = new G4UIcmdWithAString("/Trigger/ARange",this);
+  TARangeCmd->SetGuidance("Select the mass number range for particles to trigger on.");
+  TARangeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  TZRangeCmd = new G4UIcmdWithAString("/Trigger/ZRange",this);
+  TZRangeCmd->SetGuidance("Select the atomic number range for particles to trigger on.");
+  TZRangeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   TAZCmd = new G4UIcmdWithoutParameter("/Trigger/DefinedParticleSingles",this);
   TAZCmd->SetGuidance("Select CsI singles events for the particle defined by /Trigger/A and /Trigger/Z");
 
@@ -79,6 +87,8 @@ EventAction_Messenger::~EventAction_Messenger()
   delete GSCmd;
   delete TACmd;
   delete TZCmd;
+  delete TARangeCmd;
+  delete TZRangeCmd;
   delete TAZCmd;
   delete TAZ1Cmd;
   delete TAZCCmd;
@@ -119,11 +129,29 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
  if( command == TAZC2GCmd )
    { aEventAction->SetTriggerParticleCoincAnd2GammaCores(); }
 
- //A and Z of user defined particle
- if( command == TACmd )
-   { aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));}
- if( command == TZCmd )
-   { aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));}
+  //A and Z of user defined particle
+  if( command == TACmd )
+    { aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));}
+  if( command == TZCmd )
+    { aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));}
+
+  if( command == TARangeCmd )
+    {
+      int min,max;
+      if(sscanf(newValue,"%i %i",&min,&max)==2)
+        {
+          aEventAction->setTriggerARange(min,max);
+        }
+    }
+  if( command == TZRangeCmd )
+    {
+      int min,max;
+      if(sscanf(newValue,"%i %i",&min,&max)==2)
+        {
+          aEventAction->setTriggerZRange(min,max);
+        }
+    }
+
 
  if( command == TIDCmd )
    { aEventAction->setTID(TIDCmd->GetNewIntValue(newValue));}

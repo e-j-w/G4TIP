@@ -93,8 +93,10 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Trigger/GammaSingles | Trigger on events containing at least one hit in the TIGRESS/GRIFFIN array. |
-| /Trigger/A NUMBER | If using a particle trigger, this is the mass number of the particle to trigger on.  If both /Trigger/A and /Trigger/Z are unset, the particle trigger will be apply to any charged particle. |
-| /Trigger/Z NUMBER | If using a particle trigger, this is the proton number of the particle to trigger on.  If both /Trigger/A and /Trigger/Z are unset, the particle trigger will be apply to any charged particle. |
+| /Trigger/A NUMBER | If using a particle trigger, this is the mass number of the particle to trigger on<sup>1</sup>. |
+| /Trigger/Z NUMBER | If using a particle trigger, this is the proton number of the particle to trigger on<sup>1</sup>. |
+| /Trigger/ARange MIN MAX | If using a particle trigger, this is the range of mass number of the particle(s) which may be triggered on<sup>1</sup>. |
+| /Trigger/ZRange MIN MAX | If using a particle trigger, this is the range of proton numbers of the particle(s) which may be triggered on<sup>1</sup>. |
 | /Trigger/DefinedParticleSingles | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z. |
 | /Trigger/DefinedParticleCoincAndGamma | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
 | /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z (or any particle if those commands are not used), and two hits in the TIGRESS/GRIFFIN array. |
@@ -102,6 +104,8 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET and core index COL from the trigger. |
 | /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM from the trigger. |
 | /Trigger/DisableCsIRange LOW HIGH | Removes CsI detectors with index between LOW and HIGH (inclusive) from the trigger. |
+
+<sup>1</sup>If none of /Trigger/A, /Trigger/Z, /Trigger/ARange, and /Trigger/ZRange are set, the particle trigger will be applied to any charged particle.
 
 ### Data Generation and Saving
 

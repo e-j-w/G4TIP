@@ -75,6 +75,8 @@ typedef struct {
   Double_t E[NCsI];
   Double_t b[NCsI];
   Double_t w[NCsI];
+  Int_t A[NCsI];
+  Int_t Z[NCsI];
   Int_t Id[NCsI];
   Int_t r[NCsI];
   Double_t path[NCsI]; // path length in material

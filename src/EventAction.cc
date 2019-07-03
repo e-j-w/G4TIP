@@ -122,6 +122,17 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                               //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
                             }
                       }
+                    else if(triggerAZ == 2) //user defined particle trigger range
+                      {
+                        if( ((*CsI)[i]->GetA()>=Atmin)&&((*CsI)[i]->GetA()<=Atmax) ) // user defined particle trigger range
+                          if( ((*CsI)[i]->GetZ()>=Ztmin)&&((*CsI)[i]->GetZ()<=Ztmax) )
+                            {
+                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                              partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                              //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+                            }
+                      }
                     else // trigger on any charged particle
                       {
                         if((*CsI)[i]->GetA()>0)
@@ -291,6 +302,26 @@ void EventAction::setTriggerZ(G4int Zin)
   Zt=Zin;
   triggerAZ=1;
   G4cout<<"----> Z of the particle to trigger on set to  "<<Zt<< G4endl;
+  
+}
+//---------------------------------------------------------
+void EventAction::setTriggerARange(G4int min, G4int max)
+{
+
+  Atmin=min;
+  Atmax=max;
+  triggerAZ=2;
+  G4cout<<"----> A of the particle to trigger on set to range from " << min << " to " << max << "." << G4endl;
+  
+}
+//---------------------------------------------------------
+void EventAction::setTriggerZRange(G4int min, G4int max)
+{
+
+  Ztmin=min;
+  Ztmax=max;
+  triggerAZ=2;
+  G4cout<<"----> Z of the particle to trigger on set range from " << min << " to " << max << "." << G4endl;
   
 }
 //---------------------------------------------------------
