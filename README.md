@@ -119,11 +119,9 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 
 Some GEANT4 classes have been backported from version 9.4 for use in this code:
 
-G4IonParametrisedLossModel (from GEANT4.9.4) - modified to allow for user defined stopping powers.
-
 G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
 
-G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only internal conversion.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
+G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only gamma decay.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
 
 G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 
