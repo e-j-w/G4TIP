@@ -1,14 +1,14 @@
-# TIP Fusion-Evaporation DSAM GEANT4 Code
+# TIP Fusion-Evaporation GEANT4 Code
 
 Maintainer: Jonathan Williams
 
 ## Description
 
-GEANT4 code implementing TIP/TIGRESS DSAM using a fusion-evaporation reaction process.
+GEANT4 code implementing TIP/TIGRESS DSAM using a fusion-evaporation reaction process.  For RDM, see the `rdm` branch.
 
 At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  Step-wise decay of the residual nucleus (gamma ray cascade) is also availaible.
 
-This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead. 
+This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead.
 
 ## Installation
 
@@ -133,7 +133,7 @@ T. Ma - CsI ball code.
 
 C. Morse - Finding and fixing memory leaks.
 
-K. Starosta - Initial TIP codebase.
+K. Starosta - Initial TIP codebase, RDM implementation.
 
 F. Wu - Reaction code work and auditing.
 
