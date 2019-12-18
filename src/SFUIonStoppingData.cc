@@ -23,13 +23,13 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-// $Id: G4IonStoppingData.cc,v 1.3 2010-10-25 08:41:39 vnivanch Exp $
+// $Id: SFUIonStoppingData.cc,v 1.3 2010-10-25 08:41:39 vnivanch Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
 //
 // ===========================================================================
 // GEANT4 class source file
 //
-// Class:                G4IonStoppingData
+// Class:                SFUIonStoppingData
 //
 // Base class:           G4VIonDEDXTable 
 // 
@@ -49,7 +49,7 @@
 // =========================================================================== 
 //
 
-#include "G4IonStoppingData.hh" 
+#include "SFUIonStoppingData.hh" 
 #include "G4PhysicsVector.hh"
 #include "G4LPhysicsFreeVector.hh"
 #include <fstream>
@@ -64,21 +64,21 @@ using namespace CLHEP;
 
 // #########################################################################
 
-G4IonStoppingData::G4IonStoppingData(const G4String& leDirectory) :
+SFUIonStoppingData::SFUIonStoppingData(const G4String& leDirectory) :
   subDir( leDirectory ) {
   G4cout << "Generating stopping powers from files in directory: " << leDirectory << G4endl;
 }
 
 // #########################################################################
 
-G4IonStoppingData::~G4IonStoppingData() {
+SFUIonStoppingData::~SFUIonStoppingData() {
 
   ClearTable();
 }
 
 // #########################################################################
 
-G4bool G4IonStoppingData::IsApplicable(
+G4bool SFUIonStoppingData::IsApplicable(
          G4int atomicNumberIon,  // Atomic number of ion
          G4int atomicNumberElem  // Atomic number of elemental material
 				    ) {
@@ -94,7 +94,7 @@ G4bool G4IonStoppingData::IsApplicable(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::IsApplicable(
+G4bool SFUIonStoppingData::IsApplicable(
          G4int atomicNumberIon,         // Atomic number of ion
          const G4String& matIdentifier  // Name or chemical formula of material
 				    ) {
@@ -110,7 +110,7 @@ G4bool G4IonStoppingData::IsApplicable(
 
 // #########################################################################
 
-G4PhysicsVector* G4IonStoppingData::GetPhysicsVector(
+G4PhysicsVector* SFUIonStoppingData::GetPhysicsVector(
          G4int atomicNumberIon,        // Atomic number of ion
          G4int atomicNumberElem        // Atomic number of elemental material
 				    ) {
@@ -128,7 +128,7 @@ G4PhysicsVector* G4IonStoppingData::GetPhysicsVector(
 
 // #########################################################################
 
-G4PhysicsVector*  G4IonStoppingData::GetPhysicsVector(
+G4PhysicsVector*  SFUIonStoppingData::GetPhysicsVector(
          G4int atomicNumberIon,        // Atomic number of ion
          const G4String& matIdentifier // Name or chemical formula of material
 				    ) {
@@ -146,7 +146,7 @@ G4PhysicsVector*  G4IonStoppingData::GetPhysicsVector(
 
 // #########################################################################
 
-G4double G4IonStoppingData::GetDEDX(
+G4double SFUIonStoppingData::GetDEDX(
          G4double kinEnergyPerNucleon, // Kinetic energy per nucleon
          G4int atomicNumberIon,        // Atomic number of ion
          G4int atomicNumberElem        // Atomic number of elemental material
@@ -169,7 +169,7 @@ G4double G4IonStoppingData::GetDEDX(
 
 // #########################################################################
 
-G4double G4IonStoppingData::GetDEDX(
+G4double SFUIonStoppingData::GetDEDX(
          G4double kinEnergyPerNucleon, // Kinetic energy per nucleon
          G4int atomicNumberIon,        // Atomic number of ion
          const G4String& matIdentifier // Name or chemical formula of material
@@ -192,7 +192,7 @@ G4double G4IonStoppingData::GetDEDX(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::AddPhysicsVector(
+G4bool SFUIonStoppingData::AddPhysicsVector(
         G4PhysicsVector* physicsVector, // Physics vector
 	G4int atomicNumberIon,          // Atomic number of ion
         const G4String& matIdentifier   // Name of elemental material
@@ -201,7 +201,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(physicsVector == 0) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: Pointer to vector"
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: Pointer to vector"
             << " is null-pointer."
             << G4endl;
 #endif
@@ -212,7 +212,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(matIdentifier.empty()) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Cannot add physics vector. Invalid name."
             << G4endl;
 #endif
@@ -223,7 +223,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(atomicNumberIon <= 0) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Cannot add physics vector. Illegal atomic number."
             << G4endl;
 #endif
@@ -236,7 +236,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(dedxMapMaterials.count(mkey) == 1) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Vector with Z1 = " << atomicNumberIon << ", mat = " 
             << matIdentifier
             << "already exists. Remove first before replacing."
@@ -253,7 +253,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::AddPhysicsVector(
+G4bool SFUIonStoppingData::AddPhysicsVector(
         G4PhysicsVector* physicsVector, // Physics vector
 	G4int atomicNumberIon,          // Atomic number of ion
         G4int atomicNumberElem          // Atomic number of elemental material
@@ -262,7 +262,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(physicsVector == 0) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Pointer to vector is null-pointer."
             << G4endl;
 #endif
@@ -273,7 +273,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(atomicNumberIon <= 0) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Cannot add physics vector. Illegal atomic number."
             << G4endl;
 #endif
@@ -284,7 +284,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(atomicNumberElem <= 0) {
 
 #ifdef G4VERBOSE
-        G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+        G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
                << "Atomic number of element < 0."
                << G4endl;
 #endif
@@ -296,7 +296,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
   if(dedxMapElements.count(key) == 1) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::AddPhysicsVector() Error: "
+     G4cerr << "SFUIonStoppingData::AddPhysicsVector() Error: "
             << "Vector with Z1 = " << atomicNumberIon << ", Z2 = " 
             << atomicNumberElem
             << " already exists. Remove first before replacing."
@@ -312,7 +312,7 @@ G4bool G4IonStoppingData::AddPhysicsVector(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::RemovePhysicsVector(
+G4bool SFUIonStoppingData::RemovePhysicsVector(
 	G4int atomicNumberIon,         // Atomic number of ion
         const G4String& matIdentifier  // Name or chemical formula of material
 				      ) {
@@ -324,7 +324,7 @@ G4bool G4IonStoppingData::RemovePhysicsVector(
   if(iter == dedxMapMaterials.end()) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::RemovePhysicsVector() Warning: "
+     G4cerr << "SFUIonStoppingData::RemovePhysicsVector() Warning: "
             << "Cannot remove physics vector. Vector not found."
             << G4endl;
 #endif
@@ -345,7 +345,7 @@ G4bool G4IonStoppingData::RemovePhysicsVector(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::RemovePhysicsVector(
+G4bool SFUIonStoppingData::RemovePhysicsVector(
 	G4int atomicNumberIon,         // Atomic number of ion
         G4int atomicNumberElem         // Atomic number of elemental material
 				      ) {
@@ -356,7 +356,7 @@ G4bool G4IonStoppingData::RemovePhysicsVector(
   if(iter == dedxMapElements.end()) {
 
 #ifdef G4VERBOSE
-     G4cerr << "G4IonStoppingData::RemovePhysicsVector() Warning: "
+     G4cerr << "SFUIonStoppingData::RemovePhysicsVector() Warning: "
             << "Cannot remove physics vector. Vector not found."
             << G4endl;
 #endif
@@ -377,7 +377,7 @@ G4bool G4IonStoppingData::RemovePhysicsVector(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::BuildPhysicsVector(
+G4bool SFUIonStoppingData::BuildPhysicsVector(
 	G4int atomicNumberIon,          // Atomic number of ion
         const G4String& matIdentifier   // Name of material
         					     ) {
@@ -386,7 +386,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
 
   /*char* path = getenv("G4LEDATA");
   if ( !path ) {
-    G4Exception("G4IonStoppingData::BuildPhysicsVector: G4LEDATA environment variable not set");
+    G4Exception("SFUIonStoppingData::BuildPhysicsVector: G4LEDATA environment variable not set");
     return false;
   }*/
   
@@ -432,7 +432,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
 
 // #########################################################################
 
-G4bool G4IonStoppingData::BuildPhysicsVector(
+G4bool SFUIonStoppingData::BuildPhysicsVector(
 	G4int atomicNumberIon,          // Atomic number of ion
         G4int atomicNumberElem          // Atomic number of elemental material
         					     ) {
@@ -441,7 +441,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
 
   /*char* path = getenv("G4LEDATA");
   if ( !path ) {
-    G4Exception("G4IonStoppingData::BuildPhysicsVector: G4LEDATA environment variable not set");
+    G4Exception("SFUIonStoppingData::BuildPhysicsVector: G4LEDATA environment variable not set");
     return false;
   }*/
   
@@ -487,7 +487,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
 
 // #########################################################################
 
-void G4IonStoppingData::ClearTable() {
+void SFUIonStoppingData::ClearTable() {
 
   G4IonDEDXMapMat::iterator iterMat = dedxMapMaterials.begin();
   G4IonDEDXMapMat::iterator iterMat_end = dedxMapMaterials.end();
@@ -516,7 +516,7 @@ void G4IonStoppingData::ClearTable() {
 
 // #########################################################################
 
-void G4IonStoppingData::DumpMap() {
+void SFUIonStoppingData::DumpMap() {
 
   G4IonDEDXMapMat::iterator iterMat = dedxMapMaterials.begin();
   G4IonDEDXMapMat::iterator iterMat_end = dedxMapMaterials.end();

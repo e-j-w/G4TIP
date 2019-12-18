@@ -99,7 +99,7 @@ void PhysicsList::ConstructEM() {
                                             // allow for custom stopping powers
       if (customStopping) {
         theModel->RemoveDEDXTable("ICRU73");
-        theModel->AddDEDXTable("Custom", new G4IonStoppingData(cspath),
+        theModel->AddDEDXTable("Custom", new SFUIonStoppingData(cspath),
                                new G4IonDEDXScalingICRU73()); // add stopping
                                                               // power data from
                                                               // data files
