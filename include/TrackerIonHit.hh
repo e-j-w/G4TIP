@@ -50,8 +50,11 @@ class TrackerIonHit : public G4VHit
       void SetReactionInFlag(){pflag=REACTION_IN_FLAG;}
       void SetReactionOutFlag(){pflag=REACTION_OUT_FLAG;}
       void SetTargetInFlag(){flag=TARGET_IN_FLAG;}
+      void SetTargetOutFlag(){flag=TARGET_OUT_FLAG;}
       void SetBackingInFlag(){flag=BACKING_IN_FLAG;}
       void SetBackingOutFlag(){flag=BACKING_OUT_FLAG;}
+      void SetDegraderInFlag(){flag=DEGRADER_IN_FLAG;}
+      void SetDegraderOutFlag(){flag=DEGRADER_OUT_FLAG;}
       void SetPFlag(G4int i){pflag=i;}
       void SetTime(G4double t){time=t;};
   

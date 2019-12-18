@@ -15,7 +15,6 @@
 #include "DetectorConstruction.hh"
 #include <vector>
 
-
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
@@ -31,8 +30,8 @@ private:
 
   G4int n_particle;
   G4ParticleGun* particleGun;
-  //G4ParticleTable* particleTable;
-  G4IonTable* ionTable;
+  // G4ParticleTable* particleTable; // v9.4.p04
+  G4IonTable *ionTable;
   G4ParticleDefinition* ion;
   G4ThreeVector  direction;
   G4ThreeVector  position;

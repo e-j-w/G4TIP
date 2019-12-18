@@ -40,8 +40,8 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-SteppingAction::SteppingAction(DetectorConstruction *det, EventAction *evt)
-    : detector(det), eventaction(evt) {
+SteppingAction::SteppingAction(DetectorConstruction *detConst, EventAction *evt)
+    : detector(detConst), eventaction(evt) {
   griffinDetectorMapSet = false;
   numberOfAssemblyVols = 13;
 
@@ -305,9 +305,9 @@ void SteppingAction::SetDetNumberForGenericDetector(G4String volname) {
   // G4endl;
 }
 
-G4int SteppingAction::FindTrueGriffinDetector(G4int det) {
+G4int SteppingAction::FindTrueGriffinDetector(G4int detx) {
   G4int trueDet;
-  trueDet = detector->griffinDetectorsMap[det - 1];
+  trueDet = detector->griffinDetectorsMap[detx - 1];
 
   return trueDet;
 }

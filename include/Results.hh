@@ -150,7 +150,7 @@ private:
 
   EventStat eStat;
   IonStat stat;
-  IonInf gun, pTIn, pRIn, rROut, rBIn, rBOut, rDec[MAXNUMDECAYS],
+  IonInf gun, pBIn, pBOut, pTIn, pRIn, rROut, rTOut, rDIn, rDOut, rDec[MAXNUMDECAYS],
       partROut;      // ion tracking (projectile, residual)
   CsIInf partHit;     // particle hit
   GInf GHit;          // gamma hit

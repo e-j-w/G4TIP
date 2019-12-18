@@ -61,7 +61,7 @@ class EventAction : public G4UserEventAction
   G4int         CsICollectionID;
   G4int         CollectionGriffinGe;
   timeval       tc,ts,td;
-  double        t,rate;
+  double        tt,rate;
   RunAction*    run_action;
   G4int         GriffinCrystDisabled[16][4];
   G4double      GriffinCrystEnergyDet[16][4];

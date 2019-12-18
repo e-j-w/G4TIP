@@ -1200,7 +1200,7 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
 {
 
-  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterial);
+  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterialStr);
   if( !electrodeMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -1257,7 +1257,7 @@ void DetectionSystemGriffin::ConstructDetector()
   G4RotationMatrix* rotate_piece[4] ;
   G4ThreeVector move_piece[4] ; 
   
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
+  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterialStr);
   if( !structureMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -1551,12 +1551,12 @@ void DetectionSystemGriffin::ConstructColdFinger()
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
+  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterialStr);
   if( !structureMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterial);
+  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterialStr);
   if( !electrodeMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -1935,7 +1935,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   G4int i;
   G4double x0, y0, z0, x, y, z;
 
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
+  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterialStr);
   if( !structureMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
@@ -2014,7 +2014,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
     G4RotationMatrix* rotate_back_suppressor_shells[4] ; 
     G4ThreeVector move_back_quarter_suppressor[4] ; 
 
-  	for( G4int i = 0 ; i < 4 ; i++ )
+  	for(i = 0 ; i < 4 ; i++ )
   		{
   			rotate_back_suppressor_shells[i] = new G4RotationMatrix ;
   			rotate_back_suppressor_shells[i]->rotateX( -M_PI / 2.0 + i * M_PI / 2.0 ) ;
@@ -2276,7 +2276,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLay
   G4String strdet = G4UIcommand::ConvertToString(det);
   G4String strcry = G4UIcommand::ConvertToString(cry);
 
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
+  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterialStr);
   if( !structureMaterial ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);

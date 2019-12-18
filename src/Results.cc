@@ -22,15 +22,12 @@ void Results::SetupRun(Int_t nP, Int_t nN, Int_t nA) {
   numA = nA;
   Ap = theProjectile->getA();
   Zp = theProjectile->getZ();
-  Ar = theProjectile->getA() + theDetector->GetTarget()->getTargetMass() -
+  Ar = theProjectile->getA() + theDetector->GetPlunger()->getTargetMass() -
        numP - numN - numA * 4;
-  Zr = theProjectile->getZ() + theDetector->GetTarget()->getTargetCharge() -
+  Zr = theProjectile->getZ() + theDetector->GetPlunger()->getTargetCharge() -
        numP - numA * 2;
-  // G4cout << "Results: target A: " <<
-  // theDetector->GetTarget()->getTargetMass() << ", target Z: " <<
-  // theDetector->GetTarget()->getTargetCharge() << G4endl;
-  // G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",
-  // recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
+  //   G4cout << "Results: target A: " << theDetector->GetPlunger()->getTargetMass() << ", target Z: " <<theDetector->GetPlunger()->getTargetCharge() << G4endl;
+  //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
 
   // get HPGe and CsI crystal positions
   if (theDetector->usingCsIBall())
@@ -104,23 +101,36 @@ void Results::TreeCreate() {
     tree->Branch("projGun", &gun,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
                  "D:phi/D:w/D"); // projectile when shot from the particle gun
+
+    tree->Branch("projBackingIn", &pBIn,
+                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
+                 "D:phi/D:w/D"); // projectile upon entering the target        
+
+
     tree->Branch("projTargetIn", &pTIn,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
                  "D:phi/D:w/D"); // projectile upon entering the target
+
     tree->Branch("projReactionIn", &pRIn,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
                  "D:phi/D:w/D"); // projectile at the reaction point
+
     tree->Branch("resReactionOut", &rROut,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
                  "D:phi/D:w/D"); // residual at the reaction point
-    tree->Branch(
-        "resBackingIn", &rBIn,
+
+    tree->Branch("resTargetOut", &rTOut,
         "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
-        "D"); // residual upon leaving the target/entering the backing
-    tree->Branch(
-        "resBackingOut", &rBOut,
-        "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
-        "D"); // residual upon leaving the backing (if it makes it that far)
+        "D"); // residual upon leaving the target
+
+    tree->Branch("resDegraderIn", &rDIn,
+	 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
+	 "D"); // residual upon entering the degrader  
+
+    tree->Branch("resDegraderOut", &rDOut,
+	 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
+         "D"); // residual upon leaving the degrader
+
     for (int i = 0; i < numDec; i++) // make branch for each decay
       if (i < MAXNUMDECAYS) {
         sprintf(branchName, "resDec%i", i + 1);
@@ -132,7 +142,7 @@ void Results::TreeCreate() {
     tree->Branch("partReactionOut", &partROut,
                  "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/"
                  "D"); // evaporated particle at the reaction point
-  } else {
+ } else {
     printf("Tree not deleted, could not create new tree!\n");
     getc(stdin);
   }
@@ -169,14 +179,19 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&eStat, 0, soes);
   memset(&stat, 0, sos);
   memset(&gun, 0, soi);
+  memset(&pBIn, 0, soi);
   memset(&pTIn, 0, soi);
+  memset(&rTOut,0,soi);
+  memset(&rDIn,0,soi);
+  memset(&rDOut,0,soi);
   memset(&pRIn, 0, soi);
   memset(&rROut, 0, soi);
-  memset(&rBIn, 0, soi);
-  memset(&rBOut, 0, soi);
+ 
+ 
   for (int i = 0; i < numDec; i++)
     if (i < MAXNUMDECAYS)
       memset(&rDec[i], 0, soi);
+
   memset(&partROut, 0, soi);
   memset(&partHit, 0, soh);
   // memset(&GHit,0,sogh);
@@ -219,6 +234,10 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     stat.Zp = Zp;
 
     for (Int_t i = 0; i < Nt; i++) {
+      
+      //      if((*IonCollection)[i]->GetFlag()!=0)
+      //	printf("Flag %d\n",(*IonCollection)[i]->GetFlag());
+
       if ((*IonCollection)[i]->GetFlag() == GUN_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ap)
           if ((*IonCollection)[i]->GetZ() == Zp) {
@@ -243,6 +262,31 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                               (*IonCollection)[i]->GetMom().getY())) /
                 degree; // angle between (1,0,0) and momentum vector in x and y
             gun.w = (*IonCollection)[i]->GetWeight();
+          }
+      } else if ((*IonCollection)[i]->GetFlag() == BACKING_IN_FLAG) {
+        if ((*IonCollection)[i]->GetA() == Ap)
+          if ((*IonCollection)[i]->GetZ() == Zp) {
+            pBIn.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            pBIn.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            pBIn.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            pBIn.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            pBIn.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            pBIn.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            pBIn.b = (*IonCollection)[i]->GetBeta();
+            pBIn.E = (*IonCollection)[i]->GetKE() / MeV;
+            pBIn.t = (*IonCollection)[i]->GetTime() / ns;
+            pBIn.tROffset = 0.;
+            pBIn.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                              ((*IonCollection)[i]->GetMom().mag())) /
+                         degree; // angle between (0,0,1) and momentum vector                                                                                                       
+            pBIn.phi =
+                acos((*IonCollection)[i]->GetMom().getX() /
+                     sqrt((*IonCollection)[i]->GetMom().getX() *
+                              (*IonCollection)[i]->GetMom().getX() +
+                          (*IonCollection)[i]->GetMom().getY() *
+                              (*IonCollection)[i]->GetMom().getY())) /
+                degree; // angle between (1,0,0) and momentum vector in x and y                                                                                                     
+            pBIn.w = (*IonCollection)[i]->GetWeight();
           }
       } else if ((*IonCollection)[i]->GetFlag() == TARGET_IN_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ap)
@@ -269,59 +313,87 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             pTIn.w = (*IonCollection)[i]->GetWeight();
           }
-      } else if ((*IonCollection)[i]->GetFlag() == BACKING_IN_FLAG) {
+      }
+      else if ((*IonCollection)[i]->GetFlag() == TARGET_OUT_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ar)
           if ((*IonCollection)[i]->GetZ() == Zr) {
-            rBIn.x = (*IonCollection)[i]->GetPos().getX() / mm;
-            rBIn.y = (*IonCollection)[i]->GetPos().getY() / mm;
-            rBIn.z = (*IonCollection)[i]->GetPos().getZ() / mm;
-            rBIn.px = (*IonCollection)[i]->GetMom().getX() / MeV;
-            rBIn.py = (*IonCollection)[i]->GetMom().getY() / MeV;
-            rBIn.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
-            rBIn.b = (*IonCollection)[i]->GetBeta();
-            rBIn.E = (*IonCollection)[i]->GetKE() / MeV;
-            rBIn.t = (*IonCollection)[i]->GetTime() / ns;
-            rBIn.tROffset = 0.;
-            rBIn.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+            rTOut.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            rTOut.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            rTOut.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            rTOut.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            rTOut.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            rTOut.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            rTOut.b = (*IonCollection)[i]->GetBeta();
+            rTOut.E = (*IonCollection)[i]->GetKE() / MeV;
+            rTOut.t = (*IonCollection)[i]->GetTime() / ns;
+            rTOut.tROffset = 0.;
+            rTOut.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
                               ((*IonCollection)[i]->GetMom().mag())) /
                          degree; // angle between (0,0,1) and momentum vector
-            rBIn.phi =
+            rTOut.phi =
                 acos((*IonCollection)[i]->GetMom().getX() /
                      sqrt((*IonCollection)[i]->GetMom().getX() *
                               (*IonCollection)[i]->GetMom().getX() +
                           (*IonCollection)[i]->GetMom().getY() *
                               (*IonCollection)[i]->GetMom().getY())) /
                 degree; // angle between (1,0,0) and momentum vector in x and y
-            rBIn.w = (*IonCollection)[i]->GetWeight();
-          }
-      } else if ((*IonCollection)[i]->GetFlag() == BACKING_OUT_FLAG) {
-        if ((*IonCollection)[i]->GetA() == Ar)
-          if ((*IonCollection)[i]->GetZ() == Zr) {
-            rBOut.x = (*IonCollection)[i]->GetPos().getX() / mm;
-            rBOut.y = (*IonCollection)[i]->GetPos().getY() / mm;
-            rBOut.z = (*IonCollection)[i]->GetPos().getZ() / mm;
-            rBOut.px = (*IonCollection)[i]->GetMom().getX() / MeV;
-            rBOut.py = (*IonCollection)[i]->GetMom().getY() / MeV;
-            rBOut.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
-            rBOut.b = (*IonCollection)[i]->GetBeta();
-            rBOut.E = (*IonCollection)[i]->GetKE() / MeV;
-            rBOut.t = (*IonCollection)[i]->GetTime() / ns;
-            rBOut.tROffset = 0.;
-            rBOut.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
-                               ((*IonCollection)[i]->GetMom().mag())) /
-                          degree; // angle between (0,0,1) and momentum vector
-            rBOut.phi =
-                acos((*IonCollection)[i]->GetMom().getX() /
-                     sqrt((*IonCollection)[i]->GetMom().getX() *
-                              (*IonCollection)[i]->GetMom().getX() +
-                          (*IonCollection)[i]->GetMom().getY() *
-                              (*IonCollection)[i]->GetMom().getY())) /
-                degree; // angle between (1,0,0) and momentum vector in x and y
-            rBOut.w = (*IonCollection)[i]->GetWeight();
+            rTOut.w = (*IonCollection)[i]->GetWeight();
           }
       }
+      else if ((*IonCollection)[i]->GetFlag() == DEGRADER_IN_FLAG) {
+        if ((*IonCollection)[i]->GetA() == Ar)
+          if ((*IonCollection)[i]->GetZ() == Zr) {
+            rDIn.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            rDIn.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            rDIn.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            rDIn.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            rDIn.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            rDIn.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            rDIn.b = (*IonCollection)[i]->GetBeta();
+            rDIn.E = (*IonCollection)[i]->GetKE() / MeV;
+            rDIn.t = (*IonCollection)[i]->GetTime() / ns;
+            rDIn.tROffset = 0.;
+            rDIn.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                               ((*IonCollection)[i]->GetMom().mag())) /
+                          degree; // angle between (0,0,1) and momentum vector
+            rDIn.phi =
+                acos((*IonCollection)[i]->GetMom().getX() /
+                     sqrt((*IonCollection)[i]->GetMom().getX() *
+                              (*IonCollection)[i]->GetMom().getX() +
+                          (*IonCollection)[i]->GetMom().getY() *
+                              (*IonCollection)[i]->GetMom().getY())) /
+                degree; // angle between (1,0,0) and momentum vector in x and y
+            rDIn.w = (*IonCollection)[i]->GetWeight();
+	    }
+        }
+      else if ((*IonCollection)[i]->GetFlag() == DEGRADER_OUT_FLAG) {
+	if ((*IonCollection)[i]->GetA() == Ar)
+          if ((*IonCollection)[i]->GetZ() == Zr) {
+            rDOut.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            rDOut.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            rDOut.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            rDOut.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            rDOut.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            rDOut.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            rDOut.b = (*IonCollection)[i]->GetBeta();
+            rDOut.E = (*IonCollection)[i]->GetKE() / MeV;
+            rDOut.t = (*IonCollection)[i]->GetTime() / ns;
+            rDOut.tROffset = 0.;
+            rDOut.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                               ((*IonCollection)[i]->GetMom().mag())) /
+                          degree; // angle between (0,0,1) and momentum vector                                                                                                             
+            rDOut.phi =
+                acos((*IonCollection)[i]->GetMom().getX() /
+                     sqrt((*IonCollection)[i]->GetMom().getX() *
+                              (*IonCollection)[i]->GetMom().getX() +
+                          (*IonCollection)[i]->GetMom().getY() *
+                              (*IonCollection)[i]->GetMom().getY())) /
+                degree; // angle between (1,0,0) and momentum vector in x and y                                                                                                            
+            rDOut.w = (*IonCollection)[i]->GetWeight();
+            }
+        }      
     }
-
+      
     for (Int_t i = 0; i < Nt; i++) {
       if ((*IonCollection)[i]->GetPFlag() == REACTION_IN_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ap)
@@ -374,8 +446,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rROut.w = (*IonCollection)[i]->GetWeight();
           }
-
-        
       } else if ((*IonCollection)[i]->GetPFlag() >= DECAY_FLAG) {
         G4int flag = (*IonCollection)[i]->GetPFlag();
         if ((*IonCollection)[i]->GetA() == Ar)
@@ -416,19 +486,25 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
 
   // record time offsets with respect to the reaction
   gun.tROffset = gun.t - pRIn.t;
+  pBIn.tROffset = pBIn.t - pRIn.t;
   pTIn.tROffset = pTIn.t - pRIn.t;
-  rBIn.tROffset = rBIn.t - pRIn.t;
-  rBOut.tROffset = rBOut.t - pRIn.t;
+  rTOut.tROffset = rTOut.t - pRIn.t;
+  rDIn.tROffset=rDIn.t-pRIn.t;
+  rDOut.tROffset=rDOut.t-pRIn.t;
   rROut.tROffset = rROut.t - pRIn.t;
   partROut.tROffset = partROut.t - pRIn.t;
   if (gun.tROffset < 0.)
     gun.tROffset = 0.;
-  if (pTIn.tROffset < 0.)
+  if (pBIn.tROffset < 0.)
+    pBIn.tROffset = 0.;
+   if (pTIn.tROffset < 0.)
     pTIn.tROffset = 0.;
-  if (rBIn.tROffset < 0.)
-    rBIn.tROffset = 0.;
-  if (rBOut.tROffset < 0.)
-    rBOut.tROffset = 0.;
+  if (rTOut.tROffset < 0.)
+    rTOut.tROffset = 0.;
+  if (rDIn.tROffset < 0.)
+    rDIn.tROffset = 0.;
+  if (rDOut.tROffset < 0.)
+    rDOut.tROffset = 0.;
   if (partROut.tROffset < 0.)
     partROut.tROffset = 0.;
 

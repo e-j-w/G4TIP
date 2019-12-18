@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(TIP_Fusion_Evaporation)
+project(TIP_FE_RDM)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -31,24 +31,25 @@ include_directories(SYSTEM $ENV{ROOTINC})
 # Setup include directory for this project
 #
 include(${Geant4_USE_FILE})
-include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
+include_directories(SYSTEM BEFORE ${PROJECT_SOURCE_DIR}/include)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
 #
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 and ROOT libraries
 #
-add_executable(TIP_Fusion_Evaporation TIP_Fusion_Evaporation.cc ${sources} ${headers})
-target_link_libraries(TIP_Fusion_Evaporation ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
+add_executable(TIP_FE_RDM TIP_FE_RDM.cc ${sources} ${headers})
+target_link_libraries(TIP_FE_RDM ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build TIP_Fusion_Evaporation
+# build TIP_FE_RDM
 #
 set(TIPFUSEVAP_SCRIPTS
   1274level.mac
@@ -73,6 +74,6 @@ endforeach()
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS TIP_Fusion_Evaporation DESTINATION bin)
+install(TARGETS TIP_FE_RDM DESTINATION bin)
 
 
