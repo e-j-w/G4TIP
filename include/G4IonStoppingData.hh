@@ -48,8 +48,8 @@
 // =========================================================================== 
 //
 
-#ifndef SFUIONSTOPPINGDATA_HH
-#define SFUIONSTOPPINGDATA_HH
+#ifndef G4IonStoppingData_HH
+#define G4IonStoppingData_HH
 
 #include "globals.hh"
 #include "G4VIonDEDXTable.hh"
@@ -57,11 +57,11 @@
 #include <vector>
 #include <map>
 
-class SFUIonStoppingData : public G4VIonDEDXTable {
+class G4IonStoppingData : public G4VIonDEDXTable {
 
  public:
-   SFUIonStoppingData(const G4String& leDirectory);
-   virtual ~SFUIonStoppingData();
+   G4IonStoppingData(const G4String& leDirectory);
+   virtual ~G4IonStoppingData();
 
    // Function for checking the availability of stopping power tables
    // for a given ion-material couple, where the material consists of
@@ -165,4 +165,4 @@ class SFUIonStoppingData : public G4VIonDEDXTable {
    G4IonDEDXMapMat dedxMapMaterials;
 };
 
-#endif // SFUIONSTOPPINGDATA_HH
+#endif // G4IonStoppingData_HH

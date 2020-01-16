@@ -30,8 +30,8 @@ include_directories(SYSTEM $ENV{ROOTINC})
 # Setup Geant4 include directories and compile definitions
 # Setup include directory for this project
 #
+include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/include)
 include(${Geant4_USE_FILE})
-include_directories(SYSTEM BEFORE ${PROJECT_SOURCE_DIR}/include)
 
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project

@@ -38,7 +38,7 @@ source $G4INSTALL/share/GEANT4_VERSION/geant4make/geant4make.sh
 The program is then compiled from source using the following commands (substituting the appropriate directories):
 
 ```
-cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION
+cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib64/GEANT4_VERSION
 make
 ```
 

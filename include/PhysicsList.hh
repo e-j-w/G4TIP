@@ -28,7 +28,7 @@
 //#include "G4ScreenedNuclearRecoil.hh" //only in newer GEANT4 versions?
 #include "G4IonDEDXScalingICRU73.hh"
 #include "G4IonParametrisedLossModel.hh"
-#include "SFUIonStoppingData.hh"
+#include "G4IonStoppingData.hh"
 #include "G4NuclearStopping.hh"
 
 // neutrons

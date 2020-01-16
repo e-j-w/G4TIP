@@ -24,3 +24,4 @@ DetectorConstructionSuppressed.cc
 TIP_Fusion_Evaporation
 TIP_FE_RDM
 Makefile
+.nfs*
