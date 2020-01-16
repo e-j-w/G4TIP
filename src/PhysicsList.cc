@@ -99,11 +99,12 @@ void PhysicsList::ConstructEM() {
                                             // allow for custom stopping powers
       if (customStopping) {
         theModel->RemoveDEDXTable("ICRU73");
-        theModel->AddDEDXTable("Custom", new SFUIonStoppingData(cspath),
+        theModel->AddDEDXTable("Custom", new G4IonStoppingData(cspath),
                                new G4IonDEDXScalingICRU73()); // add stopping
                                                               // power data from
                                                               // data files
       }
+      theModel->ListDEDXTables();
       ionIoni->SetStepFunction(
           0.05, stepSize); // small step size needed for short lifetimes?
       ionIoni->SetEmModel(theModel);
