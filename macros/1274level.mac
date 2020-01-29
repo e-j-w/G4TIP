@@ -1,5 +1,5 @@
 /Physics/Step 0.05 um
-#/Physics/IgnoreNeutrons
+/Physics/IgnoreNeutrons
 #/Construction/UseCsIBall
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize

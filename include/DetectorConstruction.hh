@@ -100,6 +100,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
   G4bool    useCsIball;
 
   GriffinMessenger* griffinMessenger;
+
+  void DefineSuppressedParameters();
+  void DefineMaterials();
 };
 
 #endif

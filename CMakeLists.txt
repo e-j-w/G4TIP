@@ -51,9 +51,9 @@ target_link_libraries(TIP_Fusion_Evaporation ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 # build TIP_Fusion_Evaporation
 #
 set(TIPFUSEVAP_SCRIPTS
-  1274level.mac
-  gui/vis.mac
-  gui/gui.mac
+  macros/1274level.mac
+  macros/vis.mac
+  macros/gui.mac
   )
 
 foreach(_script ${TIPFUSEVAP_SCRIPTS})
