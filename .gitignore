@@ -23,3 +23,5 @@ TIP_Fusion_Evaporation
 TIP_FE_RDM
 Makefile
 .nfs*
+DetectionSystemGriffinSuppressed.cc
+DetectorConstructionSuppressed.cc

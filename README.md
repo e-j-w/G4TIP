@@ -35,6 +35,9 @@ source $G4INSTALL/bin/geant4.sh
 source $G4INSTALL/share/GEANT4_VERSION/geant4make/geant4make.sh
 ```
 
+This program requires secret files describing the GRIFFIN geometry.  After obtaining these files from a collaborator, copy them to the `src` directory.
+
+
 The program is then compiled from source using the following commands (substituting the appropriate directories):
 
 ```
