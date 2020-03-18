@@ -256,8 +256,8 @@ private:
   G4double wedgeDim;
   G4double quarterDetectorCxn;
   G4double quarterDetectorCxnB;
-  G4String electrodeMaterialStr;
-  G4String structureMaterialStr;
+  G4String electrodeMaterial;
+  G4String structureMaterial;
 
   
   // Assembly volumes

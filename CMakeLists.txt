@@ -52,7 +52,7 @@ target_link_libraries(TIP_FE_RDM ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 # build TIP_FE_RDM
 #
 set(TIPFUSEVAP_SCRIPTS
-  1274level.mac
+  1274level_rdm.mac
   gui/vis.mac
   gui/gui.mac
   )
