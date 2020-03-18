@@ -30,6 +30,7 @@ class Materials
   G4Material* Ca;
   G4Material* Ta;
   G4Material* Ni;
+  G4Material* S;
 
   // Compounds
   G4Material* Vacuum;
