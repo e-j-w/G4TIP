@@ -1,4 +1,4 @@
-# TIP Fusion-Evaporation Code
+# G4TIP
 
 Maintainer: Jonathan Williams
 
@@ -58,21 +58,26 @@ This program requires secret files describing the GRIFFIN geometry (`DetectionSy
 The program is then compiled from source using the following commands (substituting the appropriate directories):
 
 ```
-cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION
-make
+cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION .
+make -j
 ```
 
 ## Using the program
 
-The program `TIP_Fusion_Evaporation` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files `1274level.mac` and `3357cascade.mac` for examples of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
+The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files in the `macros` directory for examples of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
 
-### Detectors and Geometry
+### Detectors and geometry
 
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
 | /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option. |
 | /Construction/UsePlunger | Use the TIP plunger as the reaction target. |
+
+#### DSAM target parameters
+
+|**Command**|**Effect**|
+|:---:|:---:|
 | /Target/ThicknessMgCm2 NUMBER | The thickness of the reaction target, in mg/cm^2. |
 | /Target/Thickness NUMBER um | The thickness of the reaction target, in micrometers (can be used instead of /Target/ThicknessMgCm2). |
 | /Backing/Thickness NUMBER um | The thickness of the reaction target backing, in micrometers. |
@@ -81,14 +86,14 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /Backing/Z NUMBER | The proton number of the target backing. |
 
-### Physics Parameters
+### Physics parameters
 
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
 | /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
 
-### Reaction Parameters
+### Fusion-evaporation reaction parameters
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -110,7 +115,7 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Reaction/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
 | /Reaction/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
 
-### Trigger Parameters
+### Trigger parameters
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -129,7 +134,7 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 
 <sup>1</sup>If none of /Trigger/A, /Trigger/Z, /Trigger/ARange, and /Trigger/ZRange are set, the particle trigger will be applied to any charged particle.
 
-### Data Generation and Saving
+### Data generation and saving
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -137,7 +142,7 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 | /Results/Tree/Save FILENAME | Saves the results of the simulation to a ROOT tree in the specified file. |
 
 
-## Other Notes
+## Other notes
 
 Some GEANT4 classes have been backported from version 9.4 for use in this code:
 

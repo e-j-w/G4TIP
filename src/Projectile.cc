@@ -6,6 +6,8 @@ Projectile::Projectile()
 {
   A=18;
   Z=8;
+  Ex=0.*MeV;
+  Tau=0.*ns;
   KE=100*MeV;
   fcX=0.*mm;
   fcDX=0.0*mm;
@@ -34,6 +36,8 @@ void Projectile::Report()
   G4cout<<"----> Z of the projectile set to  "<<Z<< G4endl;
   G4cout<<"----> A of the projectile set to  "<<A<< G4endl;
   G4cout<<"----> Kin. En. of the projectile set to "<<KE/MeV<<" MeV"<<G4endl;
+  G4cout<<"----> Excitation energy of the projectile set to "<<Ex/MeV<<" MeV"<<G4endl;
+  G4cout<<"----> Lifetime for the dexcitation of the projectile set to "<<Tau/ns*1000.<<" ps"<<G4endl;
   G4cout<<"----> focal point X position for the projectile set to  "<<G4BestUnit(fcX,"Length")<< G4endl;
   G4cout<<"----> focal point DX size for the projectile set to  "<<G4BestUnit(fcDX,"Length")<< G4endl;
   G4cout<<"----> focal point Y position for the projectile set to  "<<G4BestUnit(fcY,"Length")<< G4endl;
@@ -113,9 +117,23 @@ void Projectile::setKE(G4double KEin)
 {
 
   KE=KEin;
-G4cout<<"----> Kin. En. of the projectile set to "<<
- G4BestUnit(KE,"Energy")<<G4endl;
+  G4cout<<"----> Kin. En. of the projectile set to "<<
+  G4BestUnit(KE,"Energy")<<G4endl;
 
+}
+//---------------------------------------------------------
+void Projectile::setTau(G4double T)
+{
+
+  Tau=T;
+ G4cout<<"----> Lifetime for the dexcitation of the projectile set to "<<Tau/ns*1000.<<" ps"<<G4endl;
+}
+//---------------------------------------------------------
+void Projectile::setEx(G4double E)
+{
+
+  Ex=E;
+  G4cout<<"----> Excitation energy of the projectile set to "<<Ex/MeV<<" MeV"<<G4endl;
 }
 //---------------------------------------------------------
 G4ThreeVector Projectile::getDirection()

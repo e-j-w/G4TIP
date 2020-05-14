@@ -1,4 +1,6 @@
-// DSAM simulation program for TIP fusion-evaporation
+// Simulation program for TIP
+// Fusion-evaporation or coulex
+// Plunger or DSAM target
 // Implements CsI wall and ball arrays
 
 #include "G4RunManager.hh"
@@ -27,6 +29,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "Projectile.hh"
 #include "Projectile_Messenger.hh"
+#include "Recoil.hh"
+#include "Recoil_Messenger.hh"
 #include "Results.hh"
 #include "Results_Messenger.hh"
 #include "RunAction.hh"
@@ -56,9 +60,15 @@ int main(int argc, char **argv) {
   ProjectileMessenger = new Projectile_Messenger(theProjectile);
   theProjectile->Report();
 
+  // Construct the outgoing beam (for Coulex)
+  Recoil* theRecoil=new Recoil();
+  Recoil_Messenger* RecoilMessenger;
+  RecoilMessenger = new Recoil_Messenger(theRecoil);
+  theRecoil->Report();
+
   // Setup physics list
   // Also sets up the reaction
-  PhysicsList *thePhysicsList = new PhysicsList(theProjectile, theDetector);
+  PhysicsList *thePhysicsList = new PhysicsList(theProjectile, theRecoil, theDetector);
   runManager->SetUserInitialization(thePhysicsList);
 
   Run_Messenger *runMessenger;
@@ -118,7 +128,7 @@ int main(int argc, char **argv) {
     #endif
     #endif
     #endif*/
-    G4cout << "TIP_Fusion_Evaporation macro_file" << G4endl;
+    G4cout << "G4TIP macro_file" << G4endl;
     G4cout << "---------------------------------" << G4endl;
     G4cout << "Please specify a macro file (.mac) to run as an argument."
            << G4endl;
@@ -168,6 +178,7 @@ int main(int argc, char **argv) {
   // job termination
   delete detectorMessenger;
   delete ProjectileMessenger;
+  delete RecoilMessenger;
   delete resultsMessenger;
   delete runMessenger;
   delete eventActionMessenger;

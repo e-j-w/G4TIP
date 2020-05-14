@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------
 # Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
-project(TIP_Fusion_Evaporation)
+project(G4TIP)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -44,21 +44,22 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 and ROOT libraries
 #
-add_executable(TIP_Fusion_Evaporation TIP_Fusion_Evaporation.cc ${sources} ${headers})
-target_link_libraries(TIP_Fusion_Evaporation ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
+add_executable(G4TIP G4TIP.cc ${sources} ${headers})
+target_link_libraries(G4TIP ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
-# build TIP_Fusion_Evaporation
+# build G4TIP
 #
-set(TIPFUSEVAP_SCRIPTS
+set(G4TIP_SCRIPTS
   macros/1274level_fusevap_dsam.mac
   macros/1274level_fusevap_rdm.mac
+  macros/3357cascade_fusevap_dsam.mac
   macros/vis.mac
   macros/gui.mac
   )
 
-foreach(_script ${TIPFUSEVAP_SCRIPTS})
+foreach(_script ${G4TIP_SCRIPTS})
   configure_file(
     ${PROJECT_SOURCE_DIR}/${_script}
     ${PROJECT_BINARY_DIR}/${_script}
@@ -75,6 +76,6 @@ endforeach()
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS TIP_Fusion_Evaporation DESTINATION bin)
+install(TARGETS G4TIP DESTINATION bin)
 
 

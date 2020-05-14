@@ -14,7 +14,7 @@ Results::Results(Projectile *proj, DetectorConstruction *det,
 
 Results::~Results() { tree->Delete(); }
 //---------------------------------------------------------
-void Results::SetupRun(Int_t nP, Int_t nN, Int_t nA) {
+void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
   // Get A, Z of the projectile and recoiling residual (needed for particle
   // identification when saving data to tree)
   numP = nP;
@@ -39,12 +39,6 @@ void Results::SetupRun(Int_t nP, Int_t nN, Int_t nA) {
   } 
   //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
   
-
-  // get HPGe and CsI crystal positions
-  if (theDetector->usingCsIBall())
-    GetCsIBallPositions();
-  else
-    GetCsIWallPositions();
   /*for(int i=0; i<GN; i++)
     for(int j=0; j<GS; j++)
       {
@@ -53,13 +47,23 @@ void Results::SetupRun(Int_t nP, Int_t nN, Int_t nA) {
     %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
       }*/
 
-  numDec = thePhysicsList->getReaction()->GetNumDecays();
+  numDec = thePhysicsList->getReactionFusEvap()->GetNumDecays();
   G4cout << "Results - number of decays: " << numDec << G4endl;
+
+  SetupRun();
+}
+//---------------------------------------------------------
+void Results::SetupRun(){
+
+  // get HPGe and CsI crystal positions
+  if (theDetector->usingCsIBall())
+    GetCsIBallPositions();
+  else
+    GetCsIWallPositions();
 
   G4cout << "Results - creating tree... ";
   TreeCreate();
   G4cout << "created!" << G4endl;
-
   // getc(stdin);
 }
 //---------------------------------------------------------

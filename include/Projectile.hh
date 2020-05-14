@@ -22,7 +22,9 @@ public:
   void Report();
   void setA(G4int);
   void setZ(G4int);
-  void setKE(G4double); 
+  void setKE(G4double);
+  void setEx(G4double); 
+  void setTau(G4double);
   void setfcX(G4double);
   void setfcDX(G4double);
   void setfcY(G4double);
@@ -36,6 +38,8 @@ public:
 
   G4int getA()    {return A;}
   G4int getZ()    {return Z;}
+  G4double getEx(){return Ex;}
+  G4double getTau(){return Tau;}
   G4double getKE(){return KE;};
   G4double getAta0(){return ata0;}
   G4double getBta0(){return bta0;}
@@ -49,6 +53,8 @@ private:
   
   G4int A;
   G4int Z;
+  G4double Ex;
+  G4double Tau;
   G4double KE;
   G4double fcX;
   G4double fcDX;

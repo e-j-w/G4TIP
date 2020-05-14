@@ -114,7 +114,8 @@ public:
   ~Results();
 
 public:
-  void SetupRun(Int_t, Int_t, Int_t);
+  void SetupRunFusEvap(Int_t, Int_t, Int_t);
+  void SetupRun();
 
   void FillTree(G4int, TrackerIonHitsCollection *, TrackerCsIHitsCollection *,
                 G4double[16][4], G4double[16][4], G4ThreeVector[16][4],

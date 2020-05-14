@@ -52,22 +52,28 @@
 #include "G4LeptonConstructor.hh"
 #include "G4MesonConstructor.hh"
 
+#include "Recoil.hh"
 #include "Projectile.hh"
 #include "ReactionFusEvap.hh"
 #include "ReactionFusEvap_Messenger.hh"
+#include "ReactionCoulex.hh"
+#include "ReactionCoulex_Messenger.hh"
 
 using namespace CLHEP;
 
 class PhysicsList : public G4VUserPhysicsList {
 public:
-  PhysicsList(Projectile *, DetectorConstruction *);
+  PhysicsList(Projectile *, Recoil *, DetectorConstruction *);
   ~PhysicsList();
 
-  ReactionFusEvap *getReaction() { return theReaction; };
+  int getReactionType() { return reactionType; };
+  ReactionFusEvap *getReactionFusEvap() { return theReactionFusEvap; };
+  ReactionCoulex *getReactionCoulex() { return theReactionCoulex; };
   void setStepSize(double ss) { stepSize = ss; };
   void setcs() { customStopping = true; };
   void setcspath(const char *csp) { strcpy(cspath, csp); };
   void setUseNeutrons(bool val) { useNeutrons = val; };
+  void setReactionType(int val) { reactionType = val; };
 
 protected:
   // Construct particle and physics process
@@ -77,13 +83,17 @@ protected:
   void SetCuts();
 
 private:
+  Recoil *theRecoil;
   Projectile *theProjectile;
   DetectorConstruction *theDetector;
-  ReactionFusEvap *theReaction;
-  ReactionFusEvap_Messenger *theReactionMessenger;
+  ReactionFusEvap *theReactionFusEvap;
+  ReactionFusEvap_Messenger *theReactionFusEvapMessenger;
+  ReactionCoulex *theReactionCoulex;
+  ReactionCoulex_Messenger *theReactionCoulexMessenger;
   double stepSize;
   bool customStopping;
   bool useNeutrons = true;
+  int reactionType; //0=fusion-evaporation, 1=coulex
   char cspath[256];
 };
 

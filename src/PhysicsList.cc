@@ -1,7 +1,7 @@
 #include "PhysicsList.hh"
 
-PhysicsList::PhysicsList(Projectile *Proj, DetectorConstruction *Det)
-    : theProjectile(Proj), theDetector(Det) {
+PhysicsList::PhysicsList(Projectile *Proj, Recoil* Rec, DetectorConstruction *Det)
+    : theProjectile(Proj), theRecoil(Rec), theDetector(Det) {
   stepSize = 0.05 * um;
   customStopping = false;
 }
@@ -111,10 +111,21 @@ void PhysicsList::ConstructEM() {
       ionIoni->SetEmModel(theModel);
       pmanager->AddProcess(ionIoni, -1, 3, 2);
       pmanager->AddProcess(new G4NuclearStopping(), -1, 4, -1);
-      theReaction = new ReactionFusEvap(theProjectile, theDetector);
-      theReactionMessenger = new ReactionFusEvap_Messenger(
-          theReaction); // this line needed here but not in Aaron's RDM code
-      pmanager->AddProcess(theReaction, -1, -1, 3);
+      switch(reactionType){
+        case 1:
+          //coulex
+          theReactionCoulex = new ReactionCoulex(theProjectile,theRecoil);
+          theReactionCoulexMessenger = new ReactionCoulex_Messenger(theReactionCoulex);
+          pmanager->AddProcess(theReactionCoulex, -1, -1, 3);
+          break;
+        default:
+          //fusion-evaporation
+          theReactionFusEvap = new ReactionFusEvap(theProjectile, theDetector);
+          theReactionFusEvapMessenger = new ReactionFusEvap_Messenger(theReactionFusEvap); // this line needed here but not in Aaron's RDM code
+          pmanager->AddProcess(theReactionFusEvap, -1, -1, 3);
+          break;
+      }
+      
       pmanager->AddProcess(new G4StepLimiter, -1, -1, 4);
     } else if (particleName == "neutron") {
       if (useNeutrons) {
