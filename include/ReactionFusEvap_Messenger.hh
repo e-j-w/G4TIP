@@ -11,10 +11,10 @@
 #include "ReactionFusEvap.hh"
 #include "globals.hh"
 
-class Reaction_Messenger : public G4UImessenger {
+class ReactionFusEvap_Messenger : public G4UImessenger {
 public:
-  Reaction_Messenger(ReactionFusEvap *);
-  ~Reaction_Messenger();
+  ReactionFusEvap_Messenger(ReactionFusEvap *);
+  ~ReactionFusEvap_Messenger();
 
   void SetNewValue(G4UIcommand *, G4String);
 

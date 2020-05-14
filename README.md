@@ -4,11 +4,9 @@ Maintainer: Jonathan Williams
 
 ## Description
 
-GEANT4 code implementing TIP/TIGRESS DSAM/RDM using a fusion-evaporation reaction process.  For DSAM, use the `dsam` branch.
+GEANT4 code implementing TIP/TIGRESS DSAM/RDM using a fusion-evaporation reaction process.
 
 At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  Step-wise decay of the residual nucleus (gamma ray cascade) is also availaible.
-
-This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead. 
 
 ## Installation
 
@@ -16,7 +14,7 @@ This code has been tested on Ubuntu 14.04/16.04, CentOS 7, and Arch Linux (as of
 
 ### ROOT
 
-ROOT trees are used to store simulated data.  You may already have this set up (in that case just make sure that the environment variables are correctly defined). If not, ROOT should be built from source:
+ROOT trees are used to store simulated data.  The code is tested with v6.x, but earlier versions may work.  You may already have this set up (in that case just make sure that the environment variables are correctly defined). If not, ROOT should be built from source:
 
 [ROOT source code](https://root.cern.ch/downloading-root)
 
@@ -34,6 +32,8 @@ export PATH=$PATH:$ROOTSYS/bin
 ```
 
 ### GEANT4
+
+The code is tested with GEANT4 v10.6.  It may still work with older versions.
 
 [GEANT4 source code](https://geant4.web.cern.ch/support/download)
 

@@ -52,8 +52,8 @@ target_link_libraries(TIP_Fusion_Evaporation ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 # build TIP_Fusion_Evaporation
 #
 set(TIPFUSEVAP_SCRIPTS
-  macros/1274level_dsam.mac
-  macros/1274level_rdm.mac
+  macros/1274level_fusevap_dsam.mac
+  macros/1274level_fusevap_rdm.mac
   macros/vis.mac
   macros/gui.mac
   )

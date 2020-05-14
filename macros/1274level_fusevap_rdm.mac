@@ -1,0 +1,57 @@
+/Physics/Step 0.05 um
+/Physics/IgnoreNeutrons
+/Construction/UseCsIBall
+/Construction/UsePlunger
+#INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
+/Run/Initialize
+/Griffin/UseTIGRESSPositions true
+/Griffin/addGriffinBack 16
+/Projectile/A 18
+/Projectile/Z 8
+/Projectile/KE 48 MeV
+/Projectile/Focus/X 0. mm
+/Projectile/Focus/Y 0. mm
+/Projectile/Focus/Z -50. mm
+/Projectile/Focus/DX 0. mm
+/Projectile/Focus/DY 0. mm
+#
+# Plunger setup
+#
+/Plunger/Backing/Material G4_Galactic
+/Plunger/Backing/Thickness 0.001 um
+/Plunger/Backing/NStep 1
+/Plunger/Target/SetA 12
+/Plunger/Target/SetZ 6
+/Plunger/Target/Material G4_C
+/Plunger/Target/Thickness 1.91 um
+/Plunger/Target/NStep 1
+/Plunger/Stopper/Material G4_Au
+/Plunger/Stopper/Thickness 14.9 um
+/Plunger/Stopper/NStep 1
+/Plunger/Separation 50. um
+/Plunger/Report
+/Reaction/AddDecay 1.274537 5.1937e-3
+/Reaction/N_protons 0
+/Reaction/N_neutrons 0
+/Reaction/N_alpha 2
+/CompoundFormation/Q 23.651 MeV
+/ParticleEvaporation/Q1 -10.643 MeV
+/ParticleEvaporation/Q2 -10.615 MeV
+/ParticleEvaporation/Centroid 14.16082
+/ParticleEvaporation/Width 1.001135
+/ParticleEvaporation/Tau 2.286506
+#/ParticleEvaporation/ConstrainAngularRange
+#/ParticleEvaporation/MaxAngle 50.0 deg
+/Results/Tree/CsIDetectorID 0
+/Trigger/CsIDetectorID 0
+/Trigger/A 4
+/Trigger/Z 2
+/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoincAnd2GammaCores
+/Trigger/CsIThreshold 3.0 MeV
+#/Print/CsI_Track_Set
+#/Print/Track_Set
+/run/beamOn 1000000
+#/Results/Tree/Report
+/Results/Tree/Save run1_1274level_rdm.root
+#/Projectile/Report

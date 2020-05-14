@@ -1,6 +1,6 @@
-#include "Reaction_Messenger.hh"
+#include "ReactionFusEvap_Messenger.hh"
 
-Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
+ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
 
   theReactionDir = new G4UIdirectory("/Reaction/");
   theReactionDir->SetGuidance("Evaporation channel control.");
@@ -145,7 +145,7 @@ Reaction_Messenger::Reaction_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
 
 }
 
-Reaction_Messenger::~Reaction_Messenger() {
+ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
   delete theReactionDir;
   delete EneCmd;
   delete TauCmd;
@@ -180,7 +180,7 @@ Reaction_Messenger::~Reaction_Messenger() {
   delete GDist4Cmd;
 }
 
-void Reaction_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
+void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
 
   if (command == SetupCmd) {
     theReaction->SetupReaction();

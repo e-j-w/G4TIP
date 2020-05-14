@@ -112,7 +112,7 @@ void PhysicsList::ConstructEM() {
       pmanager->AddProcess(ionIoni, -1, 3, 2);
       pmanager->AddProcess(new G4NuclearStopping(), -1, 4, -1);
       theReaction = new ReactionFusEvap(theProjectile, theDetector);
-      theReactionMessenger = new Reaction_Messenger(
+      theReactionMessenger = new ReactionFusEvap_Messenger(
           theReaction); // this line needed here but not in Aaron's RDM code
       pmanager->AddProcess(theReaction, -1, -1, 3);
       pmanager->AddProcess(new G4StepLimiter, -1, -1, 4);

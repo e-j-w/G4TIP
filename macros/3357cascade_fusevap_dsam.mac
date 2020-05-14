@@ -1,5 +1,8 @@
-/Physics/Step 0.005 um
+/Physics/Step 0.05 um
 /Physics/IgnoreNeutrons
+#/Construction/UseCsIBall
+/Construction/UseDSAMTarget
+#/Physics/StoppingTable stopping_data/SRIM
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize
 /Griffin/UseTIGRESSPositions true
@@ -20,27 +23,26 @@
 /Target/A 12
 /Target/Thickness 1.91 um
 /Target/NStep 1
-#using energies measured from expt data
 /Reaction/AddDecay 2.0820 324.61e-6
-/Reaction/AddDecay 1.2744 5.1937e-3
+/Reaction/AddDecay 1.274537 5.1937e-3
 /Reaction/N_protons 0
 /Reaction/N_neutrons 0
 /Reaction/N_alpha 2
 /CompoundFormation/Q 23.651 MeV
 /ParticleEvaporation/Q1 -10.643 MeV
 /ParticleEvaporation/Q2 -10.615 MeV
-/ParticleEvaporation/Centroid 14.59060
-/ParticleEvaporation/Width 1.197889
-/ParticleEvaporation/Tau 2.105894
-/ParticleEvaporation/ConstrainAngularRange
-/ParticleEvaporation/MaxAngle 50.0 deg
+/ParticleEvaporation/Centroid 14.16082
+/ParticleEvaporation/Width 1.001135
+/ParticleEvaporation/Tau 2.286506
+#/ParticleEvaporation/ConstrainAngularRange
+#/ParticleEvaporation/MaxAngle 50.0 deg
 /Target/Report
 /Results/Tree/CsIDetectorID 0
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
 /Trigger/Z 2
-#/Trigger/DefinedParticleCoincAndGamma
-/Trigger/DefinedParticleCoincAnd2GammaCores
+/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoincAnd2GammaCores
 /Trigger/DisableGriffin 1
 /Trigger/DisableGriffin 2
 /Trigger/DisableGriffin 3
@@ -51,9 +53,9 @@
 #/Print/CsI_Track_Set
 #/Print/Track_Set
 #need to run this AFTER adjusting the target/backing parameters!
-/Construction/TIPChamberZShift -0.0 mm
+/Construction/ShiftChamber -0.0 mm
 #/Print/Track_Set
 /run/beamOn 1000000
 /Results/Tree/Report
-/Results/Tree/Save 3357_run1.root
+/Results/Tree/Save run1_1274level_dsam.root
 /Projectile/Report

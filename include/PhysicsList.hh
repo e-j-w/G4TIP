@@ -54,7 +54,7 @@
 
 #include "Projectile.hh"
 #include "ReactionFusEvap.hh"
-#include "Reaction_Messenger.hh"
+#include "ReactionFusEvap_Messenger.hh"
 
 using namespace CLHEP;
 
@@ -80,7 +80,7 @@ private:
   Projectile *theProjectile;
   DetectorConstruction *theDetector;
   ReactionFusEvap *theReaction;
-  Reaction_Messenger *theReactionMessenger;
+  ReactionFusEvap_Messenger *theReactionMessenger;
   double stepSize;
   bool customStopping;
   bool useNeutrons = true;
