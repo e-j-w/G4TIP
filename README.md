@@ -1,22 +1,28 @@
-# TIP Fusion-Evaporation GEANT4 Code
+# TIP Fusion-Evaporation Code
 
 Maintainer: Jonathan Williams
 
 ## Description
 
-GEANT4 code implementing TIP/TIGRESS DSAM using a fusion-evaporation reaction process.  For RDM, see the `rdm` branch.
+GEANT4 code implementing TIP/TIGRESS DSAM/RDM using a fusion-evaporation reaction process.  For DSAM, use the `dsam` branch.
 
 At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  Step-wise decay of the residual nucleus (gamma ray cascade) is also availaible.
 
-This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead.
+This code requires GEANT4 version 10.x (see the version 9.4 branch for the most recent code compatible with version 9).  If the ROOT interface is needed, the code in the version 9.4 branch should be used instead. 
 
 ## Installation
 
-This code has been tested with GEANT4 10.3/10.5/10.6 on Ubuntu 14.04/16.04 and CentOS 7.
+This code has been tested on Ubuntu 14.04/16.04, CentOS 7, and Arch Linux (as of May 2020).  Follow the instructions below to set up the required dependencies.
 
-This program depends on GEANT4, ROOT v5.x/6.x (results are saved to ROOT tree files), and cmake.  These programs should be compiled from source and installed according to the install guides on their respective websites.  GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.
+### ROOT
 
-Environment variables must be properly set up for all dependencies, for example by adding the following lines to ~/.bashrc (substituting the appropriate paths):
+ROOT trees are used to store simulated data.  You may already have this set up (in that case just make sure that the environment variables are correctly defined). If not, ROOT should be built from source:
+
+[ROOT source code](https://root.cern.ch/downloading-root)
+
+[ROOT build and install guide](https://root.cern.ch/building-root)
+
+Set up environment variables for ROOT by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
 
 ```
 #ROOT configuration
@@ -27,6 +33,14 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTLIB
 export PATH=$PATH:$ROOTSYS/bin
 ```
 
+### GEANT4
+
+[GEANT4 source code](https://geant4.web.cern.ch/support/download)
+
+[GEANT4 build and install guide](https://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/InstallationGuide/html/installguide.html)
+
+GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.  Set up environment variables for GEANT4 by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
+
 ```
 #for GEANT4
 export G4INSTALL=/path/to/geant4_install_directory
@@ -35,13 +49,16 @@ source $G4INSTALL/bin/geant4.sh
 source $G4INSTALL/share/GEANT4_VERSION/geant4make/geant4make.sh
 ```
 
-This program requires secret files describing the GRIFFIN geometry.  After obtaining these files from a collaborator, copy them to the `src` directory.
+### Redacted files
 
+This program requires secret files describing the GRIFFIN geometry (`DetectionSystemGriffinSuppressed.cc` and `DetectorConstructionSuppressed.cc`).  To get them, ask a collaborator or your boss.  After obtaining these files, copy them to the `src` directory.
+
+### Build the simulation code
 
 The program is then compiled from source using the following commands (substituting the appropriate directories):
 
 ```
-cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib64/GEANT4_VERSION
+cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION
 make
 ```
 
@@ -54,6 +71,8 @@ The program `TIP_Fusion_Evaporation` is run from the command line and takes a ba
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
+| /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option. |
+| /Construction/UsePlunger | Use the TIP plunger as the reaction target. |
 | /Target/ThicknessMgCm2 NUMBER | The thickness of the reaction target, in mg/cm^2. |
 | /Target/Thickness NUMBER um | The thickness of the reaction target, in micrometers (can be used instead of /Target/ThicknessMgCm2). |
 | /Backing/Thickness NUMBER um | The thickness of the reaction target backing, in micrometers. |

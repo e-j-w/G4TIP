@@ -9,26 +9,26 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-
-
 class DetectorConstruction_Messenger: public G4UImessenger
 {
   public:
-    DetectorConstruction_Messenger(DetectorConstruction *);
+    DetectorConstruction_Messenger(DetectorConstruction*);
    ~DetectorConstruction_Messenger();
     
     void SetNewValue(G4UIcommand*, G4String);
     
   private:
-    DetectorConstruction* aDetCon;
-    
-    G4UIdirectory*             DetConDir;
-    G4UIcmdWithADoubleAndUnit*  ShiftCmd;
-    
-    G4UIcmdWithoutParameter*   BallCmd;
+  DetectorConstruction* theDetector;
 
+  G4UIdirectory* DetectorDir;
+
+  G4UIcmdWithoutParameter*   RepCmd;
+  G4UIcmdWithADoubleAndUnit* STCmd;  
+  G4UIcmdWithADoubleAndUnit* SPCmd;
+  G4UIcmdWithoutParameter*   BallCmd;
+  G4UIcmdWithoutParameter*   PlungerCmd;
+  G4UIcmdWithoutParameter*   DSAMCmd;
 };
-
 
 #endif
 

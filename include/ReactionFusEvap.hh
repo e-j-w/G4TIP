@@ -141,10 +141,10 @@ public:
   G4double getExi(G4double, G4double, G4double);
   G4double getTabulatedExi(G4double);
 
-  G4DynamicParticle RecoilOut;
-  G4DynamicParticle EvapP[MAXNUMEVAP];
-  G4DynamicParticle EvapN[MAXNUMEVAP];
-  G4DynamicParticle EvapA[MAXNUMEVAP];
+  //  G4DynamicParticle RecoilOut;
+  //  G4DynamicParticle EvapP[MAXNUMEVAP];
+  //  G4DynamicParticle EvapN[MAXNUMEVAP];
+  //  G4DynamicParticle EvapA[MAXNUMEVAP];
 
 private:
   Projectile *theProjectile;

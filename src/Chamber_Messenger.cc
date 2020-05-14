@@ -30,7 +30,7 @@ Chamber_Messenger::Chamber_Messenger(Chamber* Chamb)
   VisOff->SetGuidance("Make exp. hall invisible");  
 
   RepCmd = new G4UIcmdWithoutParameter("/Chamber/Report",this);
-  RepCmd->SetGuidance("Report exp. hall parameters");
+  RepCmd->SetGuidance("Report exp. hall parameters");  
 
 }
 
@@ -56,12 +56,12 @@ void Chamber_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 //    { aChamber->setRmin(RMinCmd->GetNewDoubleValue(newValue));}
 //   if( command == RMaxCmd )
 //    { aChamber->setRmax(RMaxCmd->GetNewDoubleValue(newValue));}
-  if( command == VisOff )
-    { aChamber->setInvisible();}
-  if( command == VisOn )
-    { aChamber->setVisible();}
+ if( command == VisOff )
+   { aChamber->setInvisible();}
+ if( command == VisOn )
+   { aChamber->setVisible();}
   if( command == RepCmd )
-    { aChamber->Report();}
+   { aChamber->Report();}
 
 }
 

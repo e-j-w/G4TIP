@@ -37,8 +37,9 @@ include(${Geant4_USE_FILE})
 # Locate sources and headers for this project
 # NB: headers are included so they will show up in IDEs
 #
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 and ROOT libraries
@@ -51,7 +52,8 @@ target_link_libraries(TIP_Fusion_Evaporation ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 # build TIP_Fusion_Evaporation
 #
 set(TIPFUSEVAP_SCRIPTS
-  macros/1274level.mac
+  macros/1274level_dsam.mac
+  macros/1274level_rdm.mac
   macros/vis.mac
   macros/gui.mac
   )

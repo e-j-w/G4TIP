@@ -9,8 +9,6 @@
 #include "G4UIcmdWithADoubleAndUnit.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
-
-
 class Chamber_Messenger: public G4UImessenger
 {
   public:

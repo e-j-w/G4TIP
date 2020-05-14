@@ -2014,7 +2014,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
     G4RotationMatrix* rotate_back_suppressor_shells[4] ; 
     G4ThreeVector move_back_quarter_suppressor[4] ; 
 
-  	for( G4int i = 0 ; i < 4 ; i++ )
+  	for(i = 0 ; i < 4 ; i++ )
   		{
   			rotate_back_suppressor_shells[i] = new G4RotationMatrix ;
   			rotate_back_suppressor_shells[i]->rotateX( -M_PI / 2.0 + i * M_PI / 2.0 ) ;

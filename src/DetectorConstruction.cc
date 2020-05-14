@@ -2,86 +2,96 @@
 
 DetectorConstruction::DetectorConstruction()
 {
- // use G4-NIST materials data base
+  // use G4-NIST materials data base
   //
   G4NistManager* man = G4NistManager::Instance();
   man->FindOrBuildMaterial("G4_Galactic");
   man->FindOrBuildMaterial("G4_Pb");
   man->FindOrBuildMaterial("G4_lAr");
   man->FindOrBuildMaterial("G4_STAINLESS-STEEL");
-  
-  
   man->FindOrBuildMaterial("G4_Al");
   man->FindOrBuildMaterial("G4_POLYETHYLENE");
   man->FindOrBuildMaterial("G4_RUBBER_NEOPRENE");
-  man->FindOrBuildMaterial("G4_ALUMINUM_OXIDE");
   man->FindOrBuildMaterial("G4_ALUMINUM_OXIDE");
   man->FindOrBuildMaterial("G4_BGO");
   man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   man->FindOrBuildMaterial("G4_Ge");
   man->FindOrBuildMaterial("G4_Cu");
-  
   man->FindOrBuildMaterial("G4_AIR");
- // parameters to suppress:
+  man->FindOrBuildMaterial("Hevimetal");
+
+  // parameters to suppress:
 
   griffinFwdBackPosition = 11.0*cm;
   detectorRadialDistance = 11.0*cm ;
   
-  // Detector System Default
-  useTigressPositions = true;
-	useCsIball=false;
-  
   // Shield Selection Default
+
+  useTigressPositions = true;
+  useCsIball=false;
+
   detectorShieldSelect = 1 ; // Include suppressors by default. 
   extensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
-  hevimetSelector = 1 ; // Chooses whether or not to include a hevimet
+  hevimetSelector = 1 ; // Chooses whether or not to include a hevimet (default yes)
 
   customDetectorNumber 		= 1 ; // det_num
   customDetectorPosition  = 1 ; // pos_num
   customDetectorVal				= 0 ; // Unused for now (Oct 2013)
 
-  griffinMessenger = new GriffinMessenger(this);
+ griffinMessenger = new GriffinMessenger(this);
 
   griffinDetectorsMapIndex = 0;
   for(G4int i = 0; i < 16; i++)
   {
       griffinDetectorsMap[i] = 0;
   }
-	
-	
 
 }
 
+/*====================================================================*/
 DetectorConstruction::~DetectorConstruction()
 {
-  delete ExperimentalHallMessenger;
- 
+  delete ExperimentalHallMessenger; 
 }
 
+/*====================================================================*/
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 
-	Materials* materials=new Materials();
+  Materials* materials=new Materials();
 
-	//Experimental Hall
+  //Experimental Hall
 
-	Experimental_Hall* ExperimentalHall = new Experimental_Hall(materials);
-	ExpHall_phys=ExperimentalHall->Construct();
-	ExpHall_log=ExperimentalHall->GetLogVolume();
-	ExperimentalHall->Report();
-	ExperimentalHallMessenger = new Experimental_Hall_Messenger(ExperimentalHall);
+  Experimental_Hall* ExperimentalHall = new Experimental_Hall(materials);
+  ExpHall_phys=ExperimentalHall->Construct();
+  ExpHall_log=ExperimentalHall->GetLogVolume();
+  ExperimentalHall->Report();
+  ExperimentalHallMessenger = new Experimental_Hall_Messenger(ExperimentalHall);
 
-	theChamber = new Chamber(ExpHall_log,materials);
-	theChamber->Construct();
-	theChamber->Report();
-	ChamberMessenger = new Chamber_Messenger(theChamber); 
+  theChamber = new Chamber(ExpHall_log,materials);
+  theChamber->Construct();
+  theChamber->Report();
+  ChamberMessenger = new Chamber_Messenger(theChamber); 
 
-	theTarget = new Target(ExpHall_log,materials);
-	theTarget->Construct();
-	theTarget->Report();
-	TargetMessenger = new Target_Messenger(theTarget);
+  switch (targetType)
+  {
+    case 1:
+      //TIP plunger
+      thePlunger = new Plunger(ExpHall_log,materials);
+      thePlunger->Construct();
+      thePlunger->Report();
+      PlungerMessenger = new Plunger_Messenger(thePlunger);
+      break;
+    default:
+      //DSAM target
+      theTarget = new Target(ExpHall_log,materials);
+      theTarget->Construct();
+      theTarget->Report();
+      TargetMessenger = new Target_Messenger(theTarget);
+      break;
+  }
 
-	if(useCsIball)
+  if(useCsIball)
 		{
 			aCsI_ball = new CsI_array_spherical(ExpHall_log,materials);
 			aCsI_ball->Construct();
@@ -93,82 +103,69 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			aCsI_wall->Construct();
 			aCsI_wall->Report();
 		}
-	//------------------------------------------------ 
-	// Sensitive detectors
-	//------------------------------------------------ 
+ 
+  //------------------------------------------------ 
+  // Sensitive detectors
+  //------------------------------------------------ 
 
-	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
 
-	//------------------------------------------------
-	// Detectors sensitive for ion tracking
-	//------------------------------------------------
-	TrackerIon = new TrackerIonSD("IonTracker");
-	TrackerIonSDMessenger = new TrackerIonSD_Messenger(TrackerIon);
-	SDman->AddNewDetector( TrackerIon );
+  //------------------------------------------------
+  // Detectors sensitive for ion tracking
+  //------------------------------------------------
+  TrackerIon = new TrackerIonSD("IonTracker");
+  TrackerIonSDMessenger = new TrackerIonSD_Messenger(TrackerIon);
+  SDman->AddNewDetector( TrackerIon );
 
-	theTarget->GetTargetLog()->SetSensitiveDetector(TrackerIon);
-	theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
-	ExpHall_log->SetSensitiveDetector(TrackerIon);
+  switch (targetType)
+  {
+    case 1:
+      //TIP plunger
+      thePlunger->GetBackingLog()->SetSensitiveDetector(TrackerIon);
+      thePlunger->GetTargetLog()->SetSensitiveDetector(TrackerIon);
+      thePlunger->GetStopperLog()->SetSensitiveDetector(TrackerIon);
+      break;
+    default:
+      //DSAM target
+      theTarget->GetTargetLog()->SetSensitiveDetector(TrackerIon);
+      theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
+      ExpHall_log->SetSensitiveDetector(TrackerIon);
+      break;
+  }
+  
+  ExpHall_log->SetSensitiveDetector(TrackerIon);
 
-	TrackerCsI = new TrackerCsISD("CsITracker");
-	TrackerCsISDMessenger = new TrackerCsISD_Messenger(TrackerCsI);
-	SDman->AddNewDetector( TrackerCsI );
-	if(useCsIball)
-		aCsI_ball->MakeSensitive(TrackerCsI);
-	else
-		aCsI_wall->MakeSensitive(TrackerCsI);
-	/*TrackerPIN = new TrackerPINSD("PINTracker");
-	SDman->AddNewDetector( TrackerPIN );
-	aPIN_array->MakeSensitive(TrackerPIN);*/
+  TrackerCsI = new TrackerCsISD("CsITracker");
+  SDman->AddNewDetector( TrackerCsI );
 
-	return ExpHall_phys;
+  if(useCsIball)
+    aCsI_ball->MakeSensitive(TrackerCsI);
+  else
+    aCsI_wall->MakeSensitive(TrackerCsI);
+
+  return ExpHall_phys;
 }
-void DetectorConstruction::setZShift(G4double zshift)
-{
-	//shift the chamber
-	G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
-	shift.setZ(shift.getZ() + zshift);
-	theChamber->GetChamberPlacement()->SetTranslation(shift);
-	//shift the target
-	shift = theTarget->GetTargetPlacement()->GetTranslation();
-	shift.setZ(shift.getZ() + zshift);
-	theTarget->GetTargetPlacement()->SetTranslation(shift);
-	//shift the backing
-	shift = theTarget->GetBackingPlacement()->GetTranslation();
-	shift.setZ(shift.getZ() + zshift);
-	theTarget->GetBackingPlacement()->SetTranslation(shift);
-	//shift the CsI array
-	if(useCsIball)
-		{
-			aCsI_ball->SetZPos(aCsI_ball->GetZPos() + zshift);
-			aCsI_ball->MakeSensitive(TrackerCsI);
-		}
-	else
-		{
-			aCsI_wall->SetZPos(aCsI_wall->GetZPos() + zshift);
-			aCsI_wall->MakeSensitive(TrackerCsI);
-		}
-	G4RunManager::GetRunManager()->GeometryHasBeenModified();
-	G4cout<<"----> TIP chamber, target, and CsI array have been shifted by   "<<zshift<<" mm"<<G4endl;
-}
+
 /*====================================================================*/
 void DetectorConstruction::UpdateGeometry()
 {
   G4RunManager::GetRunManager()->DefineWorldVolume(Construct());
 }
+
 /*====================================================================*/
 // Temporary Function for testing purposes
-void DetectorConstruction::AddDetectionSystemGriffinCustomDetector( G4int ){
+void DetectorConstruction::AddDetectionSystemGriffinCustomDetector( G4int )
+{
+
 
   griffinDetectorsMap[griffinDetectorsMapIndex] = this->customDetectorNumber ; 
   griffinDetectorsMapIndex++;
-
-
-	// NOTE: ndet served no purpose in this case but I left it in just in case this needs to be modified later. The position of a detector placed using this function must be set using
-	// SetDeadLayer. 
-
+  
+  // NOTE: ndet served no purpose in this case but I left it in just in case this needs to be modified later. The position of a detector placed using this function must be set using
+  // SetDeadLayer.
+ 
   DetectionSystemGriffin* pGriffinCustom = new DetectionSystemGriffin( this->extensionSuppressorLocation , this->detectorShieldSelect, this->detectorRadialDistance, this->hevimetSelector ); // Select Forward (0) or Back (1)
-
+  
   pGriffinCustom->BuildDeadLayerSpecificCrystal(this->customDetectorNumber-1);
 
   pGriffinCustom->PlaceDeadLayerSpecificCrystal( ExpHall_log, this->customDetectorNumber-1, this->customDetectorPosition-1, useTigressPositions ) ;
@@ -177,9 +174,9 @@ void DetectorConstruction::AddDetectionSystemGriffinCustomDetector( G4int ){
 
   pGriffinCustom->PlaceEverythingButCrystals( ExpHall_log, this->customDetectorNumber-1, this->customDetectorPosition-1, useTigressPositions ) ;
 
-
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet)
 {
 
@@ -202,18 +199,22 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet)
     }
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinShieldSelect( G4int ShieldSelect ){
   this->detectorShieldSelect = ShieldSelect ; 
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinSetRadialDistance( G4double detectorDist ){
   this->detectorRadialDistance = detectorDist ; 
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ){
   this->extensionSuppressorLocation = detectorPos ; 
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params )
 {
 
@@ -223,6 +224,7 @@ void DetectorConstruction::AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector 
 
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet)
 {
 //  G4double theta,phi,position;
@@ -249,6 +251,9 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet)
     for( det_num = 1; det_num <= ndet; det_num++ ) {
         pos_num = det_num;
 
+        griffinDetectorsMap[griffinDetectorsMapIndex] = det_num;
+        griffinDetectorsMapIndex++;
+
         DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector); // Select Forward (0) or Back (1)
 
 	// printf("Using TIGRESS positions (1=yes) %d\n",useTigressPositions);
@@ -260,19 +265,20 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet)
         pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
 
 	for(int i=0 ; i<GS ; i++)
-	  {
-	    DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
-	    //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;
-	  }
+          {
+            DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
+            //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                               
+          }
+
 
     }
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet)
 {
 //  G4double theta,phi,position;
 //  G4ThreeVector move,direction;
-
 
 //  DetectionSystemGriffin* pGriffinForward = new DetectionSystemGriffin(0, 1, this->griffinFwdBackPosition); // Select Forward (0) or Back (1)
 //  pGriffinForward->Build();
@@ -285,7 +291,6 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet)
 
 //  pGriffinForward->PlaceDetector( ExpHall_log, move, rotate, ndet ) ;
 
-
   G4int det_num = ndet;
   G4int pos_num = ndet;
   G4int config  = 0;
@@ -295,18 +300,15 @@ void DetectorConstruction::AddDetectionSystemGriffinForwardDetector(G4int ndet)
 
   DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector ); // Select Forward (0) or Back (1)
 
-
   pGriffinDLS->BuildDeadLayerSpecificCrystal(det_num-1);
-
   pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
-
   pGriffinDLS->BuildEverythingButCrystals();
-
   pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
 
-
+  
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
 {
 //  G4double theta,phi,position;
@@ -340,22 +342,27 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
       DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector ); // Select Forward (0) or Back (1)
 
       G4cout<<" Adding detector "<<det_num<<" for back configuration "<<G4endl;
-      //   getc(stdin);
+        // getc(stdin);
       pGriffinDLS->BuildDeadLayerSpecificCrystal(det_num-1);
+      G4cout<<" Built dead layer for detector "<<det_num<<G4endl;
       pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
+      G4cout<<" Placed dead layer for detector "<<det_num<<G4endl;
       pGriffinDLS->BuildEverythingButCrystals();
+      G4cout<<" Built everything but crystals for detector "<<det_num<<G4endl;
       pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
+      G4cout<<" Placed everything but crystals for detector "<<det_num<<G4endl;
 
-	for(int i=0 ; i<GS ; i++)
-	  {
-	    DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
-	    //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;
-	  }
 
+      for(int i=0 ; i<GS ; i++)
+	{
+	  DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
+	  //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                                 
+	}
+      
   }
-
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet)
 {
 //  G4double theta,phi,position;
@@ -386,8 +393,11 @@ void DetectorConstruction::AddDetectionSystemGriffinBackDetector(G4int ndet)
     pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
     pGriffinDLS->BuildEverythingButCrystals();
     pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
+
+    
 }
 
+/*====================================================================*/
 void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input)
 {
   // Includes hevimet. 
@@ -420,3 +430,77 @@ void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input)
 //  pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1 ) ;
 
 //}
+
+/*====================================================================*/
+void DetectorConstruction::ShiftChamber(G4double z)
+{
+	
+  switch (targetType)
+  {
+    case 1:
+      //TIP plunger case
+      // This is a modified version of Jonathan's method
+
+      // chamber at origin
+      // reset physical volume Z position
+      theChamber->SetPosZ(z); 
+
+      // set plunger wrt to current plunger position
+      // preserve shifts wrt to chamber over translation
+      thePlunger->SetPosZ( thePlunger->GetPosZ() + z );
+      break;
+    default:
+      //DSAM target case
+      //shift the chamber
+      G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
+      shift.setZ(shift.getZ() + z);
+      theChamber->GetChamberPlacement()->SetTranslation(shift);
+      //shift the target
+      shift = theTarget->GetTargetPlacement()->GetTranslation();
+      shift.setZ(shift.getZ() + z);
+      theTarget->GetTargetPlacement()->SetTranslation(shift);
+      //shift the backing
+      shift = theTarget->GetBackingPlacement()->GetTranslation();
+      shift.setZ(shift.getZ() + z);
+      theTarget->GetBackingPlacement()->SetTranslation(shift);
+      break;
+  }
+
+	
+	//shift the CsI array
+	if(useCsIball)
+		{
+			aCsI_ball->SetZPos(aCsI_ball->GetZPos() + z);
+			aCsI_ball->MakeSensitive(TrackerCsI);
+		}
+	else
+		{
+			aCsI_wall->SetZPos(aCsI_wall->GetZPos() + z);
+			aCsI_wall->MakeSensitive(TrackerCsI);
+		}
+	G4RunManager::GetRunManager()->GeometryHasBeenModified();
+	G4cout<<"----> Chamber position has been shifted by   "<<z<<" mm"<<G4endl;
+}
+
+/*====================================================================*/
+void DetectorConstruction::ShiftPlunger(G4double z)
+{
+  // shift plunger wrt chamber
+  thePlunger->SetPosZ( theChamber->GetPosZ() + z );
+}
+
+/*====================================================================*/
+void DetectorConstruction::Report()
+{
+  G4cout<<"---------- Detector Construction Report ----------"<<G4endl;
+  G4cout<<"Plunger Report"<<G4endl;
+  G4cout<<"-----------------"<<G4endl;
+  thePlunger->Report();
+  G4cout<<"CsI array Report"<<G4endl;
+  G4cout<<"-----------------"<<G4endl;
+  aCsI_wall->Report();
+  G4cout<<"Chamber Report"<<G4endl;
+  G4cout<<"-----------------"<<G4endl;
+  theChamber->Report();
+  G4cout<<"---------- End Detector Construction Report ----------"<<G4endl;
+}

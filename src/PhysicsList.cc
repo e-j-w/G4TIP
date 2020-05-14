@@ -3,6 +3,7 @@
 PhysicsList::PhysicsList(Projectile *Proj, DetectorConstruction *Det)
     : theProjectile(Proj), theDetector(Det) {
   stepSize = 0.05 * um;
+  customStopping = false;
 }
 
 PhysicsList::~PhysicsList() { ; }

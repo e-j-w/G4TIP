@@ -49,9 +49,15 @@ class TrackerIonHit : public G4VHit
       void SetDecayFlag(){pflag=DECAY_FLAG;}
       void SetReactionInFlag(){pflag=REACTION_IN_FLAG;}
       void SetReactionOutFlag(){pflag=REACTION_OUT_FLAG;}
-      void SetTargetInFlag(){flag=TARGET_IN_FLAG;}
-      void SetBackingInFlag(){flag=BACKING_IN_FLAG;}
-      void SetBackingOutFlag(){flag=BACKING_OUT_FLAG;}
+      void SetPlungerTargetInFlag(){flag=PLUNGER_TARGET_IN_FLAG;}
+      void SetPlungerTargetOutFlag(){flag=PLUNGER_TARGET_OUT_FLAG;}
+      void SetPlungerBackingInFlag(){flag=PLUNGER_BACKING_IN_FLAG;}
+      void SetPlungerBackingOutFlag(){flag=PLUNGER_BACKING_OUT_FLAG;}
+      void SetPlungerDegraderInFlag(){flag=PLUNGER_DEGRADER_IN_FLAG;}
+      void SetPlungerDegraderOutFlag(){flag=PLUNGER_DEGRADER_OUT_FLAG;}
+      void SetDSAMTargetInFlag(){flag=DSAM_TARGET_IN_FLAG;}
+      void SetDSAMBackingInFlag(){flag=DSAM_BACKING_IN_FLAG;}
+      void SetDSAMBackingOutFlag(){flag=DSAM_BACKING_OUT_FLAG;}
       void SetPFlag(G4int i){pflag=i;}
       void SetTime(G4double t){time=t;};
   

@@ -488,11 +488,27 @@ void ReactionFusEvap::TargetFaceCrossSection() {
   A1 = theProjectile->getA();
   Z1 = theProjectile->getZ();
 
-  A2 = theDetector->GetTarget()->getTargetMass();
-  Z2 = theDetector->GetTarget()->getTargetCharge();
+  switch(theDetector->GetTargetType())
+  {
+    case 1:
+      //plunger
+      A2 = theDetector->GetPlunger()->getTargetMass();
+      Z2 = theDetector->GetPlunger()->getTargetCharge();
 
-  A3 = theDetector->GetTarget()->getBackingMass();
-  Z3 = theDetector->GetTarget()->getBackingCharge();
+      A3 = theDetector->GetPlunger()->getStopperMass();
+      Z3 = theDetector->GetPlunger()->getStopperCharge();
+      break;
+    default:
+      //dsam target
+      A2 = theDetector->GetTarget()->getTargetMass();
+      Z2 = theDetector->GetTarget()->getTargetCharge();
+
+      A3 = theDetector->GetTarget()->getBackingMass();
+      Z3 = theDetector->GetTarget()->getBackingCharge();
+      break;
+  } 
+
+  
 
   // set properties of the compound (which we assume does not gamma decay)
   compound = G4IonTable::GetIonTable()->GetIon(
@@ -650,9 +666,9 @@ void ReactionFusEvap::AddDecay(G4double E, G4double T) {
 //---------------------------------------------------------
 // Computes an Exi value based on a Gaussian distribution with high energy
 // exponential tail
-G4double ReactionFusEvap::getExi(G4double x0, G4double w, G4double tau) {
+G4double ReactionFusEvap::getExi(G4double x0, G4double w, G4double ttau) {
   G4double exi = CLHEP::RandGauss::shoot(x0, w);
-  exi += CLHEP::RandExponential::shoot(tau);
+  exi += CLHEP::RandExponential::shoot(ttau);
   return exi;
 }
 //---------------------------------------------------------

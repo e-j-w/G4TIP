@@ -116,14 +116,53 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent *HCE) {
       if ((*ionCollection)[i]->GetA() == (*ionCollection)[i + 1]->GetA())
         if ((*ionCollection)[i]->GetZ() == (*ionCollection)[i + 1]->GetZ())
           if ((*ionCollection)[i]->GetVolName() == "expHall" &&
+              (*ionCollection)[i + 1]->GetVolName() == "backing")
+            (*ionCollection)[i + 1]->SetPlungerBackingInFlag();
+
+      if ((*ionCollection)[i]->GetA() == (*ionCollection)[i + 1]->GetA())
+        if ((*ionCollection)[i]->GetZ() == (*ionCollection)[i + 1]->GetZ())
+          if ((*ionCollection)[i]->GetVolName() == "backing" &&
               (*ionCollection)[i + 1]->GetVolName() == "target")
-            (*ionCollection)[i + 1]->SetTargetInFlag();
+            (*ionCollection)[i + 1]->SetPlungerTargetInFlag();
+    }
+
+    for (i = 1; i < NbHits; i++) {
+      if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
+        if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
+          if ((*ionCollection)[i - 1]->GetVolName() == "target" &&
+              (*ionCollection)[i]->GetVolName() == "expHall")
+            (*ionCollection)[i]->SetPlungerTargetOutFlag();
+    }
+
+
+    for (i = 1; i < NbHits; i++) {
+      if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
+        if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
+          if ((*ionCollection)[i - 1]->GetVolName() == "expHall" &&
+              (*ionCollection)[i]->GetVolName() == "degrader")
+            (*ionCollection)[i]->SetPlungerDegraderInFlag();
+    }
+
+    for (i = 1; i < NbHits; i++) {
+      if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
+        if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
+          if ((*ionCollection)[i - 1]->GetVolName() == "degrader" &&
+              (*ionCollection)[i]->GetVolName() == "expHall")
+            (*ionCollection)[i]->SetPlungerDegraderOutFlag();
+    }
+
+    for (i = 0; i < NbHits - 1; i++) {
+      if ((*ionCollection)[i]->GetA() == (*ionCollection)[i + 1]->GetA())
+        if ((*ionCollection)[i]->GetZ() == (*ionCollection)[i + 1]->GetZ())
+          if ((*ionCollection)[i]->GetVolName() == "expHall" &&
+              (*ionCollection)[i + 1]->GetVolName() == "target")
+            (*ionCollection)[i + 1]->SetDSAMTargetInFlag();
 
       if ((*ionCollection)[i]->GetA() == (*ionCollection)[i + 1]->GetA())
         if ((*ionCollection)[i]->GetZ() == (*ionCollection)[i + 1]->GetZ())
           if ((*ionCollection)[i]->GetVolName() == "target" &&
               (*ionCollection)[i + 1]->GetVolName() == "backing")
-            (*ionCollection)[i + 1]->SetBackingInFlag();
+            (*ionCollection)[i + 1]->SetDSAMBackingInFlag();
     }
 
     for (i = 1; i < NbHits; i++) {
@@ -131,9 +170,10 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent *HCE) {
         if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
           if ((*ionCollection)[i - 1]->GetVolName() == "backing" &&
               (*ionCollection)[i]->GetVolName() == "expHall")
-            (*ionCollection)[i]->SetBackingOutFlag();
+            (*ionCollection)[i]->SetDSAMBackingOutFlag();
     }
 
+    
     // increment the decay counter if neccesary (for cascades)
     G4int decayCounter = -1;
     for (i = 0; i < NbHits; i++)

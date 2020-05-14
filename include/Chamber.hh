@@ -1,7 +1,6 @@
 #ifndef Chamber_H
 #define Chamber_H 1
 
-
 #include "G4Material.hh"
 #include "Materials.hh"
 #include "G4Sphere.hh"
@@ -36,6 +35,8 @@ class Chamber
   void setInvisible();
   void Report();
   G4VPhysicalVolume* GetChamberPlacement(){return Chamber_phys;}
+  void SetPosZ(G4double);
+  G4double GetPosZ();
   
     private:
   // dimensions

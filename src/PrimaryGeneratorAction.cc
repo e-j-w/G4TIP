@@ -18,11 +18,13 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   
-	ionTable = G4IonTable::GetIonTable();
-
+  //particleTable = G4ParticleTable::GetParticleTable(); // v9.4.p04
+  ionTable = G4IonTable::GetIonTable();
+ 
+  //ion =  particleTable->GetIon(theProjectile->getZ(),theProjectile->getA(),0.); // v9.4.p04
   ion =  ionTable->GetIon(theProjectile->getZ(),theProjectile->getA(),0.);
+
   particleGun->SetParticleDefinition(ion);
-  
   
   position=theProjectile->getPosition();
   particleGun->SetParticlePosition(position);
@@ -32,12 +34,30 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   KE=theProjectile->getKE();
   particleGun->SetParticleEnergy(KE);
+
+  G4double TT,TC,depth;
+  switch(theDetector->GetTargetType())
+  {
+    //Reactions on the target
+    case 1:
+      //plunger
+      TT=2.*theDetector->GetPlunger()->GetTarget()->GetZHalfLength();
+      TC=theDetector->GetPlunger()->GetTargetPlacement()->GetTranslation().getZ();
+      depth=TC+TT*(G4UniformRand()-0.5);
+      theDetector->GetPlunger()->SetTargetReactionDepth(depth);
+      // printf("tar thickness %f tar center (?) %f --> target reaction depth set to %f\n",TT,TC,depth);
+      // getc(stdin);
+      break;
+    default:
+      //dsam target
+      TT=2.*theDetector->GetTarget()->GetTarget()->GetZHalfLength();
+      TC=theDetector->GetTarget()->GetTargetPlacement()->GetTranslation().getZ();
+      depth=TC+TT*(G4UniformRand()-0.5);
+      theDetector->GetTarget()->setTargetReactionDepth(depth);
+      break;
+  } 
  
-  //Reactions on the target
-  G4double TT=2.*theDetector->GetTarget()->GetTarget()->GetZHalfLength();
-  G4double TC=theDetector->GetTarget()->GetTargetPlacement()->GetTranslation().getZ();
-  G4double depth=TC+TT*(G4UniformRand()-0.5);
-  theDetector->GetTarget()->setTargetReactionDepth(depth);
+  
 
   // G4cout<<" +++++ Generating an event "<<G4endl;
   particleGun->GeneratePrimaryVertex(anEvent);

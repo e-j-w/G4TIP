@@ -150,8 +150,17 @@ private:
 
   EventStat eStat;
   IonStat stat;
-  IonInf gun, pTIn, pRIn, rROut, rBIn, rBOut, rDec[MAXNUMDECAYS],
-      partROut;      // ion tracking (projectile, residual)
+  IonInf gun;
+  IonInf pRIn;
+  IonInf rROut;
+  IonInf pTIn_plunger, pTIn_dsam; //target in
+  IonInf rTOut_plunger; //target out
+  IonInf pBIn_plunger, rBIn_dsam; //backing in
+  IonInf pBOut_plunger, rBOut_dsam; //backing out
+  IonInf rDIn_plunger; //degrader in
+  IonInf rDOut_plunger; //degrader out
+  IonInf rDec[MAXNUMDECAYS];
+  IonInf partROut;      // ion tracking (projectile, residual)
   CsIInf partHit;     // particle hit
   GInf GHit;          // gamma hit
   G4double maxGe[GN]; // maximum single gamma energy deposit in a given detector
@@ -162,7 +171,7 @@ private:
   G4double dDensity;   // degrader density for calculating path in mg/cm^2
   G4double CsIDensity; // CsI density for calculating path in mg/cm^2
   G4int CsITrigId;     // ID of CsI detector to save particle data for (0 = all
-                   // detectors)
+                    // detectors)
 
   G4double kB[NCsI];  // Birks constant in um/MeV
   G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV

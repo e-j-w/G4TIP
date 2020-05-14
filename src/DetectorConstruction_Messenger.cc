@@ -1,39 +1,77 @@
 #include "DetectorConstruction_Messenger.hh"
 
-
-DetectorConstruction_Messenger::DetectorConstruction_Messenger(DetectorConstruction* DetCon)
-  :aDetCon(DetCon)
+DetectorConstruction_Messenger::DetectorConstruction_Messenger(DetectorConstruction* Det)
+  :theDetector(Det)
 { 
- 
-  DetConDir = new G4UIdirectory("/Construction/");
-  DetConDir->SetGuidance("Dectector construction control.");
-  
-  ShiftCmd = new G4UIcmdWithADoubleAndUnit("/Construction/TIPChamberZShift",this);
-  ShiftCmd->SetGuidance("Shift the TIP chamber (and target, CsI array inside) by the given distance in the z direction.");
-  ShiftCmd->SetParameterName("choice",false);
-  ShiftCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-	
-	BallCmd = new G4UIcmdWithoutParameter("/Construction/UseCsIBall",this);
+  // directories 
+  DetectorDir = new G4UIdirectory("/Construction/");
+  DetectorDir->SetGuidance("Detector construction control.");
+
+  // commands
+  RepCmd = new G4UIcmdWithoutParameter("/Construction/Report",this);
+  RepCmd->SetGuidance("Report TIP construction parameters");
+
+  STCmd = new G4UIcmdWithADoubleAndUnit("/Construction/ShiftChamber",this);
+  STCmd->SetGuidance("Set the position of the TIP chamber along the z (beam) axis");
+  STCmd->SetParameterName("choice",false);
+  STCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  SPCmd = new G4UIcmdWithADoubleAndUnit("/Construction/ShiftPlunger",this);
+  SPCmd->SetGuidance("Shift the plunger along the z (beam) axis wrt chamber center");
+  SPCmd->SetParameterName("choice",false);
+  SPCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  BallCmd = new G4UIcmdWithoutParameter("/Construction/UseCsIBall",this);
   BallCmd->SetGuidance("Use the CsI ball array instead of the wall array (which is default).");
 
+  PlungerCmd = new G4UIcmdWithoutParameter("/Construction/UsePlunger",this);
+  PlungerCmd->SetGuidance("Use the TIP plunger as the reaction target (DSAM target is default).");
+
+  DSAMCmd = new G4UIcmdWithoutParameter("/Construction/UseDSAMTarget",this);
+  DSAMCmd->SetGuidance("Use the DSAM reaction target (this is the default).");
 }
 
 
 DetectorConstruction_Messenger::~DetectorConstruction_Messenger()
 {
-	delete DetConDir;
-	delete ShiftCmd;
-	delete BallCmd;
+  // directories
+  delete DetectorDir;
+
+  // commands
+  delete RepCmd;
+  delete STCmd;
+  delete SPCmd;
+  delete BallCmd;
+  delete PlungerCmd;
+  delete DSAMCmd;
 }
 
 
 void DetectorConstruction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
-  if( command == ShiftCmd )
-    { aDetCon->setZShift(ShiftCmd->GetNewDoubleValue(newValue));}
+  if( command == RepCmd )
+    { theDetector->Report(); }
 
-	if( command == BallCmd )
-    { aDetCon->UseCsIBall(true);}
+  if( command == STCmd )
+    { theDetector->ShiftChamber(STCmd->GetNewDoubleValue(newValue)); }
 
+  if( command == SPCmd )
+    { theDetector->ShiftPlunger(SPCmd->GetNewDoubleValue(newValue)); }
+
+  if( command == BallCmd )
+    { theDetector->UseCsIBall(true);}
+
+  if( command == PlungerCmd )
+    { 
+      G4cout << "----> Using the TIP plunger as the reaction target" << G4endl;
+      theDetector->SetUsePlunger();
+    }
+
+  if( command == DSAMCmd )
+    { 
+      G4cout << "----> Using the TIP DSAM reaction target" << G4endl;
+      theDetector->SetUseDSAMTarget();
+    }
+  
 }
 
