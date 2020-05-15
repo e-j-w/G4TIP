@@ -1,9 +1,7 @@
 #include "Results.hh"
 
-Results::Results(DetectorConstruction *det,
-                 PhysicsList *physl)
-    : theDetector(det), thePhysicsList(physl) {
-
+Results::Results(DetectorConstruction *det, PhysicsList *physl) : theDetector(det), thePhysicsList(physl) 
+{
   soh = sizeof(partHit);
   sogh = sizeof(GHit);
   soi = sizeof(gun);
@@ -15,7 +13,7 @@ Results::Results(DetectorConstruction *det,
 Results::~Results() { tree->Delete(); }
 //---------------------------------------------------------
 void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
-  // Get A, Z of the projectile and recoiling residual (needed for particle
+  // Get A, Z of the projectile and recoiling nucleus (needed for particle
   // identification when saving data to tree)
   numP = nP;
   numN = nN;
@@ -53,6 +51,7 @@ void Results::SetupRunCoulex() {
   Zp = thePhysicsList->getReactionCoulex()->getProjectile()->getZ();
   Ar = thePhysicsList->getReactionCoulex()->getRecoil()->getA();
   Zr = thePhysicsList->getReactionCoulex()->getRecoil()->getZ();
+  numDec = 1;
 
   SetupRun();
 }
@@ -86,89 +85,92 @@ void Results::TreeCreate() {
 
   if (tree == NULL) {
     tree = new TTree("tree", "tree");
-    tree->Branch("Gfold", &GHit.Gfold, "Gfold/I");
-    tree->Branch("GId", GHit.GId, "GId[Gfold]/I");
-    tree->Branch("GSeg", GHit.GSeg, "GSeg[Gfold]/I");
-    tree->Branch("GRing", GHit.GRing, "GRing[Gfold]/I");
+    tree->Branch("GammaFold", &GHit.Gfold, "Gfold/I");
+    tree->Branch("TigressID", GHit.GId, "GId[Gfold]/I");
+    tree->Branch("TigressSegment", GHit.GSeg, "GSeg[Gfold]/I");
+    tree->Branch("TigressRing", GHit.GRing, "GRing[Gfold]/I");
     tree->Branch("Gx", GHit.Gx, "Gx[Gfold]/D");
     tree->Branch("Gy", GHit.Gy, "Gy[Gfold]/D");
     tree->Branch("Gz", GHit.Gz, "Gz[Gfold]/D");
-    tree->Branch("GE", GHit.GE, "GE[Gfold]/D");
+    tree->Branch("GammaEnergy", GHit.GE, "GE[Gfold]/D");
     tree->Branch("GW", GHit.GW, "GW[Gfold]/D");
     tree->Branch("GT", GHit.GT, "GT[Gfold]/D");
-    tree->Branch("GfoldAddBack", &GHit.GfoldAB, "GfoldAB/I");
-    tree->Branch("GIdAddBack", GHit.GIdAB, "GIdAB[GfoldAB]/I");
-    tree->Branch("GSegAddBack", GHit.GSegAB, "GSegAB[GfoldAB]/I");
-    tree->Branch("GRingAddBack", GHit.GRingAB, "GRingAB[GfoldAB]/I");
+    tree->Branch("GammaFoldAddBack", &GHit.GfoldAB, "GfoldAB/I");
+    tree->Branch("TigressIDAddBack", GHit.GIdAB, "GIdAB[GfoldAB]/I");
+    tree->Branch("TigressSegmentAddBack", GHit.GSegAB, "GSegAB[GfoldAB]/I");
+    tree->Branch("TigressRingAddBack", GHit.GRingAB, "GRingAB[GfoldAB]/I");
     tree->Branch("GxAddBack", GHit.GxAB, "GxAB[GfoldAB]/D");
     tree->Branch("GyAddBack", GHit.GyAB, "GyAB[GfoldAB]/D");
     tree->Branch("GzAddBack", GHit.GzAB, "GzAB[GfoldAB]/D");
-    tree->Branch("GEAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
-    tree->Branch("dsfold", &eStat.dsfold, "dsfold/I");
-    tree->Branch("ds", &eStat.ds, "ds[dsfold]/D");
-    tree->Branch("calcERes", &eStat.calcERes, "calcERes[dsfold]/D");
-    tree->Branch("CsIfold", &partHit.CsIfold, "CsIfold/I");
+    tree->Branch("GammaEnergyAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
+    tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
+    tree->Branch("DopplerShiftFactor", &eStat.ds, "ds[dsfold]/D");
+    tree->Branch("calcERecoil", &eStat.calcERes, "calcERes[dsfold]/D");
+    tree->Branch("CsIFold", &partHit.CsIfold, "CsIfold/I");
     tree->Branch("CsIx", partHit.x, "x[CsIfold]/D");
     tree->Branch("CsIy", partHit.y, "y[CsIfold]/D");
     tree->Branch("CsIz", partHit.z, "z[CsIfold]/D");
     tree->Branch("CsIpx", partHit.px, "px[CsIfold]/D");
     tree->Branch("CsIpy", partHit.py, "py[CsIfold]/D");
     tree->Branch("CsIpz", partHit.pz, "pz[CsIfold]/D");
-    tree->Branch("CsIE", partHit.E, "E[CsIfold]/D");
+    tree->Branch("CsIEnergy", partHit.E, "E[CsIfold]/D");
     tree->Branch("CsIb", partHit.b, "b[CsIfold]/D");
     tree->Branch("CsIw", partHit.w, "w[CsIfold]/D");
     tree->Branch("CsIA", partHit.A, "A[CsIfold]/I");
     tree->Branch("CsIZ", partHit.Z, "Z[CsIfold]/I");
-    tree->Branch("CsIId", partHit.Id, "Id[CsIfold]/I");
+    tree->Branch("CsIID", partHit.Id, "Id[CsIfold]/I");
     tree->Branch("CsIr", partHit.r, "r[CsIfold]/I");
     tree->Branch("CsIpath", partHit.path, "path[CsIfold]/D");
     tree->Branch("CsIdE", partHit.Id, "dE[CsIfold]/D");
     tree->Branch("CsIdEdx", partHit.dEdx, "dEdx[CsIfold]/D");
     tree->Branch("CsIdLdx", partHit.dLdx, "dLdx[CsIfold]/D");
     tree->Branch("CsILY", partHit.LY, "LY[CsIfold]/D");
-    tree->Branch("projGun", &gun,
-                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
-                 "D:phi/D:w/D"); // projectile when shot from the particle gun
-    tree->Branch("projReactionIn", &pRIn,
-                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
-                 "D:phi/D:w/D"); // projectile at the reaction point
-    tree->Branch("resReactionOut", &rROut,
-                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/"
-                 "D:phi/D:w/D"); // residual at the reaction point
+    tree->Branch("ProjectileStart", &gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile when shot from the particle gun
+    tree->Branch("ProjectileReactionIn", &pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile at the reaction point
+    tree->Branch("ProjectileReactionOut",&pROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D");
+    tree->Branch("RecoilReactionOut", &rROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // recoil at the reaction point
     //setup branches that are relevant to the chosen target
     switch(theDetector->GetTargetType())
     {
       case 1:
         //plunger
-        tree->Branch("projBackingIn", &pBIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target  
-        tree->Branch("projTargetIn", &pTIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target 
-        tree->Branch("resTargetOut", &rTOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/""D"); // residual upon leaving the target
-        tree->Branch("resDegraderIn", &rDIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/""D"); // residual upon entering the degrader  
-        tree->Branch("resDegraderOut", &rDOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/""D"); // residual upon leaving the degrader
+        tree->Branch("ProjectileBackingIn", &pBIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target  
+        tree->Branch("ProjectileTargetIn", &pTIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target 
+        tree->Branch("ProjectileTargetOut",&pTOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D");
+        tree->Branch("RecoilTargetOut", &rTOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the target
+        tree->Branch("RecoilDegraderIn", &rDIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon entering the degrader  
+        tree->Branch("RecoilDegraderOut", &rDOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the degrader
         break;
       default:
         //dsam target
-        tree->Branch("projTargetIn", &pTIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target
-        tree->Branch("resBackingIn", &rBIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/""D"); // residual upon leaving the target/entering the backing
-        tree->Branch("resBackingOut", &rBOut_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/""D"); // residual upon leaving the backing (if it makes it that far)
+        tree->Branch("ProjectileTargetIn", &pTIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target
+        tree->Branch("ProjectileBackingIn",&pBIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D");
+        tree->Branch("RecoilBackingIn", &rBIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the target/entering the backing
+        tree->Branch("RecoilBackingOut", &rBOut_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the backing (if it makes it that far)
         break;
     } 
-      
 
+    //setup branches that are relevant to the chosen reaction
+    switch(thePhysicsList->getReactionType()==0)
+    {
+      case 1:
+        //coulex
+        break;
+      default:
+        //fusion-evaporation
+        tree->Branch("ParticleReactionOut", &partROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/D"); // evaporated particle at the reaction point
+        break;
+    }
+
+    //setup decays
     for (int i = 0; i < numDec; i++) // make branch for each decay
       if (i < MAXNUMDECAYS) {
-        sprintf(branchName, "resDec%i", i + 1);
-        tree->Branch(
-            branchName, &rDec[i],
-            "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/"
-            "D"); // residual upon decaying via gamma emission
+        sprintf(branchName, "Decay%i", i + 1);
+        tree->Branch(branchName, &rDec[i],"x/D:y/D:z/D:px/D:py/D:pz/D:A/I:Z/I:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon decaying via gamma emission
       }
-    tree->Branch("partReactionOut", &partROut,
-                 "x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:theta/D:phi/D:w/"
-                 "D"); // evaporated particle at the reaction point
  } else {
-    printf("Tree not deleted, could not create new tree!\n");
-    getc(stdin);
+    G4cout << "WARNING: Tree exists, could not create new tree!" << G4endl;
+    //getc(stdin);
   }
 }
 //---------------------------------------------------------
@@ -205,13 +207,16 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&gun, 0, soi);
   memset(&pBIn_plunger, 0, soi);
   memset(&pTIn_plunger, 0, soi);
+  memset(&pTOut_plunger, 0, soi);
   memset(&rTOut_plunger,0,soi);
   memset(&rDIn_plunger,0,soi);
   memset(&rDOut_plunger,0,soi);
   memset(&pTIn_dsam,0,soi);
+  memset(&pBIn_dsam,0,soi);
   memset(&rBIn_dsam,0,soi);
   memset(&rBOut_dsam,0,soi);
   memset(&pRIn, 0, soi);
+  memset(&pROut, 0, soi);
   memset(&rROut, 0, soi);
  
  
@@ -346,6 +351,30 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           }
       }
       else if ((*IonCollection)[i]->GetFlag() == PLUNGER_TARGET_OUT_FLAG) {
+        if ((*IonCollection)[i]->GetA() == Ap)
+          if ((*IonCollection)[i]->GetZ() == Zp) {
+            pTOut_plunger.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            pTOut_plunger.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            pTOut_plunger.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            pTOut_plunger.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            pTOut_plunger.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            pTOut_plunger.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            pTOut_plunger.b = (*IonCollection)[i]->GetBeta();
+            pTOut_plunger.E = (*IonCollection)[i]->GetKE() / MeV;
+            pTOut_plunger.t = (*IonCollection)[i]->GetTime() / ns;
+            pTOut_plunger.tROffset = 0.;
+            pTOut_plunger.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                              ((*IonCollection)[i]->GetMom().mag())) /
+                         degree; // angle between (0,0,1) and momentum vector
+            pTOut_plunger.phi =
+                acos((*IonCollection)[i]->GetMom().getX() /
+                     sqrt((*IonCollection)[i]->GetMom().getX() *
+                              (*IonCollection)[i]->GetMom().getX() +
+                          (*IonCollection)[i]->GetMom().getY() *
+                              (*IonCollection)[i]->GetMom().getY())) /
+                degree; // angle between (1,0,0) and momentum vector in x and y
+            pTOut_plunger.w = (*IonCollection)[i]->GetWeight();
+          }
         if ((*IonCollection)[i]->GetA() == Ar)
           if ((*IonCollection)[i]->GetZ() == Zr) {
             rTOut_plunger.x = (*IonCollection)[i]->GetPos().getX() / mm;
@@ -448,6 +477,30 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
               pTIn_dsam.w = (*IonCollection)[i]->GetWeight();
             }
         } else if ((*IonCollection)[i]->GetFlag() == DSAM_BACKING_IN_FLAG) {
+          if ((*IonCollection)[i]->GetA() == Ap)
+            if ((*IonCollection)[i]->GetZ() == Zp) {
+              pBIn_dsam.x = (*IonCollection)[i]->GetPos().getX() / mm;
+              pBIn_dsam.y = (*IonCollection)[i]->GetPos().getY() / mm;
+              pBIn_dsam.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+              pBIn_dsam.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+              pBIn_dsam.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+              pBIn_dsam.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+              pBIn_dsam.b = (*IonCollection)[i]->GetBeta();
+              pBIn_dsam.E = (*IonCollection)[i]->GetKE() / MeV;
+              pBIn_dsam.t = (*IonCollection)[i]->GetTime() / ns;
+              pBIn_dsam.tROffset = 0.;
+              pBIn_dsam.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                                ((*IonCollection)[i]->GetMom().mag())) /
+                          degree; // angle between (0,0,1) and momentum vector
+              pBIn_dsam.phi =
+                  acos((*IonCollection)[i]->GetMom().getX() /
+                      sqrt((*IonCollection)[i]->GetMom().getX() *
+                                (*IonCollection)[i]->GetMom().getX() +
+                            (*IonCollection)[i]->GetMom().getY() *
+                                (*IonCollection)[i]->GetMom().getY())) /
+                  degree; // angle between (1,0,0) and momentum vector in x and y
+              pBIn_dsam.w = (*IonCollection)[i]->GetWeight();
+            }
           if ((*IonCollection)[i]->GetA() == Ar)
             if ((*IonCollection)[i]->GetZ() == Zr) {
               rBIn_dsam.x = (*IonCollection)[i]->GetPos().getX() / mm;
@@ -527,7 +580,31 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
             pRIn.w = (*IonCollection)[i]->GetWeight();
           }
       } else if ((*IonCollection)[i]->GetPFlag() == REACTION_OUT_FLAG) {
-        // residual nucleus tracking
+        if ((*IonCollection)[i]->GetA() == Ap)
+          if ((*IonCollection)[i]->GetZ() == Zp) {
+            pROut.x = (*IonCollection)[i]->GetPos().getX() / mm;
+            pROut.y = (*IonCollection)[i]->GetPos().getY() / mm;
+            pROut.z = (*IonCollection)[i]->GetPos().getZ() / mm;
+            pROut.px = (*IonCollection)[i]->GetMom().getX() / MeV;
+            pROut.py = (*IonCollection)[i]->GetMom().getY() / MeV;
+            pROut.pz = (*IonCollection)[i]->GetMom().getZ() / MeV;
+            pROut.b = (*IonCollection)[i]->GetBeta();
+            pROut.E = (*IonCollection)[i]->GetKE() / MeV;
+            pROut.t = (*IonCollection)[i]->GetTime() / ns;
+            pROut.tROffset = 0.;
+            pROut.theta = acos(((*IonCollection)[i]->GetMom().getZ()) /
+                               ((*IonCollection)[i]->GetMom().mag())) /
+                          degree; // angle between (0,0,1) and momentum vector
+            pROut.phi =
+                acos((*IonCollection)[i]->GetMom().getX() /
+                     sqrt((*IonCollection)[i]->GetMom().getX() *
+                              (*IonCollection)[i]->GetMom().getX() +
+                          (*IonCollection)[i]->GetMom().getY() *
+                              (*IonCollection)[i]->GetMom().getY())) /
+                degree; // angle between (1,0,0) and momentum vector in x and y
+            pROut.w = (*IonCollection)[i]->GetWeight();
+          }
+        // recoil nucleus tracking
         if ((*IonCollection)[i]->GetA() == Ar)
           if ((*IonCollection)[i]->GetZ() == Zr) {
             rROut.x = (*IonCollection)[i]->GetPos().getX() / mm;
@@ -554,8 +631,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           }
       } else if ((*IonCollection)[i]->GetPFlag() >= DECAY_FLAG) {
         G4int flag = (*IonCollection)[i]->GetPFlag();
-        if ((*IonCollection)[i]->GetA() == Ar)
-          if ((*IonCollection)[i]->GetZ() == Zr) {
+        if (((*IonCollection)[i]->GetA() == Ar) || ((*IonCollection)[i]->GetA() == Ap))
+          if (((*IonCollection)[i]->GetZ() == Zr) || ((*IonCollection)[i]->GetZ() == Zp)) {
             rDec[flag - DECAY_FLAG].x =
                 (*IonCollection)[i]->GetPos().getX() / mm;
             rDec[flag - DECAY_FLAG].y =
@@ -569,6 +646,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
             rDec[flag - DECAY_FLAG].pz =
                 (*IonCollection)[i]->GetMom().getZ() / MeV;
             rDec[flag - DECAY_FLAG].b = (*IonCollection)[i]->GetBeta();
+            rDec[flag - DECAY_FLAG].A = (*IonCollection)[i]->GetA();
+            rDec[flag - DECAY_FLAG].Z = (*IonCollection)[i]->GetZ();
             rDec[flag - DECAY_FLAG].E = (*IonCollection)[i]->GetKE() / MeV;
             rDec[flag - DECAY_FLAG].t = (*IonCollection)[i]->GetTime() / ns;
             rDec[flag - DECAY_FLAG].tROffset =
@@ -805,7 +884,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
 
   // compute an approxiate Doppler shift based on the specific detectors where
   // gamma and evaporated particles were seen
-  Double_t beta; // speed of residual (calculated)
+  Double_t beta; // speed of recoil (calculated)
   eStat.dsfold = 0;
   for (i = 0; i < GHit.GfoldAB; i++) // number of addback hits in the event
   {
@@ -818,7 +897,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     resMom.setX(gun.px);
     resMom.setY(gun.py);
     resMom.setZ(gun.pz);
-    // get residual momentum by subtracting evaporated particle momenta from
+    // get recoil momentum by subtracting evaporated particle momenta from
     // beam momentum
     for (j = 0; j < partHit.CsIfold; j++) {
       partMom.setX(partHit.px[j]);
@@ -831,11 +910,11 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     }
     eStat.calcERes[eStat.dsfold] = resMom * resMom / (2. * 931.45 * Ar);
     // Print debug
-    /*G4cout<<"Residual momentum (calc), hit #"<<i+1<<": "<<resMom;
+    /*G4cout<<"recoil momentum (calc), hit #"<<i+1<<": "<<resMom;
     G4cout<<", magnitude:"<<resMom.mag()<<G4endl;
     G4cout<<"Energy (calc): "<<resE/MeV<<", (sim): "<<rROut.E/MeV<<G4endl;*/
     beta = resMom.mag() / (931.45 * Ar);
-    // G4cout<<"Residual beta (calc): "<<beta<<", (sim): "<<rROut.b<<G4endl;
+    // G4cout<<"recoil beta (calc): "<<beta<<", (sim): "<<rROut.b<<G4endl;
     if (resMom.mag() != 0)
       resMom.setMag(1.0);
 

@@ -1,0 +1,83 @@
+/Physics/Step 0.05 um
+/Physics/IgnoreNeutrons
+/Physics/Coulex
+/Construction/UseCsIBall
+/Construction/UsePlunger
+#INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
+/Run/Initialize
+
+#
+# Add HPGe detectors
+#
+/Griffin/addGriffinForward 16
+
+#
+# Projectile setup
+#
+/Projectile/A 20
+/Projectile/Z 12
+/Projectile/KE 50 MeV
+/Projectile/Ex 1.598 MeV
+/Projectile/Lifetime 2.2 ps
+/Projectile/Focus/X 0.0 mm
+/Projectile/Focus/Y 0.0 mm
+/Projectile/Focus/DX 0.0 mm
+/Projectile/Focus/DY 0.0 mm
+
+#
+# Recoil setup
+#
+/Recoil/A 9
+/Recoil/Z 4
+/Recoil/Ex 0 MeV
+/Recoil/Lifetime 0 ps
+
+#
+# Plunger setup
+#
+/Plunger/Backing/Material G4_Galactic
+/Plunger/Backing/Thickness 0.001 um
+/Plunger/Backing/NStep 1
+/Plunger/Target/Material G4_Be
+/Plunger/Target/Thickness 5.0 um
+/Plunger/Target/NStep 1
+/Plunger/Stopper/Material G4_Au
+/Plunger/Stopper/Thickness 5.0 um
+/Plunger/Stopper/NStep 1
+/Plunger/Separation 20 um
+
+#
+# Equipment shifts
+#
+#/DetectorConstruction/ShiftChamber -2.751003 mm
+#/DetectorConstruction/ShiftPlunger -5.0 mm
+
+#
+# Reaction setup
+#
+#/Coulex/SetDCmin 11.415953
+
+#
+# Output
+#
+#/Print/Track_Set
+
+#
+# Trigger setup
+#
+/Trigger/CsIThreshold 0.001 MeV
+#Trigger on recoil
+/Trigger/A 9
+/Trigger/Z 4
+/Trigger/DefinedParticleAndGamma
+
+#
+# Run
+#
+/run/beamOn 100000
+
+#
+# Stuff to save
+#
+/Results/Tree/Report
+/Results/Tree/Save run1.root

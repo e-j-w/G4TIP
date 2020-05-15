@@ -52,9 +52,10 @@ target_link_libraries(G4TIP ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 # build G4TIP
 #
 set(G4TIP_SCRIPTS
-  macros/1274level_fusevap_dsam.mac
-  macros/1274level_fusevap_rdm.mac
-  macros/3357cascade_fusevap_dsam.mac
+  macros/coulex_rdm_20Mg_Be_target_Au_stopper.mac
+  macros/fusevap_dsam_1274level.mac
+  macros/fusevap_dsam_3357cascade.mac
+  macros/fusevap_rdm_1274level.mac
   macros/vis.mac
   macros/gui.mac
   )

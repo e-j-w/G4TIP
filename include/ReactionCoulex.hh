@@ -86,6 +86,7 @@ public:
   G4int    GetRxnDroppedE(){return dropE;};
   G4int    GetRxnDroppedKsi(){return dropKsi;};
   G4int    GetRxnDroppedRand(){return dropRand;};
+  G4bool   GetProjEx(){return ProjEx;};
   void     ReportDCmin(){printf("Minimum istnace of closest approach = %.2f fm\n",dcmin);};
   void     SetDCmin(G4double d){dcmin = d;};
 
@@ -148,7 +149,7 @@ private:
   G4double ksiFace;
   G4double EprimeFace;
   G4double A1,Z1,A2,Z2;
-  G4bool   ProjEx;
+  G4bool   ProjEx; //true if the projectile is excited (and decays), false if the recoil is excited
   G4double Ex1,Ex2;
   G4double BE2;
   G4double DE,DEp;

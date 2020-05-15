@@ -54,15 +54,7 @@ void RunAction::EndOfRunAction(const G4Run*)
       //coulex
       G4double p,ddx,dx,Nv;
       G4cout<<G4endl;
-      theResults->SetTargetFaceCrossSection(thePhysicsList->getReactionCoulex()->GetTargetFaceCrossSection());
-      if(theDetector->GetTargetType()==1){
-        //using plunger
-        dx=theDetector->GetPlunger()->GetTargetThickness();   // in cm
-        ddx=dx*theDetector->GetPlunger()->GetTargetDensity(); // in g/cm^2
-        Nv=theDetector->GetPlunger()->GetTargetNV(recoilZ);   // in atoms/cm3
-        p=Nv*dx*thePhysicsList->getReactionCoulex()->GetThickTargetCrossSection()*1E-18;
-      }
-      
+      theResults->SetTargetFaceCrossSection(thePhysicsList->getReactionCoulex()->GetTargetFaceCrossSection());   
     
       G4cout<<setprecision(3);
 
@@ -73,6 +65,11 @@ void RunAction::EndOfRunAction(const G4Run*)
       G4cout<<" Thick Target Cross Section is             : "<<thePhysicsList->getReactionCoulex()->GetThickTargetCrossSection()<<" [b]"<<G4endl;
       // G4cout<<" Target thickness in um  is                : "<<dx*10000.<<G4endl;
       if(theDetector->GetTargetType()==1){
+        //using plunger
+        dx=theDetector->GetPlunger()->GetTargetThickness();   // in cm
+        ddx=dx*theDetector->GetPlunger()->GetTargetDensity(); // in g/cm^2
+        Nv=theDetector->GetPlunger()->GetTargetNV(recoilZ);   // in atoms/cm3
+        p=Nv*dx*thePhysicsList->getReactionCoulex()->GetThickTargetCrossSection()*1E-18;
         G4cout<<" Target material density in g/cm3 is       : "<<theDetector->GetPlunger()->GetTargetDensity()<<G4endl;
         G4cout<<" Target thickness in mg/cm2 is             : "<<ddx*1000.<<G4endl;
         // G4cout<<" Number of atoms per unit volume           : "<<Nv<<" atoms/cm3"<<G4endl;

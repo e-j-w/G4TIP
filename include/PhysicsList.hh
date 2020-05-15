@@ -83,8 +83,8 @@ protected:
   void SetCuts();
 
 private:
-  Recoil *theRecoil;
   Projectile *theProjectile;
+  Recoil *theRecoil;
   DetectorConstruction *theDetector;
   ReactionFusEvap *theReactionFusEvap;
   ReactionFusEvap_Messenger *theReactionFusEvapMessenger;

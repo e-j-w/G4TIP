@@ -65,6 +65,26 @@ typedef struct {
 } IonInf;
 
 typedef struct {
+  Double_t x;
+  Double_t y;
+  Double_t z;
+  Double_t px;
+  Double_t py;
+  Double_t pz;
+  Int_t A;
+  Int_t Z;
+  Double_t E;
+  Double_t b;     // beta
+  Double_t t;     // time
+  Double_t tROffset; //time offset w.r.t. reaction
+  Double_t theta; // angle of emission from beam (z) axis
+  Double_t phi; // angle between plane of emission and horizontal (x) axis plane
+  Double_t w;
+  Double_t path;  // path length in material
+  Double_t Eloss; // energy loss on path
+} DecayInf;
+
+typedef struct {
   Int_t CsIfold;
   Double_t x[NCsI];
   Double_t y[NCsI];
@@ -154,14 +174,16 @@ private:
   IonStat stat;
   IonInf gun;
   IonInf pRIn;
+  IonInf pROut;
   IonInf rROut;
-  IonInf pTIn_plunger, pTIn_dsam; //target in
-  IonInf rTOut_plunger; //target out
-  IonInf pBIn_plunger, rBIn_dsam; //backing in
+  IonInf pTIn_plunger, pTIn_dsam; //projectile target in
+  IonInf pTOut_plunger; //projectile target out
+  IonInf rTOut_plunger; //recoil target out
+  IonInf pBIn_plunger, pBIn_dsam, rBIn_dsam; //backing in
   IonInf pBOut_plunger, rBOut_dsam; //backing out
   IonInf rDIn_plunger; //degrader in
   IonInf rDOut_plunger; //degrader out
-  IonInf rDec[MAXNUMDECAYS];
+  DecayInf rDec[MAXNUMDECAYS];
   IonInf partROut;      // ion tracking (projectile, residual)
   CsIInf partHit;     // particle hit
   GInf GHit;          // gamma hit

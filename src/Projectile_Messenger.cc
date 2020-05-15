@@ -134,7 +134,7 @@ void Projectile_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
     { theProjectile->setfcZ(fcZCmd->GetNewDoubleValue(newValue));}
   if( command == maxACmd )
     { theProjectile->setmaxAta(maxACmd->GetNewDoubleValue(newValue));}
- if( command == maxBCmd )
+  if( command == maxBCmd )
     { theProjectile->setmaxBta(maxBCmd->GetNewDoubleValue(newValue));}
   if( command == Ata0Cmd )
     { theProjectile->setAta0(Ata0Cmd->GetNewDoubleValue(newValue));}

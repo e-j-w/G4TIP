@@ -2,11 +2,15 @@
 
 Maintainer: Jonathan Williams
 
+See the list of contributors [below](#contributors).
+
 ## Description
 
-GEANT4 code implementing TIP/TIGRESS DSAM/RDM using a fusion-evaporation reaction process.
+Unified simulation code for [TIP](https://fiveyearplan.triumf.ca/tip/) and [TIGRESS](https://fiveyearplan.triumf.ca/teams-tools/tigress-triumf-isac-gamma-ray-suppressed-spectrometer/) using the GEANT4 framework.
 
-At present, the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  Step-wise decay of the residual nucleus (gamma ray cascade) is also availaible.
+At present, fusion-evaporation and Coulomb excitation reaction processes are available, and the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  The TIP plunger (for RDM) or a DSAM target are available.
+
+For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma ray cascade) is availaible.  Coulomb excitation is single-step (E2).
 
 ## Installation
 
@@ -55,7 +59,7 @@ This program requires secret files describing the GRIFFIN geometry (`DetectionSy
 
 ### Build the simulation code
 
-The program is then compiled from source using the following commands (substituting the appropriate directories):
+The program is then compiled from source using the following commands (substituting the appropriate directory):
 
 ```
 cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION .
@@ -64,7 +68,18 @@ make -j
 
 ## Using the program
 
-The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files in the `macros` directory for examples of commands that can be used in the simulation.  Tables explaining some (but not all) of the available commands follow:
+The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  The `macros` directory contains some examples of working batch files, it may be easier to copy one of these and modify it.  Tables explaining some (but not all) of the available commands follow:
+
+### Reaction mechanism and physics parameters
+
+One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex`) must be specified.
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Physics/FusionEvaporation | Use the fusion-evaporation reaction mechanism. The reaction should be further configured using the reaction parameters listed [below](#fusevappar). |
+| /Physics/Coulex | Use the Coulomb excitation reaction mechanism. |
+| /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
+| /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
 
 ### Detectors and geometry
 
@@ -86,14 +101,9 @@ The program `G4TIP` is run from the command line and takes a batch file as its o
 | /Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /Backing/Z NUMBER | The proton number of the target backing. |
 
-### Physics parameters
 
-|**Command**|**Effect**|
-|:---:|:---:|
-| /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
-| /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
 
-### Fusion-evaporation reaction parameters
+### Fusion-evaporation reaction parameters<a name="fusevappar"></a>
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -153,15 +163,17 @@ G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a 
 
 G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 
-## Acknowledgements
+## Contributors<a name="contributors"></a>
 
-A. Chester - CsI wall code.
+A. Chester - CsI wall code, Coulex implementation, RDM implementation.
 
 T. Ma - CsI ball code.
 
 C. Morse - Finding and fixing memory leaks.
 
-K. Starosta - Initial TIP codebase, RDM implementation.
+K. Starosta - Initial TIP codebase.
+
+J. Williams - Fusion-evaporation implementation, DSAM implementation.
 
 F. Wu - Reaction code work and auditing.
 

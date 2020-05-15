@@ -1,7 +1,7 @@
 #include "PhysicsList.hh"
 
-PhysicsList::PhysicsList(Projectile *Proj, Recoil* Rec, DetectorConstruction *Det)
-    : theProjectile(Proj), theRecoil(Rec), theDetector(Det) {
+PhysicsList::PhysicsList(Projectile* Proj, Recoil* Rec, DetectorConstruction* Det) : theProjectile(Proj), theRecoil(Rec), theDetector(Det) 
+{
   stepSize = 0.05 * um;
   customStopping = false;
   reactionType = -1;
