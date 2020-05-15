@@ -1,6 +1,7 @@
 /Physics/Step 0.05 um
 /Physics/IgnoreNeutrons
-#/Construction/UseCsIBall
+/Physics/FusionEvaporation
+/Construction/UseCsIBall
 /Construction/UseDSAMTarget
 #/Physics/StoppingTable stopping_data/SRIM
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
@@ -23,19 +24,19 @@
 /Target/A 12
 /Target/Thickness 1.91 um
 /Target/NStep 1
-/Reaction/AddDecay 2.0820 324.61e-6
-/Reaction/AddDecay 1.274537 5.1937e-3
-/Reaction/N_protons 0
-/Reaction/N_neutrons 0
-/Reaction/N_alpha 2
-/CompoundFormation/Q 23.651 MeV
-/ParticleEvaporation/Q1 -10.643 MeV
-/ParticleEvaporation/Q2 -10.615 MeV
-/ParticleEvaporation/Centroid 14.16082
-/ParticleEvaporation/Width 1.001135
-/ParticleEvaporation/Tau 2.286506
-#/ParticleEvaporation/ConstrainAngularRange
-#/ParticleEvaporation/MaxAngle 50.0 deg
+/FusionEvaporation/AddDecay 2.0820 324.61e-6
+/FusionEvaporation/AddDecay 1.274537 5.1937e-3
+/FusionEvaporation/N_protons 0
+/FusionEvaporation/N_neutrons 0
+/FusionEvaporation/N_alpha 2
+/FusionEvaporation/CompoundFormationQ 23.651 MeV
+/FusionEvaporation/Q1 -10.643 MeV
+/FusionEvaporation/Q2 -10.615 MeV
+/FusionEvaporation/Centroid 14.16082
+/FusionEvaporation/Width 1.001135
+/FusionEvaporation/Tau 2.286506
+#/FusionEvaporation/ConstrainParticleAngularRange
+#/FusionEvaporation/MaxParticleAngle 50.0 deg
 /Target/Report
 /Results/Tree/CsIDetectorID 0
 /Trigger/CsIDetectorID 0
@@ -58,4 +59,3 @@
 /run/beamOn 1000000
 /Results/Tree/Report
 /Results/Tree/Save run1_3357level_dsam.root
-/Projectile/Report

@@ -34,6 +34,7 @@ class RunAction : public G4UserRunAction
   Results* theResults;
   DetectorConstruction* theDetector;
   G4int nP,nN,nA;//number of each type of recoil particle
+  G4int recoilZ;
  
 };
 

@@ -4,15 +4,15 @@
 ReactionCoulex_Messenger::ReactionCoulex_Messenger(ReactionCoulex* React)
   :aReaction(React)
 { 
-  ReactionDir = new G4UIdirectory("/Reaction/");
-  ReactionDir->SetGuidance("Reaction control.");
+  ReactionDir = new G4UIdirectory("/Coulex/");
+  ReactionDir->SetGuidance("Coulomb excitaiton reaction control.");
 
-  SetDCminCmd = new G4UIcmdWithADouble("/Reaction/SetDCmin",this);
+  SetDCminCmd = new G4UIcmdWithADouble("/Coulex/SetDCmin",this);
   SetDCminCmd->SetGuidance("Set minimum distance of closest approach in fm.");
   SetDCminCmd->SetParameterName("choice",false);
   SetDCminCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  RepDCminCmd = new G4UIcmdWithoutParameter("/Reaction/ReportDCmin",this);
+  RepDCminCmd = new G4UIcmdWithoutParameter("/Coulex/ReportDCmin",this);
   RepDCminCmd->SetGuidance("Report minimum distance of closest approach in fm");  
 }
 

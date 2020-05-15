@@ -28,6 +28,8 @@ class Run_Messenger: public G4UImessenger
     G4UIcmdWithoutParameter* ICmd;
     G4UIcmdWithAString* CSCmd;
     G4UIcmdWithoutParameter* NCmd;
+    G4UIcmdWithoutParameter* FusEvapCmd;
+    G4UIcmdWithoutParameter* CoulexCmd;
 };
 
 

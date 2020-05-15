@@ -37,6 +37,7 @@ class TrackerCsIHit : public G4VHit
       void SetZ(G4int z){Z=z;};
       void SetBeta(G4double b){beta=b;};
       void SetKE(G4double k){KE=k;};
+      void SetEdep(G4double ed){Edep=ed;};
       void SetWeight(G4double w){weight=w;};
       void SetPos      (G4ThreeVector xyz){ pos = xyz; };
       void SetMom      (G4ThreeVector xyz){ p = xyz; };
@@ -51,6 +52,7 @@ class TrackerCsIHit : public G4VHit
       G4double GetBeta(){return beta;};
       G4double GetWeight(){return weight;};
       G4double GetKE(){return KE;};
+      G4double GetEdep(){return Edep;};
       G4ThreeVector GetPos(){ return pos; };
       G4ThreeVector GetMom(){ return p; };
       G4int    GetId()      { return id; };       
@@ -65,6 +67,7 @@ class TrackerCsIHit : public G4VHit
       G4int         Z;
       G4double      beta;
       G4double      KE;
+      G4double      Edep;
       G4double      weight;
       G4double      time;
       G4ThreeVector pos;

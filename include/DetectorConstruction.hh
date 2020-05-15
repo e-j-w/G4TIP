@@ -40,6 +40,7 @@ public:
   CsI_array* GetCsIWall(){return aCsI_wall;};
   CsI_array_spherical* GetCsIBall(){return aCsI_ball;};
   Chamber*   GetChamber(){return theChamber;};
+  int GetTargetType() {return targetType;};
   G4bool usingCsIBall(){return useCsIball;};
   
   G4int griffinDetectorsMapIndex;
@@ -61,7 +62,6 @@ public:
   void UseCsIBall( G4bool input ) {useCsIball = input;};
   void SetUseDSAMTarget() {targetType = 0;};
   void SetUsePlunger() {targetType = 1;};
-  int GetTargetType() {return targetType;};
   void UpdateGeometry();
   G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
   void ShiftChamber(G4double);

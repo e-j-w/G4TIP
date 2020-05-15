@@ -26,6 +26,7 @@ using namespace CLHEP;
   trigger 1 AND 12                  13 (defined particle-particle coinc AND gamma singles)
   2 unsupp Griffin cores and 2 CsI  14
   only one defined particle         15 (particle singles with 1 hit restriction)
+  trigger 10 AND 1                  16 (particle-gamma coinc, only 1 of each needed)
  */
 
 class EventAction : public G4UserEventAction
@@ -40,6 +41,7 @@ class EventAction : public G4UserEventAction
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleSing1Hit(){setTrigger=15;};
   void SetTriggerParticleCoinc(){setTrigger=12;};
+  void SetTriggerParticleAndGamma(){setTrigger=16;};
   void SetTriggerParticleCoincAndGamma(){setTrigger=13;};
   void SetTriggerParticleCoincAnd2GammaCores(){setTrigger=14;};
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};

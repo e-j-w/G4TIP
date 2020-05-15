@@ -26,6 +26,16 @@ Projectile_Messenger::Projectile_Messenger(Projectile* BI)
   KECmd->SetParameterName("Projectile KE",false);
   KECmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  ExCmd = new G4UIcmdWithADoubleAndUnit("/Projectile/Ex",this);
+  ExCmd->SetGuidance("Set excitation energy for the incoming beam.");
+  ExCmd->SetParameterName("Projectile Ex",false);
+  ExCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  TauCmd = new G4UIcmdWithADoubleAndUnit("/Projectile/Lifetime",this);
+  TauCmd->SetGuidance("Set liftime for de-excitation of the incoming beam.");
+  TauCmd->SetParameterName("Projectile Tau",false);
+  TauCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   fcXCmd = new G4UIcmdWithADoubleAndUnit("/Projectile/Focus/X",this);
   fcXCmd->SetGuidance("Set focal point X position for the incoming beam.");
   fcXCmd->SetParameterName("choice",false);
@@ -89,6 +99,8 @@ Projectile_Messenger::~Projectile_Messenger()
   delete fcDXCmd;
   delete fcDYCmd;
   delete KECmd;
+  delete ExCmd;
+  delete TauCmd;
   delete RepCmd;
   delete ZCmd;
   delete ACmd;
@@ -106,6 +118,10 @@ void Projectile_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
     { theProjectile->setZ(ZCmd->GetNewIntValue(newValue));}
   if( command == KECmd )
     { theProjectile->setKE(KECmd->GetNewDoubleValue(newValue));}
+ if( command == ExCmd )
+    { theProjectile->setEx(ExCmd->GetNewDoubleValue(newValue));}
+  if( command == TauCmd )
+    { theProjectile->setTau(TauCmd->GetNewDoubleValue(newValue));}
   if( command == fcXCmd )
     { theProjectile->setfcX(fcXCmd->GetNewDoubleValue(newValue));}
   if( command == fcDXCmd )

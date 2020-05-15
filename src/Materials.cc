@@ -7,6 +7,7 @@
  
   // Elemental materials
   Al = man->FindOrBuildMaterial("G4_Al");
+  Be = man->FindOrBuildMaterial("G4_Be"); 
   Ge = man->FindOrBuildMaterial("G4_Ge"); 
   Cu = man->FindOrBuildMaterial("G4_Cu");
   C = man->FindOrBuildMaterial("G4_C");

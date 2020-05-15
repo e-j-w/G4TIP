@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
       new PrimaryGeneratorAction(theDetector, theProjectile);
   runManager->SetUserAction(generatorAction);
 
-  Results *results = new Results(theProjectile, theDetector, thePhysicsList);
+  Results *results = new Results(theDetector, thePhysicsList);
   Results_Messenger *resultsMessenger;
   resultsMessenger = new Results_Messenger(results);
 

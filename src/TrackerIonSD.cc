@@ -50,7 +50,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step *aStep, G4TouchableHistory *) {
     if (len > 0.) {
       TrackerIonHit *newIonHitI = new TrackerIonHit();
 
-      if (pName == "ReactionFusEvap")
+      if ((pName == "ReactionFusEvap") || (pName == "ReactionCoulex"))
         if (vi->GetLocalTime() == 0.) {
           newIonHitI->SetReactionOutFlag();
         }
@@ -82,7 +82,7 @@ G4bool TrackerIonSD::ProcessHits(G4Step *aStep, G4TouchableHistory *) {
        aStep->GetTrack()->GetDefinition()->GetPDGLifeTime()/ns << " ns." <<
        G4endl;*/
     }
-    if (vf->GetProcessDefinedStep()->GetProcessName() == "ReactionFusEvap")
+    if ((vf->GetProcessDefinedStep()->GetProcessName() == "ReactionFusEvap") || (vf->GetProcessDefinedStep()->GetProcessName() == "ReactionCoulex"))
       newIonHitF->SetReactionInFlag();
     newIonHitF->SetIonName(particleName);
     newIonHitF->SetVolName(vname);

@@ -4,6 +4,7 @@ PhysicsList::PhysicsList(Projectile *Proj, Recoil* Rec, DetectorConstruction *De
     : theProjectile(Proj), theRecoil(Rec), theDetector(Det) {
   stepSize = 0.05 * um;
   customStopping = false;
+  reactionType = -1;
 }
 
 PhysicsList::~PhysicsList() { ; }
@@ -118,12 +119,15 @@ void PhysicsList::ConstructEM() {
           theReactionCoulexMessenger = new ReactionCoulex_Messenger(theReactionCoulex);
           pmanager->AddProcess(theReactionCoulex, -1, -1, 3);
           break;
-        default:
+        case 0:
           //fusion-evaporation
           theReactionFusEvap = new ReactionFusEvap(theProjectile, theDetector);
           theReactionFusEvapMessenger = new ReactionFusEvap_Messenger(theReactionFusEvap); // this line needed here but not in Aaron's RDM code
           pmanager->AddProcess(theReactionFusEvap, -1, -1, 3);
           break;
+        default:
+          G4cout << "ERROR: no reaction mechanism specified.  Specify /Physics/FusionEvaporation or /Physics/Coulex in the macro file and try again." << G4endl;
+          exit(-1);
       }
       
       pmanager->AddProcess(new G4StepLimiter, -1, -1, 4);

@@ -64,7 +64,7 @@ make -j
 
 ## Using the program
 
-The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files in the `macros` directory for examples of commands that can be used in the simulation.  A table explaining some (but not all) of the available commands follows:
+The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  See the included sample batch files in the `macros` directory for examples of commands that can be used in the simulation.  Tables explaining some (but not all) of the available commands follow:
 
 ### Detectors and geometry
 
@@ -99,21 +99,21 @@ The program `G4TIP` is run from the command line and takes a batch file as its o
 |:---:|:---:|
 | /Projectile/A NUMBER | The mass number of the beam species (number of nucleons). |
 | /Projectile/Z NUMBER | The proton number of the beam species. |
-| /Reaction/N_protons | In fusion-evaporation, the number of protons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
-| /Reaction/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
-| /Reaction/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
-| /Reaction/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
-| /Reaction/MaxNumAttempts NUMBER | When simulating, the program will discard any reactions which are non-physical (eg. residual nucleus not excited high enough to emit the gamma rays requested) and re-attempt the reaction.  This sets the maximum number of times to re-attempt the reaction before giving an error.  Default value is 1000. |
-| /CompoundFormation/Q NUMBER | The reaction Q value, in MeV, of the fusion reaction forming the compound system from the beam and target species, based on the difference in mass between the beam + target and the compound nucleus. |
-| /ParticleEvaporation/Q1 NUMBER | The reaction Q value, in MeV, of the first particle evaporation from the compund nucleus, based on the difference in mass between the compound system and the particle + remaining nucleus. |
-| /ParticleEvaporation/Q2 NUMBER | Same as above, except for the second particle evaporation (if applicable).  Use Q3 and Q4 for the third and fourth particle evaporations, if necessary. |
-| /ParticleEvaporation/Centroid NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the centroid of the Gaussian distribution. |
-| /ParticleEvaporation/Width NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the width of the Gaussian distribution. |
-| /ParticleEvaporation/Tau NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the decay constant of the exponential distribution. |
-| /ParticleEvaporation/DistFile FILENAME | Specifies a file containing the desired centre-of-mass energy distribution for evaporated particles.  The format of the file is two columns for the start-of-bin energy in MeV and the number of counts in the bin, respectively.  Using this command **overrides** the default Gaussian+exponential distribution (and the associated Centroid, Width, and Tau parameters listed above). |
-| /Reaction/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
-| /Reaction/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
-| /Reaction/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
+| /FusionEvaporation/N_protons | In fusion-evaporation, the number of protons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
+| /FusionEvaporation/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
+| /FusionEvaporation/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
+| /FusionEvaporation/AddDecay ENERGY LIFETIME | Adds a decay (emits a gamma-ray from the residual nucleus) with energy specified in MeV, and lifetime specified in ns.  More than 1 decay may be added, in which case the decays occur sequentially (in a cascade). |
+| /FusionEvaporation/MaxNumAttempts NUMBER | When simulating, the program will discard any reactions which are non-physical (eg. residual nucleus not excited high enough to emit the gamma rays requested) and re-attempt the reaction.  This sets the maximum number of times to re-attempt the reaction before giving an error.  Default value is 1000. |
+| /FusionEvaporation/CompoundFormationQ NUMBER | The reaction Q value, in MeV, of the fusion reaction forming the compound system from the beam and target species, based on the difference in mass between the beam + target and the compound nucleus. |
+| /FusionEvaporation/Q1 NUMBER | The reaction Q value, in MeV, of the first particle evaporation from the compund nucleus, based on the difference in mass between the compound system and the particle + remaining nucleus. |
+| /FusionEvaporation/Q2 NUMBER | Same as above, except for the second particle evaporation (if applicable).  Use Q3 and Q4 for the third and fourth particle evaporations, if necessary. |
+| /FusionEvaporation/Centroid NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the centroid of the Gaussian distribution. |
+| /FusionEvaporation/Width NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the width of the Gaussian distribution. |
+| /FusionEvaporation/Tau NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the decay constant of the exponential distribution. |
+| /FusionEvaporation/DistFile FILENAME | Specifies a file containing the desired centre-of-mass energy distribution for evaporated particles.  The format of the file is two columns for the start-of-bin energy in MeV and the number of counts in the bin, respectively.  Using this command **overrides** the default Gaussian+exponential distribution (and the associated Centroid, Width, and Tau parameters listed above). |
+| /FusionEvaporation/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
+| /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
+| /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
 
 ### Trigger parameters
 
@@ -125,6 +125,7 @@ The program `G4TIP` is run from the command line and takes a batch file as its o
 | /Trigger/ARange MIN MAX | If using a particle trigger, this is the range of mass number of the particle(s) which may be triggered on<sup>1</sup>. |
 | /Trigger/ZRange MIN MAX | If using a particle trigger, this is the range of proton numbers of the particle(s) which may be triggered on<sup>1</sup>. |
 | /Trigger/DefinedParticleSingles | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z. |
+| /Trigger/DefinedParticleAndGamma | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
 | /Trigger/DefinedParticleCoincAndGamma | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
 | /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z (or any particle if those commands are not used), and two hits in the TIGRESS/GRIFFIN array. |
 | /Trigger/DisableGriffin NUM | Removes the TIGRESS/GRIFFIN detector with index NUM from the trigger. |

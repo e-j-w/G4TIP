@@ -2,121 +2,98 @@
 
 ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theReaction(EC) {
 
-  theReactionDir = new G4UIdirectory("/Reaction/");
-  theReactionDir->SetGuidance("Evaporation channel control.");
+  theReactionDir = new G4UIdirectory("/FusionEvaporation/");
+  theReactionDir->SetGuidance("Fusion-evaporation reaction control.");
 
-  MACmd = new G4UIcmdWithAnInteger("/Reaction/MaxNumAttempts", this);
+  MACmd = new G4UIcmdWithAnInteger("/FusionEvaporation/MaxNumAttempts", this);
   MACmd->SetGuidance("Set the maximum number of times to attempt a single "
                      "reaction before giving an error.");
   MACmd->SetParameterName("N_attempts", false);
   MACmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  NACmd = new G4UIcmdWithAnInteger("/Reaction/N_alpha", this);
+  NACmd = new G4UIcmdWithAnInteger("/FusionEvaporation/N_alpha", this);
   NACmd->SetGuidance("Set the number of alphas evaporated.");
   NACmd->SetParameterName("N_proton", false);
   NACmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  NPCmd = new G4UIcmdWithAnInteger("/Reaction/N_protons", this);
+  NPCmd = new G4UIcmdWithAnInteger("/FusionEvaporation/N_protons", this);
   NPCmd->SetGuidance("Set the number of protons evaporated.");
   NPCmd->SetParameterName("N_proton", false);
   NPCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  NNCmd = new G4UIcmdWithAnInteger("/Reaction/N_neutrons", this);
+  NNCmd = new G4UIcmdWithAnInteger("/FusionEvaporation/N_neutrons", this);
   NNCmd->SetGuidance("Set the number of neutrons evaporated.");
   NNCmd->SetParameterName("N_neutrons", false);
   NNCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  EneCmd = new G4UIcmdWithADoubleAndUnit("/Reaction/E_gamma", this);
-  EneCmd->SetGuidance("(DEPRECATED, use /Reaction/AddDecay) Gamma ray energy "
-                      "for the simulated transition.");
-  EneCmd->SetParameterName("E_gamma", false);
-  EneCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
-  TauCmd = new G4UIcmdWithADoubleAndUnit("/Reaction/Tau", this);
-  TauCmd->SetGuidance("(DEPRECATED, use /Reaction/AddDecay) Lifetime for the "
-                      "simulated transition.");
-  TauCmd->SetParameterName("Tau", false);
-  TauCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
-  ADecCmd = new G4UIcmdWithAString("/Reaction/AddDecay", this);
+  ADecCmd = new G4UIcmdWithAString("/FusionEvaporation/AddDecay", this);
   ADecCmd->SetGuidance("Adds a transition to the residual nucleus.  Format: "
                        "'/Reaction/AddDecay ENERGY LIFETIME', with ENERGY in "
                        "MeV, LIFETIME in ns.");
   ADecCmd->SetParameterName("Tau", false);
   ADecCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  SetupCmd = new G4UIcmdWithoutParameter("/Reaction/Setup", this);
-  SetupCmd->SetGuidance("Set up the reaction with the previously specified "
-                        "parameters.  Simulation will fail if this is not "
-                        "called.");
-
-  theCompoundDir = new G4UIdirectory("/CompoundFormation/");
-  theCompoundDir->SetGuidance("Beam-target reaction parameters.");
-
-  QCmd = new G4UIcmdWithADoubleAndUnit("/CompoundFormation/Q", this);
+  QCmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/CompoundFormationQ", this);
   QCmd->SetGuidance("Q for the reaction forming the compound.");
   QCmd->SetParameterName("Q", false);
   QCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  theEvaporationDir = new G4UIdirectory("/ParticleEvaporation/");
-  theEvaporationDir->SetGuidance("Beam-target reaction parameters.");
-
-  Q1Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q1", this);
+  Q1Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q1", this);
   Q1Cmd->SetGuidance("Q for the first particle evaporation process.");
   Q1Cmd->SetParameterName("Q1", false);
   Q1Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q2Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q2", this);
+  Q2Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q2", this);
   Q2Cmd->SetGuidance(
       "Q for the second particle evaporation process (if necessary).");
   Q2Cmd->SetParameterName("Q2", false);
   Q2Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q3Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q3", this);
+  Q3Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q3", this);
   Q3Cmd->SetGuidance(
       "Q for the third particle evaporation process (if necessary).");
   Q3Cmd->SetParameterName("Q3", false);
   Q3Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q4Cmd = new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/Q4", this);
+  Q4Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q4", this);
   Q4Cmd->SetGuidance(
       "Q for the fourth particle evaporation process (if necessary).");
   Q4Cmd->SetParameterName("Q4", false);
   Q4Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  dExix0Cmd = new G4UIcmdWithADouble("/ParticleEvaporation/Centroid", this);
+  dExix0Cmd = new G4UIcmdWithADouble("/FusionEvaporation/Centroid", this);
   dExix0Cmd->SetGuidance("Centroid of the Gaussian used to characterize change "
                          "in compound nucleus excitation energy following "
                          "particle evaporation.");
   dExix0Cmd->SetParameterName("dExix0", false);
   dExix0Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  dExiwCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Width", this);
+  dExiwCmd = new G4UIcmdWithADouble("/FusionEvaporation/Width", this);
   dExiwCmd->SetGuidance("Width of the Gaussian used to characterize change in "
                         "compound nucleus excitation energy following particle "
                         "evaporation.");
   dExiwCmd->SetParameterName("dExiw", false);
   dExiwCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  dExitauCmd = new G4UIcmdWithADouble("/ParticleEvaporation/Tau", this);
+  dExitauCmd = new G4UIcmdWithADouble("/FusionEvaporation/Tau", this);
   dExitauCmd->SetGuidance("Tau of the high energy exponential tail used to "
                           "characterize change in compound nucleus excitation "
                           "energy following particle evaporation.");
   dExitauCmd->SetParameterName("dExitau", false);
   dExitauCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  dExiDistCmd = new G4UIcmdWithAString("/ParticleEvaporation/DistFile", this);
+  dExiDistCmd = new G4UIcmdWithAString("/FusionEvaporation/DistFile", this);
   dExiDistCmd->SetGuidance("Specifies a tabulated distribution of dExi values for evaporated particles (containing 2 columns, start-of-bin energy in MeV and counts).");
   dExiDistCmd->SetParameterName("Tau", false);
   dExiDistCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   CARCmd = new G4UIcmdWithoutParameter(
-      "/ParticleEvaporation/ConstrainAngularRange", this);
+      "/FusionEvaporation/ConstrainParticleAngularRange", this);
   CARCmd->SetGuidance("Require that at least one evaporated particle be "
                       "emitted in a specified angular range.");
 
   CARMaxCmd =
-      new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/MaxAngle", this);
+      new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MaxParticleAngle", this);
   CARMaxCmd->SetGuidance("Maximum angle (from the z/beam axis) in which at "
                          "least one of the evaporated particles must be "
                          "emitted.");
@@ -124,31 +101,26 @@ ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theR
   CARMaxCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   CARMinCmd =
-      new G4UIcmdWithADoubleAndUnit("/ParticleEvaporation/MinAngle", this);
+      new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MinParticleAngle", this);
   CARMinCmd->SetGuidance("Minimum angle (from the z/beam axis) in which at "
                          "least one of the evaporated particles must be "
                          "emitted.");
   CARMinCmd->SetParameterName("CARMin", false);
   CARMinCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  GDist0Cmd = new G4UIcmdWithoutParameter(
-      "/Reaction/P0", this);
+  GDist0Cmd = new G4UIcmdWithoutParameter("/FusionEvaporation/P0", this);
   GDist0Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to be isotropic.");
 
-  GDist2Cmd = new G4UIcmdWithoutParameter(
-      "/Reaction/P2", this);
+  GDist2Cmd = new G4UIcmdWithoutParameter("/FusionEvaporation/P2", this);
   GDist2Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta).");
 
-  GDist4Cmd = new G4UIcmdWithoutParameter(
-      "/Reaction/P4", this);
+  GDist4Cmd = new G4UIcmdWithoutParameter("/FusionEvaporation/P4", this);
   GDist4Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta).");
 
 }
 
 ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
   delete theReactionDir;
-  delete EneCmd;
-  delete TauCmd;
   delete ADecCmd;
   delete NPCmd;
   delete NACmd;
@@ -156,12 +128,8 @@ ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
 
   delete MACmd;
 
-  delete SetupCmd;
-
-  delete theCompoundDir;
   delete QCmd;
 
-  delete theEvaporationDir;
   delete Q1Cmd;
   delete Q2Cmd;
   delete Q3Cmd;
@@ -182,10 +150,6 @@ ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
 
 void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
 
-  if (command == SetupCmd) {
-    theReaction->SetupReaction();
-  }
-
   if (command == MACmd) {
     theReaction->SetNumberOfAttempts(NACmd->GetNewIntValue(newValue));
   }
@@ -200,14 +164,6 @@ void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newVa
 
   if (command == NNCmd) {
     theReaction->SetNumberOfNeutrons(NNCmd->GetNewIntValue(newValue));
-  }
-
-  if (command == EneCmd) {
-    theReaction->SetEgamma(EneCmd->GetNewDoubleValue(newValue));
-  }
-
-  if (command == TauCmd) {
-    theReaction->SetTau(TauCmd->GetNewDoubleValue(newValue));
   }
 
   if (command == ADecCmd) {

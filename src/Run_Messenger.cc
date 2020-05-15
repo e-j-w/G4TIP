@@ -27,6 +27,12 @@ Run_Messenger::Run_Messenger(G4RunManager* rm, PhysicsList* physl)
   NCmd = new G4UIcmdWithoutParameter("/Physics/IgnoreNeutrons",this);
   NCmd->SetGuidance("Ignore neutron interactions when constructing physics (makes things faster).");
 
+  FusEvapCmd = new G4UIcmdWithoutParameter("/Physics/FusionEvaporation",this);
+  FusEvapCmd->SetGuidance("Use the fusion-evaporation reaction mechanism (set by default).");
+
+  CoulexCmd = new G4UIcmdWithoutParameter("/Physics/Coulex",this);
+  CoulexCmd->SetGuidance("Use the Coulomb excitation reaction mechanism.");
+
 }
 
 
@@ -36,6 +42,8 @@ Run_Messenger::~Run_Messenger()
   delete PLSCmd;
   delete CSCmd;
   delete NCmd;
+  delete FusEvapCmd;
+  delete CoulexCmd;
 }
 
 
@@ -60,6 +68,16 @@ void Run_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == NCmd )
     {
       thePhysicsList->setUseNeutrons(false);
+    }
+  if( command == FusEvapCmd )
+    {
+      G4cout << "----> Using the fusion-evaporation reaction mechanism" << G4endl;
+      thePhysicsList->setReactionType(0);
+    }
+  if( command == CoulexCmd )
+    {
+      G4cout << "----> Using the Coulomb excitation reaction mechanism" << G4endl;
+      thePhysicsList->setReactionType(1);
     }
 
 }

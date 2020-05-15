@@ -20,6 +20,7 @@ class Materials
 
   // Elemental materials
   G4Material* Al;
+  G4Material* Be;
   G4Material* Ge;
   G4Material* Cu;
   G4Material* C;

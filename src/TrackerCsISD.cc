@@ -54,7 +54,8 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	            TrackerCsIHit* newHitI = new TrackerCsIHit();
 	            
 	            newHitI->SetBeta(aStep->GetPreStepPoint()->GetBeta());
-	            newHitI->SetKE(aStep->GetTotalEnergyDeposit());
+	            newHitI->SetKE(aStep->GetPreStepPoint()->GetKineticEnergy());
+	      			newHitI->SetEdep(aStep->GetTotalEnergyDeposit());
 	            newHitI->SetPos(aStep->GetPreStepPoint()->GetPosition());
 	            newHitI->SetMom(aStep->GetPreStepPoint()->GetMomentum());
 	            newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
@@ -77,6 +78,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 	            TrackerCsIHit* newHitF = new TrackerCsIHit();
 	            newHitF->SetBeta(aStep->GetPostStepPoint()->GetBeta());
 	            newHitF->SetKE(aStep->GetPostStepPoint()->GetKineticEnergy());
+	      			newHitF->SetEdep(aStep->GetTotalEnergyDeposit());
 	            newHitF->SetMom(aStep->GetPostStepPoint()->GetMomentum());
 	            newHitF->SetPos(aStep->GetPostStepPoint()->GetPosition());
 	            newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());

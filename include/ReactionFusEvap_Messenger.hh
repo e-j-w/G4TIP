@@ -22,8 +22,6 @@ private:
   ReactionFusEvap *theReaction;
   G4UIdirectory *theReactionDir;
 
-  G4UIcmdWithADoubleAndUnit *TauCmd;
-  G4UIcmdWithADoubleAndUnit *EneCmd;
   G4UIcmdWithAString *ADecCmd;
   G4UIcmdWithAnInteger *NNCmd;
   G4UIcmdWithAnInteger *NPCmd;
@@ -31,12 +29,8 @@ private:
 
   G4UIcmdWithAnInteger *MACmd;
 
-  G4UIcmdWithoutParameter *SetupCmd;
-
-  G4UIdirectory *theCompoundDir;
   G4UIcmdWithADoubleAndUnit *QCmd;
 
-  G4UIdirectory *theEvaporationDir;
   G4UIcmdWithADoubleAndUnit *Q1Cmd;
   G4UIcmdWithADoubleAndUnit *Q2Cmd;
   G4UIcmdWithADoubleAndUnit *Q3Cmd;

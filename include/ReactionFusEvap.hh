@@ -141,6 +141,8 @@ public:
   G4double getExi(G4double, G4double, G4double);
   G4double getTabulatedExi(G4double);
 
+  Projectile* getProjectile() { return theProjectile; };
+
   //  G4DynamicParticle RecoilOut;
   //  G4DynamicParticle EvapP[MAXNUMEVAP];
   //  G4DynamicParticle EvapN[MAXNUMEVAP];

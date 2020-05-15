@@ -116,7 +116,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                         if((*CsI)[i]->GetA()==At) // user defined particle trigger
                           if((*CsI)[i]->GetZ()==Zt)
                             {
-                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
                               partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
                               partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
                               //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
@@ -127,7 +127,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                         if( ((*CsI)[i]->GetA()>=Atmin)&&((*CsI)[i]->GetA()<=Atmax) ) // user defined particle trigger range
                           if( ((*CsI)[i]->GetZ()>=Ztmin)&&((*CsI)[i]->GetZ()<=Ztmax) )
                             {
-                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
                               partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
                               partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
                               //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
@@ -137,7 +137,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                       {
                         if((*CsI)[i]->GetA()>0)
                           {
-                            partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetKE();
+                            partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
                             partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
                               partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
                             //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
@@ -211,6 +211,10 @@ void EventAction::EndOfEventAction(const G4Event* evt)
         eventTrigger|=(one<<1);
       // end HPGe trigger
       
+      //particle AND gamma singles trigger
+      if((eventTrigger&(one<<10))&&(eventTrigger&(one<<1)))
+        eventTrigger|=(one<<16);
+
       //particle-particle coincidence AND gamma singles trigger
       if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
         eventTrigger|=(one<<13);
@@ -219,7 +223,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       if((eventTrigger&(one<<12))&&(GriffinFold>1))
         eventTrigger|=(one<<14);
 
-      /*printf("HPGe fold is %d\n",GriffinFold);
+      /*G4cout << "Set trigger is " << setTrigger << G4endl;
+      G4cout << "HPGe fold is " << GriffinFold << G4endl;
+      G4cout << "CsI fold is " << numDetHits << G4endl;
       for(testTrigger=1;testTrigger<=14;testTrigger++)
         {
           if(eventTrigger&(one<<testTrigger))
@@ -231,14 +237,6 @@ void EventAction::EndOfEventAction(const G4Event* evt)
           //increment triggered event and CsI hit counters
           numTriggeredEvents++;
           numTriggeredCsIHits+=numDetHits;
-
-          /*printf("CsI fold is %d\n",numDetHits);
-          printf("HPGe fold is %d\n",GriffinFold);
-          for(testTrigger=1;testTrigger<=15;testTrigger++)
-            {
-              if(eventTrigger&(one<<testTrigger))
-                G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
-            }*/
         
 	        if(GriffinFold>0)
 	          for(G4int det=0;det<16;det++)

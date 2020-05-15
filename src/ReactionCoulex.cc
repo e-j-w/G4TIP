@@ -815,19 +815,18 @@ void ReactionCoulex::TargetFaceCrossSection() {
     // ProjDecTab->DumpInfo();
     // getc(stdin);
     // make sure that the projectile has the decay process in its manager
-    G4ProcessManager *proj_pm = proj->GetProcessManager();
-    if (proj_pm == NULL) {
+    if (proj->GetProcessManager() == NULL) {
       G4cerr << "Could not find process manager for the projectile." << G4endl;
       exit(EXIT_FAILURE);
     }
     decay = new G4Decay();      
-    if (proj_pm->GetProcessActivation(decay) == false) {
+    if (proj->GetProcessManager()->GetProcessActivation(decay) == false) {
       G4cout<<"-> adding the projectile decay process"<<G4endl;
-      proj_pm->SetParticleType(proj);
-      proj_pm->AddProcess(decay,1,-1,5);
+      proj->GetProcessManager()->SetParticleType(proj);
+      proj->GetProcessManager()->AddProcess(decay,1,-1,5);
     }      
-    // proj_pm->DumpInfo();
-    // getc(stdin);      
+     //proj->GetProcessManager()->DumpInfo();
+     //getc(stdin);      
   }
   else {
     proj->SetPDGStable(true);
@@ -843,19 +842,18 @@ void ReactionCoulex::TargetFaceCrossSection() {
     // RecDecTab->DumpInfo();
     // getc(stdin);
     // make sure that the recoil has the decay process in its manager
-    G4ProcessManager *rec_pm = rec->GetProcessManager();
-    if (rec_pm == NULL) {
+    if (rec->GetProcessManager() == NULL) {
       G4cerr << "Could not find process manager for the recoil." << G4endl;
       exit(EXIT_FAILURE);
     }
     decay = new G4Decay();
-    if (rec_pm->GetProcessActivation(decay) == false) {
+    if (rec->GetProcessManager()->GetProcessActivation(decay) == false) {
       G4cout<<"-> adding the recoil decay process"<<G4endl;
-      rec_pm->SetParticleType(rec);
-      rec_pm->AddProcess(decay,1,-1,5);
+      rec->GetProcessManager()->SetParticleType(rec);
+      rec->GetProcessManager()->AddProcess(decay,1,-1,5);
     }
-    // rec_pm->DumpInfo();
-    // getc(stdin);
+     //rec->GetProcessManager()->DumpInfo();
+     //getc(stdin);
   }
   
   sumWeights = 0.0;

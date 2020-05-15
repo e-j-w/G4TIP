@@ -616,9 +616,7 @@ compound->GetAtomicNumber() << G4endl;
           false) {
         G4cout << "-> adding the residual nucleus decay process for step "
                << i + 1 << " of the cascade." << G4endl;
-        residual[i]->GetProcessManager()->SetParticleType(
-            residual[i]); // neccesary for decay process to be added
-                          // successfully
+        residual[i]->GetProcessManager()->SetParticleType(residual[i]); // neccesary for decay process to be added successfully
         residual[i]->GetProcessManager()->AddProcess(decay[i], 1, -1, 5);
         //residual[i]->GetProcessManager()->RemoveProcess( residual[i]->GetProcessManager()->GetProcessListLength()-1 );
       }

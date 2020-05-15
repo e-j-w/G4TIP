@@ -11,7 +11,6 @@
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAnInteger.hh"
 
-
 class Projectile_Messenger: public G4UImessenger
 {
   public:
@@ -27,6 +26,8 @@ class Projectile_Messenger: public G4UImessenger
     G4UIcmdWithAnInteger*      ACmd;
     G4UIcmdWithAnInteger*      ZCmd;
     G4UIcmdWithADoubleAndUnit* KECmd;
+    G4UIcmdWithADoubleAndUnit* ExCmd;
+    G4UIcmdWithADoubleAndUnit* TauCmd;
     G4UIcmdWithADoubleAndUnit* fcXCmd;
     G4UIcmdWithADoubleAndUnit* fcDXCmd;
     G4UIcmdWithADoubleAndUnit* fcYCmd;

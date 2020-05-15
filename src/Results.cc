@@ -1,8 +1,8 @@
 #include "Results.hh"
 
-Results::Results(Projectile *proj, DetectorConstruction *det,
+Results::Results(DetectorConstruction *det,
                  PhysicsList *physl)
-    : theProjectile(proj), theDetector(det), thePhysicsList(physl) {
+    : theDetector(det), thePhysicsList(physl) {
 
   soh = sizeof(partHit);
   sogh = sizeof(GHit);
@@ -20,32 +20,26 @@ void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
   numP = nP;
   numN = nN;
   numA = nA;
-  Ap = theProjectile->getA();
-  Zp = theProjectile->getZ();
+  Ap = thePhysicsList->getReactionFusEvap()->getProjectile()->getA();
+  Zp = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ();
   switch(theDetector->GetTargetType())
   {
     case 1:
       //plunger
-      Ar = theProjectile->getA() + theDetector->GetPlunger()->getTargetMass() - numP - numN - numA * 4;
-      Zr = theProjectile->getZ() + theDetector->GetPlunger()->getTargetCharge() - numP - numA * 2;
+      Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetPlunger()->getTargetMass() - numP - numN - numA * 4;
+      Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetPlunger()->getTargetCharge() - numP - numA * 2;
       //   G4cout << "Results: target A: " << theDetector->GetPlunger()->getTargetMass() << ", target Z: " <<theDetector->GetPlunger()->getTargetCharge() << G4endl;
       break;
     default:
       //dsam target
-      Ar = theProjectile->getA() + theDetector->GetTarget()->getTargetMass() - numP - numN - numA * 4;
-      Zr = theProjectile->getZ() + theDetector->GetTarget()->getTargetCharge() - numP - numA * 2;
+      Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetTarget()->getTargetMass() - numP - numN - numA * 4;
+      Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetTarget()->getTargetCharge() - numP - numA * 2;
       // G4cout << "Results: target A: " << theDetector->GetTarget()->getTargetMass() << ", target Z: " << theDetector->GetTarget()->getTargetCharge() << G4endl;
       break;
   } 
   //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
   
-  /*for(int i=0; i<GN; i++)
-    for(int j=0; j<GS; j++)
-      {
-              CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
-              printf("HPGe position %d crystal %d x %f y %f z
-    %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
-      }*/
+  
 
   numDec = thePhysicsList->getReactionFusEvap()->GetNumDecays();
   G4cout << "Results - number of decays: " << numDec << G4endl;
@@ -53,13 +47,32 @@ void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
   SetupRun();
 }
 //---------------------------------------------------------
+void Results::SetupRunCoulex() {
+
+  Ap = thePhysicsList->getReactionCoulex()->getProjectile()->getA();
+  Zp = thePhysicsList->getReactionCoulex()->getProjectile()->getZ();
+  Ar = thePhysicsList->getReactionCoulex()->getRecoil()->getA();
+  Zr = thePhysicsList->getReactionCoulex()->getRecoil()->getZ();
+
+  SetupRun();
+}
+//---------------------------------------------------------
 void Results::SetupRun(){
 
-  // get HPGe and CsI crystal positions
+  // get CsI crystal positions
   if (theDetector->usingCsIBall())
     GetCsIBallPositions();
   else
     GetCsIWallPositions();
+
+  /* // get HPGe crystal positions
+  for(int i=0; i<GN; i++)
+    for(int j=0; j<GS; j++)
+      {
+              CP[i][j]=theDetector->GetDetectorCrystalPosition(i,j);
+              printf("HPGe position %d crystal %d x %f y %f z
+    %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
+      }*/
 
   G4cout << "Results - creating tree... ";
   TreeCreate();

@@ -110,11 +110,12 @@ typedef struct {
 
 class Results {
 public:
-  Results(Projectile *, DetectorConstruction *, PhysicsList *);
+  Results(DetectorConstruction *, PhysicsList *);
   ~Results();
 
 public:
   void SetupRunFusEvap(Int_t, Int_t, Int_t);
+  void SetupRunCoulex();
   void SetupRun();
 
   void FillTree(G4int, TrackerIonHitsCollection *, TrackerCsIHitsCollection *,

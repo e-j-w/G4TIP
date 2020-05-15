@@ -88,6 +88,9 @@ public:
   G4int    GetRxnDroppedRand(){return dropRand;};
   void     ReportDCmin(){printf("Minimum istnace of closest approach = %.2f fm\n",dcmin);};
   void     SetDCmin(G4double d){dcmin = d;};
+
+  Projectile* getProjectile() { return theProjectile; };
+  Recoil*     getRecoil() { return theRecoil; };
   
 private:
   
