@@ -85,7 +85,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
+| /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead.  The plunger geometry is configured using parameters listed [below](#plungerpar). |
 | /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option.  The target geometry is configured using parameters listed [below](#dsampar). |
 | /Construction/UsePlunger | Use the TIP plunger as the reaction target. |
 | /Construction/ShiftChamber NUMBER mm | Set the position of the TIP chamber along the z (beam) axis (0 mm is centred with respect to the TIGRESS array). |
@@ -96,9 +96,6 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Target/ThicknessMgCm2 NUMBER | The thickness of the reaction target, in mg/cm^2. |
-| /Target/Thickness NUMBER um | The thickness of the reaction target, in micrometers (can be used instead of /Target/ThicknessMgCm2). |
-| /Backing/Thickness NUMBER um | The thickness of the reaction target backing, in micrometers. |
 | /Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
 | /Target/Z NUMBER | The proton number of the reaction target. |
 | /Target/Material STRING<sup>1</sup> | The reaction target material. |
@@ -111,7 +108,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
 
-#### Plunger parameters
+#### Plunger parameters<a name="plungerpar"></a>
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -193,6 +190,8 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 
 ## Visualization
+
+![geometry](geometry.png "geometry")
 
 For visualization using the GEANT4 Qt visualization driver, run the program as `G4TIP -u`.  The macro `macros/vis.mac` provides an example for drawing the TIGRESS array and CsI ball (right now this is very slow, you may have to wait a while for drawing to finish).
 
