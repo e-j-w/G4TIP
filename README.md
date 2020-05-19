@@ -43,7 +43,7 @@ The code is tested with GEANT4 v10.6.  It may still work with older versions.
 
 [GEANT4 build and install guide](https://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/InstallationGuide/html/installguide.html)
 
-GEANT4 should be built with its data files, using the `-DGEANT4_INSTALL_DATA=ON` switch specified in its install guide.  Set up environment variables for GEANT4 by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
+GEANT4 should be built with its data files and the Qt visualization drivers, using the `-DGEANT4_INSTALL_DATA=ON` and `-DGEANT4_USE_QT` switches specified in its install guide.  Set up environment variables for GEANT4 by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
 
 ```
 #for GEANT4
@@ -68,7 +68,7 @@ make -j
 
 ## Using the program
 
-The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  The `macros` directory contains some examples of working batch files, it may be easier to copy one of these and modify it.  Tables explaining some (but not all) of the available commands follow:
+The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  The `macros` directory contains some examples of working batch files, it may be easier to copy one of these and modify it.  Tables explaining most (but not all) of the available commands follow:
 
 ### Reaction mechanism and physics parameters
 
@@ -77,7 +77,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Physics/FusionEvaporation | Use the fusion-evaporation reaction mechanism. The reaction should be further configured using the reaction parameters listed [below](#fusevappar). |
-| /Physics/Coulex | Use the Coulomb excitation reaction mechanism. |
+| /Physics/Coulex | Use the Coulomb excitation reaction mechanism. The reaction should be further configured using the reaction parameters listed [below](#coulexpar) |
 | /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
 | /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
 
@@ -86,10 +86,13 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
-| /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option. |
+| /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option.  The target geometry is configured using parameters listed [below](#dsampar). |
 | /Construction/UsePlunger | Use the TIP plunger as the reaction target. |
+| /Construction/ShiftChamber NUMBER mm | Set the position of the TIP chamber along the z (beam) axis (0 mm is centred with respect to the TIGRESS array). |
+| /Construction/ShiftPlunger NUMBER mm | Set the position of the plunger along the z (beam) axis with respect to the TIP chamber (0 mm is centred with respect to the chamber). |
 
-#### DSAM target parameters
+
+#### DSAM target parameters<a name="dsampar"></a>
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -98,10 +101,29 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Backing/Thickness NUMBER um | The thickness of the reaction target backing, in micrometers. |
 | /Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
 | /Target/Z NUMBER | The proton number of the reaction target. |
+| /Target/Material STRING<sup>1</sup> | The reaction target material. |
+| /Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/ThicknessMgCm2`). |
 | /Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /Backing/Z NUMBER | The proton number of the target backing. |
+| /Backing/Material STRING<sup>1</sup> | The target backing material. |
+| /Backing/Thickness NUMBER um | The target backing thickness. |
+
+<sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
 
+#### Plunger parameters
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Plunger/Backing/Material STRING<sup>1</sup> | The plunger target backing material. |
+| /Plunger/Backing/Thickness NUMBER um | The plunger target backing thickness. |
+| /Plunger/Target/Material STRING<sup>1</sup> | The plunger reaction target material. |
+| /Plunger/Target/Thickness NUMBER um | The plunger reaction target thickness. |
+| /Plunger/Stopper/Material STRING<sup>1</sup> | The plunger stopper/degrader material. |
+| /Plunger/Stopper/Thickness NUMBER um | The plunger reaction stopper/degrader thickness. |
+| /Plunger/Separation NUMBER um | The separation between the plunger target and stopper/degrader. |
+
+<sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
 ### Fusion-evaporation reaction parameters<a name="fusevappar"></a>
 
@@ -109,6 +131,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 |:---:|:---:|
 | /Projectile/A NUMBER | The mass number of the beam species (number of nucleons). |
 | /Projectile/Z NUMBER | The proton number of the beam species. |
+| /Projectile/KE NUMBER MeV | The energy of the beam in the lab frame. |
 | /FusionEvaporation/N_protons | In fusion-evaporation, the number of protons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /FusionEvaporation/N_neutrons | In fusion-evaporation, the number of neutrons (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
 | /FusionEvaporation/N_alpha | In fusion-evaporation, the number of alpha particles (promptly) emitted from the compound nucleus in order to form the residual nucleus. |
@@ -124,6 +147,21 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /FusionEvaporation/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
 | /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
 | /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
+
+### Coulex reaction parameters<a name="coulexpar"></a>
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Projectile/A NUMBER | The mass number of the beam species (number of nucleons). |
+| /Projectile/Z NUMBER | The proton number of the beam species. |
+| /Projectile/KE NUMBER MeV | The energy of the beam in the lab frame. |
+| /Projectile/Ex NUMBER MeV | Excitation energy of the level to be populated in the beam species (either this or /Recoil/Ex must be non-zero, and not both). |
+| /Projectile/Lifetime NUMBER ps | Mean lifetime of the level to be populated in the beam species (set this if using /Projectile/Ex). |
+| /Recoil/A NUMBER | The mass number of the target/recoil species (number of nucleons). |
+| /Recoil/Z NUMBER | The proton number of the target/recoil species. |
+| /Recoil/Ex NUMBER MeV | Excitation energy of the level to be populated in the recoil/target species (either this or /Projectile/Ex must be non-zero, and not both). |
+| /Recoil/Lifetime NUMBER ps | Mean lifetime of the level to be populated in the target/recoil species (set this if using /Recoil/Ex). |
+| /Coulex/SetDCmin NUMBER fm | Set minimum distance of closest approach in fm. |
 
 ### Trigger parameters
 
@@ -142,6 +180,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET and core index COL from the trigger. |
 | /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM from the trigger. |
 | /Trigger/DisableCsIRange LOW HIGH | Removes CsI detectors with index between LOW and HIGH (inclusive) from the trigger. |
+| /Trigger/CsIThreshold NUMBER MeV | Sets a lower energy threshold for detection of hits in CsI detectors. |
 
 <sup>1</sup>If none of /Trigger/A, /Trigger/Z, /Trigger/ARange, and /Trigger/ZRange are set, the particle trigger will be applied to any charged particle.
 
@@ -152,6 +191,10 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /run/beamOn NUMBER | Runs the simulation for the specified number of events (primary beam tracks). |
 | /Results/Tree/Save FILENAME | Saves the results of the simulation to a ROOT tree in the specified file. |
 
+
+## Visualization
+
+For visualization using the GEANT4 Qt visualization driver, run the program as `G4TIP -u`.  The macro `macros/vis.mac` provides an example for drawing the TIGRESS array and CsI ball (right now this is very slow, you may have to wait a while for drawing to finish).
 
 ## Other notes
 

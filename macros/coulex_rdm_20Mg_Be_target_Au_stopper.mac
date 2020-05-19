@@ -49,8 +49,8 @@
 #
 # Equipment shifts
 #
-#/DetectorConstruction/ShiftChamber -2.751003 mm
-#/DetectorConstruction/ShiftPlunger -5.0 mm
+#/Construction/ShiftChamber -2.751003 mm
+#/Construction/ShiftPlunger -5.0 mm
 
 #
 # Reaction setup

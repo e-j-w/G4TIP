@@ -20,7 +20,7 @@ public:
 private:
   ReactionCoulex* aReaction;  
   G4UIdirectory             *ReactionDir;
-  G4UIcmdWithADouble        *SetDCminCmd;
+  G4UIcmdWithADoubleAndUnit *SetDCminCmd;
   G4UIcmdWithoutParameter   *RepDCminCmd;
 };
 

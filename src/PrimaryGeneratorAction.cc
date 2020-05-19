@@ -6,7 +6,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction *Det,Project
 
   n_particle = 1;
   particleGun = new G4ParticleGun(n_particle);
- 
 
 }
 
@@ -18,6 +17,8 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   
+  //this function is called at the begining of each event
+
   //particleTable = G4ParticleTable::GetParticleTable(); // v9.4.p04
   ionTable = G4IonTable::GetIonTable();
  
