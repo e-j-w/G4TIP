@@ -206,26 +206,26 @@ void Target::setBackingReactionDepth(G4double depth)
 //-----------------------------------------------------------------------------
 void Target::setTargetMass(G4int n)
 {
-   TargetA=n;
- G4cout<<"---->  Target mass number A set to "<<TargetA<< G4endl;  
+  TargetA=n;
+  G4cout<<"---->  Target mass number A set to "<<TargetA<< G4endl;  
 }
 //-----------------------------------------------------------------------------
 void Target::setTargetCharge(G4int n)
 {
-   TargetZ=n;
- G4cout<<"---->Target atomic number A set to "<<TargetA<< G4endl;  
+  TargetZ=n;
+  G4cout<<"---->Target atomic number A set to "<<TargetZ<< G4endl;  
 }
 //-----------------------------------------------------------------------------
 void Target::setBackingMass(G4int n)
 {
-   BackingA=n;
- G4cout<<"---->  Backing mass number A set to "<<BackingA<< G4endl;  
+  BackingA=n;
+  G4cout<<"---->  Backing mass number A set to "<<BackingA<< G4endl;  
 }
 //-----------------------------------------------------------------------------
 void Target::setBackingCharge(G4int n)
 {
   BackingZ=n;
- G4cout<<"---->Backing atomic number A set to "<<BackingA<< G4endl;  
+  G4cout<<"---->Backing atomic number A set to "<<BackingZ<< G4endl;  
 }
 //-----------------------------------------------------------------------------
 void Target::setBackingEx(G4double x)
