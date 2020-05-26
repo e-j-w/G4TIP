@@ -28,7 +28,12 @@ DetectorConstruction_Messenger::DetectorConstruction_Messenger(DetectorConstruct
   PlungerCmd->SetGuidance("Use the TIP plunger as the reaction target (DSAM target is default).");
 
   DSAMCmd = new G4UIcmdWithoutParameter("/Construction/UseDSAMTarget",this);
-  DSAMCmd->SetGuidance("Use the DSAM reaction target (this is the default).");
+  DSAMCmd->SetGuidance("Use the DSAM reaction target.");
+
+  TargetCmd = new G4UIcmdWithoutParameter("/Construction/UseTarget",this);
+  TargetCmd->SetGuidance("Use the user-definable reaction target (this is the default).");
+
+
 }
 
 
@@ -44,6 +49,7 @@ DetectorConstruction_Messenger::~DetectorConstruction_Messenger()
   delete BallCmd;
   delete PlungerCmd;
   delete DSAMCmd;
+  delete TargetCmd;
 }
 
 
@@ -71,6 +77,12 @@ void DetectorConstruction_Messenger::SetNewValue(G4UIcommand* command,G4String n
     { 
       G4cout << "----> Using the TIP DSAM reaction target" << G4endl;
       theDetector->SetUseDSAMTarget();
+    }
+
+  if( command == TargetCmd )
+    { 
+      G4cout << "----> Using the user-definable reaction target" << G4endl;
+      theDetector->SetUseArbitraryTarget();
     }
   
 }

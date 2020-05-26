@@ -11,6 +11,8 @@
 #include "Plunger_Messenger.hh"
 #include "Target.hh"
 #include "Target_Messenger.hh"
+#include "ArbitraryTarget.hh"
+#include "ArbitraryTarget_Messenger.hh"
 #include "TrackerIonSD.hh"
 #include "TrackerIonSD_Messenger.hh"
 #include "CsI_array.hh"
@@ -60,8 +62,9 @@ public:
   void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ; 
   void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
   void UseCsIBall( G4bool input ) {useCsIball = input;};
-  void SetUseDSAMTarget() {targetType = 0;};
-  void SetUsePlunger() {targetType = 1;};
+  void SetUseArbitraryTarget() {targetType = 0;};
+  void SetUseDSAMTarget() {targetType = 1;};
+  void SetUsePlunger() {targetType = 2;};
   void UpdateGeometry();
   G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
   void ShiftChamber(G4double);
@@ -74,19 +77,21 @@ private:
   G4LogicalVolume*        ExpHall_log;
   G4VPhysicalVolume*      ExpHall_phys;
   Plunger*                thePlunger;
-  Target*                theTarget;
+  Target*                 theTarget;
+  ArbitraryTarget*        theArbitraryTarget;
   CsI_array*              aCsI_wall; 
   CsI_array_spherical*    aCsI_ball;
   TrackerCsISD*           TrackerCsI;
   TrackerCsISD_Messenger* TrackerCsISDMessenger;
   Chamber*                theChamber;
-  G4ThreeVector DetectorCrystalPosition[GN][GS];
 
+  G4ThreeVector DetectorCrystalPosition[GN][GS];
 
   Experimental_Hall_Messenger* ExperimentalHallMessenger;
   Chamber_Messenger*           ChamberMessenger;
   Plunger_Messenger*           PlungerMessenger;
   Target_Messenger*            TargetMessenger;
+  ArbitraryTarget_Messenger*   ArbitraryTargetMessenger;
 
   TrackerIonSD*           TrackerIon;
   TrackerIonSD_Messenger* TrackerIonSDMessenger;
@@ -101,7 +106,7 @@ private:
   G4int     hevimetSelector ; 
   G4bool    useTigressPositions;
   G4bool    useCsIball;
-  int       targetType; //0=DSAM target, 1=plunger
+  G4int     targetType; //0=arbitrary target, 1=DSAM target, 2=plunger
 
   GriffinMessenger* griffinMessenger;
 

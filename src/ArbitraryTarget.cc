@@ -239,6 +239,7 @@ void ArbitraryTarget::SetReactionLayer(G4int layer)
     Target_log[layer]->SetName(layerName);
   }
   Target_log[layer]->SetName("target_log"); //reaction classes use this name to determine where the reaction takes place
+  TargetExLayer=layer;
   G4cout << "----> Target layer " << layer << " set to be where the reaction will take place." << G4endl;
 }
 //-----------------------------------------------------------------------------

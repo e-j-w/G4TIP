@@ -22,17 +22,19 @@ void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
   Zp = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ();
   switch(theDetector->GetTargetType())
   {
-    case 1:
+    case 2:
       //plunger
       Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetPlunger()->getTargetMass() - numP - numN - numA * 4;
       Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetPlunger()->getTargetCharge() - numP - numA * 2;
       //   G4cout << "Results: target A: " << theDetector->GetPlunger()->getTargetMass() << ", target Z: " <<theDetector->GetPlunger()->getTargetCharge() << G4endl;
       break;
-    default:
+    case 1:
       //dsam target
       Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetTarget()->getTargetMass() - numP - numN - numA * 4;
       Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetTarget()->getTargetCharge() - numP - numA * 2;
       // G4cout << "Results: target A: " << theDetector->GetTarget()->getTargetMass() << ", target Z: " << theDetector->GetTarget()->getTargetCharge() << G4endl;
+      break;
+    default:
       break;
   } 
   //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
@@ -132,7 +134,7 @@ void Results::TreeCreate() {
     //setup branches that are relevant to the chosen target
     switch(theDetector->GetTargetType())
     {
-      case 1:
+      case 2:
         //plunger
         tree->Branch("ProjectileBackingIn", &pBIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target  
         tree->Branch("ProjectileTargetIn", &pTIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target 
@@ -141,12 +143,14 @@ void Results::TreeCreate() {
         tree->Branch("RecoilDegraderIn", &rDIn_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon entering the degrader  
         tree->Branch("RecoilDegraderOut", &rDOut_plunger,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the degrader
         break;
-      default:
+      case 1:
         //dsam target
         tree->Branch("ProjectileTargetIn", &pTIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile upon entering the target
         tree->Branch("ProjectileBackingIn",&pBIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D");
         tree->Branch("RecoilBackingIn", &rBIn_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the target/entering the backing
         tree->Branch("RecoilBackingOut", &rBOut_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the backing (if it makes it that far)
+        break;
+      default:
         break;
     } 
 

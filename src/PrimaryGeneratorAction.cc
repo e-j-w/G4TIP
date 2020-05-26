@@ -40,7 +40,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   switch(theDetector->GetTargetType())
   {
     //Reactions on the target
-    case 1:
+    case 2:
       //plunger
       TT=2.*theDetector->GetPlunger()->GetTarget()->GetZHalfLength();
       TC=theDetector->GetPlunger()->GetTargetPlacement()->GetTranslation().getZ();
@@ -49,12 +49,14 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       // printf("tar thickness %f tar center (?) %f --> target reaction depth set to %f\n",TT,TC,depth);
       // getc(stdin);
       break;
-    default:
+    case 1:
       //dsam target
       TT=2.*theDetector->GetTarget()->GetTarget()->GetZHalfLength();
       TC=theDetector->GetTarget()->GetTargetPlacement()->GetTranslation().getZ();
       depth=TC+TT*(G4UniformRand()-0.5);
       theDetector->GetTarget()->setTargetReactionDepth(depth);
+      break;
+    default:
       break;
   } 
  

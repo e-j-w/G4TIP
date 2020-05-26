@@ -490,7 +490,7 @@ void ReactionFusEvap::TargetFaceCrossSection() {
 
   switch(theDetector->GetTargetType())
   {
-    case 1:
+    case 2:
       //plunger
       A2 = theDetector->GetPlunger()->getTargetMass();
       Z2 = theDetector->GetPlunger()->getTargetCharge();
@@ -498,13 +498,15 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       A3 = theDetector->GetPlunger()->getStopperMass();
       Z3 = theDetector->GetPlunger()->getStopperCharge();
       break;
-    default:
+    case 1:
       //dsam target
       A2 = theDetector->GetTarget()->getTargetMass();
       Z2 = theDetector->GetTarget()->getTargetCharge();
 
       A3 = theDetector->GetTarget()->getBackingMass();
       Z3 = theDetector->GetTarget()->getBackingCharge();
+      break;
+    default:
       break;
   } 
 

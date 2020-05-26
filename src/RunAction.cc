@@ -64,7 +64,7 @@ void RunAction::EndOfRunAction(const G4Run*)
       G4cout<<" Thick Target correction is                : "<<thePhysicsList->getReactionCoulex()->GetThickTargetCorrection()<<G4endl;
       G4cout<<" Thick Target Cross Section is             : "<<thePhysicsList->getReactionCoulex()->GetThickTargetCrossSection()<<" [b]"<<G4endl;
       // G4cout<<" Target thickness in um  is                : "<<dx*10000.<<G4endl;
-      if(theDetector->GetTargetType()==1){
+      if(theDetector->GetTargetType()==2){
         //using plunger
         dx=theDetector->GetPlunger()->GetTargetThickness();   // in cm
         ddx=dx*theDetector->GetPlunger()->GetTargetDensity(); // in g/cm^2

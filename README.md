@@ -85,9 +85,9 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead.  The plunger geometry is configured using parameters listed [below](#plungerpar). |
-| /Construction/UseDSAMTarget | Use the DSAM reaction target.  This is the default option.  The target geometry is configured using parameters listed [below](#dsampar). |
-| /Construction/UsePlunger | Use the TIP plunger as the reaction target. |
+| /Construction/UseCsIBall | Use the CsI ball array for charged particle detection.  If this command is not set, the wall array will be used instead. |
+| /Construction/UseDSAMTarget | Use the DSAM reaction target.  The target geometry is configured using parameters listed [below](#dsampar). |
+| /Construction/UsePlunger | Use the TIP plunger as the reaction target.  The plunger geometry is configured using parameters listed [below](#plungerpar). |
 | /Construction/ShiftChamber NUMBER mm | Set the position of the TIP chamber along the z (beam) axis (0 mm is centred with respect to the TIGRESS array). |
 | /Construction/ShiftPlunger NUMBER mm | Set the position of the plunger along the z (beam) axis with respect to the TIP chamber (0 mm is centred with respect to the chamber). |
 

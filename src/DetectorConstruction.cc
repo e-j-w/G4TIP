@@ -29,6 +29,8 @@ DetectorConstruction::DetectorConstruction()
 
   useTigressPositions = true;
   useCsIball=false;
+  targetType = 0; //arbitrary target by default
+
 
   detectorShieldSelect = 1 ; // Include suppressors by default. 
   extensionSuppressorLocation = 0 ; // Back by default (Detector Forward)
@@ -38,7 +40,7 @@ DetectorConstruction::DetectorConstruction()
   customDetectorPosition  = 1 ; // pos_num
   customDetectorVal				= 0 ; // Unused for now (Oct 2013)
 
- griffinMessenger = new GriffinMessenger(this);
+  griffinMessenger = new GriffinMessenger(this);
 
   griffinDetectorsMapIndex = 0;
   for(G4int i = 0; i < 16; i++)
@@ -75,19 +77,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   switch (targetType)
   {
-    case 1:
+    case 2:
       //TIP plunger
       thePlunger = new Plunger(ExpHall_log,materials);
       thePlunger->Construct();
       thePlunger->Report();
       PlungerMessenger = new Plunger_Messenger(thePlunger);
       break;
-    default:
+    case 1:
       //DSAM target
       theTarget = new Target(ExpHall_log,materials);
       theTarget->Construct();
       theTarget->Report();
       TargetMessenger = new Target_Messenger(theTarget);
+      break;
+    default:
+      //arbitrary target
+      theArbitraryTarget = new ArbitraryTarget(ExpHall_log,materials);
+      theArbitraryTarget->AddLayer(); //construct the first layer of the target
+      theArbitraryTarget->Report();
+      ArbitraryTargetMessenger = new ArbitraryTarget_Messenger(theArbitraryTarget);
       break;
   }
 
@@ -119,17 +128,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   switch (targetType)
   {
-    case 1:
+    case 2:
       //TIP plunger
       thePlunger->GetBackingLog()->SetSensitiveDetector(TrackerIon);
       thePlunger->GetTargetLog()->SetSensitiveDetector(TrackerIon);
       thePlunger->GetStopperLog()->SetSensitiveDetector(TrackerIon);
       break;
-    default:
+    case 1:
       //DSAM target
       theTarget->GetTargetLog()->SetSensitiveDetector(TrackerIon);
       theTarget->GetBackingLog()->SetSensitiveDetector(TrackerIon);
       ExpHall_log->SetSensitiveDetector(TrackerIon);
+      break;
+    default:
       break;
   }
   
@@ -435,9 +446,10 @@ void DetectorConstruction::AddDetectionSystemGriffinHevimet(G4int input)
 void DetectorConstruction::ShiftChamber(G4double z)
 {
 	
+  G4ThreeVector shift;
   switch (targetType)
   {
-    case 1:
+    case 2:
       //TIP plunger case
       // This is a modified version of Jonathan's method
 
@@ -449,10 +461,10 @@ void DetectorConstruction::ShiftChamber(G4double z)
       // preserve shifts wrt to chamber over translation
       thePlunger->SetPosZ( thePlunger->GetPosZ() + z );
       break;
-    default:
+    case 1:
       //DSAM target case
       //shift the chamber
-      G4ThreeVector shift = theChamber->GetChamberPlacement()->GetTranslation();
+      shift = theChamber->GetChamberPlacement()->GetTranslation();
       shift.setZ(shift.getZ() + z);
       theChamber->GetChamberPlacement()->SetTranslation(shift);
       //shift the target
@@ -463,6 +475,8 @@ void DetectorConstruction::ShiftChamber(G4double z)
       shift = theTarget->GetBackingPlacement()->GetTranslation();
       shift.setZ(shift.getZ() + z);
       theTarget->GetBackingPlacement()->SetTranslation(shift);
+      break;
+    default:
       break;
   }
 
