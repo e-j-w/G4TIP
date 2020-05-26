@@ -1,0 +1,66 @@
+/Physics/Step 0.05 um
+/Physics/IgnoreNeutrons
+/Physics/FusionEvaporation
+/Construction/UseCsIBall
+#/Physics/StoppingTable stopping_data/SRIM
+#INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
+/Run/Initialize
+/Griffin/UseTIGRESSPositions true
+/Griffin/addGriffinBack 16
+/Projectile/A 18
+/Projectile/Z 8
+/Projectile/KE 48 MeV
+/Projectile/Focus/X 0. mm
+/Projectile/Focus/Y 0. mm
+/Projectile/Focus/Z -50. mm
+/Projectile/Focus/DX 0. mm
+/Projectile/Focus/DY 0. mm
+
+#Setup target
+/Target/Layer1/Thickness 1.91 um
+/Target/Layer1/Position 0.0 um
+/Target/Layer1/Material G4_C
+/Target/Layer1/A 12
+
+/Target/Layer2/Thickness 14.9 um
+/Target/Layer2/Position 8.4050 um
+/Target/Layer2/Material G4_Au
+/Target/Layer2/A 197
+
+/Target/NStep 1
+/Target/ReactionLayer 1
+
+/FusionEvaporation/AddDecay 2.0820 324.61e-6
+/FusionEvaporation/AddDecay 1.274537 5.1937e-3
+/FusionEvaporation/N_protons 0
+/FusionEvaporation/N_neutrons 0
+/FusionEvaporation/N_alpha 2
+/FusionEvaporation/CompoundFormationQ 23.651 MeV
+/FusionEvaporation/Q1 -10.643 MeV
+/FusionEvaporation/Q2 -10.615 MeV
+/FusionEvaporation/Centroid 14.16082
+/FusionEvaporation/Width 1.001135
+/FusionEvaporation/Tau 2.286506
+#/FusionEvaporation/ConstrainParticleAngularRange
+#/FusionEvaporation/MaxParticleAngle 50.0 deg
+/Results/Tree/CsIDetectorID 0
+/Trigger/CsIDetectorID 0
+/Trigger/A 4
+/Trigger/Z 2
+/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoincAnd2GammaCores
+/Trigger/DisableGriffin 1
+/Trigger/DisableGriffin 2
+/Trigger/DisableGriffin 3
+/Trigger/DisableGriffin 4
+/Trigger/DisableGriffinDetCol 9 2
+/Trigger/DisableGriffinDetCol 12 2
+/Trigger/CsIThreshold 3.0 MeV
+#/Print/CsI_Track_Set
+#/Print/Track_Set
+#need to run this AFTER adjusting the target/backing parameters!
+/Construction/ShiftChamber -0.0 mm
+#/Print/Track_Set
+/run/beamOn 1000000
+/Results/Tree/Report
+/Results/Tree/Save run1_3357level_dsam_arbtarget.root

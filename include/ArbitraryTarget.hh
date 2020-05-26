@@ -30,6 +30,7 @@ class ArbitraryTarget
   ArbitraryTarget(G4LogicalVolume*,Materials*);
   ~ArbitraryTarget();
   
+  void Construct();
   G4VPhysicalVolume *AddLayer();
   void setTargetR(G4double);
   void setTargetZ(G4int, G4double);

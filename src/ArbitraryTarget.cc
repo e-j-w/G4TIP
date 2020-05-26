@@ -4,24 +4,39 @@ ArbitraryTarget::ArbitraryTarget(G4LogicalVolume* experimentalHall_log,Materials
 {
   materials=mat;
   expHall_log=experimentalHall_log;
-  Target_radius=6*mm;
-  TargetEx=0.0*MeV;
-  TargetTau=1e-9*ns;
-  for(int i=0;i<NATARGETLAYERS;i++){
-    Target_thickness[i]=1*um;
-    TargetLayerPosition[i]=0.0*mm;
-    setTargetMaterial(i, "G4_Galactic"); //use G4_Galactic by default 
-  }
-  TargetExLayer=0;
+  
   Pos = new G4ThreeVector(0.,0.,0.);
-  NTStep=20;
-  numTargetLayers=0;
+  
 }
 
 ArbitraryTarget::~ArbitraryTarget()
 { 
   for(int i=0;i<numTargetLayers;i++)
     delete target_limits[i];
+}
+//-----------------------------------------------------------------------------
+void ArbitraryTarget::Construct()
+{
+  //setup default values
+  Target_radius=6*mm;
+  TargetEx=0.0*MeV;
+  TargetTau=1e-9*ns;
+  TargetExLayer=0;
+  NTStep=20;
+  numTargetLayers=0;
+
+  //setup logical volumes (all of them needed by DetectorConstruction class)
+  for(int i=0;i<NATARGETLAYERS;i++){
+    Target_thickness[i]=1*um;
+    TargetLayerPosition[i]=0.0*mm;
+    char layerName[30];
+    snprintf(layerName,30,"targetlayer%i",i);
+    aTargetLayer[i] = new G4Tubs(layerName,0.,Target_radius,Target_thickness[i]/2.,-1.*deg,361.*deg);
+    Target_log[i] = new G4LogicalVolume(aTargetLayer[i],TargetMaterial[i],layerName,0,0,0);
+    setTargetMaterial(i,"G4_Galactic"); //by default, all layers are vacuum unless otherwise specified by the user
+  }
+  
+  
 }
 //-----------------------------------------------------------------------------
 // Add a layer to the target.  This does not set properties of the layer 
@@ -38,13 +53,9 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
   
   G4ThreeVector shift;
 
-  //setup name
   char layerName[30];
   snprintf(layerName,30,"targetlayer%i",numTargetLayers);
 
-  aTargetLayer[numTargetLayers] = new G4Tubs(layerName,0.,Target_radius,Target_thickness[numTargetLayers]/2.,-1.*deg,361.*deg);
-
-  Target_log[numTargetLayers] = new G4LogicalVolume(aTargetLayer[numTargetLayers],TargetMaterial[numTargetLayers],layerName,0,0,0);
   target_limits[numTargetLayers] = new G4UserLimits();
   target_limits[numTargetLayers]->SetMaxAllowedStep(Target_thickness[numTargetLayers]/NTStep);
   Target_log[numTargetLayers]->SetUserLimits(target_limits[numTargetLayers]);
@@ -59,9 +70,9 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
   Vis_6->SetVisibility(true);
   Vis_6->SetForceSolid(true);
   Target_log[numTargetLayers]->SetVisAttributes(Vis_6);
-
+  
   numTargetLayers++;
- 
+
   return Target_phys[numTargetLayers];
 }
 //-----------------------------------------------------------------------------
@@ -165,7 +176,7 @@ void ArbitraryTarget::setTargetMass(G4int layer, G4int n)
     exit(-1);
   }
   TargetA[layer]=n;
-  G4cout << "---->  Target layer " << layer << " mass number A set to " << TargetA[layer] << G4endl;  
+  G4cout << "----> Target layer " << layer << " mass number A set to " << TargetA[layer] << G4endl;  
 }
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetCharge(G4int layer, G4int n)
@@ -175,7 +186,7 @@ void ArbitraryTarget::setTargetCharge(G4int layer, G4int n)
     exit(-1);
   }
   TargetZ[layer]=n;
-  G4cout << "---->Target layer " << layer << " atomic number A set to " << TargetZ[layer] << G4endl;  
+  G4cout << "----> Target layer " << layer << " atomic number A set to " << TargetZ[layer] << G4endl;  
 }
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetExAndLayer(G4int layer, G4double x)
@@ -186,13 +197,13 @@ void ArbitraryTarget::setTargetExAndLayer(G4int layer, G4double x)
   }
   TargetExLayer=layer;
   TargetEx=x;
-  G4cout << "---->Target layer " << layer << " recoil excitation energy set to " << TargetEx/keV << " keV" << G4endl;
+  G4cout << "----> Target layer " << layer << " recoil excitation energy set to " << TargetEx/keV << " keV" << G4endl;
 }
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetTau(G4double x)
 {
   TargetTau=x;
-  G4cout << "---->Target recoil lifetime energy set to " << TargetTau/1000./ns << " ps" << G4endl;  
+  G4cout << "----> Target recoil lifetime energy set to " << TargetTau/1000./ns << " ps" << G4endl;  
 }
 //-----------------------------------------------------------------------------
 G4double ArbitraryTarget::GetTargetNV(G4int layer, G4int Z)
@@ -267,7 +278,7 @@ bool ArbitraryTarget::CheckAndAddLayers(int reqLayer)
   }else{
     if(reqLayer < NATARGETLAYERS){
       //make new layers as neccesary
-      while(reqLayer < numTargetLayers){
+      while(numTargetLayers < (reqLayer+1)){
         AddLayer();
       }
       return true;

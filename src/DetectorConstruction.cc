@@ -94,8 +94,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     default:
       //arbitrary target
       theArbitraryTarget = new ArbitraryTarget(ExpHall_log,materials);
-      theArbitraryTarget->AddLayer(); //construct the first layer of the target
-      theArbitraryTarget->Report();
+      theArbitraryTarget->Construct(); //setup default properties of all logical volumes
       ArbitraryTargetMessenger = new ArbitraryTarget_Messenger(theArbitraryTarget);
       break;
   }
@@ -142,7 +141,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       break;
     default:
       //arbitrary target
-      for(int i=0;i<theArbitraryTarget->getNumberOfLayers();i++){
+      for(int i=0;i<NATARGETLAYERS;i++){
         theArbitraryTarget->GetTargetLog(i)->SetSensitiveDetector(TrackerIon);
       }
       ExpHall_log->SetSensitiveDetector(TrackerIon);

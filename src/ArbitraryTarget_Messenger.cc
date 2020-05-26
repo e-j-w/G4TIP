@@ -11,7 +11,7 @@ ArbitraryTarget_Messenger::ArbitraryTarget_Messenger(ArbitraryTarget* Tar)
   char str[256], guideStr[256];
   for(int i=0;i<NATARGETLAYERS;i++){
 
-    snprintf(str,256,"/Target/Layer%i",i+1);
+    snprintf(str,256,"/Target/Layer%i/",i+1);
     snprintf(guideStr,256,"Target layer %i control.",i+1);
     TargetLayerDir[i] = new G4UIdirectory(str);
     TargetLayerDir[i]->SetGuidance(guideStr);

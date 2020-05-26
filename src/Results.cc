@@ -35,6 +35,9 @@ void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
       // G4cout << "Results: target A: " << theDetector->GetTarget()->getTargetMass() << ", target Z: " << theDetector->GetTarget()->getTargetCharge() << G4endl;
       break;
     default:
+      //arbitrary target
+      Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetArbitraryTarget()->getTargetMass(theDetector->GetArbitraryTarget()->getTargetExLayer()) - numP - numN - numA * 4;
+      Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer()) - numP - numA * 2;
       break;
   } 
   //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
@@ -151,6 +154,7 @@ void Results::TreeCreate() {
         tree->Branch("RecoilBackingOut", &rBOut_dsam,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/D:phi/D:w/D"); // recoil upon leaving the backing (if it makes it that far)
         break;
       default:
+        //arbitrary target
         break;
     } 
 
