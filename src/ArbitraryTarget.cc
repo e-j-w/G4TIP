@@ -5,14 +5,12 @@ ArbitraryTarget::ArbitraryTarget(G4LogicalVolume* experimentalHall_log,Materials
   materials=mat;
   expHall_log=experimentalHall_log;
   Target_radius=6*mm;
-  TargetEx=4.43891*MeV;
+  TargetEx=0.0*MeV;
   TargetTau=1e-9*ns;
   for(int i=0;i<NATARGETLAYERS;i++){
     Target_thickness[i]=1*um;
-    TargetZ[i]=20;
-    TargetA[i]=40;
     TargetLayerPosition[i]=0.0*mm;
-    TargetMaterial[i] = materials->FindMaterial("Ca");//carbon
+    setTargetMaterial(i, "G4_Galactic"); //use G4_Galactic by default 
   }
   TargetExLayer=0;
   Pos = new G4ThreeVector(0.,0.,0.);
@@ -26,32 +24,45 @@ ArbitraryTarget::~ArbitraryTarget()
     delete target_limits[i];
 }
 //-----------------------------------------------------------------------------
-G4VPhysicalVolume* ArbitraryTarget::Construct()
+// Add a layer to the target.  This does not set properties of the layer 
+// (thickness, position, material, etc.), that must be done using the other 
+// available methods.
+//-----------------------------------------------------------------------------
+G4VPhysicalVolume* ArbitraryTarget::AddLayer()
 {
+
+  if(numTargetLayers>=NATARGETLAYERS){
+    G4cout << "ERROR: cannot exceed the maximum number of target layers (" << NATARGETLAYERS << ")." << G4endl;
+    getc(stdin);
+  }
   
   G4ThreeVector shift;
 
-  aTargetLayer[0] = new G4Tubs("targetlayer0",0.,Target_radius,Target_thickness[0]/2.,-1.*deg,361.*deg);
+  //setup name
+  char layerName[30];
+  snprintf(layerName,30,"targetlayer%i",numTargetLayers);
 
-  Target_log[0] = new G4LogicalVolume(aTargetLayer[0],TargetMaterial[0],"target_log",0,0,0);
-  target_limits[0] = new G4UserLimits();
-  target_limits[0]->SetMaxAllowedStep(Target_thickness[0]/NTStep);
-  Target_log[0]->SetUserLimits(target_limits[0]);
-  Target_phys[0] = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log[0],"targetlayer0",expHall_log,false,0);
+  aTargetLayer[numTargetLayers] = new G4Tubs(layerName,0.,Target_radius,Target_thickness[numTargetLayers]/2.,-1.*deg,361.*deg);
+
+  Target_log[numTargetLayers] = new G4LogicalVolume(aTargetLayer[numTargetLayers],TargetMaterial[numTargetLayers],layerName,0,0,0);
+  target_limits[numTargetLayers] = new G4UserLimits();
+  target_limits[numTargetLayers]->SetMaxAllowedStep(Target_thickness[numTargetLayers]/NTStep);
+  Target_log[numTargetLayers]->SetUserLimits(target_limits[numTargetLayers]);
+  Target_phys[numTargetLayers] = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log[numTargetLayers],layerName,expHall_log,false,0);
   shift.setX(0.);
   shift.setY(0.);
-  shift.setZ(-0.5*Target_thickness[0] + TargetLayerPosition[0]);
-  Target_phys[0]->SetTranslation(shift);
+  shift.setZ(-0.5*Target_thickness[numTargetLayers] + TargetLayerPosition[numTargetLayers]);
+  Target_phys[numTargetLayers]->SetTranslation(shift);
 
   G4Colour lightblue (0.0,1.0, 1.0); 
   G4VisAttributes* Vis_6 = new G4VisAttributes(lightblue);
   Vis_6->SetVisibility(true);
   Vis_6->SetForceSolid(true);
-  Target_log[0]->SetVisAttributes(Vis_6);
+  Target_log[numTargetLayers]->SetVisAttributes(Vis_6);
 
-  numTargetLayers=1;
+  numTargetLayers++;
  
-  return Target_phys[0];
+  return Target_phys[numTargetLayers];
 }
 
 //-----------------------------------------------------------------------------
@@ -155,7 +166,7 @@ void ArbitraryTarget::setTargetCharge(G4int layer, G4int n)
   G4cout << "---->Target layer " << layer << " atomic number A set to " << TargetZ[layer] << G4endl;  
 }
 //-----------------------------------------------------------------------------
-void ArbitraryTarget::setTargetEx(G4int layer, G4double x)
+void ArbitraryTarget::setTargetExAndLayer(G4int layer, G4double x)
 {
   if((layer<0)&&(layer>=NATARGETLAYERS)){
     G4cout << "ERROR: attempted to adjust excitation energy for invalid target layer (" << layer << ")" << G4endl;
@@ -166,15 +177,10 @@ void ArbitraryTarget::setTargetEx(G4int layer, G4double x)
   G4cout << "---->Target layer " << layer << " recoil excitation energy set to " << TargetEx/keV << " keV" << G4endl;
 }
 //-----------------------------------------------------------------------------
-void ArbitraryTarget::setTargetTau(G4int layer, G4double x)
+void ArbitraryTarget::setTargetTau(G4double x)
 {
-  if((layer<0)&&(layer>=NATARGETLAYERS)){
-    G4cout << "ERROR: attempted to adjust lifetime for invalid target layer (" << layer << ")" << G4endl;
-    exit(-1);
-  }
-  TargetExLayer=layer;
   TargetTau=x;
-  G4cout << "---->Target layer " << layer << " recoil lifetime energy set to " << TargetTau/1000./ns << " ps" << G4endl;  
+  G4cout << "---->Target recoil lifetime energy set to " << TargetTau/1000./ns << " ps" << G4endl;  
 }
 //-----------------------------------------------------------------------------
 G4double ArbitraryTarget::GetTargetNV(G4int layer, G4int Z)
@@ -202,7 +208,7 @@ G4double ArbitraryTarget::GetTargetNV(G4int layer, G4int Z)
 void ArbitraryTarget::SetTarThickness(G4int layer, G4double Z)
 {
   if((layer<0)&&(layer>=NATARGETLAYERS)){
-    G4cout << "ERROR: attempted to set thickness for invalid target layer (" << layer << ")" << G4endl;
+    G4cout << "ERROR: attempted to set thickness in mg/cm^2 for invalid target layer (" << layer << ")" << G4endl;
     exit(-1);
   }
 
@@ -217,4 +223,55 @@ void ArbitraryTarget::SetTarThickness(G4int layer, G4double Z)
   target_limits[layer]->SetMaxAllowedStep(Target_thickness[layer]/NTStep);
   Target_log[layer]->SetUserLimits(target_limits[layer]);
   G4cout << "----> Target layer " << layer << " thickness is set to " << G4BestUnit(2.*aTargetLayer[layer]->GetZHalfLength(),"Length") << 2.*aTargetLayer[layer]->GetZHalfLength()/cm*Target_log[layer]->GetMaterial()->GetDensity()/g*cm3*1000 << " mg/cm^2" << G4endl;
+}
+//-----------------------------------------------------------------------------
+void ArbitraryTarget::SetReactionLayer(G4int layer)
+{
+  if((layer<0)&&(layer>=NATARGETLAYERS)){
+    G4cout << "ERROR: attempted to reaction for invalid target layer (" << layer << ")" << G4endl;
+    exit(-1);
+  }
+
+  //reset names
+  char layerName[30];
+  for(int i=0;i<numTargetLayers;i++){
+    snprintf(layerName,30,"targetlayer%i",i);
+    Target_log[layer]->SetName(layerName);
+  }
+  Target_log[layer]->SetName("target_log"); //reaction classes use this name to determine where the reaction takes place
+  G4cout << "----> Target layer " << layer << " set to be where the reaction will take place." << G4endl;
+}
+//-----------------------------------------------------------------------------
+// Checks whether the requested layer in the target exists.
+// If it does, return true.  If it doesn't, try to make new layers until it 
+// does, and return true if successful.
+// If the process fails, error out (the user should know).
+//-----------------------------------------------------------------------------
+bool ArbitraryTarget::CheckAndAddLayers(int reqLayer)
+{
+  if(reqLayer < numTargetLayers){
+    return true;
+  }else{
+    if(reqLayer < NATARGETLAYERS){
+      //make new layers as neccesary
+      while(reqLayer < numTargetLayers){
+        AddLayer();
+      }
+      return true;
+    }else{
+      G4cout << "ERROR: requested target layer (" << reqLayer+1 << ") is larger than the maximum number of allowed target layers (" << NATARGETLAYERS << ")." << G4endl;
+      exit(-1);
+    }
+  }
+  G4cout << "WARNING: should not be here (CheckAndAddLayers), please fix this!" << G4endl;
+  getc(stdin);
+  return false;
+}
+//-----------------------------------------------------------------------------
+void ArbitraryTarget::setTargetExLayer(G4int layer){
+  setTargetExAndLayer(layer,TargetEx);
+}
+//-----------------------------------------------------------------------------
+void ArbitraryTarget::setTargetEx(G4double e){
+  setTargetExAndLayer(TargetExLayer,e);
 }

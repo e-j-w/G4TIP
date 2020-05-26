@@ -69,7 +69,7 @@ class Target
   void setBackingReactionDepth(G4double);
   G4double GetFracReactionBacking(){return fracReactionBacking;};
   G4bool getFlagReactionBacking(){return flagReactionBacking;}
- G4double GetTargetDensity(){ return Target_log->GetMaterial()->GetDensity()/g*cm3;};
+  G4double GetTargetDensity(){ return Target_log->GetMaterial()->GetDensity()/g*cm3;};
   G4double GetTargetThickness(){return 2.*aTarget->GetZHalfLength()/cm;};
   G4double GetTargetNV(G4int);
 

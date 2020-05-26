@@ -30,16 +30,18 @@ class ArbitraryTarget
   ArbitraryTarget(G4LogicalVolume*,Materials*);
   ~ArbitraryTarget();
   
-  G4VPhysicalVolume *Construct();
+  G4VPhysicalVolume *AddLayer();
   void setTargetR(G4double);
   void setTargetZ(G4int, G4double);
   void setTargetMaterial(G4int, G4String);
   void setTargetCharge(G4int, G4int);
   void setTargetMass(G4int, G4int);
-  void setTargetEx(G4int, G4double);
-  void setTargetTau(G4int, G4double);
+  void setTargetEx(G4double);
+  void setTargetExLayer(G4int);
+  void setTargetTau(G4double);
   void setNTStep(G4int);
   void SetTarThickness(G4int, G4double);
+  void SetReactionLayer(G4int layer);
   void Report();
   G4LogicalVolume* GetTargetLog(unsigned int layer){return Target_log[layer];}
   G4Tubs* GetTarget(unsigned int layer){return aTargetLayer[layer];}
@@ -52,9 +54,16 @@ class ArbitraryTarget
   G4double GetTargetDensity(unsigned int layer){ return Target_log[layer]->GetMaterial()->GetDensity()/g*cm3;};
   G4double GetTargetThickness(G4int layer){return 2.*aTargetLayer[layer]->GetZHalfLength()/cm;};
   G4double GetTargetNV(G4int, G4int);
+  G4int getNumberOfLayers(){return numTargetLayers;};
+
+  bool CheckAndAddLayers(int);
+
+  
 
 
   private:
+
+  void setTargetExAndLayer(G4int, G4double);
     
   Chamber* chamber;
 
@@ -67,12 +76,12 @@ class ArbitraryTarget
   //materials
   Materials* materials;
   G4Material* TargetMaterial[NATARGETLAYERS];
-  G4Material* BackingMaterial;
+
   G4int TargetA[NATARGETLAYERS],TargetZ[NATARGETLAYERS];
   G4double TargetLayerPosition[NATARGETLAYERS]; //positions of target layers (0=chamber center)
   G4double TargetEx;
   G4double TargetTau;
-  G4int TargetExLayer; //layer of the target which is excited
+  G4int TargetExLayer; //layer of the target which is excited (or where reaction occurs)
   //default position
   G4RotationMatrix NoRot;
   G4ThreeVector *Pos; //overall position of target (used to shift entire target, 0 = centered in chamber)

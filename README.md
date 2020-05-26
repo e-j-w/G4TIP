@@ -96,14 +96,14 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
-| /Target/Z NUMBER | The proton number of the reaction target. |
-| /Target/Material STRING<sup>1</sup> | The reaction target material. |
-| /Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/ThicknessMgCm2`). |
-| /Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
-| /Backing/Z NUMBER | The proton number of the target backing. |
-| /Backing/Material STRING<sup>1</sup> | The target backing material. |
-| /Backing/Thickness NUMBER um | The target backing thickness. |
+| /DSAMTarget/Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
+| /DSAMTarget/Target/Z NUMBER | The proton number of the reaction target. |
+| /DSAMTarget/Target/Material STRING<sup>1</sup> | The reaction target material. |
+| /DSAMTarget/Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/ThicknessMgCm2`). |
+| /DSAMTarget/Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
+| /DSAMTarget/Backing/Z NUMBER | The proton number of the target backing. |
+| /DSAMTarget/Backing/Material STRING<sup>1</sup> | The target backing material. |
+| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness. |
 
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 

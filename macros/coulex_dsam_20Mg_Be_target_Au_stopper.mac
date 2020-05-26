@@ -36,14 +36,14 @@
 # DSAM target setup
 #
 
-/Backing/Material G4_Au
-/Backing/A 197
-/Backing/Thickness 14.9 um
-/Backing/NStep 1
-/Target/Material G4_Be
-/Target/A 12
-/Target/Thickness 5.0 um
-/Target/NStep 1
+/DSAMTarget/Backing/Material G4_Au
+/DSAMTarget/Backing/A 197
+/DSAMTarget/Backing/Thickness 14.9 um
+/DSAMTarget/Backing/NStep 1
+/DSAMTarget/Target/Material G4_Be
+/DSAMTarget/Target/A 12
+/DSAMTarget/Target/Thickness 5.0 um
+/DSAMTarget/Target/NStep 1
 
 #
 # Equipment shifts

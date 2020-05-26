@@ -22,6 +22,7 @@ class Target_Messenger: public G4UImessenger
   private:
     Target* aTarget;
     
+    G4UIdirectory*             DSAMTargetDir;
     G4UIdirectory*             TargetDir;
     G4UIdirectory*             BackingDir;
     G4UIcmdWithAString*        TMatCmd;  

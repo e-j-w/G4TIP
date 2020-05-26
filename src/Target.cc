@@ -49,13 +49,10 @@ G4VPhysicalVolume* Target::Construct()
   backing_limits= new G4UserLimits();
   backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
   Backing_log->SetUserLimits(backing_limits);
- 
 
   Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0);
   shift.setZ(0.5*Backing_thickness);
   Backing_phys->SetTranslation(shift);
-
-
 
   G4Colour lightblue (0.0,1.0, 1.0); 
   G4VisAttributes* Vis_6 = new G4VisAttributes(lightblue);

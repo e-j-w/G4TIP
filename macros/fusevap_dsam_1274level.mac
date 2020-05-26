@@ -16,14 +16,14 @@
 /Projectile/Focus/Z -50. mm
 /Projectile/Focus/DX 0. mm
 /Projectile/Focus/DY 0. mm
-/Backing/Material G4_Au
-/Backing/A 197
-/Backing/Thickness 14.9 um
-/Backing/NStep 1
-/Target/Material G4_C
-/Target/A 12
-/Target/Thickness 1.91 um
-/Target/NStep 1
+/DSAMTarget/Backing/Material G4_Au
+/DSAMTarget/Backing/A 197
+/DSAMTarget/Backing/Thickness 14.9 um
+/DSAMTarget/Backing/NStep 1
+/DSAMTarget/Target/Material G4_C
+/DSAMTarget/Target/A 12
+/DSAMTarget/Target/Thickness 1.91 um
+/DSAMTarget/Target/NStep 1
 /FusionEvaporation/AddDecay 1.274537 5.1937e-3
 /FusionEvaporation/N_protons 0
 /FusionEvaporation/N_neutrons 0
@@ -36,7 +36,7 @@
 /FusionEvaporation/Tau 2.286506
 #/FusionEvaporation/ConstrainParticleAngularRange
 #/FusionEvaporation/MaxParticleAngle 50.0 deg
-/Target/Report
+/DSAMTarget/Target/Report
 /Results/Tree/CsIDetectorID 0
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
