@@ -141,6 +141,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       ExpHall_log->SetSensitiveDetector(TrackerIon);
       break;
     default:
+      //arbitrary target
+      for(int i=0;i<theArbitraryTarget->getNumberOfLayers();i++){
+        theArbitraryTarget->GetTargetLog(i)->SetSensitiveDetector(TrackerIon);
+      }
+      ExpHall_log->SetSensitiveDetector(TrackerIon);
       break;
   }
   
@@ -477,6 +482,17 @@ void DetectorConstruction::ShiftChamber(G4double z)
       theTarget->GetBackingPlacement()->SetTranslation(shift);
       break;
     default:
+      //arbitrary target case
+      //shift the chamber
+      shift = theChamber->GetChamberPlacement()->GetTranslation();
+      shift.setZ(shift.getZ() + z);
+      theChamber->GetChamberPlacement()->SetTranslation(shift);
+      //shift the target
+      for(int i=0;i<theArbitraryTarget->getNumberOfLayers();i++){
+        shift = theArbitraryTarget->GetTargetPlacement(i)->GetTranslation();
+        shift.setZ(shift.getZ() + z);
+        theArbitraryTarget->GetTargetPlacement(i)->SetTranslation(shift);
+      }
       break;
   }
 
@@ -507,9 +523,27 @@ void DetectorConstruction::ShiftPlunger(G4double z)
 void DetectorConstruction::Report()
 {
   G4cout<<"---------- Detector Construction Report ----------"<<G4endl;
-  G4cout<<"Plunger Report"<<G4endl;
-  G4cout<<"-----------------"<<G4endl;
-  thePlunger->Report();
+  switch (targetType)
+  {
+    case 2:
+      //TIP plunger case
+      G4cout<<"Plunger Report"<<G4endl;
+      G4cout<<"-----------------"<<G4endl;
+      thePlunger->Report();
+      break;
+    case 1:
+      //DSAM target case
+      G4cout<<"DSAM Target Report"<<G4endl;
+      G4cout<<"-----------------"<<G4endl;
+      theTarget->Report();
+      break;
+    default:
+      //arbitrary target case
+      G4cout<<"Target Report"<<G4endl;
+      G4cout<<"-----------------"<<G4endl;
+      theArbitraryTarget->Report();
+      break;
+  }
   G4cout<<"CsI array Report"<<G4endl;
   G4cout<<"-----------------"<<G4endl;
   aCsI_wall->Report();

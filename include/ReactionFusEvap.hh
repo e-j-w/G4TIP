@@ -161,6 +161,7 @@ private:
   G4double A1, Z1, A2, Z2, A3, Z3, DA, DZ;
   G4int nP, nN, nA;
   G4int maxNumEvap;
+  G4bool targetHasBacking; //true if the target has a layer downstream of the target layer (eg. DSAM, plunger)
   G4bool constrainedAngle; // whether to constrain direction of emitted
                            // particles
   G4double maxEvapAngle, minEvapAngle; // at least one evaporated particle must

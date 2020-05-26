@@ -42,6 +42,7 @@ class ArbitraryTarget
   void setNTStep(G4int);
   void SetTarThickness(G4int, G4double);
   void SetReactionLayer(G4int layer);
+  void setTargetPosition(G4int, G4double);
   void Report();
   G4LogicalVolume* GetTargetLog(unsigned int layer){return Target_log[layer];}
   G4Tubs* GetTarget(unsigned int layer){return aTargetLayer[layer];}
@@ -55,6 +56,7 @@ class ArbitraryTarget
   G4double GetTargetThickness(G4int layer){return 2.*aTargetLayer[layer]->GetZHalfLength()/cm;};
   G4double GetTargetNV(G4int, G4int);
   G4int getNumberOfLayers(){return numTargetLayers;};
+  G4int getTargetExLayer(){return TargetExLayer;};
 
   bool CheckAndAddLayers(int);
 

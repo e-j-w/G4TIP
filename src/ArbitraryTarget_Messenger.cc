@@ -51,6 +51,13 @@ ArbitraryTarget_Messenger::ArbitraryTarget_Messenger(ArbitraryTarget* Tar)
     TTarCmd[i]->SetParameterName("choice",false);
     TTarCmd[i]->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    snprintf(str,256,"/Target/Layer%i/Position",i+1);
+    snprintf(guideStr,256,"Set the position for target layer %i.",i+1);
+    TPCmd[i] = new G4UIcmdWithADoubleAndUnit(str,this);
+    TPCmd[i]->SetGuidance(guideStr);
+    TPCmd[i]->SetParameterName("choice",false);
+    TPCmd[i]->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   }
   
   TRLCmd = new G4UIcmdWithAnInteger("/Target/ReactionLayer",this);
@@ -100,6 +107,7 @@ ArbitraryTarget_Messenger::~ArbitraryTarget_Messenger()
       delete TZCmd[i];
       delete TMCmd[i];
       delete TQCmd[i];
+      delete TPCmd[i];
       delete TTarCmd[i];
       delete TargetLayerDir[i];
     }
@@ -134,10 +142,15 @@ void ArbitraryTarget_Messenger::SetNewValue(G4UIcommand* command,G4String newVal
         if(aArbitraryTarget->CheckAndAddLayers(i))
           aArbitraryTarget->SetTarThickness(i,TTarCmd[i]->GetNewDoubleValue(newValue));
       }
+    if( command == TPCmd[i] )
+      {
+        if(aArbitraryTarget->CheckAndAddLayers(i)) 
+          aArbitraryTarget->setTargetPosition(i, TPCmd[i]->GetNewDoubleValue(newValue));
+      }
   }
   
   if( command == TRLCmd )
-    { aArbitraryTarget->setTargetExLayer(TRLCmd->GetNewIntValue(newValue));}
+    { aArbitraryTarget->setTargetExLayer(TRLCmd->GetNewIntValue(newValue)-1);}
   if( command == TExCmd )
     { aArbitraryTarget->setTargetEx(TExCmd->GetNewDoubleValue(newValue));}
   if( command == TTauCmd )

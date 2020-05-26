@@ -37,13 +37,14 @@ public:
   
   G4VPhysicalVolume* Construct();
   
-  Plunger*   GetPlunger(){return thePlunger;};
-  Target* GetTarget(){return theTarget;};
-  CsI_array* GetCsIWall(){return aCsI_wall;};
+  Plunger*             GetPlunger(){return thePlunger;};
+  Target*              GetTarget(){return theTarget;};
+  ArbitraryTarget*     GetArbitraryTarget(){return theArbitraryTarget;};
+  CsI_array*           GetCsIWall(){return aCsI_wall;};
   CsI_array_spherical* GetCsIBall(){return aCsI_ball;};
-  Chamber*   GetChamber(){return theChamber;};
-  int GetTargetType() {return targetType;};
-  G4bool usingCsIBall(){return useCsIball;};
+  Chamber*             GetChamber(){return theChamber;};
+  int                  GetTargetType() {return targetType;};
+  G4bool               usingCsIBall(){return useCsIball;};
   
   G4int griffinDetectorsMapIndex;
   G4int griffinDetectorsMap[16];

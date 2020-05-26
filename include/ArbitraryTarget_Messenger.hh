@@ -27,6 +27,7 @@ class ArbitraryTarget_Messenger: public G4UImessenger
     G4UIcmdWithAString*        TMatCmd[NATARGETLAYERS];  
     G4UIcmdWithAnInteger*      TMCmd[NATARGETLAYERS];
     G4UIcmdWithAnInteger*      TQCmd[NATARGETLAYERS];
+    G4UIcmdWithADoubleAndUnit* TPCmd[NATARGETLAYERS];
     G4UIcmdWithAnInteger*      TRLCmd;
     G4UIcmdWithADoubleAndUnit* TExCmd;
     G4UIcmdWithADoubleAndUnit* TTauCmd;

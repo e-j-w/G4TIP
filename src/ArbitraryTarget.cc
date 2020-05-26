@@ -64,7 +64,6 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
  
   return Target_phys[numTargetLayers];
 }
-
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetR(G4double X)
 {
@@ -74,6 +73,19 @@ void ArbitraryTarget::setTargetR(G4double X)
   }
   G4cout << "----> Target radius is set to " << G4BestUnit(2.*aTargetLayer[0]->GetOuterRadius(),"Length") << G4endl;
   G4RunManager::GetRunManager()->GeometryHasBeenModified();
+}
+//-----------------------------------------------------------------------------
+void ArbitraryTarget::setTargetPosition(G4int layer, G4double pos){
+  if((layer<0)&&(layer>=NATARGETLAYERS)){
+    G4cout << "ERROR: attempted to adjust position for invalid target layer (" << layer << ")" << G4endl;
+    exit(-1);
+  }
+  TargetLayerPosition[layer]=pos;
+  G4ThreeVector d;
+  d.setX(Pos->getX());
+  d.setY(Pos->getY());
+  d.setZ(Pos->getZ() - 0.5*Target_thickness[layer] + TargetLayerPosition[layer]);
+  Target_phys[layer]->SetTranslation(d);
 }
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetZ(G4int layer, G4double Z)
@@ -87,7 +99,7 @@ void ArbitraryTarget::setTargetZ(G4int layer, G4double Z)
   aTargetLayer[layer]->SetZHalfLength(Target_thickness[layer]/2.);
   d.setX(Pos->getX());
   d.setY(Pos->getY());
-  d.setZ(Pos->getZ() - 0.5*Z + TargetLayerPosition[layer]);
+  d.setZ(Pos->getZ() - 0.5*Target_thickness[layer] + TargetLayerPosition[layer]);
   Target_phys[layer]->SetTranslation(d);
   target_limits[layer]->SetMaxAllowedStep(Target_thickness[layer]/NTStep);
   Target_log[layer]->SetUserLimits(target_limits[layer]);
