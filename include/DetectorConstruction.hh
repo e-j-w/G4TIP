@@ -44,7 +44,7 @@ public:
   CsI_array_spherical* GetCsIBall(){return aCsI_ball;};
   Chamber*             GetChamber(){return theChamber;};
   int                  GetTargetType() {return targetType;};
-  G4bool               usingCsIBall(){return useCsIball;};
+  G4int                GetAncArrayType(){return ancArrayType;};
   
   G4int griffinDetectorsMapIndex;
   G4int griffinDetectorsMap[16];
@@ -62,7 +62,9 @@ public:
   void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
   void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ; 
   void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
-  void UseCsIBall( G4bool input ) {useCsIball = input;};
+  void SetUseCsIWall() {ancArrayType = 0;};
+  void SetUseCsIBall() {ancArrayType = 1;};
+  void SetUseNoAncArray() {ancArrayType = 2;};
   void SetUseArbitraryTarget() {targetType = 0;};
   void SetUseDSAMTarget() {targetType = 1;};
   void SetUsePlunger() {targetType = 2;};
@@ -106,7 +108,7 @@ private:
   G4int     customDetectorVal ; 
   G4int     hevimetSelector ; 
   G4bool    useTigressPositions;
-  G4bool    useCsIball;
+  G4int     ancArrayType; //0=CsI wall, 1=CsI ball, 2=no array
   G4int     targetType; //0=arbitrary target, 1=DSAM target, 2=plunger
 
   GriffinMessenger* griffinMessenger;

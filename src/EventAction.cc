@@ -146,10 +146,15 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                   }
 			        }
           
-          //determine the number of CsI hits 
-          if(theDetector->usingCsIBall())
-          	{
-				      for(int i=0;i<NCsISph;i++)
+          //determine the number of CsI hits
+          switch (theDetector->GetAncArrayType())
+          {
+            case 2:
+              // no ancillary array
+              break;
+            case 1:
+              //CsI ball
+              for(int i=0;i<NCsISph;i++)
 				      	if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
                     {
@@ -159,11 +164,10 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                       if((partACsI[i]==1)&&(partZCsI[i]==1))
                         numPCsIHits+=1.0*CsIWeight[i];
                     }
-							      
-					  }
-	        else
-	        	{
-	        		for(int i=0;i<NCsI;i++)
+              break;
+            default:
+              //CsI wall
+              for(int i=0;i<NCsI;i++)
 	        			if(CsIDisabled[i]==0) //check if detector is disabled
 							    if(partECsI[i]>=CsIThreshold)
                     {
@@ -173,8 +177,8 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                       if((partACsI[i]==1)&&(partZCsI[i]==1))
                         numPCsIHits+=1.0*CsIWeight[i];
                     }
-							      
-	        	}
+              break;
+          }
 
           //increment the counter for number of CsI hits (before triggering)
           numCsIhits+=numDetHits;

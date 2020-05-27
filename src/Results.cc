@@ -64,10 +64,20 @@ void Results::SetupRunCoulex() {
 void Results::SetupRun(){
 
   // get CsI crystal positions
-  if (theDetector->usingCsIBall())
-    GetCsIBallPositions();
-  else
-    GetCsIWallPositions();
+  switch (theDetector->GetAncArrayType())
+  {
+    case 2:
+      // no ancillary array
+      break;
+    case 1:
+      //CsI ball
+      GetCsIBallPositions();
+      break;
+    default:
+      //CsI wall
+      GetCsIWallPositions();
+      break;
+  }
 
   /* // get HPGe crystal positions
   for(int i=0; i<GN; i++)
@@ -733,9 +743,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   if (Np > 0) {
     for (j = 1; j < NCsISph + 1; j++) // loop through CsI detector IDs (1 indexed)
     {
-      if ((j < NCsI + 1) ||
-          (theDetector
-               ->usingCsIBall())) // check whether index is valid for wall/ball
+      if ((j < NCsI + 1) || (theDetector->GetAncArrayType()==1)) // check whether index is valid for wall/ball
         if ((CsITrigId == 0) ||
             (CsITrigId == j)) // save only data for the detectors we want to see
           for (i = 0; i < Np; i++) // loop through all entries in the collection

@@ -28,7 +28,7 @@ DetectorConstruction::DetectorConstruction()
   // Shield Selection Default
 
   useTigressPositions = true;
-  useCsIball=false;
+  ancArrayType = 0; //CsI wall by default
   targetType = 0; //arbitrary target by default
 
 
@@ -99,18 +99,24 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       break;
   }
 
-  if(useCsIball)
-		{
-			aCsI_ball = new CsI_array_spherical(ExpHall_log,materials);
+  switch (ancArrayType)
+  {
+    case 2:
+      // no ancillary array
+      break;
+    case 1:
+      //CsI ball
+      aCsI_ball = new CsI_array_spherical(ExpHall_log,materials);
 			aCsI_ball->Construct();
 			aCsI_ball->Report();
-		}
-	else
-		{
-			aCsI_wall = new CsI_array(ExpHall_log,materials);
+      break;
+    default:
+      //CsI wall
+      aCsI_wall = new CsI_array(ExpHall_log,materials);
 			aCsI_wall->Construct();
 			aCsI_wall->Report();
-		}
+      break;
+  }
  
   //------------------------------------------------ 
   // Sensitive detectors
@@ -153,10 +159,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   TrackerCsI = new TrackerCsISD("CsITracker");
   SDman->AddNewDetector( TrackerCsI );
 
-  if(useCsIball)
-    aCsI_ball->MakeSensitive(TrackerCsI);
-  else
-    aCsI_wall->MakeSensitive(TrackerCsI);
+  switch (ancArrayType)
+  {
+    case 2:
+      // no ancillary array
+      break;
+    case 1:
+      //CsI ball
+      aCsI_ball->MakeSensitive(TrackerCsI);
+      break;
+    default:
+      //CsI wall
+      aCsI_wall->MakeSensitive(TrackerCsI);
+      break;
+  }
 
   return ExpHall_phys;
 }
@@ -497,16 +513,23 @@ void DetectorConstruction::ShiftChamber(G4double z)
 
 	
 	//shift the CsI array
-	if(useCsIball)
-		{
-			aCsI_ball->SetZPos(aCsI_ball->GetZPos() + z);
+  switch (ancArrayType)
+  {
+    case 2:
+      // no ancillary array
+      break;
+    case 1:
+      //CsI ball
+      aCsI_ball->SetZPos(aCsI_ball->GetZPos() + z);
 			aCsI_ball->MakeSensitive(TrackerCsI);
-		}
-	else
-		{
-			aCsI_wall->SetZPos(aCsI_wall->GetZPos() + z);
+      break;
+    default:
+      //CsI wall
+      aCsI_wall->SetZPos(aCsI_wall->GetZPos() + z);
 			aCsI_wall->MakeSensitive(TrackerCsI);
-		}
+      break;
+  }
+
 	G4RunManager::GetRunManager()->GeometryHasBeenModified();
 	G4cout<<"----> Chamber position has been shifted by   "<<z<<" mm"<<G4endl;
 }

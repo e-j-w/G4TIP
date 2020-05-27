@@ -25,7 +25,9 @@ class DetectorConstruction_Messenger: public G4UImessenger
   G4UIcmdWithoutParameter*   RepCmd;
   G4UIcmdWithADoubleAndUnit* STCmd;  
   G4UIcmdWithADoubleAndUnit* SPCmd;
+  G4UIcmdWithoutParameter*   WallCmd;
   G4UIcmdWithoutParameter*   BallCmd;
+  G4UIcmdWithoutParameter*   NoAncArrayCmd;
   G4UIcmdWithoutParameter*   PlungerCmd;
   G4UIcmdWithoutParameter*   DSAMCmd;
   G4UIcmdWithoutParameter*   TargetCmd;

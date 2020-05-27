@@ -21,8 +21,14 @@ DetectorConstruction_Messenger::DetectorConstruction_Messenger(DetectorConstruct
   SPCmd->SetParameterName("choice",false);
   SPCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  WallCmd = new G4UIcmdWithoutParameter("/Construction/UseCsIWall",this);
+  WallCmd->SetGuidance("Use the CsI wall ancillary array for charged particle detection (this is the default option).");
+
   BallCmd = new G4UIcmdWithoutParameter("/Construction/UseCsIBall",this);
-  BallCmd->SetGuidance("Use the CsI ball array instead of the wall array (which is default).");
+  BallCmd->SetGuidance("Use the CsI ball ancillary array for charged particle detection.");
+
+  NoAncArrayCmd = new G4UIcmdWithoutParameter("/Construction/NoAncillaryArray",this);
+  NoAncArrayCmd->SetGuidance("Do not use any ancillary array for charged particle detection.");
 
   PlungerCmd = new G4UIcmdWithoutParameter("/Construction/UsePlunger",this);
   PlungerCmd->SetGuidance("Use the TIP plunger as the reaction target (DSAM target is default).");
@@ -46,7 +52,9 @@ DetectorConstruction_Messenger::~DetectorConstruction_Messenger()
   delete RepCmd;
   delete STCmd;
   delete SPCmd;
+  delete WallCmd;
   delete BallCmd;
+  delete NoAncArrayCmd;
   delete PlungerCmd;
   delete DSAMCmd;
   delete TargetCmd;
@@ -64,8 +72,14 @@ void DetectorConstruction_Messenger::SetNewValue(G4UIcommand* command,G4String n
   if( command == SPCmd )
     { theDetector->ShiftPlunger(SPCmd->GetNewDoubleValue(newValue)); }
 
+  if( command == WallCmd )
+    { theDetector->SetUseCsIWall();}
+
   if( command == BallCmd )
-    { theDetector->UseCsIBall(true);}
+    { theDetector->SetUseCsIBall();}
+
+  if( command == NoAncArrayCmd )
+    { theDetector->SetUseNoAncArray();}
 
   if( command == PlungerCmd )
     { 

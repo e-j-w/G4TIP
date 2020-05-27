@@ -61,6 +61,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       TT=2.*theDetector->GetArbitraryTarget()->GetTarget(theDetector->GetArbitraryTarget()->getTargetExLayer())->GetZHalfLength();
       TC=theDetector->GetArbitraryTarget()->GetTargetPlacement(theDetector->GetArbitraryTarget()->getTargetExLayer())->GetTranslation().getZ();
       depth=TC+TT*(G4UniformRand()-0.5);
+      //printf("TT: %f, TC: %f, depth: %f\n",TT,TC,depth);
       theDetector->GetArbitraryTarget()->setTargetReactionDepth(theDetector->GetArbitraryTarget()->getTargetExLayer(),depth);
       break;
   } 
