@@ -26,7 +26,7 @@
 #include "TStyle.h"
 #include "TTree.h"
 
-
+#include "ArbitraryTarget.hh" //needed to know max number of layers in target
 
 #define GN 16
 #define GS 4
@@ -188,6 +188,8 @@ private:
   IonInf pBOut_plunger, rBOut_dsam; //backing out
   IonInf rDIn_plunger; //degrader in
   IonInf rDOut_plunger; //degrader out
+  IonInf pTIn_target[NATARGETLAYERS], pTOut_target[NATARGETLAYERS]; //projectile target in and out of each layer
+  IonInf rTIn_target[NATARGETLAYERS], rTOut_target[NATARGETLAYERS]; //recoil target in and out of each layer
   DecayInf rDec[MAXNUMDECAYS];
   IonInf partROut;      // ion tracking (projectile, residual)
   CsIInf partHit;     // particle hit
@@ -206,7 +208,7 @@ private:
   G4double kBm[NCsI]; // Birks constant in (mg/cm^2)/MeV
   G4double S[NCsI];   // scaling factor from LY to channel
 
-  size_t soh, sogh, soi, sos, soes;
+  size_t soh, sogh, soi, sos, soes, sod;
 
   G4int numDec;
 

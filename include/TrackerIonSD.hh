@@ -16,6 +16,8 @@
 #include "G4TrackStatus.hh"
 //#include "Results.hh"
 
+#include "ArbitraryTarget.hh" //needed to know max number of layers in target
+
 
 class TrackerIonSD : public G4VSensitiveDetector
 {

@@ -58,6 +58,8 @@ class TrackerIonHit : public G4VHit
       void SetDSAMTargetInFlag(){flag=DSAM_TARGET_IN_FLAG;}
       void SetDSAMBackingInFlag(){flag=DSAM_BACKING_IN_FLAG;}
       void SetDSAMBackingOutFlag(){flag=DSAM_BACKING_OUT_FLAG;}
+      void SetTargetLayerInFlag(G4int layer){flag=TARGET_LAYER_IN_FLAG+layer;};
+      void SetTargetLayerOutFlag(G4int layer){flag=TARGET_LAYER_OUT_FLAG+layer;};
       void SetPFlag(G4int i){pflag=i;}
       void SetTime(G4double t){time=t;};
   

@@ -16,6 +16,8 @@
 #define REACTION_IN_FLAG             98
 #define REACTION_OUT_FLAG            99
 #define DECAY_FLAG                   100
+#define TARGET_LAYER_IN_FLAG         200
+#define TARGET_LAYER_OUT_FLAG        220
 #define MAX_FLAGS                    256
 
 #endif

@@ -105,7 +105,8 @@ G4bool TrackerIonSD::ProcessHits(G4Step *aStep, G4TouchableHistory *) {
 
 void TrackerIonSD::EndOfEvent(G4HCofThisEvent *HCE) {
 
-  G4int i;
+  G4int i,j;
+  char layerName[30];
   G4int NbHits = ionCollection->entries();
 
   if (NbHits > 0) {
@@ -172,6 +173,27 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent *HCE) {
               (*ionCollection)[i]->GetVolName() == "expHall")
             (*ionCollection)[i]->SetDSAMBackingOutFlag();
     }
+
+    for(j=0;j<NATARGETLAYERS;j++){
+      snprintf(layerName,30,"targetlayer%i",j);
+      for (i = 1; i < NbHits; i++) {
+        if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
+          if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
+            if ((*ionCollection)[i - 1]->GetVolName() != layerName &&
+                (*ionCollection)[i]->GetVolName() == layerName)
+              (*ionCollection)[i]->SetTargetLayerInFlag(j);
+      }
+
+      for (i = 1; i < NbHits; i++) {
+        if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
+          if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
+            if ((*ionCollection)[i - 1]->GetVolName() == layerName &&
+                (*ionCollection)[i]->GetVolName() != layerName)
+              (*ionCollection)[i]->SetTargetLayerOutFlag(j);
+      }
+    }
+
+    
 
     
     // increment the decay counter if neccesary (for cascades)

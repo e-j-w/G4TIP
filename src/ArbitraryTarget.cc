@@ -51,7 +51,7 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
     getc(stdin);
   }
   
-  G4ThreeVector shift;
+  G4ThreeVector d;
 
   char layerName[30];
   snprintf(layerName,30,"targetlayer%i",numTargetLayers);
@@ -60,16 +60,16 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
   target_limits[numTargetLayers]->SetMaxAllowedStep(Target_thickness[numTargetLayers]/NTStep);
   Target_log[numTargetLayers]->SetUserLimits(target_limits[numTargetLayers]);
   Target_phys[numTargetLayers] = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log[numTargetLayers],layerName,expHall_log,false,0);
-  shift.setX(0.);
-  shift.setY(0.);
-  shift.setZ(-0.5*Target_thickness[numTargetLayers] + TargetLayerPosition[numTargetLayers]);
-  Target_phys[numTargetLayers]->SetTranslation(shift);
+  d.setX(Pos->getX());
+  d.setY(Pos->getY());
+  d.setZ(Pos->getZ() + TargetLayerPosition[numTargetLayers] + 0.5*Target_thickness[numTargetLayers]);
+  Target_phys[numTargetLayers]->SetTranslation(d);
 
-  G4Colour lightblue (0.0,1.0, 1.0); 
-  G4VisAttributes* Vis_6 = new G4VisAttributes(lightblue);
-  Vis_6->SetVisibility(true);
-  Vis_6->SetForceSolid(true);
-  Target_log[numTargetLayers]->SetVisAttributes(Vis_6);
+  G4Colour layerCol(0.0+0.1*numTargetLayers,1.0-0.1*numTargetLayers,1.0-0.1*numTargetLayers); 
+  G4VisAttributes* Vis_a = new G4VisAttributes(layerCol);
+  Vis_a->SetVisibility(true);
+  Vis_a->SetForceSolid(true);
+  Target_log[numTargetLayers]->SetVisAttributes(Vis_a);
   
   numTargetLayers++;
 
@@ -95,7 +95,7 @@ void ArbitraryTarget::setTargetPosition(G4int layer, G4double pos){
   G4ThreeVector d;
   d.setX(Pos->getX());
   d.setY(Pos->getY());
-  d.setZ(Pos->getZ() - 0.5*Target_thickness[layer] + TargetLayerPosition[layer]);
+  d.setZ(Pos->getZ() + TargetLayerPosition[layer] + 0.5*Target_thickness[layer]);
   Target_phys[layer]->SetTranslation(d);
 }
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void ArbitraryTarget::setTargetZ(G4int layer, G4double Z)
   aTargetLayer[layer]->SetZHalfLength(Target_thickness[layer]/2.);
   d.setX(Pos->getX());
   d.setY(Pos->getY());
-  d.setZ(Pos->getZ() - 0.5*Target_thickness[layer] + TargetLayerPosition[layer]);
+  d.setZ(Pos->getZ() + TargetLayerPosition[layer] + 0.5*Target_thickness[layer]);
   Target_phys[layer]->SetTranslation(d);
   target_limits[layer]->SetMaxAllowedStep(Target_thickness[layer]/NTStep);
   Target_log[layer]->SetUserLimits(target_limits[layer]);
@@ -197,7 +197,18 @@ void ArbitraryTarget::setTargetExAndLayer(G4int layer, G4double x)
   }
   TargetExLayer=layer;
   TargetEx=x;
-  G4cout << "----> Target layer " << layer << " recoil excitation energy set to " << TargetEx/keV << " keV" << G4endl;
+
+  //reset names
+  char layerName[30];
+  for(int i=0;i<numTargetLayers;i++){
+    snprintf(layerName,30,"targetlayer%i",i);
+    Target_log[layer]->SetName(layerName);
+  }
+  Target_log[layer]->SetName("target_log"); //reaction classes use this name to determine where the reaction takes place
+  
+  G4cout << "----> Target layer " << layer << " set to be where the reaction will take place." << G4endl;
+  if(TargetEx>0.)
+    G4cout << "----> Target layer " << layer << " recoil excitation energy set to " << TargetEx/keV << " keV" << G4endl;
 }
 //-----------------------------------------------------------------------------
 void ArbitraryTarget::setTargetTau(G4double x)
@@ -246,24 +257,6 @@ void ArbitraryTarget::SetTarThickness(G4int layer, G4double Z)
   target_limits[layer]->SetMaxAllowedStep(Target_thickness[layer]/NTStep);
   Target_log[layer]->SetUserLimits(target_limits[layer]);
   G4cout << "----> Target layer " << layer << " thickness is set to " << G4BestUnit(2.*aTargetLayer[layer]->GetZHalfLength(),"Length") << 2.*aTargetLayer[layer]->GetZHalfLength()/cm*Target_log[layer]->GetMaterial()->GetDensity()/g*cm3*1000 << " mg/cm^2" << G4endl;
-}
-//-----------------------------------------------------------------------------
-void ArbitraryTarget::SetReactionLayer(G4int layer)
-{
-  if((layer<0)&&(layer>=NATARGETLAYERS)){
-    G4cout << "ERROR: attempted to reaction for invalid target layer (" << layer << ")" << G4endl;
-    exit(-1);
-  }
-
-  //reset names
-  char layerName[30];
-  for(int i=0;i<numTargetLayers;i++){
-    snprintf(layerName,30,"targetlayer%i",i);
-    Target_log[layer]->SetName(layerName);
-  }
-  Target_log[layer]->SetName("target_log"); //reaction classes use this name to determine where the reaction takes place
-  TargetExLayer=layer;
-  G4cout << "----> Target layer " << layer << " set to be where the reaction will take place." << G4endl;
 }
 //-----------------------------------------------------------------------------
 // Checks whether the requested layer in the target exists.

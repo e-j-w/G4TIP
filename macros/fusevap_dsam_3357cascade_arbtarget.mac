@@ -23,7 +23,8 @@
 /Target/Layer1/A 12
 
 /Target/Layer2/Thickness 14.9 um
-/Target/Layer2/Position 8.4050 um
+/Target/Layer2/Position 1.91 um
+#/Target/Layer2/Position 2.0 cm
 /Target/Layer2/Material G4_Au
 /Target/Layer2/A 197
 
@@ -61,6 +62,6 @@
 #need to run this AFTER adjusting the target/backing parameters!
 /Construction/ShiftChamber -0.0 mm
 #/Print/Track_Set
-/run/beamOn 1000000
+/run/beamOn 100000
 /Results/Tree/Report
 /Results/Tree/Save run1_3357level_dsam_arbtarget.root

@@ -42,7 +42,6 @@ class ArbitraryTarget
   void setTargetTau(G4double);
   void setNTStep(G4int);
   void SetTarThickness(G4int, G4double);
-  void SetReactionLayer(G4int layer);
   void setTargetPosition(G4int, G4double);
   void Report();
   G4LogicalVolume* GetTargetLog(unsigned int layer){return Target_log[layer];}

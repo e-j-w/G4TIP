@@ -265,6 +265,8 @@ ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4d
 
   G4String name = aTrack.GetVolume()->GetLogicalVolume()->GetName();
 
+  //G4cout << "PostStepGetPhysicalInteractionLength, name: " << name << G4endl;
+
   if (name == "target_log") {
     G4UserLimits *pUserLimits =
         aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits();
