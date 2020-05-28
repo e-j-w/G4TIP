@@ -7,19 +7,18 @@
  
   // Elemental materials
   Al = man->FindOrBuildMaterial("G4_Al");
+  Au = man->FindOrBuildMaterial("G4_Au");
   Be = man->FindOrBuildMaterial("G4_Be"); 
-  Ge = man->FindOrBuildMaterial("G4_Ge"); 
-  Cu = man->FindOrBuildMaterial("G4_Cu");
   C = man->FindOrBuildMaterial("G4_C");
-  Mg = man->FindOrBuildMaterial("G4_Mg");
-  Al = man->FindOrBuildMaterial("G4_Al");
+  Cu = man->FindOrBuildMaterial("G4_Cu");
+  Ca = new G4Material("Ca", 20., 40.08*g/mole, 1.55*g/cm3);
+  Ge = man->FindOrBuildMaterial("G4_Ge");
   In = man->FindOrBuildMaterial("G4_In");
   Hf = man->FindOrBuildMaterial("G4_Hf");
-  Au = man->FindOrBuildMaterial("G4_Au");
-  Ta = man->FindOrBuildMaterial("G4_Ta");
+  Mg = man->FindOrBuildMaterial("G4_Mg");
   Ni = man->FindOrBuildMaterial("G4_Ni");
   S = man->FindOrBuildMaterial("G4_S");
-  Ca = new G4Material("Ca", 20., 40.08*g/mole, 1.55*g/cm3);
+  Ta = man->FindOrBuildMaterial("G4_Ta");
   
   // Compounds
   Vacuum = man->FindOrBuildMaterial("G4_Galactic");

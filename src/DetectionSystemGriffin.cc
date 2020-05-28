@@ -1200,8 +1200,8 @@ void DetectionSystemGriffin::ConstructComplexDetectorBlockWithDetectorSpecificDe
 void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
 {
 
-  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterial);
-  if( !electrodeMaterial ) {
+  G4Material* electrodeMat = G4Material::GetMaterial(this->electrodeMaterial);
+  if( !electrodeMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
@@ -1220,8 +1220,7 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
 	
   G4UnionSolid* inter_crystal_electrodeMat_back = this->interCrystalelectrodeMatBack(); 
   
-  inter_crystal_electrodeMat_back_log = new G4LogicalVolume(inter_crystal_electrodeMat_back,
-	electrodeMaterial, "inter_crystal_electrodeMat_back_log", 0, 0, 0);
+  inter_crystal_electrodeMat_back_log = new G4LogicalVolume(inter_crystal_electrodeMat_back, electrodeMat, "inter_crystal_electrodeMat_back_log", 0, 0, 0);
   inter_crystal_electrodeMat_back_log->SetVisAttributes(electrodeMat_vis_att);
 
   this->assembly->AddPlacedVolume(inter_crystal_electrodeMat_back_log, move_inter_crystal_electrodeMat_back, rotate_electrodeMat_back);  
@@ -1237,8 +1236,7 @@ void DetectionSystemGriffin::BuildelectrodeMatElectrodes()
 	+ this->germanium_dist_from_can_face + this->shift
 	+ this->applied_back_shift, 0,0);
   
-  inter_crystal_electrodeMat_front_log = new G4LogicalVolume(inter_crystal_electrodeMat_front,
-	electrodeMaterial, "inter_crystal_electrodeMat_front_log", 0, 0, 0);
+  inter_crystal_electrodeMat_front_log = new G4LogicalVolume(inter_crystal_electrodeMat_front, electrodeMat, "inter_crystal_electrodeMat_front_log", 0, 0, 0);
   inter_crystal_electrodeMat_front_log->SetVisAttributes(electrodeMat_vis_att);
 	
   this->assembly->AddPlacedVolume(inter_crystal_electrodeMat_front_log, move_inter_crystal_electrodeMat_front, rotate_electrodeMat_front);  
@@ -1257,15 +1255,15 @@ void DetectionSystemGriffin::ConstructDetector()
   G4RotationMatrix* rotate_piece[4] ;
   G4ThreeVector move_piece[4] ; 
   
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
-  if( !structureMaterial ) {
+  G4Material* structureMat = G4Material::GetMaterial(this->structureMaterial);
+  if( !structureMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
 
   // first we make the can's front face
   G4Box* front_face = this->squareFrontFace();
-  front_face_log = new G4LogicalVolume(front_face, structureMaterial, "front_face_log", 0, 0, 0);
+  front_face_log = new G4LogicalVolume(front_face, structureMat, "front_face_log", 0, 0, 0);
 
   G4ThreeVector move_front_face(this->shift +this->applied_back_shift, 0, 0);
 
@@ -1304,16 +1302,16 @@ void DetectionSystemGriffin::ConstructDetector()
       move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
     } 
 
-  top_bent_piece_log = new G4LogicalVolume(side_piece[0], structureMaterial, "top_bent_piece", 0, 0, 0);
+  top_bent_piece_log = new G4LogicalVolume(side_piece[0], structureMat, "top_bent_piece", 0, 0, 0);
   this->assembly->AddPlacedVolume(top_bent_piece_log, move_piece[0], rotate_piece[0]); 
 
-  right_bent_piece_log = new G4LogicalVolume(side_piece[1], structureMaterial, "right_bent_piece", 0, 0, 0);
+  right_bent_piece_log = new G4LogicalVolume(side_piece[1], structureMat, "right_bent_piece", 0, 0, 0);
   this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[1], rotate_piece[1]); 
 
-  bottom_bent_piece_log = new G4LogicalVolume(side_piece[2], structureMaterial, "right_bent_piece", 0, 0, 0);
+  bottom_bent_piece_log = new G4LogicalVolume(side_piece[2], structureMat, "right_bent_piece", 0, 0, 0);
   this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[2], rotate_piece[2]); 
 
-  left_bent_piece_log = new G4LogicalVolume(side_piece[3], structureMaterial, "right_bent_piece", 0, 0, 0);
+  left_bent_piece_log = new G4LogicalVolume(side_piece[3], structureMat, "right_bent_piece", 0, 0, 0);
   this->assembly->AddPlacedVolume(right_bent_piece_log, move_piece[3], rotate_piece[3]); 
 
 
@@ -1343,16 +1341,16 @@ void DetectionSystemGriffin::ConstructDetector()
       move_piece[i] = G4ThreeVector(x0, yMov, zMov) ;
     }
 
-  top_wedge_log = new G4LogicalVolume(side_wedge[0], structureMaterial, "top_wedge_log", 0, 0, 0);
+  top_wedge_log = new G4LogicalVolume(side_wedge[0], structureMat, "top_wedge_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(top_wedge_log, move_piece[0], rotate_piece[0]);
 
-  right_wedge_log = new G4LogicalVolume(side_wedge[1], structureMaterial, "right_wedge_log", 0, 0, 0);
+  right_wedge_log = new G4LogicalVolume(side_wedge[1], structureMat, "right_wedge_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(right_wedge_log, move_piece[1], rotate_piece[1]);
 
-  bottom_wedge_log = new G4LogicalVolume(side_wedge[2], structureMaterial, "bottom_wedge_log", 0, 0, 0);
+  bottom_wedge_log = new G4LogicalVolume(side_wedge[2], structureMat, "bottom_wedge_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(bottom_wedge_log, move_piece[2], rotate_piece[2]);
 
-  left_wedge_log = new G4LogicalVolume(side_wedge[3], structureMaterial, "left_wedge_log", 0, 0, 0);
+  left_wedge_log = new G4LogicalVolume(side_wedge[3], structureMat, "left_wedge_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(left_wedge_log, move_piece[3], rotate_piece[3]);
 
 
@@ -1385,16 +1383,16 @@ void DetectionSystemGriffin::ConstructDetector()
       move_piece[i] = G4ThreeVector(x0, yMov, zMov) ; 
     }
 
-  lower_left_cone_log = new G4LogicalVolume(cone_location[0], structureMaterial, "lower_left_cone_log", 0, 0, 0);
+  lower_left_cone_log = new G4LogicalVolume(cone_location[0], structureMat, "lower_left_cone_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(lower_left_cone_log, move_piece[0],  rotate_piece[0]);
 
-  upper_left_cone_log = new G4LogicalVolume(cone_location[1], structureMaterial, "upper_left_cone_log", 0, 0, 0);
+  upper_left_cone_log = new G4LogicalVolume(cone_location[1], structureMat, "upper_left_cone_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(upper_left_cone_log, move_piece[1], rotate_piece[1]);
 
-  upper_right_cone_log = new G4LogicalVolume(cone_location[2], structureMaterial, "upper_right_cone_log", 0, 0, 0);
+  upper_right_cone_log = new G4LogicalVolume(cone_location[2], structureMat, "upper_right_cone_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(upper_right_cone_log, move_piece[2], rotate_piece[2]);
 
-  lower_right_cone_log = new G4LogicalVolume(cone_location[3], structureMaterial, "lower_right_cone_log", 0, 0, 0);
+  lower_right_cone_log = new G4LogicalVolume(cone_location[3], structureMat, "lower_right_cone_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(lower_right_cone_log, move_piece[3], rotate_piece[3]);
 
 
@@ -1430,16 +1428,16 @@ void DetectionSystemGriffin::ConstructDetector()
 
     }
 
-  lower_left_tube_log = new G4LogicalVolume(tube_location[0], structureMaterial, "lower_left_tube_log", 0, 0, 0);
+  lower_left_tube_log = new G4LogicalVolume(tube_location[0], structureMat, "lower_left_tube_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(lower_left_tube_log, move_piece[0], rotate_piece[0]);
   
-  upper_left_tube_log = new G4LogicalVolume(tube_location[1], structureMaterial, "upper_left_tube_log", 0, 0, 0);
+  upper_left_tube_log = new G4LogicalVolume(tube_location[1], structureMat, "upper_left_tube_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(upper_left_tube_log, move_piece[1], rotate_piece[1]);
 
-  upper_right_tube_log = new G4LogicalVolume(tube_location[2], structureMaterial, "upper_right_tube_log", 0, 0, 0);
+  upper_right_tube_log = new G4LogicalVolume(tube_location[2], structureMat, "upper_right_tube_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(upper_right_tube_log, move_piece[2], rotate_piece[2]);
 
-  lower_right_tube_log = new G4LogicalVolume(tube_location[3], structureMaterial, "lower_right_tube_log", 0, 0, 0);
+  lower_right_tube_log = new G4LogicalVolume(tube_location[3], structureMat, "lower_right_tube_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(lower_right_tube_log, move_piece[3], rotate_piece[3]);
 
 
@@ -1471,16 +1469,16 @@ void DetectionSystemGriffin::ConstructDetector()
 
   }
 
-  right_side_panel_log = new G4LogicalVolume(panel_location[0], structureMaterial, "right_side_panel_log", 0, 0, 0);
+  right_side_panel_log = new G4LogicalVolume(panel_location[0], structureMat, "right_side_panel_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(right_side_panel_log, move_piece[0], rotate_piece[0]);
 
-  top_side_panel_log = new G4LogicalVolume(panel_location[1], structureMaterial, "top_side_panel_log", 0, 0, 0);
+  top_side_panel_log = new G4LogicalVolume(panel_location[1], structureMat, "top_side_panel_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(top_side_panel_log, move_piece[1], this->rotate_null);
 
-  left_side_panel_log = new G4LogicalVolume(panel_location[2], structureMaterial, "left_side_panel_log", 0, 0, 0);
+  left_side_panel_log = new G4LogicalVolume(panel_location[2], structureMat, "left_side_panel_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(left_side_panel_log, move_piece[2], rotate_piece[2]);
 
-  bottom_side_panel_log = new G4LogicalVolume(panel_location[3], structureMaterial, "bottom_side_panel_log", 0, 0, 0);
+  bottom_side_panel_log = new G4LogicalVolume(panel_location[3], structureMat, "bottom_side_panel_log", 0, 0, 0);
   this->assembly->AddPlacedVolume(bottom_side_panel_log, move_piece[3], rotate_piece[3]);
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1499,7 +1497,7 @@ void DetectionSystemGriffin::ConstructDetector()
 	- this->rear_plate_thickness/2.0 +this->shift 
 	+ this->applied_back_shift, 0, 0);
 
-  rear_plate_log = new G4LogicalVolume(rear_plate, structureMaterial, "rear_plate_log", 0, 0, 0);
+  rear_plate_log = new G4LogicalVolume(rear_plate, structureMat, "rear_plate_log", 0, 0, 0);
 
   this->assembly->AddPlacedVolume(rear_plate_log, move_rear_plate, rotate_rear_plate);
 
@@ -1513,7 +1511,7 @@ void DetectionSystemGriffin::ConstructDetector()
 	+ this->detector_total_length +this->shift 
 	+ this->applied_back_shift, 0, 0);
 
-  finger_shell_log = new G4LogicalVolume(finger_shell, structureMaterial, "finger_shell_log", 0, 0, 0);
+  finger_shell_log = new G4LogicalVolume(finger_shell, structureMat, "finger_shell_log", 0, 0, 0);
 
   this->assembly->AddPlacedVolume(finger_shell_log, move_finger_shell, rotate_finger_shell);
 
@@ -1526,7 +1524,7 @@ void DetectionSystemGriffin::ConstructDetector()
   G4ThreeVector move_tank((this->coolant_length -this->can_face_thickness)/2.0 + this->detector_total_length    	
 	+ this->cold_finger_shell_length + this->shift +this->applied_back_shift, 0, 0);
 
-  tank_log = new G4LogicalVolume(tank, structureMaterial, "tank_log", 0, 0, 0);
+  tank_log = new G4LogicalVolume(tank, structureMat, "tank_log", 0, 0, 0);
   G4VisAttributes* tank_vis_att = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
   tank_vis_att->SetVisibility(true);
   tank_vis_att->SetForceSolid(false);
@@ -1551,13 +1549,13 @@ void DetectionSystemGriffin::ConstructColdFinger()
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
-  if( !structureMaterial ) {
+  G4Material* structureMat = G4Material::GetMaterial(this->structureMaterial);
+  if( !structureMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
-  G4Material* electrodeMaterial = G4Material::GetMaterial(this->electrodeMaterial);
-  if( !electrodeMaterial ) {
+  G4Material* electrodeMat = G4Material::GetMaterial(this->electrodeMaterial);
+  if( !electrodeMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
@@ -1609,7 +1607,7 @@ void DetectionSystemGriffin::ConstructColdFinger()
     
   G4ThreeVector move_end_plate( x, 0, 0 ) ; 
  
-  end_plate_log = new G4LogicalVolume(end_plate_cut[3], structureMaterial, "end_plate_log", 0, 0, 0); 
+  end_plate_log = new G4LogicalVolume(end_plate_cut[3], structureMat, "end_plate_log", 0, 0, 0); 
 
   end_plate_log->SetVisAttributes(structureMat_vis_att);
 
@@ -1641,7 +1639,7 @@ void DetectionSystemGriffin::ConstructColdFinger()
 	+ this->shift +this->applied_back_shift
 	+ this->structureMat_cold_finger_thickness/2.0 , 0, 0); //changed Jan 2005
 
-  finger_log = new G4LogicalVolume(finger, electrodeMaterial, "finger_log", 0, 0, 0);
+  finger_log = new G4LogicalVolume(finger, electrodeMat, "finger_log", 0, 0, 0);
   finger_log->SetVisAttributes(cold_finger_vis_att);
 
   this->assembly->AddPlacedVolume(finger_log, move_finger, rotate_finger);  
@@ -1656,13 +1654,13 @@ void DetectionSystemGriffin::ConstructColdFinger()
 	     + this->applied_back_shift -this->extra_block_distance_from_back_plate
        - this->extra_block_thickness/2.0, 0, 0);
 
-  extra_cold_block_log = new G4LogicalVolume(extra_cold_block, structureMaterial, "extra_cold_block_log", 0, 0, 0);
+  extra_cold_block_log = new G4LogicalVolume(extra_cold_block, structureMat, "extra_cold_block_log", 0, 0, 0);
 
   this->assembly->AddPlacedVolume(extra_cold_block_log, move_extra_cold_block, rotate_extra_cold_block);  
 
   // The structures above the cooling end plate
   G4Tubs* structureMat_cold_finger = this->structureMatColdFinger();
-  structureMat_cold_finger_log = new G4LogicalVolume(structureMat_cold_finger, structureMaterial, "structureMat_cold_finger_log", 0, 0, 0);
+  structureMat_cold_finger_log = new G4LogicalVolume(structureMat_cold_finger, structureMat, "structureMat_cold_finger_log", 0, 0, 0);
   structureMat_cold_finger_log->SetVisAttributes(structureMat_vis_att);
 
   G4RotationMatrix* rotate_structureMat_cold_finger = new G4RotationMatrix;
@@ -1677,11 +1675,11 @@ void DetectionSystemGriffin::ConstructColdFinger()
  
   // Cooling Side Block 
   G4Box* cooling_side_block = this->coolingSideBlock();
-  cooling_side_block_log = new G4LogicalVolume(cooling_side_block, structureMaterial, "cooling_side_block_log", 0, 0, 0);
+  cooling_side_block_log = new G4LogicalVolume(cooling_side_block, structureMat, "cooling_side_block_log", 0, 0, 0);
   cooling_side_block_log->SetVisAttributes(structureMat_vis_att);
 
   G4Box* cooling_bar = this->coolingBar();
-  cooling_bar_log = new G4LogicalVolume(cooling_bar, structureMaterial, "cooling_bar_log", 0, 0, 0); 
+  cooling_bar_log = new G4LogicalVolume(cooling_bar, structureMat, "cooling_bar_log", 0, 0, 0); 
   cooling_bar_log->SetVisAttributes(structureMat_vis_att);
 
   G4RotationMatrix* rotate_piece[8] ; 
@@ -1741,7 +1739,7 @@ void DetectionSystemGriffin::ConstructColdFinger()
         + this->cold_finger_space;
 
   G4Trd* triangle_post = this->trianglePost();
-  triangle_post_log = new G4LogicalVolume(triangle_post, structureMaterial, "triangle_post_log", 0, 0, 0);
+  triangle_post_log = new G4LogicalVolume(triangle_post, structureMat, "triangle_post_log", 0, 0, 0);
 
   x = this->can_face_thickness/2.0 
   + this->germanium_dist_from_can_face +this->germanium_length 
@@ -1935,8 +1933,8 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   G4int i;
   G4double x0, y0, z0, x, y, z;
 
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
-  if( !structureMaterial ) {
+  G4Material* structureMat = G4Material::GetMaterial(this->structureMaterial);
+  if( !structureMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
@@ -1985,7 +1983,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   if(include_back_suppressors) 
   {
     back_quarter_suppressor_shell_log = new G4LogicalVolume(
-  	                                          back_quarter_suppressor_shell, structureMaterial, 
+  	                                          back_quarter_suppressor_shell, structureMat, 
                                               "back_quarter_suppressor_log", 0, 0, 0);
 
     back_quarter_suppressor_shell_log->SetVisAttributes( Suppressor_vis_att );
@@ -2037,14 +2035,14 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   G4SubtractionSolid* right_suppressor_shell = this->shellForFrontSlantSuppressor("right");
 
 
-  right_suppressor_shell_log = new G4LogicalVolume(right_suppressor_shell, structureMaterial,
+  right_suppressor_shell_log = new G4LogicalVolume(right_suppressor_shell, structureMat,
     "right_suppressor_shell_log", 0,0,0);
   right_suppressor_shell_log->SetVisAttributes(Suppressor_vis_att);
 
   G4cout << "Calling: shellForFrontLeftSlantSuppressor" << G4endl ; 
   G4SubtractionSolid* left_suppressor_shell = this->shellForFrontSlantSuppressor("left");
 
-  left_suppressor_shell_log = new G4LogicalVolume(left_suppressor_shell, structureMaterial,
+  left_suppressor_shell_log = new G4LogicalVolume(left_suppressor_shell, structureMat,
     "left_suppressor_shell_log", 0,0,0);
   left_suppressor_shell_log->SetVisAttributes(Suppressor_vis_att);
   
@@ -2276,8 +2274,8 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingDetectorSpecificDeadLay
   G4String strdet = G4UIcommand::ConvertToString(det);
   G4String strcry = G4UIcommand::ConvertToString(cry);
 
-  G4Material* structureMaterial = G4Material::GetMaterial(this->structureMaterial);
-  if( !structureMaterial ) {
+  G4Material* structureMat = G4Material::GetMaterial(this->structureMaterial);
+  if( !structureMat ) {
     G4cout << " ----> Material " << this->crystal_material << " not found, cannot build the detector shell! " << G4endl;
     exit(1);
   }
