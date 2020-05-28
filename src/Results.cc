@@ -40,10 +40,9 @@ void Results::SetupRunFusEvap(Int_t nP, Int_t nN, Int_t nA) {
       Ar = thePhysicsList->getReactionFusEvap()->getProjectile()->getA() + theDetector->GetArbitraryTarget()->getTargetMass(theDetector->GetArbitraryTarget()->getTargetExLayer()) - numP - numN - numA * 4;
       Zr = thePhysicsList->getReactionFusEvap()->getProjectile()->getZ() + theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer()) - numP - numA * 2;
       break;
-  } 
-  //  G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
-  
-  
+  }
+
+  //G4cout << "Results: projectile A: " << Ap << ", projectile Z: " << Zp << ",recoil A: " << Ar << ", recoil Z: " << Zr << G4endl;
 
   numDec = thePhysicsList->getReactionFusEvap()->GetNumDecays();
   G4cout << "Results - number of decays: " << numDec << G4endl;
@@ -671,7 +670,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rROut.w = (*IonCollection)[i]->GetWeight();
           }
-      } else if (((*IonCollection)[i]->GetPFlag() >= DECAY_FLAG) && ((*IonCollection)[i]->GetPFlag() < 200)) {
+      } else if (((*IonCollection)[i]->GetPFlag() >= DECAY_FLAG) && ((*IonCollection)[i]->GetPFlag() < TARGET_LAYER_IN_FLAG)) {
         G4int flag = (*IonCollection)[i]->GetPFlag();
         if (((*IonCollection)[i]->GetA() == Ar) || ((*IonCollection)[i]->GetA() == Ap))
           if (((*IonCollection)[i]->GetZ() == Zr) || ((*IonCollection)[i]->GetZ() == Zp)) {
@@ -707,8 +706,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rDec[flag - DECAY_FLAG].w = (*IonCollection)[i]->GetWeight();
           }
-      } else if (((*IonCollection)[i]->GetPFlag() >= TARGET_LAYER_IN_FLAG) && ((*IonCollection)[i]->GetPFlag() < TARGET_LAYER_OUT_FLAG)) {
-        G4int flag = (*IonCollection)[i]->GetPFlag();
+      } else if (((*IonCollection)[i]->GetFlag() >= TARGET_LAYER_IN_FLAG) && ((*IonCollection)[i]->GetFlag() < TARGET_LAYER_OUT_FLAG)) {
+        G4int flag = (*IonCollection)[i]->GetFlag();
         if (((*IonCollection)[i]->GetZ() == Zp) && ((*IonCollection)[i]->GetA() == Ap)) {
           pTIn_target[flag - TARGET_LAYER_IN_FLAG].x =
               (*IonCollection)[i]->GetPos().getX() / mm;
@@ -770,8 +769,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
               degree; // angle between (1,0,0) and momentum vector in x and y
           rTIn_target[flag - TARGET_LAYER_IN_FLAG].w = (*IonCollection)[i]->GetWeight();
         }
-      } else if ((*IonCollection)[i]->GetPFlag() >= TARGET_LAYER_OUT_FLAG) {
-        G4int flag = (*IonCollection)[i]->GetPFlag();
+      } else if ((*IonCollection)[i]->GetFlag() >= TARGET_LAYER_OUT_FLAG) {
+        G4int flag = (*IonCollection)[i]->GetFlag();
         if (((*IonCollection)[i]->GetZ() == Zp) && ((*IonCollection)[i]->GetA() == Ap)) {
           pTOut_target[flag - TARGET_LAYER_OUT_FLAG].x =
               (*IonCollection)[i]->GetPos().getX() / mm;

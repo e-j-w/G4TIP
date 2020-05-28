@@ -179,16 +179,17 @@ void TrackerIonSD::EndOfEvent(G4HCofThisEvent *HCE) {
       for (i = 1; i < NbHits; i++) {
         if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
           if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
-            if ((*ionCollection)[i - 1]->GetVolName() != layerName &&
-                (*ionCollection)[i]->GetVolName() == layerName)
+            if ((*ionCollection)[i - 1]->GetVolName() != layerName && (*ionCollection)[i]->GetVolName() == layerName)
               (*ionCollection)[i]->SetTargetLayerInFlag(j);
+            
       }
+      if((*ionCollection)[0]->GetVolName() == layerName)
+        (*ionCollection)[0]->SetTargetLayerInFlag(j);
 
       for (i = 1; i < NbHits; i++) {
         if ((*ionCollection)[i - 1]->GetA() == (*ionCollection)[i]->GetA())
           if ((*ionCollection)[i - 1]->GetZ() == (*ionCollection)[i]->GetZ())
-            if ((*ionCollection)[i - 1]->GetVolName() == layerName &&
-                (*ionCollection)[i]->GetVolName() != layerName)
+            if ((*ionCollection)[i - 1]->GetVolName() == layerName && (*ionCollection)[i]->GetVolName() != layerName)
               (*ionCollection)[i]->SetTargetLayerOutFlag(j);
       }
     }

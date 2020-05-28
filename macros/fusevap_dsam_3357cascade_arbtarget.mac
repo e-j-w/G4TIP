@@ -5,8 +5,12 @@
 #/Physics/StoppingTable stopping_data/SRIM
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize
+
+#Setup TIGRESS
 /Griffin/UseTIGRESSPositions true
 /Griffin/addGriffinBack 16
+
+#Setup beam
 /Projectile/A 18
 /Projectile/Z 8
 /Projectile/KE 48 MeV
@@ -21,16 +25,18 @@
 /Target/Layer1/Position 0.0 um
 /Target/Layer1/Material G4_C
 /Target/Layer1/A 12
-
 /Target/Layer2/Thickness 14.9 um
 /Target/Layer2/Position 1.91 um
 #/Target/Layer2/Position 2.0 cm
 /Target/Layer2/Material G4_Au
 /Target/Layer2/A 197
-
 /Target/NStep 1
 /Target/ReactionLayer 1
 
+#need to run this AFTER adjusting the target parameters!
+/Construction/ShiftChamber -0.0 mm
+
+#Setup reaction
 /FusionEvaporation/AddDecay 2.0820 324.61e-6
 /FusionEvaporation/AddDecay 1.274537 5.1937e-3
 /FusionEvaporation/N_protons 0
@@ -44,7 +50,10 @@
 /FusionEvaporation/Tau 2.286506
 #/FusionEvaporation/ConstrainParticleAngularRange
 #/FusionEvaporation/MaxParticleAngle 50.0 deg
+
 /Results/Tree/CsIDetectorID 0
+
+#Setup trigger
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
 /Trigger/Z 2
@@ -57,11 +66,13 @@
 /Trigger/DisableGriffinDetCol 9 2
 /Trigger/DisableGriffinDetCol 12 2
 /Trigger/CsIThreshold 3.0 MeV
+
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-#need to run this AFTER adjusting the target/backing parameters!
-/Construction/ShiftChamber -0.0 mm
-#/Print/Track_Set
+
+#Run the simulation
 /run/beamOn 100000
+
+#Save data
 /Results/Tree/Report
 /Results/Tree/Save run1_3357level_dsam_arbtarget.root
