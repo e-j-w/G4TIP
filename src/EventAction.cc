@@ -307,38 +307,57 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
   
   if(theDetector->GetUseTIGRESSSegments()){
     //determine which segment has been hit, based on the hit position
-    //G4cout << "Position of detector " << det << ", crystal " << cry << ": " << theDetector->GetDetectorCrystalPosition(det,cry) << G4endl;
-    //G4cout << "Position of hit: " << pos << " de: " << de << G4endl;
-    G4double r = (pos - pos.project(theDetector->GetDetectorCrystalPosition(det,cry))).mag();
-    G4double z = pos.project(theDetector->GetDetectorCrystalPosition(det,cry)).mag() - theDetector->GetDetectorCrystalPosition(det,cry).mag() + 45.0;
+
+    //get normalized vector pointing to a common plane parallel to the detector face
+    //both theDetector->GetDetectorPosition and theDetector->GetDetectorCrystalPosition give vectors that already point to this plane
+    G4ThreeVector posNorm = pos;
+    posNorm.setMag(theDetector->GetDetectorPosition(det).mag()/cos(pos.angle(theDetector->GetDetectorPosition(det))));
+    //G4cout << pos << " " << posNorm << " " << pos.angle(theDetector->GetDetectorPosition(det)) << G4endl;
+
+    G4double r = (posNorm.perpPart(theDetector->GetDetectorPosition(det)) - theDetector->GetDetectorCrystalPosition(det,cry).perpPart(theDetector->GetDetectorPosition(det))).mag();// - (theDetector->GetDetectorCrystalPosition(det,cry) - theDetector->GetDetectorPosition(det)).project(pos - pos.project(theDetector->GetDetectorPosition(det))).mag();
+    //G4cout << "r1: " << (pos - pos.project(theDetector->GetDetectorCrystalPosition(det,cry))).mag() << ", r2: " << (pos - pos.project(theDetector->GetDetectorPosition(det)) - (theDetector->GetDetectorCrystalPosition(det,cry) - theDetector->GetDetectorPosition(det))).mag() << G4endl;
+    G4double z = pos.project(theDetector->GetDetectorPosition(det)).mag() - theDetector->GetDetectorPosition(det).mag() + 45.0;
     //phi angle, take w.r.t the vectors joining two crystals on the same clover - segment number order may not be consistent from crystal to crystal
-    G4double phi = (pos - pos.project(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
-    G4double phi2 = (pos - pos.project(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
-    if(phi2 > M_PI/2.0){
-      phi += M_PI;
-    }
+    //G4double phi = pos + () 
+    G4double phi = (posNorm.perpPart(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
+    G4double phi2 = (posNorm.perpPart(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
     G4int seg=0;
     if(z <= 30.){
       //front 4 segments
-      if(phi > 1.5*M_PI)
-        seg=3;
-      else if(phi > M_PI)
-        seg=2;
-      else if(phi > M_PI/2.0)
-        seg=1;
-      else
-        seg=0;
+      if(phi2 > M_PI/2.0){
+        if(phi > M_PI/2.0){
+          phi -= M_PI/2.0;
+          seg=3;
+        }else{
+          seg=2;
+        }   
+      }else{
+        if(phi > M_PI/2.0){
+          phi -= M_PI/2.0;
+          seg=1;
+        }else{
+          seg=0;
+        }
+      }
     }else{
       //back 4 segments
-      if(phi > 1.5*M_PI)
-        seg=7;
-      else if(phi > M_PI)
-        seg=6;
-      else if(phi > M_PI/2.0)
-        seg=5;
-      else
-        seg=4;
+      if(phi2 > M_PI/2.0){
+        if(phi > M_PI/2.0){
+          phi -= M_PI/2.0;
+          seg=7;
+        }else{
+          seg=6;
+        }   
+      }else{
+        if(phi > M_PI/2.0){
+          phi -= M_PI/2.0;
+          seg=5;
+        }else{
+          seg=4;
+        }
+      }
     }
+    //G4cout << "detector pos: " << theDetector->GetDetectorPosition(det) << ", crystal position: " << theDetector->GetDetectorCrystalPosition(det,cry) << ", dist between: " << (theDetector->GetDetectorPosition(det) - theDetector->GetDetectorCrystalPosition(det,cry)).mag() << G4endl;
     //G4cout << "r: " << r << " phi: " << phi/deg << " phi2: " << phi2/deg << " z: " << z << " seg: " << seg << G4endl;
     if(TigressSegWeightDet[det][cry][seg]==0.){
       TigressSegWeightDet[det][cry][seg]=w;

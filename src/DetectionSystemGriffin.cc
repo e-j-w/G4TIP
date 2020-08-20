@@ -3319,12 +3319,3 @@ G4SubtractionSolid* DetectionSystemGriffin::newHeavyMet()
   return hevimet;
 
 }//end ::newHeavyMet
-
-void DetectionSystemGriffin::SetUseSegments(G4bool input)
-{
-  useSegments = input;
-  //setup approximate values for segmentation geometry
-  //publicly available in various technical papers eg. Hyperfine Interact (2014) 225:241–251
-  tig_seg_z_depth = 30.0*mm;
-  tig_seg_phi = 90.0*deg;
-}

@@ -93,7 +93,8 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Construction/UsePlunger | Use the TIP plunger as the reaction target.  The plunger geometry is configured using parameters listed [below](#plungerpar). |
 | /Construction/ShiftChamber NUMBER mm | Set the position of the TIP chamber along the z (beam) axis (0 mm is centred with respect to the TIGRESS array). |
 | /Construction/ShiftPlunger NUMBER mm | Set the position of the plunger along the z (beam) axis with respect to the TIP chamber (0 mm is centred with respect to the chamber). |
-
+| /Griffin/UseTIGRESSPositions true/false | Use TIGRESS array positions (if false, GRIFFIN positions will be used instead).  True by default. |
+| /Griffin/UseTIGRESSSegments true/false | Use TIGRESS segments in the simulation.  True by default. |
 
 #### DSAM target parameters<a name="dsampar"></a>
 

@@ -72,6 +72,7 @@ public:
   void SetUsePlunger() {targetType = 2;};
   void UpdateGeometry();
   G4ThreeVector GetDetectorCrystalPosition(G4int det,G4int cry){return DetectorCrystalPosition[det][cry];};
+  G4ThreeVector GetDetectorPosition(G4int det){return DetectorPosition[det];};
   void ShiftChamber(G4double);
   void ShiftPlunger(G4double);
   void Report();
@@ -91,6 +92,7 @@ private:
   Chamber*                theChamber;
 
   G4ThreeVector DetectorCrystalPosition[GN][GS];
+  G4ThreeVector DetectorPosition[GN];
 
   Experimental_Hall_Messenger* ExperimentalHallMessenger;
   Chamber_Messenger*           ChamberMessenger;

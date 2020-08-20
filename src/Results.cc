@@ -120,14 +120,14 @@ void Results::TreeCreate() {
     tree->Branch("GammaEnergyAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
     tree->Branch("TigressSegmentId", SegHit.segId, "segId[Gfold]/D");
     if(theDetector->GetUseTIGRESSSegments()){
-      tree->Branch("TigressSegmentFold", SegHit.segfold, "segfold[Gfold]/D");
-      tree->Branch("TigressSegmentx", SegHit.segx, "segx[Gfold]/D");
-      tree->Branch("TigressSegmenty", SegHit.segy, "segy[Gfold]/D");
-      tree->Branch("TigressSegmentz", SegHit.segz, "segz[Gfold]/D");
-      tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[Gfold]/D");
-      tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[Gfold]/D");
-      tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[Gfold]/D");
-      tree->Branch("TigressSegmentW", SegHit.segw, "segw[Gfold]/D");
+      tree->Branch("TigressSegmentFold", &SegHit.segfold, "segfold/I");
+      tree->Branch("TigressSegmentx", SegHit.segx, "segx[segfold]/D");
+      tree->Branch("TigressSegmenty", SegHit.segy, "segy[segfold]/D");
+      tree->Branch("TigressSegmentz", SegHit.segz, "segz[segfold]/D");
+      tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[segfold]/D");
+      tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[segfold]/D");
+      tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[segfold]/D");
+      tree->Branch("TigressSegmentW", SegHit.segw, "segw[segfold]/D");
     }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
     tree->Branch("DopplerShiftFactor", &eStat.ds, "ds[dsfold]/D");
@@ -1076,14 +1076,14 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       for (j = 0; j < GS; j++) // number of crystals
         for (k = 0; k < TSEG; k++) // number of segments
           if(tsw[i][j][k]>0){
-            SegHit.segId[SegHit.segfold] = i+1;
+            SegHit.segId[SegHit.segfold] = k+1;
             SegHit.segx[SegHit.segfold] = tsp[i][j][k].getX();
             SegHit.segy[SegHit.segfold] = tsp[i][j][k].getY();
             SegHit.segz[SegHit.segfold] = tsp[i][j][k].getZ();
             SegHit.segCylr[SegHit.segfold] = tscp[i][j][k].getX();
             SegHit.segCylphi[SegHit.segfold] = tscp[i][j][k].getY();
             SegHit.segCylz[SegHit.segfold] = tscp[i][j][k].getZ();
-            //G4cout << tscp[i][j][k].getX() << " " << tscp[i][j][k].getY() << " " << tscp[i][j][k].getZ() << G4endl;
+            //G4cout << tscp[i][j][k].getX() << " " << tscp[i][j][k].getY() << " " << tscp[i][j][k].getZ() << " " << SegHit.segfold << G4endl;
             SegHit.segw[SegHit.segfold] = tsw[i][j][k];
             SegHit.segfold++;
           }

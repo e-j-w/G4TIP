@@ -280,27 +280,29 @@ void DetectorConstruction::AddDetectionSystemGriffinForward(G4int ndet)
     G4int config  = 0;
 
     for( det_num = 1; det_num <= ndet; det_num++ ) {
-        pos_num = det_num;
+      pos_num = det_num;
 
-        griffinDetectorsMap[griffinDetectorsMapIndex] = det_num;
-        griffinDetectorsMapIndex++;
+      griffinDetectorsMap[griffinDetectorsMapIndex] = det_num;
+      griffinDetectorsMapIndex++;
 
-        DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector); // Select Forward (0) or Back (1)
+      DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector); // Select Forward (0) or Back (1)
 
-	// printf("Using TIGRESS positions (1=yes) %d\n",useTigressPositions);
-	// getc(stdin);
+// printf("Using TIGRESS positions (1=yes) %d\n",useTigressPositions);
+// getc(stdin);
 
-        pGriffinDLS->SetUseSegments(useTigressSegments);
-        pGriffinDLS->BuildDeadLayerSpecificCrystal(det_num-1);
-        pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
-        pGriffinDLS->BuildEverythingButCrystals();
-        pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
+      pGriffinDLS->SetUseSegments(useTigressSegments);
+      pGriffinDLS->BuildDeadLayerSpecificCrystal(det_num-1);
+      pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
+      pGriffinDLS->BuildEverythingButCrystals();
+      pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
 
-	for(int i=0 ; i<GS ; i++)
-          {
-            DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
-            //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                               
-          }
+	    for(int i=0 ; i<GS ; i++)
+        {
+          DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
+          //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                               
+        }
+      DetectorPosition[det_num-1]=pGriffinDLS->GetCrystalPosition(0)+pGriffinDLS->GetCrystalPosition(1)+pGriffinDLS->GetCrystalPosition(2)+pGriffinDLS->GetCrystalPosition(3);
+      DetectorPosition[det_num-1]/=4.;
 
 
     }
@@ -388,10 +390,12 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
 
 
       for(int i=0 ; i<GS ; i++)
-	{
-	  DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
-	  //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                                 
-	}
+        {
+          DetectorCrystalPosition[det_num-1][i]=pGriffinDLS->GetCrystalPosition(i);
+          //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                                 
+        }
+      DetectorPosition[det_num-1]=pGriffinDLS->GetCrystalPosition(0)+pGriffinDLS->GetCrystalPosition(1)+pGriffinDLS->GetCrystalPosition(2)+pGriffinDLS->GetCrystalPosition(3);
+      DetectorPosition[det_num-1]/=4.;
       
   }
 }
