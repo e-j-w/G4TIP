@@ -30,6 +30,7 @@
 
 #define GN 16
 #define GS 4
+#define TSEG 8 //TIGRESS segments per position
 #define NCsI 24
 #define PI 3.14159
 #define S16K 16384
@@ -115,7 +116,7 @@ typedef struct {
 typedef struct {
   Int_t Gfold;
   Int_t GId[GN * GS];
-  Int_t GSeg[GN * GS];
+  Int_t GCry[GN * GS];
   Int_t GRing[GN * GS];
   Double_t Gx[GN * GS];
   Double_t Gy[GN * GS];
@@ -125,13 +126,27 @@ typedef struct {
   Double_t GT[GN * GS];
   Int_t GfoldAB;
   Int_t GIdAB[GN * GS];
-  Int_t GSegAB[GN * GS];
+  Int_t GCryAB[GN * GS];
   Int_t GRingAB[GN * GS];
   Double_t GxAB[GN * GS];
   Double_t GyAB[GN * GS];
   Double_t GzAB[GN * GS];
   Double_t GEAB[GN * GS];
 } GInf;
+
+typedef struct {
+  Int_t segfold;
+  Double_t segId[GN*GS*TSEG];
+  Double_t segx[GN*GS*TSEG];
+  Double_t segy[GN*GS*TSEG];
+  Double_t segz[GN*GS*TSEG];
+  Double_t segCylr[GN*GS*TSEG];
+  Double_t segCylphi[GN*GS*TSEG];
+  Double_t segCylz[GN*GS*TSEG];
+  Double_t segw[GN*GS*TSEG];
+} SegInf;
+
+  
 
 class Results {
 public:
@@ -144,8 +159,8 @@ public:
   void SetupRun();
 
   void FillTree(G4int, TrackerIonHitsCollection *, TrackerCsIHitsCollection *,
-                G4double[16][4], G4double[16][4], G4ThreeVector[16][4],
-                G4double[16][4]);
+                G4double[GN][GS], G4double[GN][GS], G4ThreeVector[GN][GS],
+                G4double[GN][GS], G4double[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG]);
   void TreeSave(G4String);
   void TreeRead(G4String);
   void TreeAdd(G4String);
@@ -194,6 +209,7 @@ private:
   IonInf partROut;      // ion tracking (projectile, residual)
   CsIInf partHit;     // particle hit
   GInf GHit;          // gamma hit
+  SegInf SegHit;      // TIGRESS segment hit
   G4double maxGe[GN]; // maximum single gamma energy deposit in a given detector
                       // (used to get position of hits when using addback)
   G4int Ap, Zp, Ar, Zr, numP, numN, numA;

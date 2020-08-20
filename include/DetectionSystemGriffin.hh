@@ -62,6 +62,8 @@ public:
   G4int PlaceDeadLayerSpecificCrystal(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
   G4int PlaceEverythingButCrystals(G4LogicalVolume* exp_hall_log, G4int detector_number, G4int position_number, G4bool posTigress);
 
+  void SetUseSegments(G4bool input);
+
   G4ThreeVector GetCrystalPosition(G4int cry){return move_germanium[cry];}; // get final crystal positions
   
 private:
@@ -172,6 +174,10 @@ private:
   G4double electrodeMat_starting_depth;
   G4double germanium_corner_cone_end_length; 	//the ending length of the cones
                                                	//at the corners of each leaf
+
+  //TIGRESS segmentation (only approximate)
+  G4double tig_seg_z_depth; //depth in crystal at which z-segmentation occurs (using cylindrical coordinates)
+  G4double tig_seg_phi; //segment coverage in phi (using cylindrical coordinates)
   
   //basic germanium detector's values
   G4double detector_block_length;
@@ -445,6 +451,8 @@ private:
   G4double griffinDeadLayers[16][4];
   G4Colour griffinCrystalColours[4];
   G4Colour griffinDeadLayerColours[4];
+
+  G4bool useSegments;
   
   // internal methods
   void BuildOneDetector();

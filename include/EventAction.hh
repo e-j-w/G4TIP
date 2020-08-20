@@ -65,18 +65,26 @@ class EventAction : public G4UserEventAction
   timeval       tc,ts,td;
   double        tt,rate;
   RunAction*    run_action;
+  size_t        soa,sov,soas,sovs,soc,soi;
+  unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
+  G4double      CsIThreshold;
+  G4int         CsIIDTrigger;
+
+  //GRIFFIN/TIGRESS interaction information
   G4int         GriffinCrystDisabled[16][4];
   G4double      GriffinCrystEnergyDet[16][4];
   G4double      GriffinCrystWeightDet[16][4];
   G4ThreeVector GriffinCrystPosDet[16][4];
   G4double      GriffinCrystTimeDet[16][4];
+  G4int         GriffinFold;
+  //TIGRESS segment interaction information
+  G4double      TigressSegWeightDet[16][4][8];
+  G4double      TigressSegEnergyDet[16][4][8];
+  G4ThreeVector TigressSegPosDet[16][4][8]; //x,y,z position of hit
+  G4ThreeVector TigressSegPosCylDet[16][4][8]; //r,phi,z (cylindrical coordinates) position of hit w.r.t the core where the hit occurs
+  //CsI array interaction information
   G4int         CsIDisabled[NCsISph];
   G4double      CsIWeight[NCsISph];
-  G4int         GriffinFold;
-  size_t        soa,sov,soc,soi;
-  unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
-  G4double      CsIThreshold;
-  G4int         CsIIDTrigger;
   
 
   // Info for CsI trigger

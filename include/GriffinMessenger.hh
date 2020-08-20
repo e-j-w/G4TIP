@@ -45,12 +45,13 @@ class GriffinMessenger: public G4UImessenger
     G4UIcmdWithAnInteger*   AddDetectionSystemGriffinHevimetCmd ; 
 
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinCustomDetectorCmd ;
-    G4UIcmdWithAnInteger*	    AddDetectionSystemGriffinCustomCmd ;
+    G4UIcmdWithAnInteger*	      AddDetectionSystemGriffinCustomCmd ;
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinShieldSelectCmd ;
     G4UIcmdWithADoubleAndUnit*  AddDetectionSystemGriffinSetRadialDistanceCmd ; 
     G4UIcmdWithAnInteger*       AddDetectionSystemGriffinSetExtensionSuppLocationCmd ;
     G4UIcmdWith3Vector*         AddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           UseTIGRESSPositionsCmd;
+    G4UIcmdWithABool*           UseTIGRESSSegmentsCmd;
 
 };
 

@@ -102,7 +102,7 @@ void Results::TreeCreate() {
     tree = new TTree("tree", "tree");
     tree->Branch("GammaFold", &GHit.Gfold, "Gfold/I");
     tree->Branch("TigressID", GHit.GId, "GId[Gfold]/I");
-    tree->Branch("TigressSegment", GHit.GSeg, "GSeg[Gfold]/I");
+    tree->Branch("TigressCrystal", GHit.GCry, "GCry[Gfold]/I");
     tree->Branch("TigressRing", GHit.GRing, "GRing[Gfold]/I");
     tree->Branch("Gx", GHit.Gx, "Gx[Gfold]/D");
     tree->Branch("Gy", GHit.Gy, "Gy[Gfold]/D");
@@ -112,12 +112,23 @@ void Results::TreeCreate() {
     tree->Branch("GT", GHit.GT, "GT[Gfold]/D");
     tree->Branch("GammaFoldAddBack", &GHit.GfoldAB, "GfoldAB/I");
     tree->Branch("TigressIDAddBack", GHit.GIdAB, "GIdAB[GfoldAB]/I");
-    tree->Branch("TigressSegmentAddBack", GHit.GSegAB, "GSegAB[GfoldAB]/I");
+    tree->Branch("TigressCrystalAddBack", GHit.GCryAB, "GCryAB[GfoldAB]/I");
     tree->Branch("TigressRingAddBack", GHit.GRingAB, "GRingAB[GfoldAB]/I");
     tree->Branch("GxAddBack", GHit.GxAB, "GxAB[GfoldAB]/D");
     tree->Branch("GyAddBack", GHit.GyAB, "GyAB[GfoldAB]/D");
     tree->Branch("GzAddBack", GHit.GzAB, "GzAB[GfoldAB]/D");
     tree->Branch("GammaEnergyAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
+    tree->Branch("TigressSegmentId", SegHit.segId, "segId[Gfold]/D");
+    if(theDetector->GetUseTIGRESSSegments()){
+      tree->Branch("TigressSegmentFold", SegHit.segfold, "segfold[Gfold]/D");
+      tree->Branch("TigressSegmentx", SegHit.segx, "segx[Gfold]/D");
+      tree->Branch("TigressSegmenty", SegHit.segy, "segy[Gfold]/D");
+      tree->Branch("TigressSegmentz", SegHit.segz, "segz[Gfold]/D");
+      tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[Gfold]/D");
+      tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[Gfold]/D");
+      tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[Gfold]/D");
+      tree->Branch("TigressSegmentW", SegHit.segw, "segw[Gfold]/D");
+    }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
     tree->Branch("DopplerShiftFactor", &eStat.ds, "ds[dsfold]/D");
     tree->Branch("calcERecoil", &eStat.calcERes, "calcERes[dsfold]/D");
@@ -232,7 +243,9 @@ void Results::TreeSave(G4String name) {
 void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                        TrackerCsIHitsCollection *CsICollection,
                        G4double gw[GN][GS], G4double ge[GN][GS],
-                       G4ThreeVector gp[GN][GS], G4double gt[GN][GS]) {
+                       G4ThreeVector gp[GN][GS], G4double gt[GN][GS], 
+                       G4double tsw[GN][GS][TSEG], G4ThreeVector tsp[GN][GS][TSEG], 
+                       G4ThreeVector tscp[GN][GS][TSEG]) {
 
   G4int Nt = IonCollection->entries();
 
@@ -888,7 +901,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&partHit.dLdx, 0, sizeof(partHit.dLdx));
   memset(&partHit.LY, 0, sizeof(partHit.LY));
 
-  G4int i, j;
+  G4int i, j, k;
   if (Np > 0) {
     for (j = 1; j < NCsISph + 1; j++) // loop through CsI detector IDs (1 indexed)
     {
@@ -988,15 +1001,16 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     }
   } // end of CsI collection entry saving
 
+  //TIGRESS/GRIFFIN event tracking
   GHit.Gfold = 0;
   GHit.GfoldAB = 0;
   memset(maxGe, 0, sizeof(maxGe));
   memset(&GHit.GId, 0, sizeof(GHit.GId));
-  memset(&GHit.GSeg, 0, sizeof(GHit.GSeg));
+  memset(&GHit.GCry, 0, sizeof(GHit.GCry));
   memset(&GHit.GE, 0, sizeof(GHit.GE));
   memset(&GHit.GT, 0, sizeof(GHit.GT));
   memset(&GHit.GIdAB, 0, sizeof(GHit.GIdAB));
-  memset(&GHit.GSegAB, 0, sizeof(GHit.GSegAB));
+  memset(&GHit.GCryAB, 0, sizeof(GHit.GCryAB));
   memset(&GHit.GRingAB, 0, sizeof(GHit.GRingAB));
   memset(&GHit.GEAB, 0, sizeof(GHit.GEAB));
   memset(&GHit.GxAB, 0, sizeof(GHit.GxAB));
@@ -1008,10 +1022,10 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       if (gw[i][j] > 0) {
         // G4cout<<" i "<<i<<" j "<<j<<" w "<<gw[i][j]<<G4endl;
         GHit.GId[GHit.Gfold] = i + 1;
-        GHit.GSeg[GHit.Gfold] = j;
+        GHit.GCry[GHit.Gfold] = j;
         GHit.GRing[GHit.Gfold] = RingMap(
             GHit.GId[GHit.Gfold],
-            GHit.GSeg[GHit.Gfold]); // get the ring in which the hit occured
+            GHit.GCry[GHit.Gfold]); // get the ring in which the hit occured
         GHit.Gx[GHit.Gfold] = gp[i][j].getX();
         GHit.Gy[GHit.Gfold] = gp[i][j].getY();
         GHit.Gz[GHit.Gfold] = gp[i][j].getZ();
@@ -1027,10 +1041,10 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       if (ge[i][j] > maxGe[i]) {
         // assign position, ring, etc. of the addback hit
         GHit.GIdAB[GHit.GfoldAB] = i + 1;
-        GHit.GSegAB[GHit.GfoldAB] = j;
+        GHit.GCryAB[GHit.GfoldAB] = j;
         GHit.GRingAB[GHit.GfoldAB] = RingMap(
             GHit.GIdAB[GHit.GfoldAB],
-            GHit.GSegAB[GHit.GfoldAB]); // get the ring in which the hit occured
+            GHit.GCryAB[GHit.GfoldAB]); // get the ring in which the hit occured
         GHit.GxAB[GHit.GfoldAB] = gp[i][j].getX();
         GHit.GyAB[GHit.GfoldAB] = gp[i][j].getY();
         GHit.GzAB[GHit.GfoldAB] = gp[i][j].getZ();
@@ -1047,6 +1061,36 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       if (ge[(GHit.GIdAB[i]) - 1][j] > 0)
         GHit.GEAB[i] += ge[(GHit.GIdAB[i]) - 1][j];
 
+  //TIGRESS segment event tracking
+  if(theDetector->GetUseTIGRESSSegments()){
+    SegHit.segfold = 0;
+    memset(&SegHit.segId, 0, sizeof(SegHit.segId));
+    memset(&SegHit.segx, 0, sizeof(SegHit.segx));
+    memset(&SegHit.segy, 0, sizeof(SegHit.segy));
+    memset(&SegHit.segz, 0, sizeof(SegHit.segz));
+    memset(&SegHit.segCylr, 0, sizeof(SegHit.segCylr));
+    memset(&SegHit.segCylphi, 0, sizeof(SegHit.segCylphi));
+    memset(&SegHit.segCylz, 0, sizeof(SegHit.segCylz));
+    memset(&SegHit.segw, 0, sizeof(SegHit.segw));
+    for (i = 0; i < GN; i++)   // number of positions
+      for (j = 0; j < GS; j++) // number of crystals
+        for (k = 0; k < TSEG; k++) // number of segments
+          if(tsw[i][j][k]>0){
+            SegHit.segId[SegHit.segfold] = i+1;
+            SegHit.segx[SegHit.segfold] = tsp[i][j][k].getX();
+            SegHit.segy[SegHit.segfold] = tsp[i][j][k].getY();
+            SegHit.segz[SegHit.segfold] = tsp[i][j][k].getZ();
+            SegHit.segCylr[SegHit.segfold] = tscp[i][j][k].getX();
+            SegHit.segCylphi[SegHit.segfold] = tscp[i][j][k].getY();
+            SegHit.segCylz[SegHit.segfold] = tscp[i][j][k].getZ();
+            //G4cout << tscp[i][j][k].getX() << " " << tscp[i][j][k].getY() << " " << tscp[i][j][k].getZ() << G4endl;
+            SegHit.segw[SegHit.segfold] = tsw[i][j][k];
+            SegHit.segfold++;
+          }
+  }
+  
+
+
   // compute an approxiate Doppler shift based on the specific detectors where
   // gamma and evaporated particles were seen
   Double_t beta; // speed of recoil (calculated)
@@ -1054,7 +1098,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   for (i = 0; i < GHit.GfoldAB; i++) // number of addback hits in the event
   {
     G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(
-        GHit.GIdAB[eStat.dsfold] - 1, GHit.GSegAB[eStat.dsfold]);
+        GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
     if (gammaVec.mag() != 0)
       gammaVec.setMag(1.0);
     // G4cout << "gammaVec: " << gammaVec << G4endl;

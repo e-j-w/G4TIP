@@ -45,6 +45,7 @@ public:
   Chamber*             GetChamber(){return theChamber;};
   int                  GetTargetType() {return targetType;};
   G4int                GetAncArrayType(){return ancArrayType;};
+  G4bool               GetUseTIGRESSSegments(){return useTigressSegments;};
   
   G4int griffinDetectorsMapIndex;
   G4int griffinDetectorsMap[16];
@@ -61,7 +62,8 @@ public:
   void AddDetectionSystemGriffinSetRadialDistance( G4double detectorDist ) ;
   void AddDetectionSystemGriffinSetExtensionSuppLocation( G4int detectorPos ) ;
   void AddDetectionSystemGriffinSetDeadLayer( G4ThreeVector params ) ; 
-  void UseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
+  void SetUseTIGRESSPositions( G4bool input ) {useTigressPositions = input;};
+  void SetUseTIGRESSSegments( G4bool input ) {useTigressSegments = input;};
   void SetUseCsIWall() {ancArrayType = 0;};
   void SetUseCsIBall() {ancArrayType = 1;};
   void SetUseNoAncArray() {ancArrayType = 2;};
@@ -107,7 +109,7 @@ private:
   G4int     customDetectorPosition ; 
   G4int     customDetectorVal ; 
   G4int     hevimetSelector ; 
-  G4bool    useTigressPositions;
+  G4bool    useTigressPositions, useTigressSegments;
   G4int     ancArrayType; //0=CsI wall, 1=CsI ball, 2=no array
   G4int     targetType; //0=arbitrary target, 1=DSAM target, 2=plunger
 

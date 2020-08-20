@@ -1628,7 +1628,7 @@ void DetectionSystemGriffin::ConstructColdFinger()
   }
   
   // Cold Finger
-  G4Tubs* finger = this->finger();
+  G4Tubs* finger_tubs = this->finger();
 
   G4RotationMatrix* rotate_finger = new G4RotationMatrix;
   rotate_finger->rotateY(M_PI/2.0);
@@ -1639,7 +1639,7 @@ void DetectionSystemGriffin::ConstructColdFinger()
 	+ this->shift +this->applied_back_shift
 	+ this->structureMat_cold_finger_thickness/2.0 , 0, 0); //changed Jan 2005
 
-  finger_log = new G4LogicalVolume(finger, electrodeMat, "finger_log", 0, 0, 0);
+  finger_log = new G4LogicalVolume(finger_tubs, electrodeMat, "finger_log", 0, 0, 0);
   finger_log->SetVisAttributes(cold_finger_vis_att);
 
   this->assembly->AddPlacedVolume(finger_log, move_finger, rotate_finger);  
@@ -1787,9 +1787,9 @@ G4Tubs* DetectionSystemGriffin::finger()
    G4double start_angle = 0.0*M_PI;
    G4double final_angle = 2.0*M_PI;
 
-   G4Tubs* finger = new G4Tubs("finger", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
+   G4Tubs* finger_tubs = new G4Tubs("finger", inner_radius, outer_radius, half_length_z, start_angle, final_angle);
  
-   return finger;
+   return finger_tubs;
 }//end ::finger
 
 
@@ -3320,4 +3320,11 @@ G4SubtractionSolid* DetectionSystemGriffin::newHeavyMet()
 
 }//end ::newHeavyMet
 
-
+void DetectionSystemGriffin::SetUseSegments(G4bool input)
+{
+  useSegments = input;
+  //setup approximate values for segmentation geometry
+  //publicly available in various technical papers eg. Hyperfine Interact (2014) 225:241–251
+  tig_seg_z_depth = 30.0*mm;
+  tig_seg_phi = 90.0*deg;
+}

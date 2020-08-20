@@ -84,8 +84,12 @@ GriffinMessenger::GriffinMessenger(DetectorConstruction* Det)
 
 
   UseTIGRESSPositionsCmd = new G4UIcmdWithABool("/Griffin/UseTIGRESSPositions",this);
-  UseTIGRESSPositionsCmd->SetGuidance("Use TIGRESS detector positions rather than GRIFFIN");
+  UseTIGRESSPositionsCmd->SetGuidance("Use TIGRESS detector positions rather than GRIFFIN.");
   UseTIGRESSPositionsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  UseTIGRESSSegmentsCmd = new G4UIcmdWithABool("/Griffin/UseTIGRESSSegments",this);
+  UseTIGRESSSegmentsCmd->SetGuidance("Construct detector(s) using TIGRESS sgements (geometry may not be accurate).");
+  UseTIGRESSSegmentsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -112,6 +116,8 @@ GriffinMessenger::~GriffinMessenger()
   delete AddDetectionSystemGriffinSetDeadLayerCmd ; 
 
   delete UseTIGRESSPositionsCmd;
+  delete UseTIGRESSSegmentsCmd;
+
 
 
 }
@@ -163,7 +169,10 @@ void GriffinMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   }  
 
   if( command == UseTIGRESSPositionsCmd ) {
-    Detector->UseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
+    Detector->SetUseTIGRESSPositions(UseTIGRESSPositionsCmd->GetNewBoolValue(newValue));
+  }
+  if( command == UseTIGRESSSegmentsCmd ) {
+    Detector->SetUseTIGRESSSegments(UseTIGRESSSegmentsCmd->GetNewBoolValue(newValue));
   }
 
 }
