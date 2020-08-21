@@ -310,17 +310,19 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
 
     //get normalized vector pointing to a common plane parallel to the detector face
     //both theDetector->GetDetectorPosition and theDetector->GetDetectorCrystalPosition give vectors that already point to this plane
-    G4ThreeVector posNorm = pos;
-    posNorm.setMag(theDetector->GetDetectorPosition(det).mag()/cos(pos.angle(theDetector->GetDetectorPosition(det))));
-    //G4cout << pos << " " << posNorm << " " << pos.angle(theDetector->GetDetectorPosition(det)) << G4endl;
+    G4ThreeVector posNormToCentPlane = pos;
+    posNormToCentPlane.setMag(theDetector->GetDetectorPosition(det).mag()/cos(pos.angle(theDetector->GetDetectorPosition(det))));
 
-    G4double r = (posNorm.perpPart(theDetector->GetDetectorPosition(det)) - theDetector->GetDetectorCrystalPosition(det,cry).perpPart(theDetector->GetDetectorPosition(det))).mag();// - (theDetector->GetDetectorCrystalPosition(det,cry) - theDetector->GetDetectorPosition(det)).project(pos - pos.project(theDetector->GetDetectorPosition(det))).mag();
-    //G4cout << "r1: " << (pos - pos.project(theDetector->GetDetectorCrystalPosition(det,cry))).mag() << ", r2: " << (pos - pos.project(theDetector->GetDetectorPosition(det)) - (theDetector->GetDetectorCrystalPosition(det,cry) - theDetector->GetDetectorPosition(det))).mag() << G4endl;
+    //for r, some values are slightly > 30.0mm, this is because the central contact is offset (see germanium_shift in DetectionSystemGriffin) making some segments extend further than others
+    G4double r = (theDetector->GetDetectorCrystalPosition(det,cry) - (pos - pos.project(theDetector->GetDetectorPosition(det)) + theDetector->GetDetectorCrystalPosition(det,cry).project(theDetector->GetDetectorPosition(det))  )).mag();
+    
     G4double z = pos.project(theDetector->GetDetectorPosition(det)).mag() - theDetector->GetDetectorPosition(det).mag() + 45.0;
+    
     //phi angle, take w.r.t the vectors joining two crystals on the same clover - segment number order may not be consistent from crystal to crystal
     //G4double phi = pos + () 
-    G4double phi = (posNorm.perpPart(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
-    G4double phi2 = (posNorm.perpPart(theDetector->GetDetectorCrystalPosition(det,cry))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
+    G4double phi = (posNormToCentPlane.perpPart(theDetector->GetDetectorPosition(det))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
+    G4double phi2 = (posNormToCentPlane.perpPart(theDetector->GetDetectorPosition(det))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
+    
     G4int seg=0;
     if(z <= 30.){
       //front 4 segments

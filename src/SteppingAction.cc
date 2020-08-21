@@ -150,6 +150,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
   //  Griffin energy deposits
   found = volname.find("germanium_block1");
   if (edep != 0 && found != G4String::npos) {
+    //G4cout << "GRIFFIN energy deposit in volume: " << volname << G4endl;
     SetDetAndCryNumberForGriffinComponent(volname);
     eventaction->AddGriffinCrystDet(edep, weight, pos2, det - 1, cry - 1,
                                     time2);
@@ -207,6 +208,7 @@ void SteppingAction::UserSteppingAction(const G4Step *aStep) {
   // Dead layer specific code
   found = volname.find("germanium_dls_block1");
   if (edep != 0 && found != G4String::npos) {
+    //G4cout << "GRIFFIN energy deposit in volume (dls): " << volname << G4endl;
     SetDetAndCryNumberForDeadLayerSpecificGriffinCrystal(volname);
     //      G4cout << "germanium_dls_block1 Found Edep = " << edep << " keV in
     //      det = " << det << " cry = " << cry << " found = " << found << "
