@@ -266,7 +266,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                   }
                 }
 		              
-	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegWeightDet,TigressSegPosDet,TigressSegPosCylDet);
+	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
           //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
         }
 

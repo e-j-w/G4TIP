@@ -143,7 +143,13 @@ typedef struct {
   Double_t segCylr[GN*GS*TSEG];
   Double_t segCylphi[GN*GS*TSEG];
   Double_t segCylz[GN*GS*TSEG];
+  Double_t segE[GN*GS*TSEG];
   Double_t segw[GN*GS*TSEG];
+  Int_t maxESegfold;
+  Double_t maxESegCylr[GN*GS*TSEG];
+  Double_t maxESegCylphi[GN*GS*TSEG];
+  Double_t maxESegCylz[GN*GS*TSEG];
+  Double_t maxESegE[GN*GS*TSEG];
 } SegInf;
 
   
@@ -160,7 +166,7 @@ public:
 
   void FillTree(G4int, TrackerIonHitsCollection *, TrackerCsIHitsCollection *,
                 G4double[GN][GS], G4double[GN][GS], G4ThreeVector[GN][GS],
-                G4double[GN][GS], G4double[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG]);
+                G4double[GN][GS], G4double[GN][GS][TSEG], G4double[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG], G4ThreeVector[GN][GS][TSEG]);
   void TreeSave(G4String);
   void TreeRead(G4String);
   void TreeAdd(G4String);
