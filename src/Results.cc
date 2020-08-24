@@ -118,9 +118,9 @@ void Results::TreeCreate() {
     tree->Branch("GyAddBack", GHit.GyAB, "GyAB[GfoldAB]/D");
     tree->Branch("GzAddBack", GHit.GzAB, "GzAB[GfoldAB]/D");
     tree->Branch("GammaEnergyAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
-    tree->Branch("TigressSegmentId", SegHit.segId, "segId[Gfold]/D");
     if(theDetector->GetUseTIGRESSSegments()){
       tree->Branch("TigressSegmentFold", &SegHit.segfold, "segfold/I");
+      tree->Branch("TigressSegmentId", SegHit.segId, "segId[segfold]/I");
       tree->Branch("TigressSegmentx", SegHit.segx, "segx[segfold]/D");
       tree->Branch("TigressSegmenty", SegHit.segy, "segy[segfold]/D");
       tree->Branch("TigressSegmentz", SegHit.segz, "segz[segfold]/D");
@@ -130,6 +130,7 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmentE", SegHit.segE, "segE[segfold]/D");
       tree->Branch("TigressSegmentW", SegHit.segw, "segw[segfold]/D");
       tree->Branch("TigressSegmentMaxEFold", &SegHit.maxESegfold, "maxESegfold/I");
+      tree->Branch("TigressSegmentMaxEId", SegHit.maxESegId, "maxESegId[maxESegfold]/I");
       tree->Branch("TigressSegmentMaxECylr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
       tree->Branch("TigressSegmentMaxECylphi", SegHit.maxESegCylphi, "maxESegCylphi[maxESegfold]/D");
       tree->Branch("TigressSegmentMaxECylz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
@@ -1082,6 +1083,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     memset(&SegHit.segE, 0, sizeof(SegHit.segE));
     memset(&SegHit.segw, 0, sizeof(SegHit.segw));
     SegHit.maxESegfold = 0;
+    memset(&SegHit.maxESegId, 0, sizeof(SegHit.maxESegId));
     memset(&SegHit.maxESegCylr, 0, sizeof(SegHit.maxESegCylr));
     memset(&SegHit.maxESegCylphi, 0, sizeof(SegHit.maxESegCylphi));
     memset(&SegHit.maxESegCylz, 0, sizeof(SegHit.maxESegCylz));
@@ -1108,6 +1110,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           }
         }
         if(maxESeg >= 0){
+          SegHit.maxESegId[SegHit.maxESegfold] = maxESeg+1;
           SegHit.maxESegCylr[SegHit.maxESegfold] = tscp[i][j][maxESeg].getX();
           SegHit.maxESegCylphi[SegHit.maxESegfold] = tscp[i][j][maxESeg].getY();
           SegHit.maxESegCylz[SegHit.maxESegfold] = tscp[i][j][maxESeg].getZ();

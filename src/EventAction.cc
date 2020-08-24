@@ -318,12 +318,13 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     
     G4double z = pos.project(theDetector->GetDetectorPosition(det)).mag() - theDetector->GetDetectorPosition(det).mag() + 45.0;
     
-    //phi angle, take w.r.t the vectors joining two crystals on the same clover - segment number order may not be consistent from crystal to crystal
+    //phi angle, take w.r.t the vectors joining two crystals on the same clover
     //G4double phi = pos + () 
-    G4double phi = (posNormToCentPlane.perpPart(theDetector->GetDetectorPosition(det))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
-    G4double phi2 = (posNormToCentPlane.perpPart(theDetector->GetDetectorPosition(det))).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
+    G4double phi = (posNormToCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
+    G4double phi2 = (posNormToCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
     
     G4int seg=0;
+    //get segment numbers assuming white core, then modify depending on actual core number
     if(z <= 30.){
       //front 4 segments
       if(phi2 > M_PI/2.0){
@@ -331,15 +332,23 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
           phi -= M_PI/2.0;
           seg=3;
         }else{
-          seg=2;
+          seg=0;
         }   
       }else{
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
-          seg=1;
+          seg=2;
         }else{
-          seg=0;
+          seg=1;
         }
+      }
+      //modify segment number based on core (if needed)
+      if(cry!=3){
+        //printf("cry: %i, seg: %i\n",cry,seg);
+        seg+=(3-cry);
+        if(seg>3)
+          seg-=4;
+        //printf("final seg: %i\n",seg);
       }
     }else{
       //back 4 segments
@@ -348,17 +357,29 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
           phi -= M_PI/2.0;
           seg=7;
         }else{
-          seg=6;
+          seg=4;
         }   
       }else{
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
-          seg=5;
+          seg=6;
         }else{
-          seg=4;
+          seg=5;
         }
       }
+      //modify segment number based on core (if needed)
+      if(cry!=3){
+        seg+=(3-cry);
+        if(seg>7)
+          seg-=4;
+      }
     }
+    
+    if((seg>7)||(seg<0)){
+      G4cout << "WARNING: bad segment at cry: " << cry << ", seg: " << seg << G4endl;
+    }
+      
+
     //G4cout << "detector pos: " << theDetector->GetDetectorPosition(det) << ", crystal position: " << theDetector->GetDetectorCrystalPosition(det,cry) << ", dist between: " << (theDetector->GetDetectorPosition(det) - theDetector->GetDetectorCrystalPosition(det,cry)).mag() << G4endl;
     //G4cout << "r: " << r << " phi: " << phi/deg << " phi2: " << phi2/deg << " z: " << z << " seg: " << seg << G4endl;
     if(TigressSegWeightDet[det][cry][seg]==0.){

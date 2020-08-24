@@ -8,7 +8,7 @@ See the list of contributors [below](#contributors).
 
 Unified simulation code for [TIP](https://fiveyearplan.triumf.ca/tip/) and [TIGRESS](https://fiveyearplan.triumf.ca/teams-tools/tigress-triumf-isac-gamma-ray-suppressed-spectrometer/) using the GEANT4 framework.
 
-At present, fusion-evaporation and Coulomb excitation reaction processes are available, and the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  The TIP plunger (for RDM) or a DSAM target are available.
+At present, fusion-evaporation and Coulomb excitation reaction processes are available, and the TIP CsI wall/ball and GRIFFIN/TIGRESS array geometries are implemented.  The user can arbitrarily define a multi-layer reaction target using macro commands, or use the predefined TIP plunger (for RDM) or DSAM targets.
 
 For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma ray cascade) is availaible.  Coulomb excitation is single-step (E2).
 
@@ -88,15 +88,31 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Construction/UseCsIWall | Use the CsI wall ancillary array for charged particle detection.  This is the default option if no other ancillary array is specified. |
 | /Construction/UseCsIBall | Use the CsI ball ancillary array for charged particle detection. |
 | /Construction/NoAncillaryArray | Do not use an ancillary array for charged particle detection. |
-| /Construction/UseTarget | Use the user-definable reaction target (this option is used by default, unless `/Construction/UseDSAMTarget` or `/Construction/UsePlunger` are set). |
+| /Construction/UseTarget | Use the user-definable reaction target (this option is used by default, unless `/Construction/UseDSAMTarget` or `/Construction/UsePlunger` are set).  The target geometry is configured using parameters listed [below](#tarpar).|
 | /Construction/UseDSAMTarget | Use the DSAM reaction target.  The target geometry is configured using parameters listed [below](#dsampar). |
 | /Construction/UsePlunger | Use the TIP plunger as the reaction target.  The plunger geometry is configured using parameters listed [below](#plungerpar). |
 | /Construction/ShiftChamber NUMBER mm | Set the position of the TIP chamber along the z (beam) axis (0 mm is centred with respect to the TIGRESS array). |
 | /Construction/ShiftPlunger NUMBER mm | Set the position of the plunger along the z (beam) axis with respect to the TIP chamber (0 mm is centred with respect to the chamber). |
 | /Griffin/UseTIGRESSPositions true/false | Use TIGRESS array positions (if false, GRIFFIN positions will be used instead).  True by default. |
-| /Griffin/UseTIGRESSSegments true/false | Use TIGRESS segments in the simulation.  True by default. |
+| /Griffin/UseTIGRESSSegments true/false | Use TIGRESS segments in the simulation.  True by default.  This option doesn't modify the detector geometry, it just saves extra position tracking information for the germanium array. |
+
+#### Target parameters<a name="tarpar"></a>
+
+These commands configure the default target type, which is always used unless `/Construction/UseDSAMTarget` or `/Construction/UsePlunger` are set.
+
+|**Command**|**Effect**|
+|:---:|:---:|
+| /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
+| /Target/LayerX/Position NUMBER um | The position of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
+| /Target/LayerX/A NUMBER | The mass number of the layer. |
+| /Target/LayerX/Material STRING<sup>1</sup> | The layer material. |
+| /Target/ReactionLayer NUMBER | The layer at which the reaction (Coulex, fusion-evaporation, etc.) takes place (eg. if NUMBER is 1, then the reaction takes place in `Layer1`). |
+
+<sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
 #### DSAM target parameters<a name="dsampar"></a>
+
+These commands will only be used if `/Construction/UseDSAMTarget` is set.
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -114,6 +130,8 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 
 #### Plunger parameters<a name="plungerpar"></a>
 
+These commands will only be used if `/Construction/UsePlunger` is set.
+
 |**Command**|**Effect**|
 |:---:|:---:|
 | /Plunger/Backing/Material STRING<sup>1</sup> | The plunger target backing material. |
@@ -127,6 +145,8 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
 ### Fusion-evaporation reaction parameters<a name="fusevappar"></a>
+
+These commands will only be used if `/Physics/FusionEvaporation` is set.
 
 |**Command**|**Effect**|
 |:---:|:---:|
@@ -150,6 +170,8 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
 
 ### Coulex reaction parameters<a name="coulexpar"></a>
+
+These commands will only be used if `/Physics/Coulex` is set.
 
 |**Command**|**Effect**|
 |:---:|:---:|
