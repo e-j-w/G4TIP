@@ -308,22 +308,21 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
   if(theDetector->GetUseTIGRESSSegments()){
     //determine which segment has been hit, based on the hit position
 
-    //get normalized vector pointing to a common plane parallel to the detector face
-    //both theDetector->GetDetectorPosition and theDetector->GetDetectorCrystalPosition give vectors that already point to this plane
-    G4ThreeVector posNormToCentPlane = pos;
-    posNormToCentPlane.setMag(theDetector->GetDetectorPosition(det).mag()/cos(pos.angle(theDetector->GetDetectorPosition(det))));
+    //get vector pointing to a common plane parallel to the detector face with both theDetector->GetDetectorPosition and theDetector->GetDetectorCrystalPosition
+    //which preserves the radial component of the hit position
+    G4ThreeVector posAlongCentPlane = pos - pos.project(theDetector->GetDetectorPosition(det)) + theDetector->GetDetectorCrystalPosition(det,cry).project(theDetector->GetDetectorPosition(det));
 
     //for r, some values are slightly > 30.0mm, this is because the central contact is offset (see germanium_shift in DetectionSystemGriffin) making some segments extend further than others
-    G4double r = (theDetector->GetDetectorCrystalPosition(det,cry) - (pos - pos.project(theDetector->GetDetectorPosition(det)) + theDetector->GetDetectorCrystalPosition(det,cry).project(theDetector->GetDetectorPosition(det))  )).mag();
+    G4double r = (theDetector->GetDetectorCrystalPosition(det,cry) - posAlongCentPlane).mag();
     
     G4double z = pos.project(theDetector->GetDetectorPosition(det)).mag() - theDetector->GetDetectorPosition(det).mag() + 45.0;
     
     //phi angle, take w.r.t the vectors joining two crystals on the same clover
     //G4double phi = pos + () 
-    G4double phi = (posNormToCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
-    G4double phi2 = (posNormToCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
+    G4double phi = (posAlongCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
+    G4double phi2 = (posAlongCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
     
-    G4int seg=0;
+    G4int seg=-1;
     //get segment numbers assuming white core, then modify depending on actual core number
     if(z <= 30.){
       //front 4 segments
@@ -346,7 +345,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
       if(cry!=3){
         //printf("cry: %i, seg: %i\n",cry,seg);
         seg+=(3-cry);
-        if(seg>3)
+        while(seg>3)
           seg-=4;
         //printf("final seg: %i\n",seg);
       }
@@ -370,15 +369,15 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
       //modify segment number based on core (if needed)
       if(cry!=3){
         seg+=(3-cry);
-        if(seg>7)
+        while(seg>7)
           seg-=4;
       }
     }
     
     if((seg>7)||(seg<0)){
-      G4cout << "WARNING: bad segment at cry: " << cry << ", seg: " << seg << G4endl;
+      G4cout << "WARNING: bad segment at cry: " << cry << ", seg: " << seg << ", with z: " << z << ", phi: " << phi << G4endl;
+      seg = 0;
     }
-      
 
     //G4cout << "detector pos: " << theDetector->GetDetectorPosition(det) << ", crystal position: " << theDetector->GetDetectorCrystalPosition(det,cry) << ", dist between: " << (theDetector->GetDetectorPosition(det) - theDetector->GetDetectorCrystalPosition(det,cry)).mag() << G4endl;
     //G4cout << "r: " << r << " phi: " << phi/deg << " phi2: " << phi2/deg << " z: " << z << " seg: " << seg << G4endl;
