@@ -550,6 +550,115 @@ void DetectorConstruction::ShiftPlunger(G4double z)
 }
 
 /*====================================================================*/
+//when taking a TIGRESS crystal in cylindrical coordinated (r, phi, z, 
+//with z the axis along the central), get the (tapered) radius of the 
+//germanium for specific z and phi values.  Formulas Based on technical 
+//drawings of TIG06.
+G4double DetectorConstruction::GetTIGRESSGermaniumRadius(G4int seg, G4double z, G4double phiRad)
+{
+  if((z<-0.01)||(z>90.01)){
+    G4cout << "WARINING: GetTIGRESSGermaniumRadius() - invalid z value (" << z << ") for radius." << G4endl;
+    return 0.;
+  }
+  if((phiRad>0.5*M_PI)||(phiRad<0.)){
+    G4cout << "WARINING: GetTIGRESSGermaniumRadius() - invalid phi value (" << phiRad << ") for radius." << G4endl;
+    return 0.;
+  }
+
+  if(z>36.2){
+    //no taper, only edge cut
+    if((seg==7)||(seg==5)){
+      //large edge cut on one side, small on the other side
+      if(seg==5){
+        if((phiRad > 0.21645)&&(phiRad < 1.1353)){
+          return 30.;
+        }else if(phiRad <= 0.21645){
+          return 29.3/cos(phiRad);
+        }else{
+          return 27.2/cos(0.5*M_PI - phiRad);
+        }
+      }else{
+        if((phiRad > 0.43548)&&(phiRad < 1.3543)){
+          return 30.;
+        }else if(phiRad <= 0.43548){
+          return 27.2/cos(phiRad);
+        }else{
+          return 29.3/cos(0.5*M_PI - phiRad);
+        }
+      }
+    }else if(seg==6){
+      //large edge cut on both sides
+      if((phiRad > 0.43548)&&(phiRad < 1.1353)){
+        return 30.;
+      }else if(phiRad <= 0.43548){
+        return 27.2/cos(phiRad);
+      }else{
+        return 27.2/cos(0.5*M_PI - phiRad);
+      }
+    }else if(seg==4){
+      //small edge cut on both sides
+      if((phiRad > 0.21645)&&(phiRad < 1.3543)){
+        return 30.;
+      }else if(phiRad <= 0.21645){
+        return 29.3/cos(phiRad);
+      }else{
+        return 29.3/cos(0.5*M_PI - phiRad);
+      }
+    }else{
+      G4cout << "WARINING: GetTIGRESSGermaniumRadius() - invalid segment (" << seg << ") for z value (" << z << ")." << G4endl;
+      return 0.;
+    }
+  }else{
+    if((seg==3)||(seg==1)||(seg==7)||(seg==5)){
+      //taper on one side
+      G4double taperMinRad = 29.3 - ((36.2 - z)*0.41421);
+      G4double taperEdgephi = acos(taperMinRad/30.0);
+      if((seg==1)||(seg==5)){
+        if((phiRad > taperEdgephi)&&(phiRad < 1.1353)){
+          return 30.;
+        }else if(phiRad <= taperEdgephi){
+          return taperMinRad/cos(phiRad);
+        }else{
+          return 27.2/cos(0.5*M_PI - phiRad);
+        }
+      }else{
+        taperEdgephi = 0.5*M_PI - taperEdgephi;
+        if((phiRad > 0.43548)&&(phiRad < taperEdgephi)){
+          return 30.;
+        }else if(phiRad <= 0.43548){
+          return 27.2/cos(phiRad);
+        }else{
+          return taperMinRad/cos(0.5*M_PI - phiRad);
+        }
+      }
+    }else if((seg==2)||(seg==6)){
+      //no taper, only large edge cut on both sides
+      if((phiRad > 0.43548)&&(phiRad < 1.1353)){
+        return 30.;
+      }else if(phiRad <= 0.43548){
+        return 27.2/cos(phiRad);
+      }else{
+        return 27.2/cos(0.5*M_PI - phiRad);
+      }
+    }else if((seg==0)||(seg==4)){
+      //taper on both sides
+      G4double taperMinRad = 29.3 - ((36.2 - z)*0.41421);
+      G4double taperEdgephi = acos(taperMinRad/30.0);
+      if((phiRad > taperEdgephi)&&(phiRad < (0.5*M_PI - taperEdgephi))){
+        return 30.;
+      }else if(phiRad < M_PI/4){
+        return taperMinRad/cos(phiRad);
+      }else{
+        return taperMinRad/cos(0.5*M_PI - phiRad);
+      }
+    }else{
+      G4cout << "WARINING: GetTIGRESSGermaniumRadius() - invalid segment (" << seg << ") for z value (" << z << ")." << G4endl;
+      return 0.;
+    }
+  }
+}
+
+/*====================================================================*/
 void DetectorConstruction::Report()
 {
   G4cout<<"---------- Detector Construction Report ----------"<<G4endl;

@@ -75,6 +75,7 @@ public:
   G4ThreeVector GetDetectorPosition(G4int det){return DetectorPosition[det];};
   void ShiftChamber(G4double);
   void ShiftPlunger(G4double);
+  G4double GetTIGRESSGermaniumRadius(G4int,G4double,G4double);
   void Report();
 
   

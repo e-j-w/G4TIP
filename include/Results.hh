@@ -141,6 +141,7 @@ typedef struct {
   Double_t segy[GN*GS*TSEG];
   Double_t segz[GN*GS*TSEG];
   Double_t segCylr[GN*GS*TSEG];
+  Double_t segCylrFrac[GN*GS*TSEG];
   Double_t segCylphi[GN*GS*TSEG];
   Double_t segCylz[GN*GS*TSEG];
   Double_t segE[GN*GS*TSEG];
@@ -148,6 +149,7 @@ typedef struct {
   Int_t maxESegfold;
   Int_t maxESegId[GN*GS*TSEG];
   Double_t maxESegCylr[GN*GS*TSEG];
+  Double_t maxESegCylrFrac[GN*GS*TSEG];
   Double_t maxESegCylphi[GN*GS*TSEG];
   Double_t maxESegCylz[GN*GS*TSEG];
   Double_t maxESegE[GN*GS*TSEG];

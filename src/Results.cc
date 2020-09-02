@@ -125,6 +125,7 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmenty", SegHit.segy, "segy[segfold]/D");
       tree->Branch("TigressSegmentz", SegHit.segz, "segz[segfold]/D");
       tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[segfold]/D");
+      tree->Branch("TigressSegmentCylrFrac", SegHit.segCylrFrac, "segCylrFrac[segfold]/D");
       tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[segfold]/D");
       tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[segfold]/D");
       tree->Branch("TigressSegmentE", SegHit.segE, "segE[segfold]/D");
@@ -132,6 +133,7 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmentMaxEFold", &SegHit.maxESegfold, "maxESegfold/I");
       tree->Branch("TigressSegmentMaxEId", SegHit.maxESegId, "maxESegId[maxESegfold]/I");
       tree->Branch("TigressSegmentMaxECylr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
+      tree->Branch("TigressSegmentMaxECylrFrac", SegHit.maxESegCylrFrac, "maxESegCylrFrac[maxESegfold]/D");
       tree->Branch("TigressSegmentMaxECylphi", SegHit.maxESegCylphi, "maxESegCylphi[maxESegfold]/D");
       tree->Branch("TigressSegmentMaxECylz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
       tree->Branch("TigressSegmentMaxESegE", SegHit.maxESegE, "maxESegE[maxESegfold]/D");
@@ -1078,6 +1080,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     memset(&SegHit.segy, 0, sizeof(SegHit.segy));
     memset(&SegHit.segz, 0, sizeof(SegHit.segz));
     memset(&SegHit.segCylr, 0, sizeof(SegHit.segCylr));
+    memset(&SegHit.segCylrFrac, 0, sizeof(SegHit.segCylrFrac));
     memset(&SegHit.segCylphi, 0, sizeof(SegHit.segCylphi));
     memset(&SegHit.segCylz, 0, sizeof(SegHit.segCylz));
     memset(&SegHit.segE, 0, sizeof(SegHit.segE));
@@ -1085,6 +1088,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     SegHit.maxESegfold = 0;
     memset(&SegHit.maxESegId, 0, sizeof(SegHit.maxESegId));
     memset(&SegHit.maxESegCylr, 0, sizeof(SegHit.maxESegCylr));
+    memset(&SegHit.maxESegCylrFrac, 0, sizeof(SegHit.maxESegCylrFrac));
     memset(&SegHit.maxESegCylphi, 0, sizeof(SegHit.maxESegCylphi));
     memset(&SegHit.maxESegCylz, 0, sizeof(SegHit.maxESegCylz));
     memset(&SegHit.maxESegE, 0, sizeof(SegHit.maxESegE));
@@ -1100,6 +1104,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
             SegHit.segCylr[SegHit.segfold] = tscp[i][j][k].getX();
             SegHit.segCylphi[SegHit.segfold] = tscp[i][j][k].getY();
             SegHit.segCylz[SegHit.segfold] = tscp[i][j][k].getZ();
+            SegHit.segCylrFrac[SegHit.segfold] = SegHit.segCylr[SegHit.segfold]/theDetector->GetTIGRESSGermaniumRadius(k,SegHit.segCylz[SegHit.segfold],SegHit.segCylphi[SegHit.segfold]);
             SegHit.segE[SegHit.segfold] = tse[i][j][k];
             if(SegHit.segE[SegHit.segfold] > segMaxE){
               segMaxE = SegHit.segE[SegHit.segfold];
@@ -1114,6 +1119,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           SegHit.maxESegCylr[SegHit.maxESegfold] = tscp[i][j][maxESeg].getX();
           SegHit.maxESegCylphi[SegHit.maxESegfold] = tscp[i][j][maxESeg].getY();
           SegHit.maxESegCylz[SegHit.maxESegfold] = tscp[i][j][maxESeg].getZ();
+          SegHit.maxESegCylrFrac[SegHit.maxESegfold] = SegHit.maxESegCylr[SegHit.maxESegfold]/theDetector->GetTIGRESSGermaniumRadius(maxESeg,SegHit.maxESegCylz[SegHit.maxESegfold],SegHit.maxESegCylphi[SegHit.maxESegfold]);
           SegHit.maxESegE[SegHit.maxESegfold] = tse[i][j][maxESeg];
           SegHit.maxESegfold++;
         }
