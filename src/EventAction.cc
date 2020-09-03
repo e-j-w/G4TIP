@@ -321,7 +321,8 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //G4double phi = pos + () 
     G4double phi = (posAlongCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,1));
     G4double phi2 = (posAlongCentPlane - theDetector->GetDetectorCrystalPosition(det,cry)).angle(theDetector->GetDetectorCrystalPosition(det,0) - theDetector->GetDetectorCrystalPosition(det,3));
-    
+    //G4cout << "phi: " << phi << " (" << phi/deg << " deg), phi2: " << phi2 << " (" << phi2/deg << " deg)" << G4endl; 
+
     G4int seg=-1;
     //get segment numbers assuming white core, then modify depending on actual core number
     if(z <= 30.){
@@ -332,7 +333,8 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
           seg=3;
         }else{
           seg=0;
-        }   
+        }
+        phi = M_PI/2.0 - phi;
       }else{
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
@@ -357,7 +359,8 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
           seg=7;
         }else{
           seg=4;
-        }   
+        }
+        phi = M_PI/2.0 - phi;
       }else{
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
