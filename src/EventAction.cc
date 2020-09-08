@@ -311,6 +311,12 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //get vector pointing to a common plane parallel to the detector face with both theDetector->GetDetectorPosition and theDetector->GetDetectorCrystalPosition
     //which preserves the radial component of the hit position
     G4ThreeVector posAlongCentPlane = pos - pos.project(theDetector->GetDetectorPosition(det)) + theDetector->GetDetectorCrystalPosition(det,cry).project(theDetector->GetDetectorPosition(det));
+    
+    G4ThreeVector centerShort = theDetector->GetDetectorPosition(det);
+    centerShort.setMag(15.0);
+    G4ThreeVector toFrontSegContactCenter = theDetector->GetDetectorCrystalPosition(det,cry) - centerShort;
+
+    G4double d = (pos - toFrontSegContactCenter).mag();
 
     //for r, some values are slightly > 30.0mm, this is because the central contact is offset (see germanium_shift in DetectionSystemGriffin) making some segments extend further than others
     G4double r = (theDetector->GetDetectorCrystalPosition(det,cry) - posAlongCentPlane).mag();
@@ -327,6 +333,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //get segment numbers assuming white core, then modify depending on actual core number
     if(z <= 30.){
       //front 4 segments
+      r=d;
       if(phi2 > M_PI/2.0){
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
