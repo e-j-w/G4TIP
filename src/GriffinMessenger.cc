@@ -91,8 +91,8 @@ GriffinMessenger::GriffinMessenger(DetectorConstruction* Det)
   UseTIGRESSSegmentsCmd->SetGuidance("Construct detector(s) using TIGRESS sgements (geometry may not be accurate).");
   UseTIGRESSSegmentsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  UseTIGRESSSegmentsSphCmd = new G4UIcmdWithABool("/Griffin/FrontSegementTrackingSpherical",this);
-  UseTIGRESSSegmentsSphCmd->SetGuidance("Set the tracking in front TIGRESS segments to use spherical coordinates rather than cylindrical (to better follow electric field lines).");
+  UseTIGRESSSegmentsSphCmd = new G4UIcmdWithABool("/Griffin/FrontSegmentTrackingSpherical",this);
+  UseTIGRESSSegmentsSphCmd->SetGuidance("Set the tracking in front TIGRESS segments to use spherical coordinates rather than cylindrical (to better follow the electric field).");
   UseTIGRESSSegmentsSphCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }

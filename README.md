@@ -1,8 +1,6 @@
 # G4TIP
 
-Maintainer: Jonathan Williams
-
-See the list of contributors [below](#contributors).
+This repo maintained by Jonathan Williams, see the list of contributors [below](#contributors).
 
 ## Description
 
@@ -14,7 +12,7 @@ For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma
 
 ## Installation
 
-This code has been tested on Ubuntu 14.04/16.04, CentOS 7, and Arch Linux (as of May 2020).  Follow the instructions below to set up the required dependencies.
+This code has been tested on Ubuntu 14.04/16.04, CentOS 7, and Arch Linux (as of September 2020).  Follow the instructions below to set up the required dependencies.
 
 ### ROOT
 
@@ -95,6 +93,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Construction/ShiftPlunger NUMBER mm | Set the position of the plunger along the z (beam) axis with respect to the TIP chamber (0 mm is centred with respect to the chamber). |
 | /Griffin/UseTIGRESSPositions true/false | Use TIGRESS array positions (if false, GRIFFIN positions will be used instead).  True by default. |
 | /Griffin/UseTIGRESSSegments true/false | Use TIGRESS segments in the simulation.  True by default.  This option doesn't modify the detector geometry, it just saves extra position tracking information for the germanium array. |
+| /Griffin/FrontSegmentTrackingSpherical true/false | When using TIGRESS segment tracking, track the front segments in spherical coordinates (to better follow the electric field expected in the detector), and the rear segments in cylindrical coordinates.  True by default, if set to false all segments will be tracked with cylindrical coordinates. |
 
 #### Target parameters<a name="tarpar"></a>
 
