@@ -29,6 +29,7 @@ DetectorConstruction::DetectorConstruction()
 
   useTigressPositions = true;
   useTigressSegments = true;
+  useTigressSegmentTrackingSph = true;
   ancArrayType = 0; //CsI wall by default
   targetType = 0; //arbitrary target by default
 

@@ -65,7 +65,7 @@ class EventAction : public G4UserEventAction
   timeval       tc,ts,td;
   double        tt,rate;
   RunAction*    run_action;
-  size_t        soa,sov,soas,sovs,soc,soi;
+  size_t        soa,sov,sois,soas,sovs,soc,soi;
   unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
   G4double      CsIThreshold;
   G4int         CsIIDTrigger;
@@ -78,6 +78,7 @@ class EventAction : public G4UserEventAction
   G4double      GriffinCrystTimeDet[16][4];
   G4int         GriffinFold;
   //TIGRESS segment interaction information
+  G4int         TigressSegHitsDet[16][4][8]; //number of hits in each segment
   G4double      TigressSegWeightDet[16][4][8];
   G4double      TigressSegEnergyDet[16][4][8];
   G4ThreeVector TigressSegPosDet[16][4][8]; //x,y,z position of hit

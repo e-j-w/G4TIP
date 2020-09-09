@@ -8,6 +8,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   CsICollectionID=-1;
   soa=16*4*sizeof(G4double);
   sov=16*4*sizeof(G4ThreeVector);
+  sois=16*4*8*sizeof(G4int);
   soas=16*4*8*sizeof(G4double);
   sovs=16*4*8*sizeof(G4ThreeVector);
   soc=sizeof(TrackerCsIHitsCollection);
@@ -45,6 +46,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
   memset(GriffinCrystWeightDet,0,soa);
   memset(GriffinCrystPosDet,0,sov);
   if(theDetector->GetUseTIGRESSSegments()){
+    memset(TigressSegHitsDet,0,sois);
     memset(TigressSegEnergyDet,0,soas);
     memset(TigressSegWeightDet,0,soas);
     memset(TigressSegPosDet,0,sovs);
@@ -266,7 +268,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                   }
                 }
 		              
-	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
+	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegHitsDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
           //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
         }
 
@@ -312,13 +314,14 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //which preserves the radial component of the hit position
     G4ThreeVector posAlongCentPlane = pos - pos.project(theDetector->GetDetectorPosition(det)) + theDetector->GetDetectorCrystalPosition(det,cry).project(theDetector->GetDetectorPosition(det));
     
+    //setup tracking for segments in spherical coordinates
     G4ThreeVector centerShort = theDetector->GetDetectorPosition(det);
     centerShort.setMag(15.0);
     G4ThreeVector toFrontSegContactCenter = theDetector->GetDetectorCrystalPosition(det,cry) - centerShort;
-
     G4double d = (pos - toFrontSegContactCenter).mag();
 
-    //for r, some values are slightly > 30.0mm, this is because the central contact is offset (see germanium_shift in DetectionSystemGriffin) making some segments extend further than others
+    //get r in cylindrical coordinates
+    //some values are slightly > 30.0mm, this is because the central contact is offset (see germanium_shift in DetectionSystemGriffin) making some segments extend further than others
     G4double r = (theDetector->GetDetectorCrystalPosition(det,cry) - posAlongCentPlane).mag();
     
     G4double z = pos.project(theDetector->GetDetectorPosition(det)).mag() - theDetector->GetDetectorPosition(det).mag() + 45.0;
@@ -333,7 +336,9 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //get segment numbers assuming white core, then modify depending on actual core number
     if(z <= 30.){
       //front 4 segments
-      r=d;
+      if(theDetector->GetUseTIGRESSSegmentsSph()){
+        r=d; //track in spherical coordinates
+      }
       if(phi2 > M_PI/2.0){
         if(phi > M_PI/2.0){
           phi -= M_PI/2.0;
@@ -392,6 +397,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //G4cout << "detector pos: " << theDetector->GetDetectorPosition(det) << ", crystal position: " << theDetector->GetDetectorCrystalPosition(det,cry) << ", dist between: " << (theDetector->GetDetectorPosition(det) - theDetector->GetDetectorCrystalPosition(det,cry)).mag() << G4endl;
     //G4cout << "r: " << r << " phi: " << phi/deg << " phi2: " << phi2/deg << " z: " << z << " seg: " << seg << G4endl;
     if(TigressSegWeightDet[det][cry][seg]==0.){
+      TigressSegHitsDet[det][cry][seg]++;
       TigressSegWeightDet[det][cry][seg]=w;
       TigressSegEnergyDet[det][cry][seg]=de;
       TigressSegPosDet[det][cry][seg]=de*pos;
@@ -399,6 +405,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
       TigressSegPosCylDet[det][cry][seg].setY(de*phi);
       TigressSegPosCylDet[det][cry][seg].setZ(de*z);
     }else if(TigressSegWeightDet[det][cry][seg]==w){
+      TigressSegHitsDet[det][cry][seg]++;
       TigressSegEnergyDet[det][cry][seg]+=de;
       TigressSegPosDet[det][cry][seg]+=de*pos;
       TigressSegPosCylDet[det][cry][seg].setX(TigressSegPosCylDet[det][cry][seg].getX() + de*r);

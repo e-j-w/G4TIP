@@ -121,21 +121,35 @@ void Results::TreeCreate() {
     if(theDetector->GetUseTIGRESSSegments()){
       tree->Branch("TigressSegmentFold", &SegHit.segfold, "segfold/I");
       tree->Branch("TigressSegmentId", SegHit.segId, "segId[segfold]/I");
+      tree->Branch("TigressSegmentNumHits", SegHit.segNumHits, "segNumHits[segfold]/I");
       tree->Branch("TigressSegmentx", SegHit.segx, "segx[segfold]/D");
       tree->Branch("TigressSegmenty", SegHit.segy, "segy[segfold]/D");
       tree->Branch("TigressSegmentz", SegHit.segz, "segz[segfold]/D");
-      tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[segfold]/D");
-      tree->Branch("TigressSegmentCylrFrac", SegHit.segCylrFrac, "segCylrFrac[segfold]/D");
-      tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[segfold]/D");
-      tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[segfold]/D");
+      if(theDetector->GetUseTIGRESSSegmentsSph()){
+        tree->Branch("TigressSegmentCylSphr", SegHit.segCylr, "segCylr[segfold]/D");
+        tree->Branch("TigressSegmentCylSphphi", SegHit.segCylphi, "segCylphi[segfold]/D");
+        tree->Branch("TigressSegmentCylSphz", SegHit.segCylz, "segCylz[segfold]/D");
+      }else{
+        tree->Branch("TigressSegmentCylr", SegHit.segCylr, "segCylr[segfold]/D");
+        tree->Branch("TigressSegmentCylrFrac", SegHit.segCylrFrac, "segCylrFrac[segfold]/D");
+        tree->Branch("TigressSegmentCylphi", SegHit.segCylphi, "segCylphi[segfold]/D");
+        tree->Branch("TigressSegmentCylz", SegHit.segCylz, "segCylz[segfold]/D");
+      }
       tree->Branch("TigressSegmentE", SegHit.segE, "segE[segfold]/D");
       tree->Branch("TigressSegmentW", SegHit.segw, "segw[segfold]/D");
       tree->Branch("TigressSegmentMaxEFold", &SegHit.maxESegfold, "maxESegfold/I");
       tree->Branch("TigressSegmentMaxEId", SegHit.maxESegId, "maxESegId[maxESegfold]/I");
-      tree->Branch("TigressSegmentMaxECylr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
-      tree->Branch("TigressSegmentMaxECylrFrac", SegHit.maxESegCylrFrac, "maxESegCylrFrac[maxESegfold]/D");
-      tree->Branch("TigressSegmentMaxECylphi", SegHit.maxESegCylphi, "maxESegCylphi[maxESegfold]/D");
-      tree->Branch("TigressSegmentMaxECylz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
+      tree->Branch("TigressSegmentMaxENumHits", SegHit.maxESegNumHits, "maxESegNumHits[maxESegfold]/I");
+      if(theDetector->GetUseTIGRESSSegmentsSph()){
+        tree->Branch("TigressSegmentMaxECylSphr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
+        tree->Branch("TigressSegmentMaxECylSphphi", SegHit.maxESegCylphi, "maxESegCylphi[maxESegfold]/D");
+        tree->Branch("TigressSegmentMaxECylSphz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
+      }else{
+        tree->Branch("TigressSegmentMaxECylr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
+        tree->Branch("TigressSegmentMaxECylrFrac", SegHit.maxESegCylrFrac, "maxESegCylrFrac[maxESegfold]/D");
+        tree->Branch("TigressSegmentMaxECylphi", SegHit.maxESegCylphi, "maxESegCylphi[maxESegfold]/D");
+        tree->Branch("TigressSegmentMaxECylz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
+      }
       tree->Branch("TigressSegmentMaxESegE", SegHit.maxESegE, "maxESegE[maxESegfold]/D");
     }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
@@ -253,7 +267,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                        TrackerCsIHitsCollection *CsICollection,
                        G4double gw[GN][GS], G4double ge[GN][GS],
                        G4ThreeVector gp[GN][GS], G4double gt[GN][GS], 
-                       G4double tsw[GN][GS][TSEG], G4double tse[GN][GS][TSEG], G4ThreeVector tsp[GN][GS][TSEG], 
+                       G4int tsh[GN][GS][TSEG], G4double tsw[GN][GS][TSEG], G4double tse[GN][GS][TSEG], G4ThreeVector tsp[GN][GS][TSEG], 
                        G4ThreeVector tscp[GN][GS][TSEG]) {
 
   G4int Nt = IonCollection->entries();
@@ -1076,6 +1090,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     G4double segMaxE = 0.;
     SegHit.segfold = 0;
     memset(&SegHit.segId, 0, sizeof(SegHit.segId));
+    memset(&SegHit.segNumHits, 0, sizeof(SegHit.segNumHits));
     memset(&SegHit.segx, 0, sizeof(SegHit.segx));
     memset(&SegHit.segy, 0, sizeof(SegHit.segy));
     memset(&SegHit.segz, 0, sizeof(SegHit.segz));
@@ -1087,6 +1102,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     memset(&SegHit.segw, 0, sizeof(SegHit.segw));
     SegHit.maxESegfold = 0;
     memset(&SegHit.maxESegId, 0, sizeof(SegHit.maxESegId));
+    memset(&SegHit.maxESegNumHits, 0, sizeof(SegHit.maxESegNumHits));
     memset(&SegHit.maxESegCylr, 0, sizeof(SegHit.maxESegCylr));
     memset(&SegHit.maxESegCylrFrac, 0, sizeof(SegHit.maxESegCylrFrac));
     memset(&SegHit.maxESegCylphi, 0, sizeof(SegHit.maxESegCylphi));
@@ -1098,6 +1114,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
         for (k = 0; k < TSEG; k++) { // number of segments
           if(tsw[i][j][k]>0){
             SegHit.segId[SegHit.segfold] = k+1;
+            SegHit.segNumHits[SegHit.segfold] = tsh[i][j][k];
             SegHit.segx[SegHit.segfold] = tsp[i][j][k].getX();
             SegHit.segy[SegHit.segfold] = tsp[i][j][k].getY();
             SegHit.segz[SegHit.segfold] = tsp[i][j][k].getZ();
@@ -1116,6 +1133,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
         }
         if(maxESeg >= 0){
           SegHit.maxESegId[SegHit.maxESegfold] = maxESeg+1;
+          SegHit.maxESegNumHits[SegHit.maxESegfold] = tsh[i][j][maxESeg];
           SegHit.maxESegCylr[SegHit.maxESegfold] = tscp[i][j][maxESeg].getX();
           SegHit.maxESegCylphi[SegHit.maxESegfold] = tscp[i][j][maxESeg].getY();
           SegHit.maxESegCylz[SegHit.maxESegfold] = tscp[i][j][maxESeg].getZ();
@@ -1123,13 +1141,10 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           SegHit.maxESegE[SegHit.maxESegfold] = tse[i][j][maxESeg];
           SegHit.maxESegfold++;
         }
-      }
-        
+      }     
   }
-  
 
-
-  // compute an approxiate Doppler shift based on the specific detectors where
+  // compute an approximate Doppler shift based on the specific detectors where
   // gamma and evaporated particles were seen
   Double_t beta; // speed of recoil (calculated)
   eStat.dsfold = 0;
