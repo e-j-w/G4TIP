@@ -40,8 +40,13 @@
 
 typedef struct {
   Int_t dsfold;
-  Double_t calcERes[GN * GS]; // Residual energy (inferred)
-  Double_t ds[GN * GS];       // doppler shift
+  Double_t calcERes[GN * GS];  // Residual energy (inferred)
+  Double_t dsPos[GN * GS];     // doppler shift (array position)
+  Double_t dsCore[GN * GS];    // doppler shift (core)
+  Double_t thetaPos[GN * GS];  // reconstructed recoil-gamma theta value (gamma from array position)
+  Double_t thetaCore[GN * GS]; // reconstructed recoil-gamma theta value (gamma from core)
+  Double_t GEABPos[GN * GS];   // reconstructed addback gamma energy (gamma from array position)
+  Double_t GEABCore[GN * GS];  // reconstructed addback gamma energy (gamma from core)
 } EventStat;
 
 typedef struct {

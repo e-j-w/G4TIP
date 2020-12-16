@@ -26,7 +26,10 @@ class Materials
   G4Material* C;
   G4Material* Mg;
   G4Material* In;
+  G4Material* H;
+  G4Material* He;
   G4Material* Hf;
+  G4Material* Li;
   G4Material* Au;
   G4Material* Ca;
   G4Material* Ta;
@@ -36,6 +39,7 @@ class Materials
   // Compounds
   G4Material* Vacuum;
   G4Material* BGO;
+  G4Material* CH2;
   G4Material* CsI;
   G4Material* Mylar;
   G4Material* Air;

@@ -79,7 +79,7 @@ void Results::SetupRun(){
       break;
   }
 
-  /* // get HPGe crystal positions
+  /*// get HPGe crystal positions
   for(int i=0; i<GN; i++)
     for(int j=0; j<GS; j++)
       {
@@ -153,7 +153,12 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmentMaxESegE", SegHit.maxESegE, "maxESegE[maxESegfold]/D");
     }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
-    tree->Branch("DopplerShiftFactor", &eStat.ds, "ds[dsfold]/D");
+    tree->Branch("DopplerShiftFactorArrayPos", &eStat.dsPos, "dsPos[dsfold]/D");
+    tree->Branch("DopplerShiftFactorCore", &eStat.dsCore, "dsCore[dsfold]/D");
+    tree->Branch("DSArrayPosReconstructedTheta", &eStat.thetaPos, "thetaPos[dsfold]/D");
+    tree->Branch("DSCoreReconstructedTheta", &eStat.thetaCore, "thetaCore[dsfold]/D");
+    tree->Branch("DSArrayPosReconstructedGammaEnergyAddBack", &eStat.GEABPos, "GEABPos[dsfold]/D");
+    tree->Branch("DSCoreReconstructedGammaEnergyAddBack", &eStat.GEABCore, "GEABCore[dsfold]/D");
     tree->Branch("calcERecoil", &eStat.calcERes, "calcERes[dsfold]/D");
     tree->Branch("CsIFold", &partHit.CsIfold, "CsIfold/I");
     tree->Branch("CsIx", partHit.x, "x[CsIfold]/D");
@@ -1150,10 +1155,12 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   eStat.dsfold = 0;
   for (i = 0; i < GHit.GfoldAB; i++) // number of addback hits in the event
   {
-    G4ThreeVector gammaVec = theDetector->GetDetectorCrystalPosition(
-        GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
-    if (gammaVec.mag() != 0)
-      gammaVec.setMag(1.0);
+    G4ThreeVector gammaVecPos = theDetector->GetDetectorPosition(GHit.GIdAB[eStat.dsfold] - 1);
+    G4ThreeVector gammaVecCore = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
+    if (gammaVecPos.mag() != 0)
+      gammaVecPos.setMag(1.0);
+    if (gammaVecCore.mag() != 0)
+      gammaVecCore.setMag(1.0);
     // G4cout << "gammaVec: " << gammaVec << G4endl;
     G4ThreeVector resMom, partMom, partDir;
     resMom.setX(gun.px);
@@ -1180,8 +1187,12 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     if (resMom.mag() != 0)
       resMom.setMag(1.0);
 
-    eStat.ds[eStat.dsfold] =
-        sqrt(1 - beta * beta) / (1 - beta * resMom * gammaVec);
+    eStat.dsPos[eStat.dsfold] = sqrt(1 - beta * beta) / (1 - beta * resMom * gammaVecPos);
+    eStat.dsCore[eStat.dsfold] = sqrt(1 - beta * beta) / (1 - beta * resMom * gammaVecCore);
+    eStat.thetaPos[eStat.dsfold] = resMom.angle(gammaVecPos) / degree;
+    eStat.thetaCore[eStat.dsfold] = resMom.angle(gammaVecCore) / degree;
+    eStat.GEABPos[eStat.dsfold] = GHit.GEAB[eStat.dsfold]/eStat.dsPos[eStat.dsfold];
+    eStat.GEABCore[eStat.dsfold] = GHit.GEAB[eStat.dsfold]/eStat.dsCore[eStat.dsfold];
     eStat.dsfold++;
   }
   // printf("Gun beta: %10.10f\nReaction out beta: %10.10f\n",gun.b,rROut.b);

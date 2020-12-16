@@ -14,7 +14,10 @@
   Ca = new G4Material("Ca", 20., 40.08*g/mole, 1.55*g/cm3);
   Ge = man->FindOrBuildMaterial("G4_Ge");
   In = man->FindOrBuildMaterial("G4_In");
+  H = man->FindOrBuildMaterial("G4_H");
+  He = man->FindOrBuildMaterial("G4_He");
   Hf = man->FindOrBuildMaterial("G4_Hf");
+  Li = man->FindOrBuildMaterial("G4_Li");
   Mg = man->FindOrBuildMaterial("G4_Mg");
   Ni = man->FindOrBuildMaterial("G4_Ni");
   S = man->FindOrBuildMaterial("G4_S");
@@ -23,6 +26,7 @@
   // Compounds
   Vacuum = man->FindOrBuildMaterial("G4_Galactic");
   BGO    = man->FindOrBuildMaterial("G4_BGO");
+  CH2    = man->FindOrBuildMaterial("G4_POLYETHYLENE");
   CsI    = man->FindOrBuildMaterial("G4_CESIUM_IODIDE");
   Mylar  = man->FindOrBuildMaterial("G4_MYLAR");
   Air    = man->FindOrBuildMaterial("G4_AIR");

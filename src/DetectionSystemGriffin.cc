@@ -2031,7 +2031,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   // now we add the side pieces of suppressor that taper off towards the front of the can
 
   // Define the structureMat shell logical volume
-  G4cout << "Calling: shellForFrontRightSlantSuppressor" << G4endl ; 
+  //G4cout << "Calling: shellForFrontRightSlantSuppressor" << G4endl ; 
   G4SubtractionSolid* right_suppressor_shell = this->shellForFrontSlantSuppressor("right");
 
 
@@ -2039,7 +2039,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
     "right_suppressor_shell_log", 0,0,0);
   right_suppressor_shell_log->SetVisAttributes(Suppressor_vis_att);
 
-  G4cout << "Calling: shellForFrontLeftSlantSuppressor" << G4endl ; 
+  //G4cout << "Calling: shellForFrontLeftSlantSuppressor" << G4endl ; 
   G4SubtractionSolid* left_suppressor_shell = this->shellForFrontSlantSuppressor("left");
 
   left_suppressor_shell_log = new G4LogicalVolume(left_suppressor_shell, structureMat,
@@ -2121,7 +2121,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   // now we add the side pieces of suppressor that extend out in front of the can when it's in the back position
 
   // Define the shell right logical volume
-  G4cout << "Calling: shellForRightSuppressorExtension" << G4endl ; 
+  //G4cout << "Calling: shellForRightSuppressorExtension" << G4endl ; 
   // G4SubtractionSolid* right_suppressor_shell_extension = this->shellForRightSuppressorExtension();
   G4SubtractionSolid* right_suppressor_shell_extension = this->shellForSuppressorExtension("right");
 
@@ -2136,7 +2136,7 @@ void DetectionSystemGriffin::ConstructNewSuppressorCasingWithShells()
   right_suppressor_extension_log->SetVisAttributes(innards_vis_att);
 
   // Define the left shell logical volume
-  G4cout << "Calling: shellForLeftSuppressorExtension" << G4endl ; 
+  //G4cout << "Calling: shellForLeftSuppressorExtension" << G4endl ; 
   // G4SubtractionSolid* left_suppressor_shell_extension = this->shellForLeftSuppressorExtension();
   G4SubtractionSolid* left_suppressor_shell_extension = this->shellForSuppressorExtension("left");
   
