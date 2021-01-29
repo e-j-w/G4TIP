@@ -88,6 +88,167 @@ void Results::SetupRun(){
     %f\n",i+1,j,CP[i][j].getX(),CP[i][j].getY(),CP[i][j].getZ());
       }*/
 
+  tigressFwdPos[0][0] = G4ThreeVector(76.2548,62.4881,134.739);
+  tigressFwdPos[0][1] = G4ThreeVector(113.557,77.9392,94.3634);
+  tigressFwdPos[0][2] = G4ThreeVector(135.408,25.1857,94.3634);
+  tigressFwdPos[0][3] = G4ThreeVector(98.106,9.73455,134.739);
+
+  tigressFwdPos[1][0] = G4ThreeVector(-62.4881,76.2548,134.739);
+  tigressFwdPos[1][1] = G4ThreeVector(-77.9392,113.557,94.3634);
+  tigressFwdPos[1][2] = G4ThreeVector(-25.1857,135.408,94.3634);
+  tigressFwdPos[1][3] = G4ThreeVector(-9.73455,98.106,134.739);
+
+  tigressFwdPos[2][0] = G4ThreeVector(-76.2548,-62.4881,134.739);
+  tigressFwdPos[2][1] = G4ThreeVector(-113.557,-77.9392,94.3634);
+  tigressFwdPos[2][2] = G4ThreeVector(-135.408,-25.1857,94.3634);
+  tigressFwdPos[2][3] = G4ThreeVector(-98.106,-9.73455,134.739);
+
+  tigressFwdPos[3][0] = G4ThreeVector(62.4881,-76.2548,134.739);
+  tigressFwdPos[3][1] = G4ThreeVector(77.9392,-113.557,94.3634);
+  tigressFwdPos[3][2] = G4ThreeVector(25.1857,-135.408,94.3634);
+  tigressFwdPos[3][3] = G4ThreeVector(9.73455,-98.106,134.739);
+
+  tigressFwdPos[4][0] = G4ThreeVector(138.743,88.3715,28.55);
+  tigressFwdPos[4][1] = G4ThreeVector(138.743,88.3715,-28.55);
+  tigressFwdPos[4][2] = G4ThreeVector(160.594,35.618,-28.55);
+  tigressFwdPos[4][3] = G4ThreeVector(160.594,35.618,28.55);
+
+  tigressFwdPos[5][0] = G4ThreeVector(35.618,160.594,28.55);
+  tigressFwdPos[5][1] = G4ThreeVector(35.618,160.594,-28.55);
+  tigressFwdPos[5][2] = G4ThreeVector(88.3715,138.743,-28.55);
+  tigressFwdPos[5][3] = G4ThreeVector(88.3715,138.743,28.55);
+
+  tigressFwdPos[6][0] = G4ThreeVector(-88.3715,138.743,28.55);
+  tigressFwdPos[6][1] = G4ThreeVector(-88.3715,138.743,-28.55);
+  tigressFwdPos[6][2] = G4ThreeVector(-35.618,160.594,-28.55);
+  tigressFwdPos[6][3] = G4ThreeVector(-35.618,160.594,28.55);
+
+  tigressFwdPos[7][0] = G4ThreeVector(-160.594,35.618,28.55);
+  tigressFwdPos[7][1] = G4ThreeVector(-160.594,35.618,-28.55);
+  tigressFwdPos[7][2] = G4ThreeVector(-138.743,88.3715,-28.55);
+  tigressFwdPos[7][3] = G4ThreeVector(-138.743,88.3715,28.55);
+
+  tigressFwdPos[8][0] = G4ThreeVector(-138.743,-88.3715,28.55);
+  tigressFwdPos[8][1] = G4ThreeVector(-138.743,-88.3715,-28.55);
+  tigressFwdPos[8][2] = G4ThreeVector(-160.594,-35.618,-28.55);
+  tigressFwdPos[8][3] = G4ThreeVector(-160.594,-35.618,28.55);
+
+  tigressFwdPos[9][0] = G4ThreeVector(-35.618,-160.594,28.55);
+  tigressFwdPos[9][1] = G4ThreeVector(-35.618,-160.594,-28.55);
+  tigressFwdPos[9][2] = G4ThreeVector(-88.3715,-138.743,-28.55);
+  tigressFwdPos[9][3] = G4ThreeVector(-88.3715,-138.743,28.55);
+
+  tigressFwdPos[10][0] = G4ThreeVector(88.3715,-138.743,28.55);
+  tigressFwdPos[10][1] = G4ThreeVector(88.3715,-138.743,-28.55);
+  tigressFwdPos[10][2] = G4ThreeVector(35.618,-160.594,-28.55);
+  tigressFwdPos[10][3] = G4ThreeVector(35.618,-160.594,28.55);
+
+  tigressFwdPos[11][0] = G4ThreeVector(160.594,-35.618,28.55);
+  tigressFwdPos[11][1] = G4ThreeVector(160.594,-35.618,-28.55);
+  tigressFwdPos[11][2] = G4ThreeVector(138.743,-88.3715,-28.55);
+  tigressFwdPos[11][3] = G4ThreeVector(138.743,-88.3715,28.55);
+
+  tigressFwdPos[12][0] = G4ThreeVector(113.557,77.9392,-94.3634);
+  tigressFwdPos[12][1] = G4ThreeVector(76.2548,62.4881,-134.739);
+  tigressFwdPos[12][2] = G4ThreeVector(98.106,9.73455,-134.739);
+  tigressFwdPos[12][3] = G4ThreeVector(135.408,25.1857,-94.3634);
+
+  tigressFwdPos[13][0] = G4ThreeVector(-77.9392,113.557,-94.3634);
+  tigressFwdPos[13][1] = G4ThreeVector(-62.4881,76.2548,-134.739);
+  tigressFwdPos[13][2] = G4ThreeVector(-9.73455,98.106,-134.739);
+  tigressFwdPos[13][3] = G4ThreeVector(-25.1857,135.408,-94.3634);
+
+  tigressFwdPos[14][0] = G4ThreeVector(-113.557,-77.9392,-94.3634);
+  tigressFwdPos[14][1] = G4ThreeVector(-76.2548,-62.4881,-134.739);
+  tigressFwdPos[14][2] = G4ThreeVector(-98.106,-9.73455,-134.739);
+  tigressFwdPos[14][3] = G4ThreeVector(-135.408,-25.1857,-94.3634);
+
+  tigressFwdPos[15][0] = G4ThreeVector(77.9392,-113.557,-94.3634);
+  tigressFwdPos[15][1] = G4ThreeVector(62.4881,-76.2548,-134.739);
+  tigressFwdPos[15][2] = G4ThreeVector(9.73455,-98.106,-134.739);
+  tigressFwdPos[15][3] = G4ThreeVector(25.1857,-135.408,-94.3634);
+
+
+  tigressBackPos[0][0] = G4ThreeVector(99.1197,71.959,159.488);
+  tigressBackPos[0][1] = G4ThreeVector(136.422,87.4102,119.112);
+  tigressBackPos[0][2] = G4ThreeVector(158.273,34.6566,119.112);
+  tigressBackPos[0][3] = G4ThreeVector(120.971,19.2055,159.488);
+
+  tigressBackPos[1][0] = G4ThreeVector(-71.959,99.1197,159.488);
+  tigressBackPos[1][1] = G4ThreeVector(-87.4102,136.422,119.112);
+  tigressBackPos[1][2] = G4ThreeVector(-34.6566,158.273,119.112);
+  tigressBackPos[1][3] = G4ThreeVector(-19.2055,120.971,159.488);
+
+  tigressBackPos[2][0] = G4ThreeVector(-99.1197,-71.959,159.488);
+  tigressBackPos[2][1] = G4ThreeVector(-136.422,-87.4102,119.112);
+  tigressBackPos[2][2] = G4ThreeVector(-158.273,-34.6566,119.112);
+  tigressBackPos[2][3] = G4ThreeVector(-120.971,-19.2055,159.488);
+
+  tigressBackPos[3][0] = G4ThreeVector(71.959,-99.1197,159.488);
+  tigressBackPos[3][1] = G4ThreeVector(87.4102,-136.422,119.112);
+  tigressBackPos[3][2] = G4ThreeVector(34.6566,-158.273,119.112);
+  tigressBackPos[3][3] = G4ThreeVector(19.2055,-120.971,159.488);
+
+  tigressBackPos[4][0] = G4ThreeVector(171.079,101.765,28.55);
+  tigressBackPos[4][1] = G4ThreeVector(171.079,101.765,-28.55);
+  tigressBackPos[4][2] = G4ThreeVector(192.93,49.0119,-28.55);
+  tigressBackPos[4][3] = G4ThreeVector(192.93,49.0119,28.55);
+
+  tigressBackPos[5][0] = G4ThreeVector(49.0119,192.93,28.55);
+  tigressBackPos[5][1] = G4ThreeVector(49.0119,192.93,-28.55);
+  tigressBackPos[5][2] = G4ThreeVector(101.765,171.079,-28.55);
+  tigressBackPos[5][3] = G4ThreeVector(101.765,171.079,28.55);
+
+  tigressBackPos[6][0] = G4ThreeVector(-101.765,171.079,28.55);
+  tigressBackPos[6][1] = G4ThreeVector(-101.765,171.079,-28.55);
+  tigressBackPos[6][2] = G4ThreeVector(-49.0119,192.93,-28.55);
+  tigressBackPos[6][3] = G4ThreeVector(-49.0119,192.93,28.55);
+
+  tigressBackPos[7][0] = G4ThreeVector(-192.93,49.0119,28.55);
+  tigressBackPos[7][1] = G4ThreeVector(-192.93,49.0119,-28.55);
+  tigressBackPos[7][2] = G4ThreeVector(-171.079,101.765,-28.55);
+  tigressBackPos[7][3] = G4ThreeVector(-171.079,101.765,28.55);
+
+  tigressBackPos[8][0] = G4ThreeVector(-171.079,-101.765,28.55);
+  tigressBackPos[8][1] = G4ThreeVector(-171.079,-101.765,-28.55);
+  tigressBackPos[8][2] = G4ThreeVector(-192.93,-49.0119,-28.55);
+  tigressBackPos[8][3] = G4ThreeVector(-192.93,-49.0119,28.55);
+
+  tigressBackPos[9][0] = G4ThreeVector(-49.0119,-192.93,28.55);
+  tigressBackPos[9][1] = G4ThreeVector(-49.0119,-192.93,-28.55);
+  tigressBackPos[9][2] = G4ThreeVector(-101.765,-171.079,-28.55);
+  tigressBackPos[9][3] = G4ThreeVector(-101.765,-171.079,28.55);
+
+  tigressBackPos[10][0] = G4ThreeVector(101.765,-171.079,28.55);
+  tigressBackPos[10][1] = G4ThreeVector(101.765,-171.079,-28.55);
+  tigressBackPos[10][2] = G4ThreeVector(49.0119,-192.93,-28.55);
+  tigressBackPos[10][3] = G4ThreeVector(49.0119,-192.93,28.55);
+
+  tigressBackPos[11][0] = G4ThreeVector(192.93,-49.0119,28.55);
+  tigressBackPos[11][1] = G4ThreeVector(192.93,-49.0119,-28.55);
+  tigressBackPos[11][2] = G4ThreeVector(171.079,-101.765,-28.55);
+  tigressBackPos[11][3] = G4ThreeVector(171.079,-101.765,28.55);
+
+  tigressBackPos[12][0] = G4ThreeVector(136.422,87.4102,-119.112);
+  tigressBackPos[12][1] = G4ThreeVector(99.1197,71.959,-159.488);
+  tigressBackPos[12][2] = G4ThreeVector(120.971,19.2055,-159.488);
+  tigressBackPos[12][3] = G4ThreeVector(158.273,34.6566,-119.112);
+
+  tigressBackPos[13][0] = G4ThreeVector(-87.4102,136.422,-119.112);
+  tigressBackPos[13][1] = G4ThreeVector(-71.959,99.1197,-159.488);
+  tigressBackPos[13][2] = G4ThreeVector(-19.2055,120.971,-159.488);
+  tigressBackPos[13][3] = G4ThreeVector(-34.6566,158.273,-119.112);
+
+  tigressBackPos[14][0] = G4ThreeVector(-136.422,-87.4102,-119.112);
+  tigressBackPos[14][1] = G4ThreeVector(-99.1197,-71.959,-159.488);
+  tigressBackPos[14][2] = G4ThreeVector(-120.971,-19.2055,-159.488);
+  tigressBackPos[14][3] = G4ThreeVector(-158.273,-34.6566,-119.112);
+
+  tigressBackPos[15][0] = G4ThreeVector(87.4102,-136.422,-119.112);
+  tigressBackPos[15][1] = G4ThreeVector(71.959,-99.1197,-159.488);
+  tigressBackPos[15][2] = G4ThreeVector(19.2055,-120.971,-159.488);
+  tigressBackPos[15][3] = G4ThreeVector(34.6566,-158.273,-119.112);
+
   G4cout << "Results - creating tree... ";
   TreeCreate();
   G4cout << "created!" << G4endl;
@@ -120,7 +281,9 @@ void Results::TreeCreate() {
     tree->Branch("GammaEnergyAddBack", GHit.GEAB, "GEAB[GfoldAB]/D");
     if(theDetector->GetUseTIGRESSSegments()){
       tree->Branch("TigressSegmentFold", &SegHit.segfold, "segfold/I");
-      tree->Branch("TigressSegmentId", SegHit.segId, "segId[segfold]/I");
+      tree->Branch("TigressSegmentPosId", SegHit.segPos, "segPos[segfold]/I");
+      tree->Branch("TigressSegmentCoreId", SegHit.segCore, "segCore[segfold]/I");
+      tree->Branch("TigressSegmentSegId", SegHit.segId, "segId[segfold]/I");
       tree->Branch("TigressSegmentNumHits", SegHit.segNumHits, "segNumHits[segfold]/I");
       tree->Branch("TigressSegmentx", SegHit.segx, "segx[segfold]/D");
       tree->Branch("TigressSegmenty", SegHit.segy, "segy[segfold]/D");
@@ -138,7 +301,9 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmentE", SegHit.segE, "segE[segfold]/D");
       tree->Branch("TigressSegmentW", SegHit.segw, "segw[segfold]/D");
       tree->Branch("TigressSegmentMaxEFold", &SegHit.maxESegfold, "maxESegfold/I");
-      tree->Branch("TigressSegmentMaxEId", SegHit.maxESegId, "maxESegId[maxESegfold]/I");
+      tree->Branch("TigressSegmentMaxEPosId", SegHit.maxESegPos, "maxESegPos[maxESegfold]/I");
+      tree->Branch("TigressSegmentMaxECoreId", SegHit.maxESegCore, "maxESegCore[maxESegfold]/I");
+      tree->Branch("TigressSegmentMaxESegId", SegHit.maxESegId, "maxESegId[maxESegfold]/I");
       tree->Branch("TigressSegmentMaxENumHits", SegHit.maxESegNumHits, "maxESegNumHits[maxESegfold]/I");
       if(theDetector->GetUseTIGRESSSegmentsSph()){
         tree->Branch("TigressSegmentMaxECylSphr", SegHit.maxESegCylr, "maxESegCylr[maxESegfold]/D");
@@ -1094,6 +1259,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     G4int maxESeg;
     G4double segMaxE = 0.;
     SegHit.segfold = 0;
+    memset(&SegHit.segPos, 0, sizeof(SegHit.segPos));
+    memset(&SegHit.segCore, 0, sizeof(SegHit.segCore));
     memset(&SegHit.segId, 0, sizeof(SegHit.segId));
     memset(&SegHit.segNumHits, 0, sizeof(SegHit.segNumHits));
     memset(&SegHit.segx, 0, sizeof(SegHit.segx));
@@ -1106,6 +1273,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     memset(&SegHit.segE, 0, sizeof(SegHit.segE));
     memset(&SegHit.segw, 0, sizeof(SegHit.segw));
     SegHit.maxESegfold = 0;
+    memset(&SegHit.maxESegPos, 0, sizeof(SegHit.maxESegPos));
+    memset(&SegHit.maxESegCore, 0, sizeof(SegHit.maxESegCore));
     memset(&SegHit.maxESegId, 0, sizeof(SegHit.maxESegId));
     memset(&SegHit.maxESegNumHits, 0, sizeof(SegHit.maxESegNumHits));
     memset(&SegHit.maxESegCylr, 0, sizeof(SegHit.maxESegCylr));
@@ -1118,6 +1287,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
         maxESeg = -1;
         for (k = 0; k < TSEG; k++) { // number of segments
           if(tsw[i][j][k]>0){
+            SegHit.segPos[SegHit.segfold] = i+1;
+            SegHit.segCore[SegHit.segfold] = j+1;
             SegHit.segId[SegHit.segfold] = k+1;
             SegHit.segNumHits[SegHit.segfold] = tsh[i][j][k];
             SegHit.segx[SegHit.segfold] = tsp[i][j][k].getX();
@@ -1137,6 +1308,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           }
         }
         if(maxESeg >= 0){
+          SegHit.maxESegPos[SegHit.maxESegfold] = i+1;
+          SegHit.maxESegCore[SegHit.maxESegfold] = j+1;
           SegHit.maxESegId[SegHit.maxESegfold] = maxESeg+1;
           SegHit.maxESegNumHits[SegHit.maxESegfold] = tsh[i][j][maxESeg];
           SegHit.maxESegCylr[SegHit.maxESegfold] = tscp[i][j][maxESeg].getX();
@@ -1156,7 +1329,9 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   for (i = 0; i < GHit.GfoldAB; i++) // number of addback hits in the event
   {
     G4ThreeVector gammaVecPos = theDetector->GetDetectorPosition(GHit.GIdAB[eStat.dsfold] - 1);
-    G4ThreeVector gammaVecCore = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
+    //G4ThreeVector gammaVecCore = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
+    //G4ThreeVector gammaVecCore = tigressFwdPos[GHit.GIdAB[eStat.dsfold] - 1][GHit.GCryAB[eStat.dsfold]];
+    G4ThreeVector gammaVecCore = tigressBackPos[GHit.GIdAB[eStat.dsfold] - 1][GHit.GCryAB[eStat.dsfold]];
     if (gammaVecPos.mag() != 0)
       gammaVecPos.setMag(1.0);
     if (gammaVecCore.mag() != 0)

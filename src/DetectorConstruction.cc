@@ -377,17 +377,17 @@ void DetectorConstruction::AddDetectionSystemGriffinBack(G4int ndet)
 
       DetectionSystemGriffin* pGriffinDLS = new DetectionSystemGriffin(config, 1, griffinFwdBackPosition, hevimetSelector ); // Select Forward (0) or Back (1)
 
-      G4cout<<" Adding detector "<<det_num<<" for back configuration "<<G4endl;
+      //G4cout<<" Adding detector "<<det_num<<" for back configuration "<<G4endl;
         // getc(stdin);
       pGriffinDLS->SetUseSegments(useTigressSegments);
       pGriffinDLS->BuildDeadLayerSpecificCrystal(det_num-1);
-      G4cout<<" Built dead layer for detector "<<det_num<<G4endl;
+      //G4cout<<" Built dead layer for detector "<<det_num<<G4endl;
       pGriffinDLS->PlaceDeadLayerSpecificCrystal( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
-      G4cout<<" Placed dead layer for detector "<<det_num<<G4endl;
+      //G4cout<<" Placed dead layer for detector "<<det_num<<G4endl;
       pGriffinDLS->BuildEverythingButCrystals();
-      G4cout<<" Built everything but crystals for detector "<<det_num<<G4endl;
+      //G4cout<<" Built everything but crystals for detector "<<det_num<<G4endl;
       pGriffinDLS->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
-      G4cout<<" Placed everything but crystals for detector "<<det_num<<G4endl;
+      //G4cout<<" Placed everything but crystals for detector "<<det_num<<G4endl;
 
 
       for(int i=0 ; i<GS ; i++)

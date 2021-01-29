@@ -141,6 +141,8 @@ typedef struct {
 
 typedef struct {
   Int_t segfold;
+  Int_t segPos[GN*GS*TSEG];
+  Int_t segCore[GN*GS*TSEG];
   Int_t segId[GN*GS*TSEG];
   Int_t segNumHits[GN*GS*TSEG];
   Double_t segx[GN*GS*TSEG];
@@ -153,6 +155,8 @@ typedef struct {
   Double_t segE[GN*GS*TSEG];
   Double_t segw[GN*GS*TSEG];
   Int_t maxESegfold;
+  Int_t maxESegPos[GN*GS*TSEG];
+  Int_t maxESegCore[GN*GS*TSEG];
   Int_t maxESegId[GN*GS*TSEG];
   Int_t maxESegNumHits[GN*GS*TSEG];
   Double_t maxESegCylr[GN*GS*TSEG];
@@ -197,6 +201,9 @@ public:
   G4double FWHM_response(G4double);
   G4double CalculatePath(G4ThreeVector, G4ThreeVector);
   G4double CalculateBirksLawStep(G4int, G4double, G4double);
+
+  G4ThreeVector tigressFwdPos[GN][GS];
+  G4ThreeVector tigressBackPos[GN][GS];
 
 private:
   // ROOT Tree stuff

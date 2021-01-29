@@ -12,6 +12,7 @@
 *.jpg
 *.png
 *.dat
+*.C
 G4History.macro
 1
 gnuplot*
