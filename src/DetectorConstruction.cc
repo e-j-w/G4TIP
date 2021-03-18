@@ -228,6 +228,14 @@ void DetectorConstruction::AddDetectionSystemGriffinCustom(G4int ndet)
         pGriffinCustom->BuildEverythingButCrystals();
         pGriffinCustom->PlaceEverythingButCrystals( ExpHall_log, det_num-1, pos_num-1, useTigressPositions ) ;
 
+        for(int i=0 ; i<GS ; i++)
+        {
+          DetectorCrystalPosition[det_num-1][i]=pGriffinCustom->GetCrystalPosition(i);
+          //G4cout << "Position of detector " <<det_num-1 << ", crystal "<< i<<": " << DetectorCrystalPosition[det_num-1][i] << G4endl;                                                                                               
+        }
+        DetectorPosition[det_num-1]=pGriffinCustom->GetCrystalPosition(0)+pGriffinCustom->GetCrystalPosition(1)+pGriffinCustom->GetCrystalPosition(2)+pGriffinCustom->GetCrystalPosition(3);
+        DetectorPosition[det_num-1]/=4.;
+
     }
 }
 

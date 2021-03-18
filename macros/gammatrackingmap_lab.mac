@@ -1,0 +1,60 @@
+/Physics/Step 0.05 um
+/Physics/IgnoreNeutrons
+/Physics/FusionEvaporation
+/Construction/UseCsIBall
+/Construction/UsePlunger
+#INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
+/Run/Initialize
+/Griffin/UseTIGRESSPositions true
+/Griffin/SetCustomRadialDistance 25.0 cm
+/Griffin/SetCustomShieldsPresent 0
+/Griffin/addGriffinCustom 16
+/Projectile/A 18
+/Projectile/Z 8
+/Projectile/KE 48 MeV
+/Projectile/Focus/X 0. mm
+/Projectile/Focus/Y 0. mm
+/Projectile/Focus/Z -50. mm
+/Projectile/Focus/DX 0. mm
+/Projectile/Focus/DY 0. mm
+#
+# Plunger setup
+#
+/Plunger/Backing/Material G4_Galactic
+/Plunger/Backing/Thickness 0.001 um
+/Plunger/Backing/NStep 1
+/Plunger/Target/SetA 12
+/Plunger/Target/SetZ 6
+/Plunger/Target/Material G4_C
+/Plunger/Target/Thickness 1.91 um
+/Plunger/Target/NStep 1
+/Plunger/Stopper/Material G4_Au
+/Plunger/Stopper/Thickness 14.9 um
+/Plunger/Stopper/NStep 1
+/Plunger/Separation 50. um
+/Plunger/Report
+/FusionEvaporation/AddDecay 1.1732 1000e-3
+/FusionEvaporation/AddDecay 1.3325 1000e-3
+/FusionEvaporation/N_protons 0
+/FusionEvaporation/N_neutrons 0
+/FusionEvaporation/N_alpha 2
+/FusionEvaporation/CompoundFormationQ 23.651 MeV
+/FusionEvaporation/Q1 -10.643 MeV
+/FusionEvaporation/Q2 -10.615 MeV
+/FusionEvaporation/Centroid 14.16082
+/FusionEvaporation/Width 1.001135
+/FusionEvaporation/Tau 2.286506
+#/FusionEvaporation/ConstrainParticleAngularRange
+#/FusionEvaporation/MaxParticleAngle 50.0 deg
+/Results/Tree/CsIDetectorID 0
+/Trigger/CsIDetectorID 0
+/Trigger/A 4
+/Trigger/Z 2
+/Trigger/DefinedParticleCoincAndGamma
+#/Trigger/DefinedParticleCoincAnd2GammaCores
+/Trigger/CsIThreshold 3.0 MeV
+#/Print/CsI_Track_Set
+#/Print/Track_Set
+/run/beamOn 50000000
+#/Results/Tree/Report
+/Results/Tree/Save run1_map.root
