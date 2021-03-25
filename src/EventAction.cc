@@ -397,7 +397,7 @@ void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos,
     //G4cout << "detector pos: " << theDetector->GetDetectorPosition(det) << ", crystal position: " << theDetector->GetDetectorCrystalPosition(det,cry) << ", dist between: " << (theDetector->GetDetectorPosition(det) - theDetector->GetDetectorCrystalPosition(det,cry)).mag() << G4endl;
     //G4cout << "r: " << r << " phi: " << phi/deg << " phi2: " << phi2/deg << " z: " << z << " seg: " << seg << G4endl;
     if(TigressSegWeightDet[det][cry][seg]==0.){
-      TigressSegHitsDet[det][cry][seg]++;
+      TigressSegHitsDet[det][cry][seg]=1;
       TigressSegWeightDet[det][cry][seg]=w;
       TigressSegEnergyDet[det][cry][seg]=de;
       TigressSegPosDet[det][cry][seg]=de*pos;

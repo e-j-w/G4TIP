@@ -316,6 +316,22 @@ void Results::TreeCreate() {
         tree->Branch("TigressSegmentMaxECylz", SegHit.maxESegCylz, "maxESegCylz[maxESegfold]/D");
       }
       tree->Branch("TigressSegmentMaxESegE", SegHit.maxESegE, "maxESegE[maxESegfold]/D");
+      tree->Branch("TigressSegmentFullEFold", &SegHit.fullESegfold, "fullESegfold/I");
+      tree->Branch("TigressSegmentFullEPosId", SegHit.fullESegPos, "fullESegPos[fullESegfold]/I");
+      tree->Branch("TigressSegmentFullECoreId", SegHit.fullESegCore, "fullESegCore[fullESegfold]/I");
+      tree->Branch("TigressSegmentFullESegId", SegHit.fullESegId, "fullESegId[fullESegfold]/I");
+      tree->Branch("TigressSegmentFullENumHits", SegHit.fullESegNumHits, "fullESegNumHits[fullESegfold]/I");
+      if(theDetector->GetUseTIGRESSSegmentsSph()){
+        tree->Branch("TigressSegmentFullECylSphr", SegHit.fullESegCylr, "fullESegCylr[fullESegfold]/D");
+        tree->Branch("TigressSegmentFullECylSphphi", SegHit.fullESegCylphi, "fullESegCylphi[fullESegfold]/D");
+        tree->Branch("TigressSegmentFullECylSphz", SegHit.fullESegCylz, "fullESegCylz[fullESegfold]/D");
+      }else{
+        tree->Branch("TigressSegmentFullECylr", SegHit.fullESegCylr, "fullESegCylr[fullESegfold]/D");
+        tree->Branch("TigressSegmentFullECylrFrac", SegHit.fullESegCylrFrac, "fullESegCylrFrac[fullESegfold]/D");
+        tree->Branch("TigressSegmentFullECylphi", SegHit.fullESegCylphi, "fullESegCylphi[fullESegfold]/D");
+        tree->Branch("TigressSegmentFullECylz", SegHit.fullESegCylz, "fullESegCylz[fullESegfold]/D");
+      }
+      tree->Branch("TigressSegmentFullESegE", SegHit.fullESegE, "fullESegE[fullESegfold]/D");
     }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
     tree->Branch("DopplerShiftFactorArrayPos", &eStat.dsPos, "dsPos[dsfold]/D");
@@ -1256,7 +1272,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
 
   //TIGRESS segment event tracking
   if(theDetector->GetUseTIGRESSSegments()){
-    G4int maxESeg;
+    G4int maxESeg, numSegHits;
     G4double segMaxE = 0.;
     SegHit.segfold = 0;
     memset(&SegHit.segPos, 0, sizeof(SegHit.segPos));
@@ -1282,9 +1298,20 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
     memset(&SegHit.maxESegCylphi, 0, sizeof(SegHit.maxESegCylphi));
     memset(&SegHit.maxESegCylz, 0, sizeof(SegHit.maxESegCylz));
     memset(&SegHit.maxESegE, 0, sizeof(SegHit.maxESegE));
+    SegHit.fullESegfold = 0;
+    memset(&SegHit.fullESegPos, 0, sizeof(SegHit.fullESegPos));
+    memset(&SegHit.fullESegCore, 0, sizeof(SegHit.fullESegCore));
+    memset(&SegHit.fullESegId, 0, sizeof(SegHit.fullESegId));
+    memset(&SegHit.fullESegNumHits, 0, sizeof(SegHit.fullESegNumHits));
+    memset(&SegHit.fullESegCylr, 0, sizeof(SegHit.fullESegCylr));
+    memset(&SegHit.fullESegCylrFrac, 0, sizeof(SegHit.fullESegCylrFrac));
+    memset(&SegHit.fullESegCylphi, 0, sizeof(SegHit.fullESegCylphi));
+    memset(&SegHit.fullESegCylz, 0, sizeof(SegHit.fullESegCylz));
+    memset(&SegHit.fullESegE, 0, sizeof(SegHit.fullESegE));
     for (i = 0; i < GN; i++)   // number of positions
       for (j = 0; j < GS; j++) { // number of crystals
         maxESeg = -1;
+        numSegHits = 0;
         for (k = 0; k < TSEG; k++) { // number of segments
           if(tsw[i][j][k]>0){
             SegHit.segPos[SegHit.segfold] = i+1;
@@ -1305,6 +1332,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
             }
             SegHit.segw[SegHit.segfold] = tsw[i][j][k];
             SegHit.segfold++;
+            numSegHits++;
           }
         }
         if(maxESeg >= 0){
@@ -1318,6 +1346,20 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
           SegHit.maxESegCylrFrac[SegHit.maxESegfold] = SegHit.maxESegCylr[SegHit.maxESegfold]/theDetector->GetTIGRESSGermaniumRadius(maxESeg,SegHit.maxESegCylz[SegHit.maxESegfold],SegHit.maxESegCylphi[SegHit.maxESegfold]);
           SegHit.maxESegE[SegHit.maxESegfold] = tse[i][j][maxESeg];
           SegHit.maxESegfold++;
+        }
+        if(numSegHits == 1){
+          //only one segment fired in the core, with the full energy deposit
+          Int_t fullESeg = SegHit.segId[0]-1;
+          SegHit.fullESegPos[SegHit.fullESegfold] = i+1;
+          SegHit.fullESegCore[SegHit.fullESegfold] = j+1;
+          SegHit.fullESegId[SegHit.fullESegfold] = fullESeg+1;
+          SegHit.fullESegNumHits[SegHit.fullESegfold] = tsh[i][j][fullESeg];
+          SegHit.fullESegCylr[SegHit.fullESegfold] = tscp[i][j][fullESeg].getX();
+          SegHit.fullESegCylphi[SegHit.fullESegfold] = tscp[i][j][fullESeg].getY();
+          SegHit.fullESegCylz[SegHit.fullESegfold] = tscp[i][j][fullESeg].getZ();
+          SegHit.fullESegCylrFrac[SegHit.fullESegfold] = SegHit.fullESegCylr[SegHit.fullESegfold]/theDetector->GetTIGRESSGermaniumRadius(fullESeg,SegHit.fullESegCylz[SegHit.fullESegfold],SegHit.fullESegCylphi[SegHit.fullESegfold]);
+          SegHit.fullESegE[SegHit.fullESegfold] = tse[i][j][fullESeg];
+          SegHit.fullESegfold++;
         }
       }     
   }
