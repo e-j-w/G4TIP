@@ -52,7 +52,7 @@ class GriffinMessenger: public G4UImessenger
     G4UIcmdWith3Vector*         AddDetectionSystemGriffinSetDeadLayerCmd ;
     G4UIcmdWithABool*           UseTIGRESSPositionsCmd;
     G4UIcmdWithABool*           UseTIGRESSSegmentsCmd;
-    G4UIcmdWithABool*           UseTIGRESSSegmentsSphCmd;
+    G4UIcmdWithoutParameter*    UseTIGRESSSegmentsSphCmd;
 
 };
 

@@ -6,6 +6,7 @@
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize
 /Griffin/UseTIGRESSPositions true
+/Griffin/FrontSegmentTrackingSpherical
 /Griffin/SetCustomRadialDistance 25.0 cm
 /Griffin/SetCustomShieldsPresent 0
 /Griffin/addGriffinCustom 16

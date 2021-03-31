@@ -91,7 +91,7 @@ GriffinMessenger::GriffinMessenger(DetectorConstruction* Det)
   UseTIGRESSSegmentsCmd->SetGuidance("Construct detector(s) using TIGRESS sgements (geometry may not be accurate).");
   UseTIGRESSSegmentsCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  UseTIGRESSSegmentsSphCmd = new G4UIcmdWithABool("/Griffin/FrontSegmentTrackingSpherical",this);
+  UseTIGRESSSegmentsSphCmd = new G4UIcmdWithoutParameter("/Griffin/FrontSegmentTrackingSpherical",this);
   UseTIGRESSSegmentsSphCmd->SetGuidance("Set the tracking in front TIGRESS segments to use spherical coordinates rather than cylindrical (to better follow the electric field).");
   UseTIGRESSSegmentsSphCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -180,7 +180,8 @@ void GriffinMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     Detector->SetUseTIGRESSSegments(UseTIGRESSSegmentsCmd->GetNewBoolValue(newValue));
   }
   if( command == UseTIGRESSSegmentsSphCmd ) {
-    Detector->SetUseTIGRESSSegmentsSph(UseTIGRESSSegmentsSphCmd->GetNewBoolValue(newValue));
+    G4cout << "Using spherical coorinates for TIGRESS front segment hit position tracking." << G4endl;
+    Detector->SetUseTIGRESSSegmentsSph(true);
   }
 
 }
