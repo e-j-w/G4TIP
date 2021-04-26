@@ -47,11 +47,12 @@
 /Trigger/CsIDetectorID 0
 /Trigger/A 4
 /Trigger/Z 2
-/Trigger/DefinedParticleCoincAndGamma
+/Trigger/GammaSingles
+#/Trigger/DefinedParticleCoincAndGamma
 #/Trigger/DefinedParticleCoincAnd2GammaCores
-/Trigger/CsIThreshold 3.0 MeV
+/Trigger/CsIThreshold 0.5 MeV
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-/run/beamOn 1000000
+/run/beamOn 50000000
 #/Results/Tree/Report
 /Results/Tree/Save run1_1274level_rdm.root

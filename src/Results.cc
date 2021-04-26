@@ -334,13 +334,13 @@ void Results::TreeCreate() {
       tree->Branch("TigressSegmentFullESegE", SegHit.fullESegE, "fullESegE[fullESegfold]/D");
     }
     tree->Branch("DopplerShiftFactorFold", &eStat.dsfold, "dsfold/I");
-    tree->Branch("DopplerShiftFactorArrayPos", &eStat.dsPos, "dsPos[dsfold]/D");
-    tree->Branch("DopplerShiftFactorCore", &eStat.dsCore, "dsCore[dsfold]/D");
-    tree->Branch("DSArrayPosReconstructedTheta", &eStat.thetaPos, "thetaPos[dsfold]/D");
-    tree->Branch("DSCoreReconstructedTheta", &eStat.thetaCore, "thetaCore[dsfold]/D");
-    tree->Branch("DSArrayPosReconstructedGammaEnergyAddBack", &eStat.GEABPos, "GEABPos[dsfold]/D");
-    tree->Branch("DSCoreReconstructedGammaEnergyAddBack", &eStat.GEABCore, "GEABCore[dsfold]/D");
-    tree->Branch("calcERecoil", &eStat.calcERes, "calcERes[dsfold]/D");
+    tree->Branch("DopplerShiftFactorArrayPos", eStat.dsPos, "dsPos[dsfold]/D");
+    tree->Branch("DopplerShiftFactorCore", eStat.dsCore, "dsCore[dsfold]/D");
+    tree->Branch("DSArrayPosReconstructedTheta", eStat.thetaPos, "thetaPos[dsfold]/D");
+    tree->Branch("DSCoreReconstructedTheta", eStat.thetaCore, "thetaCore[dsfold]/D");
+    tree->Branch("DSArrayPosReconstructedGammaEnergyAddBack", eStat.GEABPos, "GEABPos[dsfold]/D");
+    tree->Branch("DSCoreReconstructedGammaEnergyAddBack", eStat.GEABCore, "GEABCore[dsfold]/D");
+    tree->Branch("calcERecoil", eStat.calcERes, "calcERes[dsfold]/D");
     tree->Branch("CsIFold", &partHit.CsIfold, "CsIfold/I");
     tree->Branch("CsIx", partHit.x, "x[CsIfold]/D");
     tree->Branch("CsIy", partHit.y, "y[CsIfold]/D");
@@ -1146,7 +1146,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                       (*CsICollection)[i]->GetMom().getZ() / MeV;
                   partHit.b[partHit.CsIfold] = (*CsICollection)[i]->GetBeta();
                   partHit.E[partHit.CsIfold] =
-                      (*CsICollection)[i]->GetKE() / MeV;
+                      (*CsICollection)[i]->GetEdep() / MeV;
                   partHit.dE[partHit.CsIfold] =
                       (*CsICollection)[i]->GetKE() / MeV;
                   partHit.w[partHit.CsIfold] = (*CsICollection)[i]->GetWeight();
@@ -1156,12 +1156,12 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                   partHit.r[partHit.CsIfold] = (*CsICollection)[i]->GetRingId();
                   // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in
                   // microns
-                  // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+                  // partHit.dEdx=((*CsICollection)[i]->GetEdep()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
                   partHit.path[partHit.CsIfold] =
                       ((*CsICollection)[i]->GetPathLength() / cm) * CsIDensity *
                       1000; // in mg/cm^2
                   partHit.dEdx[partHit.CsIfold] =
-                      ((*CsICollection)[i]->GetKE() / MeV) /
+                      ((*CsICollection)[i]->GetEdep() / MeV) /
                       (((*CsICollection)[i]->GetPathLength() / cm) *
                        CsIDensity * 1000);
                   partHit.dLdx[partHit.CsIfold] = CalculateBirksLawStep(
@@ -1173,23 +1173,20 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                   // printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL
                   // %9.3f  LY
                   // %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-                } else if ((*CsICollection)[i]->GetKE() > 0.) // later entries
-                                                              // for a given
-                                                              // detector with
-                                                              // nonzero energy
-                {
+                } else if ((*CsICollection)[i]->GetEdep() > 0.){ // later entries for a given detector with nonzero energy
                   partHit.E[partHit.CsIfold] +=
-                      (*CsICollection)[i]->GetKE() / MeV;
+                      (*CsICollection)[i]->GetEdep() / MeV;
                   partHit.dE[partHit.CsIfold] =
-                      (*CsICollection)[i]->GetKE() / MeV;
+                      (*CsICollection)[i]->GetEdep() / MeV;
+                  //printf("i=%i, detID=%i, de: %10.10f\n",i,(*CsICollection)[i]->GetId(),(*CsICollection)[i]->GetEdep() / MeV);
                   // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; //
                   // in microns
-                  // partHit.dEdx=((*CsICollection)[i]->GetKE()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
+                  // partHit.dEdx=((*CsICollection)[i]->GetEdep()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
                   partHit.path[partHit.CsIfold] +=
                       ((*CsICollection)[i]->GetPathLength() / cm) * CsIDensity *
                       1000; // in mg/cm^2
                   partHit.dEdx[partHit.CsIfold] =
-                      ((*CsICollection)[i]->GetKE() / MeV) /
+                      ((*CsICollection)[i]->GetEdep() / MeV) /
                       (((*CsICollection)[i]->GetPathLength() / cm) *
                        CsIDensity * 1000);
                   partHit.dLdx[partHit.CsIfold] = CalculateBirksLawStep(
@@ -1204,11 +1201,15 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
               }
             // getc(stdin);
           }
-      if (partHit.E[partHit.CsIfold] > 0.)
-        partHit.CsIfold++; // increase fold if energy in a given detector is
-                           // greater than 0
+
+      if (partHit.E[partHit.CsIfold] > 0.){
+        //printf("energy: %10.10f\n",partHit.E[partHit.CsIfold]/MeV);
+        partHit.CsIfold++; // increase fold if energy in a given detector is greater than 0
+      }
     }
   } // end of CsI collection entry saving
+
+	
 
   //TIGRESS/GRIFFIN event tracking
   GHit.Gfold = 0;
@@ -1390,8 +1391,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       partMom.setY(partHit.py[j]);
       partMom.setZ(partHit.pz[j]);
       partDir = PP[partHit.Id[j] - 1]; // get direction to CsI detector
-      partDir.setMag(
-          partMom.mag()); // turn direction vector into momentum vector
+      if (partDir.mag() != 0)
+        partDir.setMag(partMom.mag()); // turn direction vector into momentum vector
       resMom -= partDir;
     }
     eStat.calcERes[eStat.dsfold] = resMom * resMom / (2. * 931.45 * Ar);

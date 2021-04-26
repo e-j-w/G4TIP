@@ -195,7 +195,7 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 	        
 	        //set entries in detectors below energy threshold to 0
 	        for(int i=0;i<Np;i++)
-            if((partECsI[(*CsI)[i]->GetId()-1]<CsIThreshold))
+            if(((*CsI)[i]->GetKE() / MeV)<CsIThreshold)
 	            (*CsI)[i]->SetKE(0.0);
 	        
 	        //CsI singles trigger

@@ -31,7 +31,7 @@
 #define GN 16
 #define GS 4
 #define TSEG 8 //TIGRESS segments per position
-#define NCsI 24
+#define NCsI 128
 #define PI 3.14159
 #define S16K 16384
 #define RADIAN 57.29583

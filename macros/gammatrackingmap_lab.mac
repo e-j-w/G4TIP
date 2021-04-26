@@ -6,7 +6,6 @@
 #INITIALIZATION IS REQUIRED ONCE THE PHYSICS COMMANDS HAVE BEEN SET UP
 /Run/Initialize
 /Griffin/UseTIGRESSPositions true
-/Griffin/FrontSegmentTrackingSpherical
 /Griffin/SetCustomRadialDistance 25.0 cm
 /Griffin/SetCustomShieldsPresent 0
 /Griffin/addGriffinCustom 16
@@ -56,6 +55,6 @@
 /Trigger/CsIThreshold 3.0 MeV
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-/run/beamOn 50000000
+/run/beamOn 10000000
 #/Results/Tree/Report
 /Results/Tree/Save run1_map.root
