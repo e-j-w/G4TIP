@@ -273,7 +273,7 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
         else
           G4cout << "WARNING: bad angular distribution!" << G4endl;
         //generate random number between -1 and 1 to bias legendre polynomial against 
-        G4double num = CLHEP::RandFlat::shoot(2.0);
+        G4double num = CLHEP::RandFlat::shoot()*2.0;
         num=num-1.0;
         //G4cout <<  num << G4endl;
         if(num>lpval){

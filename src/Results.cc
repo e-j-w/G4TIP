@@ -405,8 +405,7 @@ void Results::TreeCreate() {
     } 
 
     //setup branches that are relevant to the chosen reaction
-    switch(thePhysicsList->getReactionType()==0)
-    {
+    switch(thePhysicsList->getReactionType()){
       case 1:
         //coulex
         break;
@@ -612,8 +611,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             pTIn_plunger.w = (*IonCollection)[i]->GetWeight();
           }
-      }
-      else if ((*IonCollection)[i]->GetFlag() == PLUNGER_TARGET_OUT_FLAG) {
+      } else if ((*IonCollection)[i]->GetFlag() == PLUNGER_TARGET_OUT_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ap)
           if ((*IonCollection)[i]->GetZ() == Zp) {
             pTOut_plunger.x = (*IonCollection)[i]->GetPos().getX() / mm;
@@ -662,8 +660,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rTOut_plunger.w = (*IonCollection)[i]->GetWeight();
           }
-      }
-      else if ((*IonCollection)[i]->GetFlag() == PLUNGER_DEGRADER_IN_FLAG) {
+      } else if ((*IonCollection)[i]->GetFlag() == PLUNGER_DEGRADER_IN_FLAG) {
         if ((*IonCollection)[i]->GetA() == Ar)
           if ((*IonCollection)[i]->GetZ() == Zr) {
             rDIn_plunger.x = (*IonCollection)[i]->GetPos().getX() / mm;
@@ -687,10 +684,9 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
                               (*IonCollection)[i]->GetMom().getY())) /
                 degree; // angle between (1,0,0) and momentum vector in x and y
             rDIn_plunger.w = (*IonCollection)[i]->GetWeight();
-	    }
-        }
-      else if ((*IonCollection)[i]->GetFlag() == PLUNGER_DEGRADER_OUT_FLAG) {
-	if ((*IonCollection)[i]->GetA() == Ar)
+	      }
+      } else if ((*IonCollection)[i]->GetFlag() == PLUNGER_DEGRADER_OUT_FLAG) {
+        if ((*IonCollection)[i]->GetA() == Ar)
           if ((*IonCollection)[i]->GetZ() == Zr) {
             rDOut_plunger.x = (*IonCollection)[i]->GetPos().getX() / mm;
             rDOut_plunger.y = (*IonCollection)[i]->GetPos().getY() / mm;
@@ -1112,26 +1108,13 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
 
   G4int i, j, k;
   if (Np > 0) {
-    for (j = 1; j < NCsISph + 1; j++) // loop through CsI detector IDs (1 indexed)
-    {
+    for (j = 1; j < NCsISph + 1; j++){ // loop through CsI detector IDs (1 indexed)
       if ((j < NCsI + 1) || (theDetector->GetAncArrayType()==1)) // check whether index is valid for wall/ball
-        if ((CsITrigId == 0) ||
-            (CsITrigId == j)) // save only data for the detectors we want to see
-          for (i = 0; i < Np; i++) // loop through all entries in the collection
-          {
-            if ((*CsICollection)[i]->GetDisabled() == 0) // don't save any
-                                                         // entries which have
-                                                         // been disabled due to
-                                                         // trigger conditions
-              if ((*CsICollection)[i]->GetId() == j)     // check whether entry
-              // belongs to the detector
-              // we are looking at
-              {
-                if ((partHit.E[partHit.CsIfold] == 0.) &&
-                    ((*CsICollection)[i]->GetKE() > 0.)) // first entry for a
-                                                         // given detector with
-                                                         // nonzero energy
-                {
+        if ((CsITrigId == 0) || (CsITrigId == j)) // save only data for the detectors we want to see
+          for (i = 0; i < Np; i++){ // loop through all entries in the collection
+            if ((*CsICollection)[i]->GetDisabled() == 0) // don't save any entries which have been disabled due to trigger conditions
+              if ((*CsICollection)[i]->GetId() == j){     // check whether entry belongs to the detector we are looking at
+                if ((partHit.E[partHit.CsIfold] == 0.) && ((*CsICollection)[i]->GetKE() > 0.)){ // first entry for a given detector with nonzero energy
                   partHit.x[partHit.CsIfold] =
                       (*CsICollection)[i]->GetPos().getX() / mm;
                   partHit.y[partHit.CsIfold] =
@@ -1369,8 +1352,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   // gamma and evaporated particles were seen
   Double_t beta; // speed of recoil (calculated)
   eStat.dsfold = 0;
-  for (i = 0; i < GHit.GfoldAB; i++) // number of addback hits in the event
-  {
+  for (i = 0; i < GHit.GfoldAB; i++) { // number of addback hits in the event
     G4ThreeVector gammaVecPos = theDetector->GetDetectorPosition(GHit.GIdAB[eStat.dsfold] - 1);
     //G4ThreeVector gammaVecCore = theDetector->GetDetectorCrystalPosition(GHit.GIdAB[eStat.dsfold] - 1, GHit.GCryAB[eStat.dsfold]);
     //G4ThreeVector gammaVecCore = tigressFwdPos[GHit.GIdAB[eStat.dsfold] - 1][GHit.GCryAB[eStat.dsfold]];

@@ -103,6 +103,11 @@ Target_Messenger::Target_Messenger(Target* Tar)
   BZCmd->SetParameterName("choice",false);
   BZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  BTarCmd = new G4UIcmdWithADouble("/DSAMTarget/Backing/ThicknessMgCm2",this);
+  BTarCmd->SetGuidance("Select the thickness for the backing in mg/cm^2");
+  BTarCmd->SetParameterName("choice",false);
+  BTarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   BOCmd = new G4UIcmdWithADoubleAndUnit("/DSAMTarget/Backing/Offset",this);
   BOCmd->SetGuidance("Specify an offset for the backing (for use as a degrader)");
   BOCmd->SetParameterName("choice",false);
@@ -142,6 +147,7 @@ Target_Messenger::~Target_Messenger()
   delete BTauCmd;
   delete BRCmd;
   delete BZCmd;
+  delete BTarCmd;
   delete BOCmd;
   delete BMatCmd;
   delete TargetDir;
@@ -203,6 +209,8 @@ if( command == BFrCmd )
    { aTarget->setBackingR(BRCmd->GetNewDoubleValue(newValue));}
   if( command == BZCmd )
    { aTarget->setBackingZ(BZCmd->GetNewDoubleValue(newValue));}
+  if( command == BTarCmd )
+   { aTarget->SetBacThickness(BTarCmd->GetNewDoubleValue(newValue));}
   if( command == BOCmd )
    { aTarget->setBackingOffset(BZCmd->GetNewDoubleValue(newValue));}
 

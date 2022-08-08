@@ -305,3 +305,25 @@ void Target::SetTarThickness(G4double Z)
   Target_log->SetUserLimits(target_limits);
   G4cout<<"----> Target thickness is set to   "<<G4BestUnit(2.*aTarget->GetZHalfLength(),"Length")<<2.*aTarget->GetZHalfLength()/cm*Target_log->GetMaterial()->GetDensity()/g*cm3*1000<<" mg/cm^2"<<G4endl;
 }
+//-----------------------------------------------------------------------------
+void Target::SetBacThickness(G4double Z)
+{
+ 
+  G4double density;
+  Z/=1000.;
+  Z*=g;
+  Z/=cm2;
+  density=Backing_log->GetMaterial()->GetDensity();
+  Backing_thickness=Z/density;
+  aBacking->SetZHalfLength(Backing_thickness/2.);
+  G4ThreeVector shift;
+  shift.setX(0.);
+  shift.setY(0.);
+  shift.setZ(0.5*Backing_thickness);
+  Backing_phys->SetTranslation(shift);
+  G4RunManager::GetRunManager()->GeometryHasBeenModified();
+  backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
+  Backing_log->SetUserLimits(backing_limits);
+  G4cout<<"----> Backing thickness is set to   "<<G4BestUnit(2.*aBacking->GetZHalfLength(),"Length")<<2.*aBacking->GetZHalfLength()/cm*Backing_log->GetMaterial()->GetDensity()/g*cm3*1000<<" mg/cm^2"<<G4endl;
+
+}

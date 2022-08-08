@@ -122,7 +122,7 @@ These commands will only be used if `/Construction/UseDSAMTarget` is set.
 | /DSAMTarget/Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /DSAMTarget/Backing/Z NUMBER | The proton number of the target backing. |
 | /DSAMTarget/Backing/Material STRING<sup>1</sup> | The target backing material. |
-| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness. |
+| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Backing/ThicknessMgCm2`). |
 
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 

@@ -47,6 +47,7 @@ class Target
   void setNTStep(G4int);
   void setNBStep(G4int);
   void SetTarThickness(G4double);
+  void SetBacThickness(G4double);
   void setFracReactionBacking(G4double);
   void setFracReactionTarget(G4double);
   void setFlagReactionBacking(G4bool flag){flagReactionBacking=flag;}
