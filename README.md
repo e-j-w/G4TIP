@@ -118,11 +118,11 @@ These commands will only be used if `/Construction/UseDSAMTarget` is set.
 | /DSAMTarget/Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
 | /DSAMTarget/Target/Z NUMBER | The proton number of the reaction target. |
 | /DSAMTarget/Target/Material STRING<sup>1</sup> | The reaction target material. |
-| /DSAMTarget/Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/ThicknessMgCm2`). |
+| /DSAMTarget/Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/DSAMTarget/Target/ThicknessMgCm2`). |
 | /DSAMTarget/Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /DSAMTarget/Backing/Z NUMBER | The proton number of the target backing. |
 | /DSAMTarget/Backing/Material STRING<sup>1</sup> | The target backing material. |
-| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Backing/ThicknessMgCm2`). |
+| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/DSAMTarget/Backing/ThicknessMgCm2`). |
 
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
@@ -136,7 +136,7 @@ These commands will only be used if `/Construction/UsePlunger` is set.
 | /Plunger/Backing/Material STRING<sup>1</sup> | The plunger target backing material. |
 | /Plunger/Backing/Thickness NUMBER um | The plunger target backing thickness. |
 | /Plunger/Target/Material STRING<sup>1</sup> | The plunger reaction target material. |
-| /Plunger/Target/Thickness NUMBER um | The plunger reaction target thickness. |
+| /Plunger/Target/Thickness NUMBER um | The plunger reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Plunger/Target/ThicknessMgCm2`). |
 | /Plunger/Stopper/Material STRING<sup>1</sup> | The plunger stopper/degrader material. |
 | /Plunger/Stopper/Thickness NUMBER um | The plunger reaction stopper/degrader thickness. |
 | /Plunger/Separation NUMBER um | The separation between the plunger target and stopper/degrader. |
