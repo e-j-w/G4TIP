@@ -3,6 +3,7 @@
 *.tar
 *.root
 *.mca
+*.spe
 *.mac
 *.macro
 *.out
@@ -13,6 +14,7 @@
 *.png
 *.dat
 *.C
+tree2mca*
 G4History.macro
 1
 gnuplot*

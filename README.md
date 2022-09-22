@@ -1,6 +1,6 @@
 # G4TIP
 
-This repo maintained by Jonathan Williams, see the list of contributors [below](#contributors).
+This repo is maintained by Jonathan Williams, see the full list of contributors [below](#contributors).
 
 ## Description
 
@@ -101,7 +101,7 @@ These commands configure the default target type, which is always used unless `/
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
+| /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer).  Alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/LayerX/ThicknessMgCm2`. |
 | /Target/LayerX/Position NUMBER um | The position of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
 | /Target/LayerX/A NUMBER | The mass number of the layer. |
 | /Target/LayerX/Material STRING<sup>1</sup> | The layer material. |
@@ -232,7 +232,7 @@ G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 
 ## Contributors<a name="contributors"></a>
 
-A. Chester - CsI wall code, Coulex implementation, RDM implementation.
+A. Chester - CsI wall code, Coulex implementation, plunger implementation.
 
 T. Ma - CsI ball code.
 
@@ -240,8 +240,10 @@ C. Morse - Finding and fixing memory leaks.
 
 K. Starosta - Initial TIP codebase.
 
-J. Williams - Fusion-evaporation implementation, DSAM implementation.
+J. Williams - Fusion-evaporation implementation, DSAM and arbitrary target implementation.
 
 F. Wu - Reaction code work and auditing.
 
-GRIFFIN/TIGRESS code based on code provided by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations
+GRIFFIN/TIGRESS code is based on work by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations
+
+You can cite [this](https://doi.org/10.1016/j.nima.2017.03.059) paper if using the fusion-evaporation process, or [this](https://doi.org/10.1016/j.nima.2017.11.029) paper if using the Coulex process.

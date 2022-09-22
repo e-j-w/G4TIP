@@ -29,13 +29,13 @@ void ArbitraryTarget::Construct()
   for(int i=0;i<NATARGETLAYERS;i++){
     Target_thickness[i]=1*um;
     TargetLayerPosition[i]=0.0*mm;
+    TargetA[i]=0;
     char layerName[30];
     snprintf(layerName,30,"targetlayer%i",i);
     aTargetLayer[i] = new G4Tubs(layerName,0.,Target_radius,Target_thickness[i]/2.,-1.*deg,361.*deg);
     Target_log[i] = new G4LogicalVolume(aTargetLayer[i],TargetMaterial[i],layerName,0,0,0);
     setTargetMaterial(i,"G4_Galactic"); //by default, all layers are vacuum unless otherwise specified by the user
   }
-  
   
 }
 //-----------------------------------------------------------------------------
@@ -156,7 +156,9 @@ void ArbitraryTarget::setTargetMaterial(G4int layer, G4String materialName)
   TargetMaterial[layer] = materials->FindMaterial(materialName);  
   Target_log[layer]->SetMaterial(TargetMaterial[layer]);
   TargetZ[layer]=TargetMaterial[layer]->GetZ();
-  TargetA[layer]=TargetMaterial[layer]->GetA();
+  if(TargetA[layer]<=0){
+    TargetA[layer]=TargetMaterial[layer]->GetA();
+  }
   G4cout << "----> Target layer " << layer << " material set to " << Target_log[layer]->GetMaterial()->GetName() << G4endl;         
 }
 //-------------------------------------------------------------------
@@ -175,6 +177,10 @@ void ArbitraryTarget::setTargetMass(G4int layer, G4int n)
     G4cout << "ERROR: attempted to adjust mass for invalid target layer (" << layer << ")" << G4endl;
     exit(-1);
   }
+  if(n<=0){
+    G4cout << "ERROR: invalid mass for target layer (" << layer << ")" << G4endl;
+    exit(-1);
+  }
   TargetA[layer]=n;
   G4cout << "----> Target layer " << layer << " mass number A set to " << TargetA[layer] << G4endl;  
 }
@@ -183,6 +189,10 @@ void ArbitraryTarget::setTargetCharge(G4int layer, G4int n)
 {
   if((layer<0)&&(layer>=NATARGETLAYERS)){
     G4cout << "ERROR: attempted to adjust charge for invalid target layer (" << layer << ")" << G4endl;
+    exit(-1);
+  }
+  if(n<0){
+    G4cout << "ERROR: invalid charge for target layer (" << layer << ")" << G4endl;
     exit(-1);
   }
   TargetZ[layer]=n;
