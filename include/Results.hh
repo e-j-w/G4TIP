@@ -133,6 +133,7 @@ typedef struct {
   Int_t GIdAB[GN * GS];
   Int_t GCryAB[GN * GS];
   Int_t GRingAB[GN * GS];
+  Int_t GSegRingAB[GN * GS];
   Double_t GxAB[GN * GS];
   Double_t GyAB[GN * GS];
   Double_t GzAB[GN * GS];
@@ -203,6 +204,7 @@ public:
   void TargetFaceF_CM();
   void SetTargetFaceCrossSection(G4double xs) { TargetFaceCrossSection = xs; };
   G4int RingMap(G4int, G4int);
+  G4int SegmentRingMap(G4int, G4int, G4int);
   void ReportCrystalPositions();
   void ReportCsIWallPositions();
   void GetCsIWallPositions();

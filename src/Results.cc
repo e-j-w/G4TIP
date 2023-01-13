@@ -259,7 +259,7 @@ void Results::TreeCreate() {
 
   char branchName[256];
 
-  if (tree == NULL) {
+  if(tree == NULL){
     tree = new TTree("tree", "tree");
     tree->Branch("GammaFold", &GHit.Gfold, "Gfold/I");
     tree->Branch("TigressID", GHit.GId, "GId[Gfold]/I");
@@ -275,6 +275,9 @@ void Results::TreeCreate() {
     tree->Branch("TigressIDAddBack", GHit.GIdAB, "GIdAB[GfoldAB]/I");
     tree->Branch("TigressCrystalAddBack", GHit.GCryAB, "GCryAB[GfoldAB]/I");
     tree->Branch("TigressRingAddBack", GHit.GRingAB, "GRingAB[GfoldAB]/I");
+    if(theDetector->GetUseTIGRESSSegments()){
+      tree->Branch("TigressSegmentRingAddBack", GHit.GSegRingAB, "GSegRingAB[GfoldAB]/I");
+    }
     tree->Branch("GxAddBack", GHit.GxAB, "GxAB[GfoldAB]/D");
     tree->Branch("GyAddBack", GHit.GyAB, "GyAB[GfoldAB]/D");
     tree->Branch("GzAddBack", GHit.GzAB, "GzAB[GfoldAB]/D");
@@ -436,6 +439,7 @@ void Results::TreeClear() {
 void Results::TreeReport() { tree->Print(); }
 //---------------------------------------------------------
 void Results::TreeSave(G4String name) {
+  G4cout << "Saving tree of simulated parameters to file: " << name << G4endl;
   TDirectory *dir = new TDirectory();
   dir = gDirectory;
   TFile f(name, "recreate");
@@ -445,7 +449,7 @@ void Results::TreeSave(G4String name) {
   tree->Write();
   f.Close();
   dir->cd();
-  G4cout << "Trees of simulated parameters saved in file " << name << G4endl;
+  G4cout << "Tree of simulated parameters saved in file: " << name << G4endl;
 }
 //---------------------------------------------------------
 void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
@@ -1205,6 +1209,7 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&GHit.GIdAB, 0, sizeof(GHit.GIdAB));
   memset(&GHit.GCryAB, 0, sizeof(GHit.GCryAB));
   memset(&GHit.GRingAB, 0, sizeof(GHit.GRingAB));
+  memset(&GHit.GSegRingAB, 0, sizeof(GHit.GSegRingAB));
   memset(&GHit.GEAB, 0, sizeof(GHit.GEAB));
   memset(&GHit.GxAB, 0, sizeof(GHit.GxAB));
   memset(&GHit.GyAB, 0, sizeof(GHit.GyAB));
@@ -1231,18 +1236,35 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   // addback
   for (i = 0; i < GN; i++)   // number of positions
     for (j = 0; j < GS; j++) // number of crystals
-      if (ge[i][j] > maxGe[i]) {
+      if (ge[i][j] > maxGe[i]){
+        
         // assign position, ring, etc. of the addback hit
         GHit.GIdAB[GHit.GfoldAB] = i + 1;
         GHit.GCryAB[GHit.GfoldAB] = j;
         GHit.GRingAB[GHit.GfoldAB] = RingMap(
             GHit.GIdAB[GHit.GfoldAB],
             GHit.GCryAB[GHit.GfoldAB]); // get the ring in which the hit occured
+        if(theDetector->GetUseTIGRESSSegments()){
+          //get the max E segment
+          G4int segId = -1;
+          G4double maxSegE = 0.;
+          for (k = 0; k < TSEG; k++) { // number of segments
+            if(tse[i][j][k] > maxSegE){
+              maxSegE = tse[i][j][k];
+              segId = k+1; //ID of the segment with the highest energy
+            }
+          }
+          GHit.GSegRingAB[GHit.GfoldAB] = SegmentRingMap(
+            GHit.GIdAB[GHit.GfoldAB],
+            GHit.GCryAB[GHit.GfoldAB],segId); // get the segment ring in which the hit occured
+
+          //cout << "pos: " << GHit.GIdAB[GHit.GfoldAB] << ", cry: " << GHit.GCryAB[GHit.GfoldAB] << ", seg: " << segId << endl;
+          //cout << "seg ring: " << GHit.GSegRingAB[GHit.GfoldAB] << endl;
+        }
         GHit.GxAB[GHit.GfoldAB] = gp[i][j].getX();
         GHit.GyAB[GHit.GfoldAB] = gp[i][j].getY();
         GHit.GzAB[GHit.GfoldAB] = gp[i][j].getZ();
-        if (maxGe[i] ==
-            0.) // no energy deposit in this detector prior to this hit
+        if (maxGe[i] == 0.) // no energy deposit in this detector prior to this hit
           GHit.GfoldAB++;
         maxGe[i] = ge[i][j];
       }
@@ -1401,77 +1423,131 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   tree->Fill();
 }
 //=====================================================================================
-G4int Results::RingMap(G4int id, G4int seg) {
+G4int Results::RingMap(G4int id, G4int cry) {
   G4int r, s;
   s = -1;
-  if (seg == 0)
-    s = 0;
-  if (seg == 1)
-    s = 1;
-  if (seg == 2)
-    s = 1;
-  if (seg == 3)
-    s = 0;
+  switch(cry){
+    case 0: //blue, downstream
+    case 3: //white, downstream
+      s = 0;
+      break;
+    case 1: //green, upstream
+    case 2: //red, upstream
+      s = 1;
+      break;
+  }
   if (s < 0)
     return -1;
 
   r = -1;
-  switch (id) {
-  case 1:
-    r = 1;
-    break;
-  case 2:
-    r = 1;
-    break;
-  case 3:
-    r = 1;
-    break;
-  case 4:
-    r = 1;
-    break;
-  case 5:
-    r = 3;
-    break;
-  case 6:
-    r = 3;
-    break;
-  case 7:
-    r = 3;
-    break;
-  case 8:
-    r = 3;
-    break;
-  case 9:
-    r = 3;
-    break;
-  case 10:
-    r = 3;
-    break;
-  case 11:
-    r = 3;
-    break;
-  case 12:
-    r = 3;
-    break;
-  case 13:
-    r = 5;
-    break;
-  case 14:
-    r = 5;
-    break;
-  case 15:
-    r = 5;
-    break;
-  case 16:
-    r = 5;
-    break;
-  default:
-    break;
+  switch(id){
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      r = 1;
+      break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+      r = 3;
+      break;
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+      r = 5;
+      break;
+    default:
+      break;
   }
   if (r < 0)
     return -1;
 
   return r + s;
+}
+//=====================================================================================
+G4int Results::SegmentRingMap(G4int id, G4int cry, G4int seg){
+  G4int r, s, t;
+
+  t = -1;
+  switch(seg){
+    case 1:
+    case 2:
+    case 5:
+    case 6:
+      if((cry == 1)||(cry == 2)){
+        //upstream core
+        t = 1;
+      }else{
+        t = 0;
+      }
+      break;
+    case 3:
+    case 4:
+    case 7:
+    case 8:
+      if((cry == 1)||(cry == 2)){
+        //upstream core
+        t = 0;
+      }else{
+        t = 1;
+      }
+      break;
+  }
+  if (t < 0)
+    return -1;
+
+  s = -1;
+  switch(cry){
+    case 0: //blue, downstream
+    case 3: //white, downstream
+      s = 0;
+      break;
+    case 1: //green, upstream
+    case 2: //red, upstream
+      s = 2;
+      break;
+  }
+  if (s < 0)
+    return -1;
+
+  r = -1;
+  switch(id){
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+      r = 1;
+      break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+      r = 5;
+      break;
+    case 13:
+    case 14:
+    case 15:
+    case 16:
+      r = 9;
+      break;
+    default:
+      break;
+  }
+  if (r < 0)
+    return -1;
+
+  return r + s + t;
 }
 //=====================================================================================
 void Results::ReportCrystalPositions() {

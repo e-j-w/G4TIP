@@ -64,6 +64,8 @@ cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION .
 make -j
 ```
 
+The `cmake` step needs to be re-done if you move the code to a different directory.
+
 ## Using the program
 
 The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  The `macros` directory contains some examples of working batch files, it may be easier to copy one of these and modify it.  Tables explaining most (but not all) of the available commands follow:

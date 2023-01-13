@@ -244,7 +244,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
       }
       /*else {	
         //Check Final momentum:
-        G4cout << "Recoil Momentum (Ca40): " << RecoilOut->GetMomentum() << G4endl;
+        G4cout << "Recoil Momentum: " << RecoilOut->GetMomentum() << G4endl;
         for (int i = 0; i < nA; i++)
           {
             G4cout << "EvapA " << i+1 << " Momentum: " << EvapA[i]->GetMomentum() <<G4endl;
