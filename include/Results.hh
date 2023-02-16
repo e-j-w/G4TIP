@@ -134,6 +134,8 @@ typedef struct {
   Int_t GCryAB[GN * GS];
   Int_t GRingAB[GN * GS];
   Int_t GSegRingAB[GN * GS];
+  Int_t GSegRingABEGate[GN * GS];
+  Int_t GSegRingABEGate2[GN * GS];
   Double_t GxAB[GN * GS];
   Double_t GyAB[GN * GS];
   Double_t GzAB[GN * GS];

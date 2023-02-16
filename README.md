@@ -167,8 +167,9 @@ These commands will only be used if `/Physics/FusionEvaporation` is set.
 | /FusionEvaporation/Tau NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the decay constant of the exponential distribution. |
 | /FusionEvaporation/DistFile FILENAME | Specifies a file containing the desired centre-of-mass energy distribution for evaporated particles.  The format of the file is two columns for the start-of-bin energy in MeV and the number of counts in the bin, respectively.  Using this command **overrides** the default Gaussian+exponential distribution (and the associated Centroid, Width, and Tau parameters listed above). |
 | /FusionEvaporation/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
-| /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
-| /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
+| /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
+| /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
+| /FusionEvaporation/P6 | Sets the angular distribution of emitted gamma rays to a 6th order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
 
 ### Coulex reaction parameters<a name="coulexpar"></a>
 

@@ -277,6 +277,8 @@ void Results::TreeCreate() {
     tree->Branch("TigressRingAddBack", GHit.GRingAB, "GRingAB[GfoldAB]/I");
     if(theDetector->GetUseTIGRESSSegments()){
       tree->Branch("TigressSegmentRingAddBack", GHit.GSegRingAB, "GSegRingAB[GfoldAB]/I");
+      tree->Branch("TigressSegmentRingAddBackEGate", GHit.GSegRingABEGate, "GSegRingABEGate[GfoldAB]/I");
+      tree->Branch("TigressSegmentRingAddBackEGate2", GHit.GSegRingABEGate2, "GSegRingABEGate2[GfoldAB]/I");
     }
     tree->Branch("GxAddBack", GHit.GxAB, "GxAB[GfoldAB]/D");
     tree->Branch("GyAddBack", GHit.GyAB, "GyAB[GfoldAB]/D");
@@ -1210,6 +1212,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&GHit.GCryAB, 0, sizeof(GHit.GCryAB));
   memset(&GHit.GRingAB, 0, sizeof(GHit.GRingAB));
   memset(&GHit.GSegRingAB, 0, sizeof(GHit.GSegRingAB));
+  memset(&GHit.GSegRingABEGate, 0, sizeof(GHit.GSegRingABEGate));
+  memset(&GHit.GSegRingABEGate2, 0, sizeof(GHit.GSegRingABEGate2));
   memset(&GHit.GEAB, 0, sizeof(GHit.GEAB));
   memset(&GHit.GxAB, 0, sizeof(GHit.GxAB));
   memset(&GHit.GyAB, 0, sizeof(GHit.GyAB));
@@ -1271,10 +1275,24 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
 
   // addback energy: sum deposits over all crystals in the detector with the
   // highest energy deposit
-  for (i = 0; i < GHit.GfoldAB; i++) // number of addback events
-    for (j = 0; j < GS; j++)         // number of crystals
-      if (ge[(GHit.GIdAB[i]) - 1][j] > 0)
+  for (i = 0; i < GHit.GfoldAB; i++) { // number of addback events
+    for (j = 0; j < GS; j++) {         // number of crystals
+      if (ge[(GHit.GIdAB[i]) - 1][j] > 0) {
         GHit.GEAB[i] += ge[(GHit.GIdAB[i]) - 1][j];
+      }
+    }
+    if((GHit.GEAB[i] > 3550)&&(GHit.GEAB[i] < 3570)){
+      GHit.GSegRingABEGate[i] = GHit.GSegRingAB[i];
+      GHit.GSegRingABEGate2[i] = -1;
+    }else if((GHit.GEAB[i] > 1260)&&(GHit.GEAB[i] < 1280)){
+      GHit.GSegRingABEGate2[i] = GHit.GSegRingAB[i];
+      GHit.GSegRingABEGate[i] = -1;
+    }else{
+      GHit.GSegRingABEGate[i] = -1;
+      GHit.GSegRingABEGate2[i] = -1;
+    }
+    
+  }
 
   //TIGRESS segment event tracking
   if(theDetector->GetUseTIGRESSSegments()){
