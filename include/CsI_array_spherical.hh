@@ -46,6 +46,7 @@ class CsI_array_spherical
   //detector rotational position and size attributes depending on position
   G4ThreeVector pos[NCsISph];
   G4ThreeVector dim[NCsISph];
+  G4double ring_abs_thickness[10]; //absorber foil thickness, per ring
   G4double zpos;
  
 
