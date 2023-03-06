@@ -2037,13 +2037,11 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
   //G4ThreeVector pInit = aTrack.GetMomentum();
   //G4cout << "Initial Momentum (beam):" << pInit << G4endl;
 
-  while (killTrack ==
-         true) // repeat the reaction code until a good event is obtained
-  {
+  // repeat the reaction code until a good event is obtained
+  while (killTrack == true) {
     if (numRepeats > maxNumRepeats) {
       G4cout << "ERROR: Maximum number of failed attempts to simulate "
-                "fusion-evaporation ("
-             << maxNumRepeats << ") was exceeded!" << G4endl;
+                "fusion-evaporation (" << maxNumRepeats << ") was exceeded!" << G4endl;
       G4cout << "This is likely caused by the reaction parameters being set to "
                 "non-physical values.  Modify the reaction parameters and try "
                 "again.  The number of attempts done before displaying this "
@@ -2092,9 +2090,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
             if(useTabulatedExi){
               evapdeltaExi[i] = getTabulatedExi(QEvap[i]);
             }else{
-	      evapdeltaExi[i] = getExi(exiV, exikT);
-              //evapdeltaExi[i] = getExi(exix0, exiw, exitau);
-              // evapdeltaExi[i]=dExiShift+(CLHEP::RandGamma::shoot(rho,lambda));
+              evapdeltaExi[i] = getExi(exiV, exikT);
             }
             
           }
@@ -2103,7 +2099,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
 
       // check that sum of delta Exi values is in bounds
       totalEvapdeltaExi = 0;
-      // FILE *out1, *out2;            //////////////////////////////////////////////////////////////////////////////////////////////
+      // FILE *out1, *out2;
       // if((out1=fopen("exi1.txt","a"))==NULL)
       // 	{printf("Cannot open output\n");exit(-1);}
       // if((out2=fopen("exi2.txt","a"))==NULL)
@@ -2117,8 +2113,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
           totalEvapdeltaExi += evapdeltaExi[i];
       if (totalEvapdeltaExi > initExi) // not physically possible!
         killTrack = true;
-      if ((initExi - totalEvapdeltaExi) <
-          Egammatot) // not enough energy to emit gamma cascade
+      if ((initExi - totalEvapdeltaExi) < Egammatot) // not enough energy to emit gamma cascade
         killTrack = true;
 
       if (killTrack == false)
@@ -2700,9 +2695,7 @@ void ReactionFusEvap::AddDecay(G4double E, G4double T) {
   }
 }
 
-
-
-
+//compute dExi for an evaporated particle, in MeV
 G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
   G4double exi=0.0;
   // G4double r=(G4double)rand()/(G4double)RAND_MAX;
@@ -2715,63 +2708,43 @@ G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
   it1=FELookupTable.end()-1;
   it2=(*it1).begin();
   r_max=*(it2);
-  if(r>=r_max)
-    {
-      G4cout<<"Happened"<<G4endl;
-      // srand(time(NULL));
-      x=*(it2+1);
+  if(r>=r_max){
+    //G4cout<<"Happened"<<G4endl;
+    // srand(time(NULL));
+    x=*(it2+1);
+    exi=kT*x;
+    exi+=V;
+    return exi;
+  }
+  
+  for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++){
+    it2=(*it1).begin();
+    r_max=*(it2);
+    if(r<r_max){
+      x_max=*(it2+1);
+      x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
       exi=kT*x;
       exi+=V;
+      // exi=V+kT*x;
+      // G4cout<<"Rand is: "<<r<<G4endl;
+      // G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
+      // G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
+      // G4cout<<"X: "<<x<<G4endl;
+      
+      // G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
+      // getc(stdin);
+      
+      // G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
+      // getc(stdin);
       return exi;
     }
-  
-  for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++)
-    {
-      it2=(*it1).begin();
-      r_max=*(it2);
-      if(r<r_max)
-	{
-	  x_max=*(it2+1);
-	  x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
-	  exi=kT*x;
-	  exi+=V;
-	  // exi=V+kT*x;
-	  // G4cout<<"Rand is: "<<r<<G4endl;
-	  // G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
-	  // G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
-	  // G4cout<<"X: "<<x<<G4endl;
-	  
-	  // G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
-	  // getc(stdin);
-	  
-	  // G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
-	  // getc(stdin);
-	  return exi;
-	}
-      r_min=*(it2);
-      x_min=*(it2+1);
-    }
-  G4cout<<"Some form of error"<<G4endl;
+    r_min=*(it2);
+    x_min=*(it2+1);
+  }
+  G4cout<<"ReactionFusEvap: some form of error"<<G4endl;
   G4cout<<"R is: "<<std::setprecision(10)<<(r)<<G4endl;
   return exi;
 }
-
-
-
-
-
-
-//---------------------------------------------------------
-// Computes an Exi value based on a Gaussian distribution with high energy
-// exponential tail
-// G4double ReactionFusEvap::getExi(G4double x0, G4double w, G4double ttau) {
-//   G4double exi = CLHEP::RandGauss::shoot(x0, w);
-//   exi += CLHEP::RandExponential::shoot(ttau);
-//   return exi;
-// }
-
-
-
 
 //---------------------------------------------------------
 // Sets up the reaction

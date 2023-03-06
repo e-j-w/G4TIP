@@ -34,8 +34,6 @@
 #include "globals.hh"
 #include <math.h>
 
-#include "CLHEP/Random/RandGamma.h" //for generating random numbers with a gaussian dist.
-
 using namespace std;
 
 #define eps 0.00001
@@ -48,21 +46,17 @@ class ReactionFusEvap : public G4VProcess {
 public:
   G4bool reaction_here;
 
-  ReactionFusEvap(Projectile *, DetectorConstruction *,
-                  const G4String &processName = "ReactionFusEvap");
+  ReactionFusEvap(Projectile *, DetectorConstruction *, const G4String &processName = "ReactionFusEvap");
 
   virtual ~ReactionFusEvap();
 
   virtual G4double
-  PostStepGetPhysicalInteractionLength(const G4Track &track,
-                                       G4double previousStepSize,
-                                       G4ForceCondition *condition);
+  PostStepGetPhysicalInteractionLength(const G4Track &track, G4double previousStepSize, G4ForceCondition *condition);
 
   virtual G4VParticleChange *PostStepDoIt(const G4Track &, const G4Step &);
 
   //  no operation in  AtRestGPIL
-  virtual G4double AtRestGetPhysicalInteractionLength(const G4Track &,
-                                                      G4ForceCondition *) {
+  virtual G4double AtRestGetPhysicalInteractionLength(const G4Track &, G4ForceCondition *) {
     return -1.0;
   };
 
@@ -72,10 +66,7 @@ public:
   };
 
   //  no operation in  AlongStepGPIL
-  virtual G4double AlongStepGetPhysicalInteractionLength(const G4Track &,
-                                                         G4double, G4double,
-                                                         G4double &,
-                                                         G4GPILSelection *) {
+  virtual G4double AlongStepGetPhysicalInteractionLength(const G4Track &, G4double, G4double, G4double &, G4GPILSelection *) {
     return -1.0;
   };
 
@@ -112,9 +103,6 @@ public:
   void SetEvapQ4(G4double x) { QEvap[3] = x; };
   void SetExiV(G4double x) { exiV = x; };
   void SetExikT(G4double x) { exikT = x; };
-  // void SetExix0(G4double x) { exix0 = x; };
-  // void SetExiw(G4double x) { exiw = x; };
-  // void SetExitau(G4double x) { exitau = x; };
   void SetTabulatedExi(bool set) { useTabulatedExi = set; };
   void ReadTabulatedExi(G4String fileName);
 

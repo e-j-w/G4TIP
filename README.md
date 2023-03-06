@@ -162,9 +162,8 @@ These commands will only be used if `/Physics/FusionEvaporation` is set.
 | /FusionEvaporation/CompoundFormationQ NUMBER | The reaction Q value, in MeV, of the fusion reaction forming the compound system from the beam and target species, based on the difference in mass between the beam + target and the compound nucleus. |
 | /FusionEvaporation/Q1 NUMBER | The reaction Q value, in MeV, of the first particle evaporation from the compund nucleus, based on the difference in mass between the compound system and the particle + remaining nucleus. |
 | /FusionEvaporation/Q2 NUMBER | Same as above, except for the second particle evaporation (if applicable).  Use Q3 and Q4 for the third and fourth particle evaporations, if necessary. |
-| /FusionEvaporation/Centroid NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the centroid of the Gaussian distribution. |
-| /FusionEvaporation/Width NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the width of the Gaussian distribution. |
-| /FusionEvaporation/Tau NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the decay constant of the exponential distribution. |
+| /FusionEvaporation/CoulombBarrier NUMBER | Specifies the Coulomb barrier energy (in MeV) used to determine evaporated particle excitation energies in the fusion-evaporation process.  This is the Coulomb barrier between the residual nucleus and the evaporated particle. |
+| /FusionEvaporation/Temperature NUMBER | Specifies the temperature (the kT value, in units of MeV) used to determine evaporated particle excitation energies in the fusion-evaporation process. |
 | /FusionEvaporation/DistFile FILENAME | Specifies a file containing the desired centre-of-mass energy distribution for evaporated particles.  The format of the file is two columns for the start-of-bin energy in MeV and the number of counts in the bin, respectively.  Using this command **overrides** the default Gaussian+exponential distribution (and the associated Centroid, Width, and Tau parameters listed above). |
 | /FusionEvaporation/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
 | /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
@@ -239,6 +238,8 @@ A. Chester - CsI wall code, Coulex implementation, plunger implementation.
 
 T. Ma - CsI ball code.
 
+M. S. Martin - Fusion-evaporation: particle evaporation code.
+
 C. Morse - Finding and fixing memory leaks.
 
 K. Starosta - Initial TIP codebase.
@@ -246,6 +247,8 @@ K. Starosta - Initial TIP codebase.
 J. Williams - Fusion-evaporation implementation, DSAM and arbitrary target implementation.
 
 F. Wu - Reaction code work and auditing.
+
+J. Yu - Fusion-evaporation: particle evaporation code.
 
 GRIFFIN/TIGRESS code is based on work by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations
 

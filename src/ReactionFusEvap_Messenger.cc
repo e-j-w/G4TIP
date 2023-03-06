@@ -44,74 +44,47 @@ ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theR
   Q1Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   Q2Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q2", this);
-  Q2Cmd->SetGuidance(
-      "Q for the second particle evaporation process (if necessary).");
+  Q2Cmd->SetGuidance("Q for the second particle evaporation process (if necessary).");
   Q2Cmd->SetParameterName("Q2", false);
   Q2Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   Q3Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q3", this);
-  Q3Cmd->SetGuidance(
-      "Q for the third particle evaporation process (if necessary).");
+  Q3Cmd->SetGuidance("Q for the third particle evaporation process (if necessary).");
   Q3Cmd->SetParameterName("Q3", false);
   Q3Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   Q4Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q4", this);
-  Q4Cmd->SetGuidance(
-      "Q for the fourth particle evaporation process (if necessary).");
+  Q4Cmd->SetGuidance("Q for the fourth particle evaporation process (if necessary).");
   Q4Cmd->SetParameterName("Q4", false);
   Q4Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   dExiVCmd = new G4UIcmdWithADouble("/FusionEvaporation/CoulombBarrier", this);
-  dExiVCmd->SetGuidance("Coulomb barrier used to characterize particle evaporation.");
+  dExiVCmd->SetGuidance("Coulomb barrier used to characterize particle evaporation, in MeV.");
   dExiVCmd->SetParameterName("dExiV", false);
   dExiVCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   dExikTCmd = new G4UIcmdWithADouble("/FusionEvaporation/Temperature", this);
-  dExikTCmd->SetGuidance("Temperature used to characterize particle evaporation.");
+  dExikTCmd->SetGuidance("Temperature (kT value) used to characterize particle evaporation, in MeV.");
   dExikTCmd->SetParameterName("dExikT", false);
   dExikTCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  // dExix0Cmd = new G4UIcmdWithADouble("/FusionEvaporation/Centroid", this);
-  // dExix0Cmd->SetGuidance("Centroid of the Gaussian used to characterize change "
-  //                        "in compound nucleus excitation energy following "
-  //                        "particle evaporation.");
-  // dExix0Cmd->SetParameterName("dExix0", false);
-  // dExix0Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
-  // dExiwCmd = new G4UIcmdWithADouble("/FusionEvaporation/Width", this);
-  // dExiwCmd->SetGuidance("Width of the Gaussian used to characterize change in "
-  //                       "compound nucleus excitation energy following particle "
-  //                       "evaporation.");
-  // dExiwCmd->SetParameterName("dExiw", false);
-  // dExiwCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
-  // dExitauCmd = new G4UIcmdWithADouble("/FusionEvaporation/Tau", this);
-  // dExitauCmd->SetGuidance("Tau of the high energy exponential tail used to "
-  //                         "characterize change in compound nucleus excitation "
-  //                         "energy following particle evaporation.");
-  // dExitauCmd->SetParameterName("dExitau", false);
-  // dExitauCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
-
   dExiDistCmd = new G4UIcmdWithAString("/FusionEvaporation/DistFile", this);
   dExiDistCmd->SetGuidance("Specifies a tabulated distribution of dExi values for evaporated particles (containing 2 columns, start-of-bin energy in MeV and counts).");
-  dExiDistCmd->SetParameterName("Tau", false);
+  dExiDistCmd->SetParameterName("dExiDist", false);
   dExiDistCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  CARCmd = new G4UIcmdWithoutParameter(
-      "/FusionEvaporation/ConstrainParticleAngularRange", this);
+  CARCmd = new G4UIcmdWithoutParameter("/FusionEvaporation/ConstrainParticleAngularRange", this);
   CARCmd->SetGuidance("Require that at least one evaporated particle be "
                       "emitted in a specified angular range.");
 
-  CARMaxCmd =
-      new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MaxParticleAngle", this);
+  CARMaxCmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MaxParticleAngle", this);
   CARMaxCmd->SetGuidance("Maximum angle (from the z/beam axis) in which at "
                          "least one of the evaporated particles must be "
                          "emitted.");
   CARMaxCmd->SetParameterName("CARMax", false);
   CARMaxCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  CARMinCmd =
-      new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MinParticleAngle", this);
+  CARMinCmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/MinParticleAngle", this);
   CARMinCmd->SetGuidance("Minimum angle (from the z/beam axis) in which at "
                          "least one of the evaporated particles must be "
                          "emitted.");
@@ -149,9 +122,6 @@ ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
   delete Q4Cmd;
   delete dExiVCmd;
   delete dExikTCmd;
-  // delete dExix0Cmd;
-  // delete dExiwCmd;
-  // delete dExitauCmd;
   delete dExiDistCmd;
 
   delete CARCmd;
@@ -188,8 +158,7 @@ void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newVa
       theReaction->AddDecay(E, T);
     } else {
       G4cerr << "Reaction Messenger: Incorrect parameters for command "
-                "/Reaction/AddDecay.  Aborting."
-             << G4endl;
+                "/Reaction/AddDecay.  Aborting." << G4endl;
       exit(EXIT_FAILURE);
     }
   }
@@ -223,21 +192,6 @@ void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newVa
     theReaction->SetTabulatedExi(false);
     theReaction->SetExikT(dExikTCmd->GetNewDoubleValue(newValue));
   }
-
-  // if (command == dExix0Cmd) {
-  //   theReaction->SetTabulatedExi(false);
-  //   theReaction->SetExix0(dExix0Cmd->GetNewDoubleValue(newValue));
-  // }
-
-  // if (command == dExiwCmd) {
-  //   theReaction->SetTabulatedExi(false);
-  //   theReaction->SetExiw(dExiwCmd->GetNewDoubleValue(newValue));
-  // }
-
-  // if (command == dExitauCmd) {
-  //   theReaction->SetTabulatedExi(false);
-  //   theReaction->SetExitau(dExitauCmd->GetNewDoubleValue(newValue));
-  // }
 
   if (command == dExiDistCmd) {
     theReaction->SetTabulatedExi(true);
