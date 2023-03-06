@@ -3,21 +3,15 @@
 
 G4Allocator<TrackerCsIHit> TrackerCsIHitAllocator;
 
-
-TrackerCsIHit::TrackerCsIHit() {
+TrackerCsIHit::TrackerCsIHit(){
 	disabled=0;
 }
 
-
-
-TrackerCsIHit::~TrackerCsIHit() {}
-
-
+TrackerCsIHit::~TrackerCsIHit(){}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TrackerCsIHit::Draw()
-{
+void TrackerCsIHit::Draw(){
   G4VVisManager* pVVisManager = G4VVisManager::GetConcreteInstance();
   if(pVVisManager)
   {
@@ -33,8 +27,7 @@ void TrackerCsIHit::Draw()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void TrackerCsIHit::Print()
-{
+void TrackerCsIHit::Print(){
   G4cout<<"  CsI diode hit - mass: "<<A<<" charge "<<Z<<
     "  energy deposit: " << G4BestUnit(KE,"Energy")
 	<< "  position: " << pos/um  << " um  path: "<<path/um<<" id: "<<id<<" ring: "<<ring<<G4endl;
