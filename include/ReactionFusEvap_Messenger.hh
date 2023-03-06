@@ -49,6 +49,7 @@ private:
   G4UIcmdWithoutParameter *GDist0Cmd;
   G4UIcmdWithoutParameter *GDist2Cmd;
   G4UIcmdWithoutParameter *GDist4Cmd;
+  G4UIcmdWithoutParameter *GDist6Cmd;
 };
 
 #endif

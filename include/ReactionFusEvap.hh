@@ -127,6 +127,8 @@ public:
   void SetGDist0() { gammaAngDist = 0; };
   void SetGDist2() { gammaAngDist = 1; };
   void SetGDist4() { gammaAngDist = 2; };
+  void SetGDist6() { gammaAngDist = 3; };
+
 
   void EvaporateWithMomentumCorrection(G4DynamicParticle *, G4DynamicParticle *,
                                        G4DynamicParticle *,

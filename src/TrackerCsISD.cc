@@ -1,7 +1,6 @@
 #include "TrackerCsISD.hh"
 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackerCsISD::TrackerCsISD(G4String name)
 :G4VSensitiveDetector(name)
@@ -10,11 +9,9 @@ TrackerCsISD::TrackerCsISD(G4String name)
   collectionName.insert(HCname="CsICollection");
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 TrackerCsISD::~TrackerCsISD(){ }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackerCsISD::Initialize(G4HCofThisEvent*)
 {
@@ -25,7 +22,6 @@ void TrackerCsISD::Initialize(G4HCofThisEvent*)
  
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
@@ -108,7 +104,6 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
   return false;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void TrackerCsISD::EndOfEvent(G4HCofThisEvent* HCE)
 {
@@ -131,7 +126,4 @@ void TrackerCsISD::EndOfEvent(G4HCofThisEvent* HCE)
   { HCID = G4SDManager::GetSDMpointer()->GetCollectionID("CsICollection"); }
   HCE->AddHitsCollection( HCID, CsICollection ); 
  }
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

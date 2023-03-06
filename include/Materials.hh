@@ -32,6 +32,7 @@ class Materials
   G4Material* Li;
   G4Material* Au;
   G4Material* Ca;
+  G4Material* G4Ca;
   G4Material* Ta;
   G4Material* Ni;
   G4Material* S;

@@ -38,16 +38,19 @@ class CsI_detector_spherical
   void Report();
   void Place(G4ThreeVector);
   G4LogicalVolume* GetLog(){return CsI_detector_log;};
+  void setMylarThickness(G4double i){CsI_mylar_thickness=i;};
   void setAbsorberThickness(G4double i){CsI_absorber_thickness=i;};
  
-    private:
+  private:
   // dimensions
+  G4double CsI_mylar_thickness;
   G4double CsI_absorber_thickness;
 
   //materials
-  Materials* materials;
-  G4Material* CsI_Material;
-  G4Material* CsI_absorber_Material;
+  Materials *materials;
+  G4Material *CsI_Material;
+  G4Material *CsI_mylar_Material;
+  G4Material *CsI_absorber_Material;
 
   //default position
   G4RotationMatrix NoRot;
@@ -56,13 +59,15 @@ class CsI_detector_spherical
   
   //logical volume
   G4LogicalVolume* CsI_detector_log;
+  G4LogicalVolume* CsI_mylar_log;
+  G4LogicalVolume* CsI_side_mylar_log;
   G4LogicalVolume* CsI_absorber_log;
-  G4LogicalVolume* CsI_side_absorber_log;
 
   //physical volume
   G4VPhysicalVolume* CsI_detector_phys;
+  G4VPhysicalVolume* CsI_mylar_phys;
+  G4VPhysicalVolume* CsI_side_mylar_phys;
   G4VPhysicalVolume* CsI_absorber_phys;
-  G4VPhysicalVolume* CsI_side_absorber_phys;
   G4int Id,RingId;
 };
 

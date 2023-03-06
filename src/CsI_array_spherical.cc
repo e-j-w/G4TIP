@@ -23,51 +23,61 @@ CsI_array_spherical::CsI_array_spherical(G4LogicalVolume *experimentalHall_log,
   det_thickness_per_ring[0] = 5.0 * mm;
   det_avgdegree_per_ring[0] = 8.0 * deg;
   det_widdegree_per_ring[0] = 4.00 * deg;
+  ring_abs_thickness[0] = 15.943 * um;
   detectors_per_ring[1] = 6;
   det_radialdist_per_ring[1] = 57.2 * mm;
   det_thickness_per_ring[1] = 2.6 * mm;
   det_avgdegree_per_ring[1] = 17.5 * deg;
   det_widdegree_per_ring[1] = 7.75 * deg;
+  ring_abs_thickness[1] = 15.058 * um;
   detectors_per_ring[2] = 12;
   det_radialdist_per_ring[2] = 57.2 * mm;
   det_thickness_per_ring[2] = 2.3 * mm;
   det_avgdegree_per_ring[2] = 33.0 * deg;
   det_widdegree_per_ring[2] = 7.75 * deg;
+  ring_abs_thickness[2] = 15.058 * um;
   detectors_per_ring[3] = 16;
   det_radialdist_per_ring[3] = 57.2 * mm;
   det_thickness_per_ring[3] = 2.0 * mm;
   det_avgdegree_per_ring[3] = 48.5 * deg;
   det_widdegree_per_ring[3] = 7.75 * deg;
+  ring_abs_thickness[3] = 14.172 * um;
   detectors_per_ring[4] = 20;
   det_radialdist_per_ring[4] = 57.2 * mm;
   det_thickness_per_ring[4] = 1.7 * mm;
   det_avgdegree_per_ring[4] = 64.0 * deg;
   det_widdegree_per_ring[4] = 7.75 * deg;
+  ring_abs_thickness[4] = 14.172 * um;
   detectors_per_ring[5] = 18;
   det_radialdist_per_ring[5] = 57.2 * mm;
   det_thickness_per_ring[5] = 1.5 * mm;
   det_avgdegree_per_ring[5] = 79.5 * deg;
   det_widdegree_per_ring[5] = 7.75 * deg;
+  ring_abs_thickness[5] = 14.172 * um;
   detectors_per_ring[6] = 18;
   det_radialdist_per_ring[6] = 57.2 * mm;
   det_thickness_per_ring[6] = 1.3 * mm;
   det_avgdegree_per_ring[6] = 95.0 * deg;
   det_widdegree_per_ring[6] = 7.75 * deg;
+  ring_abs_thickness[6] = 13.286 * um;
   detectors_per_ring[7] = 14;
   det_radialdist_per_ring[7] = 57.2 * mm;
   det_thickness_per_ring[7] = 1.2 * mm;
   det_avgdegree_per_ring[7] = 111.9 * deg;
   det_widdegree_per_ring[7] = 9.15 * deg;
+  ring_abs_thickness[7] = 13.286 * um;
   detectors_per_ring[8] = 12;
   det_radialdist_per_ring[8] = 57.2 * mm;
   det_thickness_per_ring[8] = 1.2 * mm;
   det_avgdegree_per_ring[8] = 130.2 * deg;
   det_widdegree_per_ring[8] = 9.15 * deg;
+  ring_abs_thickness[8] = 12.400 * um;
   detectors_per_ring[9] = 8;
   det_radialdist_per_ring[9] = 57.2 * mm;
   det_thickness_per_ring[9] = 1.2 * mm;
   det_avgdegree_per_ring[9] = 148.5 * deg;
   det_widdegree_per_ring[9] = 9.15 * deg;
+  ring_abs_thickness[9] = 12.400 * um;
 
   G4int ndet_cumulative = 0;
   for (G4int i = 0; i < 10; i++) {
@@ -109,8 +119,10 @@ void CsI_array_spherical::Construct() {
                    // finally, clear all elements from the array
   aCsI_array.clear();
 
-  for (i = 0; i < NCsISph; i++)
+  for (i = 0; i < NCsISph; i++){
     aCsI_array.push_back(new CsI_detector_spherical(expHall_log, materials));
+    aCsI_array[i]->setAbsorberThickness(ring_abs_thickness[ring[i]]); //lead absorber foil
+  }
 
   itPos = aCsI_array.begin();
   for (i = 0; i < NCsISph; i++) {

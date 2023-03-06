@@ -2261,7 +2261,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack,
       }
       /*else {	
         //Check Final momentum:
-        G4cout << "Recoil Momentum (Ca40): " << RecoilOut->GetMomentum() << G4endl;
+        G4cout << "Recoil Momentum: " << RecoilOut->GetMomentum() << G4endl;
         for (int i = 0; i < nA; i++)
           {
             G4cout << "EvapA " << i+1 << " Momentum: " << EvapA[i]->GetMomentum() <<G4endl;
@@ -2338,14 +2338,11 @@ G4bool ReactionFusEvap::SetupReactionProducts(const G4Track &aTrack,
   RecoilOut->SetDefinition(compound);
   RecoilOut->SetMomentum(aTrack.GetMomentum());
   initExi = aTrack.GetKineticEnergy() + QRxn - RecoilOut->GetKineticEnergy();
-  //G4cout << "Calculated initExi: "<< initExi << G4endl;
 
-  /*G4cout << "Before compound formation - Beam momentum (lab): " <<
-  aTrack.GetMomentum() << ", Beam KE: " << aTrack.GetKineticEnergy()/MeV << "
-  MeV." << G4endl;
-  G4cout << "At compound formation - Recoil momentum (lab): " <<
-  RecoilOut->GetMomentum() << ", Recoil KE: " <<
-  RecoilOut->GetKineticEnergy()/MeV << " MeV." << G4endl;
+  /*G4cout << "Before compound formation - Beam momentum (lab): " << aTrack.GetMomentum() << 
+  ", Beam KE: " << aTrack.GetKineticEnergy()/MeV << " MeV." << G4endl;
+  G4cout << "At compound formation - Recoil momentum (lab): " << RecoilOut->GetMomentum() << 
+  ", Recoil KE: " << RecoilOut->GetKineticEnergy()/MeV << " MeV." << G4endl;
   G4cout << "KE difference: " << aTrack.GetKineticEnergy()/MeV -
   RecoilOut->GetKineticEnergy()/MeV << " MeV." << G4endl;
   G4cout << "target A,Z: " << A2 << "," << Z2 << G4endl;
@@ -2531,6 +2528,7 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       break;
     default:
       //arbitrary target
+      //G4cout << "arb target layer: " << theDetector->GetArbitraryTarget()->getTargetExLayer() << G4endl;
       A2 = theDetector->GetArbitraryTarget()->getTargetMass(theDetector->GetArbitraryTarget()->getTargetExLayer());
       Z2 = theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer());
 

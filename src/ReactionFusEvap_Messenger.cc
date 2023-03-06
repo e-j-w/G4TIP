@@ -127,6 +127,9 @@ ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theR
   GDist4Cmd = new G4UIcmdWithoutParameter("/FusionEvaporation/P4", this);
   GDist4Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta).");
 
+  GDist6Cmd = new G4UIcmdWithoutParameter("/FusionEvaporation/P6", this);
+  GDist6Cmd->SetGuidance("Sets the angular distribution of emitted gamma rays to a 6th order legendre polynomial in cos(theta).");
+
 }
 
 ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
@@ -158,6 +161,7 @@ ReactionFusEvap_Messenger::~ReactionFusEvap_Messenger() {
   delete GDist0Cmd;
   delete GDist2Cmd;
   delete GDist4Cmd;
+  delete GDist6Cmd;
 }
 
 void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newValue) {
@@ -265,5 +269,10 @@ void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newVa
   if (command == GDist4Cmd) {
     G4cout << "----> Setting angular distribution of emitted gamma ray(s) to a 4th order legendre polynomial in cos(theta)." << G4endl;
     theReaction->SetGDist4();
+  }
+
+  if (command == GDist6Cmd) {
+    G4cout << "----> Setting angular distribution of emitted gamma ray(s) to a 6th order legendre polynomial in cos(theta)." << G4endl;
+    theReaction->SetGDist6();
   }
 }

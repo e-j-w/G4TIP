@@ -76,8 +76,8 @@ Plunger_Messenger::Plunger_Messenger(Plunger* Plun)
   XTarCmd->SetParameterName("choice",false);
   XTarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  TTarCmd = new G4UIcmdWithADouble("/Plunger/Target/ThicknessMgCm3",this);
-  TTarCmd->SetGuidance("Select the thickness for the target in mg/cm^3");
+  TTarCmd = new G4UIcmdWithADouble("/Plunger/Target/ThicknessMgCm2",this);
+  TTarCmd->SetGuidance("Select the thickness for the target in mg/cm^2");
   TTarCmd->SetParameterName("choice",false);
   TTarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 

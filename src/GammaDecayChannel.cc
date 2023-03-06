@@ -270,6 +270,8 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
           lpval = 0.5*(3.*cosangle*cosangle - 1.); //2nd order legendre polynomial
         else if(gammaAngDist==2)
           lpval = 0.125*(35.*cosangle*cosangle*cosangle*cosangle - 30.*cosangle*cosangle + 3.); //4th order legendre polynomial
+        else if(gammaAngDist==3)
+          lpval = 0.0625*(231.*cosangle*cosangle*cosangle*cosangle*cosangle*cosangle - 315.*cosangle*cosangle*cosangle*cosangle + 105.*cosangle*cosangle - 5.); //6th order legendre polynomial
         else
           G4cout << "WARNING: bad angular distribution!" << G4endl;
         //generate random number between -1 and 1 to bias legendre polynomial against 
@@ -279,6 +281,7 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
         if(num>lpval){
           //G4cout << "Biasing..." << G4endl;
           //remove everything from products
+          //products->G4DecayProductVector.erase(i);
           for(int j=0;j<=products->entries();j++){
             products->PopProducts();
           }

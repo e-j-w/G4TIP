@@ -1,6 +1,6 @@
 # G4TIP
 
-This repo maintained by Jonathan Williams, see the list of contributors [below](#contributors).
+This repo is maintained by Jonathan Williams, see the full list of contributors [below](#contributors).
 
 ## Description
 
@@ -64,6 +64,8 @@ cmake -DGeant4_DIR=/path/to/geant4_install_directory/lib/GEANT4_VERSION .
 make -j
 ```
 
+The `cmake` step needs to be re-done if you move the code to a different directory.
+
 ## Using the program
 
 The program `G4TIP` is run from the command line and takes a batch file as its only argument.  The batch file contains a list of commands which are executed in order by the program.  The `macros` directory contains some examples of working batch files, it may be easier to copy one of these and modify it.  Tables explaining most (but not all) of the available commands follow:
@@ -101,7 +103,7 @@ These commands configure the default target type, which is always used unless `/
 
 |**Command**|**Effect**|
 |:---:|:---:|
-| /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
+| /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer).  Alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/LayerX/ThicknessMgCm2`. |
 | /Target/LayerX/Position NUMBER um | The position of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
 | /Target/LayerX/A NUMBER | The mass number of the layer. |
 | /Target/LayerX/Material STRING<sup>1</sup> | The layer material. |
@@ -118,11 +120,11 @@ These commands will only be used if `/Construction/UseDSAMTarget` is set.
 | /DSAMTarget/Target/A NUMBER | The mass number of the reaction target (number of nucleons). |
 | /DSAMTarget/Target/Z NUMBER | The proton number of the reaction target. |
 | /DSAMTarget/Target/Material STRING<sup>1</sup> | The reaction target material. |
-| /DSAMTarget/Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/ThicknessMgCm2`). |
+| /DSAMTarget/Target/Thickness NUMBER um | The reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/DSAMTarget/Target/ThicknessMgCm2`). |
 | /DSAMTarget/Backing/A NUMBER | The mass number of the target backing (number of nucleons). |
 | /DSAMTarget/Backing/Z NUMBER | The proton number of the target backing. |
 | /DSAMTarget/Backing/Material STRING<sup>1</sup> | The target backing material. |
-| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Backing/ThicknessMgCm2`). |
+| /DSAMTarget/Backing/Thickness NUMBER um | The target backing thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/DSAMTarget/Backing/ThicknessMgCm2`). |
 
 <sup>1</sup>GEANT4 material strings are used, typically formatted as `G4_ELEMENT` (eg. copper would be `G4_Cu`).  Vacuum is also a material: `G4_Galactic`.
 
@@ -136,7 +138,7 @@ These commands will only be used if `/Construction/UsePlunger` is set.
 | /Plunger/Backing/Material STRING<sup>1</sup> | The plunger target backing material. |
 | /Plunger/Backing/Thickness NUMBER um | The plunger target backing thickness. |
 | /Plunger/Target/Material STRING<sup>1</sup> | The plunger reaction target material. |
-| /Plunger/Target/Thickness NUMBER um | The plunger reaction target thickness. |
+| /Plunger/Target/Thickness NUMBER um | The plunger reaction target thickness (alternatively this can be specified in mg/cm<sup>2</sup> using `/Plunger/Target/ThicknessMgCm2`). |
 | /Plunger/Stopper/Material STRING<sup>1</sup> | The plunger stopper/degrader material. |
 | /Plunger/Stopper/Thickness NUMBER um | The plunger reaction stopper/degrader thickness. |
 | /Plunger/Separation NUMBER um | The separation between the plunger target and stopper/degrader. |
@@ -165,8 +167,9 @@ These commands will only be used if `/Physics/FusionEvaporation` is set.
 | /FusionEvaporation/Tau NUMBER | When using a Gaussian+exponential distribution for the evaporated particle excitation energies, this command is used to specify the decay constant of the exponential distribution. |
 | /FusionEvaporation/DistFile FILENAME | Specifies a file containing the desired centre-of-mass energy distribution for evaporated particles.  The format of the file is two columns for the start-of-bin energy in MeV and the number of counts in the bin, respectively.  Using this command **overrides** the default Gaussian+exponential distribution (and the associated Centroid, Width, and Tau parameters listed above). |
 | /FusionEvaporation/P0 | Sets the angular distribution of emitted gamma rays to be isotropic (default). |
-| /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta). |
-| /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta). |
+| /FusionEvaporation/P2 | Sets the angular distribution of emitted gamma rays to a 2nd order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
+| /FusionEvaporation/P4 | Sets the angular distribution of emitted gamma rays to a 4th order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
+| /FusionEvaporation/P6 | Sets the angular distribution of emitted gamma rays to a 6th order legendre polynomial in cos(theta).  Doesn't seem to work properly with cascades at the moment. |
 
 ### Coulex reaction parameters<a name="coulexpar"></a>
 
@@ -232,7 +235,7 @@ G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 
 ## Contributors<a name="contributors"></a>
 
-A. Chester - CsI wall code, Coulex implementation, RDM implementation.
+A. Chester - CsI wall code, Coulex implementation, plunger implementation.
 
 T. Ma - CsI ball code.
 
@@ -240,8 +243,10 @@ C. Morse - Finding and fixing memory leaks.
 
 K. Starosta - Initial TIP codebase.
 
-J. Williams - Fusion-evaporation implementation, DSAM implementation.
+J. Williams - Fusion-evaporation implementation, DSAM and arbitrary target implementation.
 
 F. Wu - Reaction code work and auditing.
 
-GRIFFIN/TIGRESS code based on code provided by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations
+GRIFFIN/TIGRESS code is based on work by the GRIFFIN collaboration, available at: https://github.com/GRIFFINCollaboration/detectorSimulations
+
+You can cite [this](https://doi.org/10.1016/j.nima.2017.03.059) paper if using the fusion-evaporation process, or [this](https://doi.org/10.1016/j.nima.2017.11.029) paper if using the Coulex process.
