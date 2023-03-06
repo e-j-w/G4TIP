@@ -49,13 +49,13 @@ G4VPhysicalVolume *CsI_detector::Construct() {
 
   CsI_detector_phys =
       new G4PVPlacement(G4Transform3D(NoRot, *Pos), CsI_detector_log, "CsI",
-                        expHall_log, true, 0);
+                        expHall_log, true, 0,true);
   CsI_absorber_phys =
       new G4PVPlacement(G4Transform3D(NoRot, *Pos_abs), CsI_absorber_log,
-                        "CsI_absorber", expHall_log, true, 0);
+                        "CsI_absorber", expHall_log, true, 0,true);
   CsI_side_absorber_phys =
       new G4PVPlacement(G4Transform3D(NoRot, *Pos), CsI_side_absorber_log,
-                        "CsI_side_absorber", expHall_log, true, 0);
+                        "CsI_side_absorber", expHall_log, true, 0,true);
 
   G4Colour red(1.0, 1.0, 0.0);
   G4VisAttributes *Vis_6 = new G4VisAttributes(red);

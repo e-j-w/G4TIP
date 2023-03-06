@@ -61,7 +61,7 @@ void Plunger::Construct()
  degrader_limits= new G4UserLimits();
  degrader_limits->SetMaxAllowedStep(Stopper_thickness/NstepDeg); 
  Stopper_log->SetUserLimits(degrader_limits);
- Stopper_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Stopper_log,"degrader",expHall_log,false,0);
+ Stopper_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Stopper_log,"degrader",expHall_log,false,0,true);
  
  theTarget = new G4Tubs("target",0.,Target_radius,Target_thickness/2.,-1.*deg,361.*deg);
  Target_log = new G4LogicalVolume(theTarget,TargetMaterial,"target_log",0,0,0);
@@ -69,7 +69,7 @@ void Plunger::Construct()
  target_limits->SetMaxAllowedStep(Target_thickness/NstepTar);
  Target_log->SetUserLimits(target_limits);
  Pos->setZ(-10*D);
- Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0);
+ Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0,true);
  Pos->setZ(0.*mm);
 
  theBacking = new G4Tubs("backing",0.,Backing_radius,Backing_thickness/2.,-1.*deg,361.*deg);
@@ -77,39 +77,42 @@ void Plunger::Construct()
  backing_limits= new G4UserLimits();
  backing_limits->SetMaxAllowedStep(Backing_thickness/NstepBck);
  Backing_log->SetUserLimits(backing_limits);
- Pos->setZ(-10*D-Target_thickness/2);
- Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0);
+ Pos->setZ(-10*D-Target_thickness/2-Backing_thickness/2);
+ Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0,true);
  Pos->setZ(0.*mm);
  
  // degrader holder
  DHCone = new G4Cons("DHCone",9.017*mm,9.292*mm,9.017*mm,12.573*mm,DHt/2.,-1.*deg,361*deg);
  G4LogicalVolume *DHCone_log = new G4LogicalVolume(DHCone,PlungerMaterial,"DHCone_log",0,0,0);
- DHCone_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHCone_log,"DHCone",expHall_log,false,0);
+ //DHCone_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHCone_log,"DHCone",expHall_log,false,0,true);
  G4ThreeVector DHCone_Pos;
  DHCone_Pos.setX(Pos->getX());
  DHCone_Pos.setY(Pos->getY());
  DHCone_Pos.setZ(DHt/2.+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
- DHCone_phys->SetTranslation(DHCone_Pos);
+ DHCone_phys = new G4PVPlacement(G4Transform3D(NoRot,DHCone_Pos),DHCone_log,"DHCone",expHall_log,false,0,true);
+ //DHCone_phys->SetTranslation(DHCone_Pos);
 
  // degrader frame ring
  DHFRing = new G4Tubs("DHFRing",12.573*mm,15.494*mm,DHFRingt/2.,-1.*deg,361*deg);
  G4LogicalVolume *DHFRing_log = new G4LogicalVolume(DHFRing,PlungerMaterial,"DHFRing_log",0,0,0);
- DHFRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHFRing_log,"DHFRing",expHall_log,false,0);
+ //DHFRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHFRing_log,"DHFRing",expHall_log,false,0,true);
  G4ThreeVector DHFRing_Pos;
  DHFRing_Pos.setX(Pos->getX());
  DHFRing_Pos.setY(Pos->getY());
  DHFRing_Pos.setZ(DHt/2.+2.*DHFRingt+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
- DHFRing_phys->SetTranslation(DHFRing_Pos);
+ DHFRing_phys = new G4PVPlacement(G4Transform3D(NoRot,DHFRing_Pos),DHFRing_log,"DHFRing",expHall_log,false,0,true);
+ //DHFRing_phys->SetTranslation(DHFRing_Pos);
 
  // degrader ring
  DHRing = new G4Tubs("DHRing",12.954*mm,15.494*mm,DHRingt/2.,-1*deg,361*deg);
  G4LogicalVolume *DHRing_log = new G4LogicalVolume(DHRing,PlungerMaterial,"DHRing_log",0,0,0);
- DHRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHRing_log,"DHRing",expHall_log,false,0);
+ //DHRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),DHRing_log,"DHRing",expHall_log,false,0,true);
  G4ThreeVector DHRing_Pos;
  DHRing_Pos.setX(Pos->getX());
  DHRing_Pos.setY(Pos->getY());
  DHRing_Pos.setZ(DHRingt/2.+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
- DHRing_phys->SetTranslation(DHRing_Pos);
+ DHRing_phys = new G4PVPlacement(G4Transform3D(NoRot,DHRing_Pos),DHRing_log,"DHRing",expHall_log,false,0,true);
+ //DHRing_phys->SetTranslation(DHRing_Pos);
 
  G4RotationMatrix Rot0;
  Rot0.rotateZ(0*deg);
@@ -121,39 +124,44 @@ void Plunger::Construct()
  // target holder
  THCone = new G4Cons("THCone",6.477*mm,9.017*mm,6.477*mm,6.752*mm,THt/2.,-1.*deg,361.*deg);
  G4LogicalVolume *THCone_log = new G4LogicalVolume(THCone,PlungerMaterial,"THCone_log",0,0,0); 
- THCone_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),THCone_log,"THCone",expHall_log,false,0); 
+ //THCone_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),THCone_log,"THCone",expHall_log,false,0,true); 
  G4ThreeVector THCone_Pos;
  THCone_Pos.setX(Pos->getX());
  THCone_Pos.setY(Pos->getY());
  THCone_Pos.setZ(Pos->getZ()-Target_thickness-Backing_thickness-Stopper_thickness/2.-D-0.0001*mm-THt/2.);
- THCone_phys->SetTranslation(THCone_Pos);
+ THCone_phys = new G4PVPlacement(G4Transform3D(NoRot,THCone_Pos),THCone_log,"THCone",expHall_log,false,0,true);
+ //THCone_phys->SetTranslation(THCone_Pos);
 
  // target ring
  THRing = new G4Tubs("THRing",6.477*mm,9.017*mm,THRingt/2.,-1*deg,361*deg);
  G4LogicalVolume *THRing_log = new G4LogicalVolume(THRing,PlungerMaterial,"THRing_log",0,0,0);
- THRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),THRing_log,"THRing",expHall_log,false,0);
+ //THRing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),THRing_log,"THRing",expHall_log,false,0,true);
  G4ThreeVector THRing_Pos;
  THRing_Pos.setX(Pos->getX());
  THRing_Pos.setY(Pos->getY());
  THRing_Pos.setZ(Pos->getZ()-Target_thickness-Backing_thickness-Stopper_thickness/2.-D-0.0001*mm-THt-THRingt/2.);
- THRing_phys->SetTranslation(THRing_Pos);
+ THRing_phys = new G4PVPlacement(G4Transform3D(NoRot,THRing_Pos),THRing_log,"THRing",expHall_log,false,0,true);
+ //THRing_phys->SetTranslation(THRing_Pos);
 
  // posts for target holder
  G4double TTh=45*deg;
  THPost = new G4Tubs("THPost",Target_radius-THt+tan(TTh)*THt,Target_radius+tan(TTh)*THt,4.*cm,60.*deg-THt/(Target_radius+tan(TTh)*THt)/2.,THt/(Target_radius+tan(TTh)*THt));
  G4LogicalVolume *THPost0_log = new G4LogicalVolume(THPost,PostMaterial,"THPost0_log",0,0,0);
- THPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,*Pos),THPost0_log,"THPost0",expHall_log,false,0);
+ //THPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,*Pos),THPost0_log,"THPost0",expHall_log,false,0,true);
  G4LogicalVolume *THPost1_log = new G4LogicalVolume(THPost,PostMaterial,"THPost1_log",0,0,0);
- THPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,*Pos),THPost1_log,"THPost1",expHall_log,false,0);
+ //THPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,*Pos),THPost1_log,"THPost1",expHall_log,false,0,true);
  G4LogicalVolume *THPost2_log = new G4LogicalVolume(THPost,PostMaterial,"THPost2_log",0,0,0); 
- THPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,*Pos),THPost2_log,"THPost2",expHall_log,false,0);
+ //THPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,*Pos),THPost2_log,"THPost2",expHall_log,false,0,true);
  G4ThreeVector THPost_Pos;
  THPost_Pos.setX(THRing_Pos.getX());
  THPost_Pos.setY(THRing_Pos.getY());
  THPost_Pos.setZ(THRing_Pos.getZ()-4*cm-THRingt/2.);
- THPost0_phys->SetTranslation(THPost_Pos);
- THPost1_phys->SetTranslation(THPost_Pos);
- THPost2_phys->SetTranslation(THPost_Pos);
+ THPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,THPost_Pos),THPost0_log,"THPost0",expHall_log,false,0,true);
+ THPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,THPost_Pos),THPost1_log,"THPost1",expHall_log,false,0,true);
+ THPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,THPost_Pos),THPost2_log,"THPost2",expHall_log,false,0,true);
+ //THPost0_phys->SetTranslation(THPost_Pos);
+ //THPost1_phys->SetTranslation(THPost_Pos);
+ //THPost2_phys->SetTranslation(THPost_Pos);
 
  // posts for degrader holder
  Rot0.rotateZ(45.*deg);
@@ -161,18 +169,21 @@ void Plunger::Construct()
  Rot2.rotateZ(45.*deg);
  DHPost = new G4Tubs("DHPost",12.954*mm-DHt+tan(TTh)*DHt,12.954*mm+tan(TTh)*DHt,4.*cm,60.*deg-DHt/(12.954*mm+tan(TTh)*DHt)/2.,DHt/(12.954*mm+tan(TTh)*DHt));
  G4LogicalVolume *DHPost0_log = new G4LogicalVolume(DHPost,PostMaterial,"DHPost0_log",0,0,0);
- DHPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,*Pos),DHPost0_log,"DHPost0",expHall_log,false,0);
+ //DHPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,*Pos),DHPost0_log,"DHPost0",expHall_log,false,0,true);
  G4LogicalVolume *DHPost1_log = new G4LogicalVolume(DHPost,PostMaterial,"DHPost1_log",0,0,0);
- DHPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,*Pos),DHPost1_log,"DHPost1",expHall_log,false,0);
+ //DHPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,*Pos),DHPost1_log,"DHPost1",expHall_log,false,0,true);
  G4LogicalVolume *DHPost2_log = new G4LogicalVolume(DHPost,PostMaterial,"DHPost2_log",0,0,0); 
- DHPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,*Pos),DHPost2_log,"DHPost2",expHall_log,false,0);
+ //DHPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,*Pos),DHPost2_log,"DHPost2",expHall_log,false,0,true);
  G4ThreeVector DHPost_Pos;
  DHPost_Pos.setX(DHRing_Pos.getX());
  DHPost_Pos.setY(DHRing_Pos.getY());
  DHPost_Pos.setZ(DHRing_Pos.getZ()-4*cm-DHRingt/2.);
- DHPost0_phys->SetTranslation(DHPost_Pos);
- DHPost1_phys->SetTranslation(DHPost_Pos);
- DHPost2_phys->SetTranslation(DHPost_Pos);
+ DHPost0_phys = new G4PVPlacement(G4Transform3D(Rot0,DHPost_Pos),DHPost0_log,"DHPost0",expHall_log,false,0,true);
+ DHPost1_phys = new G4PVPlacement(G4Transform3D(Rot1,DHPost_Pos),DHPost1_log,"DHPost1",expHall_log,false,0,true);
+ DHPost2_phys = new G4PVPlacement(G4Transform3D(Rot2,DHPost_Pos),DHPost2_log,"DHPost2",expHall_log,false,0,true);
+ //DHPost0_phys->SetTranslation(DHPost_Pos);
+ //DHPost1_phys->SetTranslation(DHPost_Pos);
+ //DHPost2_phys->SetTranslation(DHPost_Pos);
  
  G4Colour dgreen (0.0,0.6,0.0);
  G4VisAttributes* Vis = new G4VisAttributes(dgreen);
@@ -235,7 +246,7 @@ void Plunger::SetSeparation(G4double d)
   Sep.setZ(DHt/2.+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
   DHCone_phys->SetTranslation(Sep);
   Sep.setZ(DHt/2.+2.*DHFRingt+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
-  DHFRing_phys->SetTranslation(Sep);
+  DHFRing_phys->SetTranslation(Sep);  
   Sep.setZ(DHRingt/2.+Stopper_thickness/2.+0.0001*mm+Pos->getZ());
   DHRing_phys->SetTranslation(Sep);
 
@@ -243,24 +254,27 @@ void Plunger::SetSeparation(G4double d)
   Sep.setZ(Pos->getZ()-Target_thickness-Backing_thickness-Stopper_thickness/2.-D-0.0001*mm-THt/2.);
   THCone_phys->SetTranslation(Sep);
 
-  // set target ring
+  //set target ring
   Sep.setZ(Pos->getZ()-Target_thickness-Backing_thickness-Stopper_thickness/2.-D-0.0001*mm-THt-THRingt/2.);
   THRing_phys->SetTranslation(Sep);
 
-  // set target posts
+
+  //set target posts
   Sep.setZ(Sep.getZ()-4*cm-THRingt/2.);
   THPost0_phys->SetTranslation(Sep);
   THPost1_phys->SetTranslation(Sep);
   THPost2_phys->SetTranslation(Sep);
 
-  // set degrader posts
+  //set degrader posts
   Sep.setZ(DHRingt/2.+Stopper_thickness/2.+0.0001*mm+Pos->getZ()-4*cm-DHRingt/2.);
   DHPost0_phys->SetTranslation(Sep);
   DHPost1_phys->SetTranslation(Sep);
   DHPost2_phys->SetTranslation(Sep);
- 
+  
+  // set backing
   Sep.setZ(Pos->getZ()-(Backing_thickness/2.+Target_thickness+Stopper_thickness/2.+D));
   Backing_phys->SetTranslation(Sep);
+  
   Sep=Target_phys->GetTranslation();
   Stop=Stopper_phys->GetTranslation();
 

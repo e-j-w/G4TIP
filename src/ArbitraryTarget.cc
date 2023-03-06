@@ -59,7 +59,7 @@ G4VPhysicalVolume* ArbitraryTarget::AddLayer()
   target_limits[numTargetLayers] = new G4UserLimits();
   target_limits[numTargetLayers]->SetMaxAllowedStep(Target_thickness[numTargetLayers]/NTStep);
   Target_log[numTargetLayers]->SetUserLimits(target_limits[numTargetLayers]);
-  Target_phys[numTargetLayers] = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log[numTargetLayers],layerName,expHall_log,false,0);
+  Target_phys[numTargetLayers] = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log[numTargetLayers],layerName,expHall_log,false,0,true);
   d.setX(Pos->getX());
   d.setY(Pos->getY());
   d.setZ(Pos->getZ() + TargetLayerPosition[numTargetLayers] + 0.5*Target_thickness[numTargetLayers]);

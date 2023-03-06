@@ -35,6 +35,8 @@ class Materials
   G4Material* Ta;
   G4Material* Ni;
   G4Material* S;
+  G4Material* Ag;
+  G4Material* Pb;
 
   // Compounds
   G4Material* Vacuum;

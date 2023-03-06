@@ -38,7 +38,7 @@ G4VPhysicalVolume* Target::Construct()
   target_limits= new G4UserLimits();
   target_limits->SetMaxAllowedStep(Target_thickness/NTStep);
   Target_log->SetUserLimits(target_limits);
-  Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0);
+  Target_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Target_log,"target",expHall_log,false,0,true);
   shift.setX(0.);
   shift.setY(0.);
   shift.setZ(-0.5*Target_thickness);
@@ -50,7 +50,7 @@ G4VPhysicalVolume* Target::Construct()
   backing_limits->SetMaxAllowedStep(Backing_thickness/NBStep);
   Backing_log->SetUserLimits(backing_limits);
 
-  Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0);
+  Backing_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos),Backing_log,"backing",expHall_log,false,0,true);
   shift.setZ(0.5*Backing_thickness);
   Backing_phys->SetTranslation(shift);
 

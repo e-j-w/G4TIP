@@ -110,9 +110,11 @@ public:
   void SetEvapQ2(G4double x) { QEvap[1] = x; };
   void SetEvapQ3(G4double x) { QEvap[2] = x; };
   void SetEvapQ4(G4double x) { QEvap[3] = x; };
-  void SetExix0(G4double x) { exix0 = x; };
-  void SetExiw(G4double x) { exiw = x; };
-  void SetExitau(G4double x) { exitau = x; };
+  void SetExiV(G4double x) { exiV = x; };
+  void SetExikT(G4double x) { exikT = x; };
+  // void SetExix0(G4double x) { exix0 = x; };
+  // void SetExiw(G4double x) { exiw = x; };
+  // void SetExitau(G4double x) { exitau = x; };
   void SetTabulatedExi(bool set) { useTabulatedExi = set; };
   void ReadTabulatedExi(G4String fileName);
 
@@ -138,7 +140,8 @@ public:
   G4ParticleDefinition* GetResidual(int i) { return residual[i]; };
 
   void AddDecay(G4double, G4double);
-  G4double getExi(G4double, G4double, G4double);
+  G4double getExi(G4double, G4double);
+  //G4double getExi(G4double, G4double, G4double);
   G4double getTabulatedExi(G4double);
 
   Projectile* getProjectile() { return theProjectile; };
@@ -172,7 +175,8 @@ private:
   G4double QRxn, QEvap[MAXNUMEVAP]; // Q values for the beam-target reaction and evaporation process(es)
   G4double initExi, evapdeltaExi[MAXNUMEVAP], totalEvapdeltaExi; // excitation energy parameters
 
-  G4double exix0, exiw, exitau; // evaporated particle excitation energy distribution parameters
+  G4double exiV, exikT;
+  // G4double exix0, exiw, exitau; // evaporated particle excitation energy distribution parameters
   G4double exitDistE[MAXEXIDISTENTRIES], exiDistCounts[MAXEXIDISTENTRIES]; //excitation energy tabulated distribution paramaeters
   int numTabulatedExiVals;
   bool useTabulatedExi;
@@ -192,6 +196,9 @@ private:
 
   G4int loopCounter;
   G4int gammaAngDist;
+
+  vector<vector<G4double>> FELookupTable;
+
 };
 
 #endif

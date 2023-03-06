@@ -44,6 +44,7 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 and ROOT libraries
 #
+set (CMAKE_CXX_STANDARD 14)
 add_executable(G4TIP G4TIP.cc ${sources} ${headers})
 target_link_libraries(G4TIP ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 

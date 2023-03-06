@@ -28,7 +28,7 @@ G4VPhysicalVolume* Chamber::Construct()
   Chamber_log = new G4LogicalVolume(Chamber_shell,Chamber_Material,"Chamber_log",0,0,0);
 
   Chamber_phys = new G4PVPlacement(G4Transform3D(NoRot,*Pos0),
-	  Chamber_log,"Chamber",expHall_log,false,0);
+	  Chamber_log,"Chamber",expHall_log,false,0,true);
 
   //Visualization Attributes
   setInvisible();

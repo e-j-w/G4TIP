@@ -35,9 +35,11 @@ private:
   G4UIcmdWithADoubleAndUnit *Q2Cmd;
   G4UIcmdWithADoubleAndUnit *Q3Cmd;
   G4UIcmdWithADoubleAndUnit *Q4Cmd;
-  G4UIcmdWithADouble *dExix0Cmd;
-  G4UIcmdWithADouble *dExiwCmd;
-  G4UIcmdWithADouble *dExitauCmd;
+  G4UIcmdWithADouble *dExiVCmd;
+  G4UIcmdWithADouble *dExikTCmd;
+  // G4UIcmdWithADouble *dExix0Cmd;
+  // G4UIcmdWithADouble *dExiwCmd;
+  // G4UIcmdWithADouble *dExitauCmd;
   G4UIcmdWithAString *dExiDistCmd;
 
   G4UIcmdWithoutParameter *CARCmd;
