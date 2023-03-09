@@ -22,7 +22,7 @@ CsI_detector_spherical::~CsI_detector_spherical() { ; }
 G4VPhysicalVolume *CsI_detector_spherical::Construct(G4ThreeVector pos,
                                                      G4ThreeVector dim) {
 
-  G4cout << "Setting up CsI ball dectector at position " << pos << ", with absorber thickness " << CsI_absorber_thickness/um << " um." << G4endl;
+  //G4cout << "Setting up CsI ball dectector at position " << pos << ", with absorber thickness " << CsI_absorber_thickness/um << " um." << G4endl;
   G4double radius, thick, theta, dtheta, phi, dphi;
   radius = pos.getR();
   thick = dim.getR();

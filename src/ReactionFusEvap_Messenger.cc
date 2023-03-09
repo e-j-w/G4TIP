@@ -38,24 +38,24 @@ ReactionFusEvap_Messenger::ReactionFusEvap_Messenger(ReactionFusEvap *EC) : theR
   QCmd->SetParameterName("Q", false);
   QCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q1Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q1", this);
-  Q1Cmd->SetGuidance("Q for the first particle evaporation process.");
-  Q1Cmd->SetParameterName("Q1", false);
+  Q1Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/SE1", this);
+  Q1Cmd->SetGuidance("Particle separation energy for the first particle evaporation process.");
+  Q1Cmd->SetParameterName("SE1", false);
   Q1Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q2Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q2", this);
-  Q2Cmd->SetGuidance("Q for the second particle evaporation process (if necessary).");
-  Q2Cmd->SetParameterName("Q2", false);
+  Q2Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/SE2", this);
+  Q2Cmd->SetGuidance("Particle separation energy for the second particle evaporation process (if necessary).");
+  Q2Cmd->SetParameterName("SE2", false);
   Q2Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q3Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q3", this);
-  Q3Cmd->SetGuidance("Q for the third particle evaporation process (if necessary).");
-  Q3Cmd->SetParameterName("Q3", false);
+  Q3Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/SE3", this);
+  Q3Cmd->SetGuidance("Particle separation energy for the third particle evaporation process (if necessary).");
+  Q3Cmd->SetParameterName("SE3", false);
   Q3Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
-  Q4Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/Q4", this);
-  Q4Cmd->SetGuidance("Q for the fourth particle evaporation process (if necessary).");
-  Q4Cmd->SetParameterName("Q4", false);
+  Q4Cmd = new G4UIcmdWithADoubleAndUnit("/FusionEvaporation/SE4", this);
+  Q4Cmd->SetGuidance("Particle separation energy for the fourth particle evaporation process (if necessary).");
+  Q4Cmd->SetParameterName("SE4", false);
   Q4Cmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
   dExiVCmd = new G4UIcmdWithADouble("/FusionEvaporation/CoulombBarrier", this);
