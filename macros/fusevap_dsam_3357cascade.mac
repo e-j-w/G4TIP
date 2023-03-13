@@ -32,9 +32,11 @@
 /FusionEvaporation/CompoundFormationQ 23.651 MeV
 /FusionEvaporation/Q1 -10.643 MeV
 /FusionEvaporation/Q2 -10.615 MeV
-/FusionEvaporation/Centroid 14.16082
-/FusionEvaporation/Width 1.001135
-/FusionEvaporation/Tau 2.286506
+#/FusionEvaporation/Centroid 14.16082
+#/FusionEvaporation/Width 1.001135
+#/FusionEvaporation/Tau 2.286506
+/FusionEvaporation/CoulombBarrier 4.00
+/FusionEvaporation/Temperature 5.00
 #/FusionEvaporation/ConstrainParticleAngularRange
 #/FusionEvaporation/MaxParticleAngle 50.0 deg
 /DSAMTarget/Target/Report

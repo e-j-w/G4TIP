@@ -360,11 +360,7 @@ void Results::TreeCreate() {
     tree->Branch("CsIZ", partHit.Z, "Z[CsIfold]/I");
     tree->Branch("CsIID", partHit.Id, "Id[CsIfold]/I");
     tree->Branch("CsIr", partHit.r, "r[CsIfold]/I");
-    tree->Branch("CsIpath", partHit.path, "path[CsIfold]/D");
     tree->Branch("CsIdE", partHit.Id, "dE[CsIfold]/D");
-    tree->Branch("CsIdEdx", partHit.dEdx, "dEdx[CsIfold]/D");
-    tree->Branch("CsIdLdx", partHit.dLdx, "dLdx[CsIfold]/D");
-    tree->Branch("CsILY", partHit.LY, "LY[CsIfold]/D");
     tree->Branch("ProjectileStart", &gun,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile when shot from the particle gun
     tree->Branch("ProjectileReactionIn", &pRIn,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D"); // projectile at the reaction point
     tree->Branch("ProjectileReactionOut",&pROut,"x/D:y/D:z/D:px/D:py/D:pz/D:E/D:b/D:t/D:tROffset/D:theta/""D:phi/D:w/D");
@@ -1107,10 +1103,6 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(&partHit.Z, 0, sizeof(partHit.Z));
   memset(&partHit.Id, 0, sizeof(partHit.Id));
   memset(&partHit.r, 0, sizeof(partHit.r));
-  memset(&partHit.path, 0, sizeof(partHit.path));
-  memset(&partHit.dEdx, 0, sizeof(partHit.dEdx));
-  memset(&partHit.dLdx, 0, sizeof(partHit.dLdx));
-  memset(&partHit.LY, 0, sizeof(partHit.LY));
 
   G4int i, j, k;
   if(Np > 0){
@@ -1118,85 +1110,55 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
       if((j < NCsI + 1) || (theDetector->GetAncArrayType()==1)) // check whether index is valid for wall/ball
         if((CsITrigId == 0) || (CsITrigId == j)) // save only data for the detectors we want to see
           for(i = 0; i < Np; i++){ // loop through all entries in the collection
-            if((*CsICollection)[i]->GetA() >= 1)
-              if((*CsICollection)[i]->GetDisabled() == 0) // don't save any entries which have been disabled due to trigger conditions
-                if((*CsICollection)[i]->GetId() == j){     // check whether entry belongs to the detector we are looking at
-                  if((partHit.E[partHit.CsIfold] == 0.) && ((*CsICollection)[i]->GetKE() > 0.)){ // first entry for a given detector with nonzero energy
-                    partHit.x[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetPos().getX() / mm;
-                    partHit.y[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetPos().getY() / mm;
-                    partHit.z[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetPos().getZ() / mm;
-                    partHit.px[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetMom().getX() / MeV;
-                    partHit.py[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetMom().getY() / MeV;
-                    partHit.pz[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetMom().getZ() / MeV;
-                    partHit.b[partHit.CsIfold] = (*CsICollection)[i]->GetBeta();
-                    partHit.E[partHit.CsIfold] = (*CsICollection)[i]->GetEdep() / MeV;
-                    partHit.dE[partHit.CsIfold] = (*CsICollection)[i]->GetKE() / MeV;
-                    partHit.w[partHit.CsIfold] = (*CsICollection)[i]->GetWeight();
-                    partHit.A[partHit.CsIfold] = (*CsICollection)[i]->GetA();
-                    partHit.Z[partHit.CsIfold] = (*CsICollection)[i]->GetZ();
-                    partHit.Id[partHit.CsIfold] = (*CsICollection)[i]->GetId();
-                    partHit.r[partHit.CsIfold] = (*CsICollection)[i]->GetRingId();
-                    // partHit.path=(*CsICollection)[i]->GetPathLength()/um; // in
-                    // microns
-                    // partHit.dEdx=((*CsICollection)[i]->GetEdep()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                    partHit.path[partHit.CsIfold] =
-                        ((*CsICollection)[i]->GetPathLength() / cm) * CsIDensity *
-                        1000; // in mg/cm^2
-                    partHit.dEdx[partHit.CsIfold] =
-                        ((*CsICollection)[i]->GetEdep() / MeV) /
-                        (((*CsICollection)[i]->GetPathLength() / cm) *
-                        CsIDensity * 1000);
-                    partHit.dLdx[partHit.CsIfold] = CalculateBirksLawStep(
-                        partHit.Id[partHit.CsIfold], partHit.dE[partHit.CsIfold],
-                        partHit.dEdx[partHit.CsIfold]); // make sure to check
-                                                        // units of kB!
-                    partHit.LY[partHit.CsIfold] = partHit.dLdx[partHit.CsIfold];
-                    // G4cout<<"CsI ID in tree: "<<partHit.Id<<G4endl;
-                    // printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL
-                    // %9.3f  LY
-                    // %9.3f\n",partHit.E,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
-                  }else if((*CsICollection)[i]->GetEdep() > 0.){ // later entries for a given detector with nonzero energy
-                    partHit.E[partHit.CsIfold] += (*CsICollection)[i]->GetEdep() / MeV;
-                    partHit.dE[partHit.CsIfold] =
-                        (*CsICollection)[i]->GetEdep() / MeV;
-                    //printf("i=%i, detID=%i, de: %10.10f\n",i,(*CsICollection)[i]->GetId(),(*CsICollection)[i]->GetEdep() / MeV);
-                    // partHit.path+=(*CsICollection)[i]->GetPathLength()/um; //
-                    // in microns
-                    // partHit.dEdx=((*CsICollection)[i]->GetEdep()/MeV)/((*CsICollection)[i]->GetPathLength()/um);
-                    partHit.path[partHit.CsIfold] +=
-                        ((*CsICollection)[i]->GetPathLength() / cm) * CsIDensity *
-                        1000; // in mg/cm^2
-                    partHit.dEdx[partHit.CsIfold] =
-                        ((*CsICollection)[i]->GetEdep() / MeV) /
-                        (((*CsICollection)[i]->GetPathLength() / cm) *
-                        CsIDensity * 1000);
-                    partHit.dLdx[partHit.CsIfold] = CalculateBirksLawStep(
-                        partHit.Id[partHit.CsIfold], partHit.dE[partHit.CsIfold],
-                        partHit.dEdx[partHit.CsIfold]); // make sure to check
-                                                        // units of kB!
-                    partHit.LY[partHit.CsIfold] += partHit.dLdx[partHit.CsIfold];
-                    // printf("particle: dE %9.3f path %9.3f  dE/dx %9.3f  dL
-                    // %9.3f  LY
-                    // %9.3f\n",partHit.dE,partHit.path,partHit.dEdx,partHit.dLdx,partHit.LY);
+            if((*CsICollection)[i]->GetA() >= 1){
+              if((*CsICollection)[i]->GetWeight() > 0){
+                if((*CsICollection)[i]->GetDisabled() == 0){ // don't save any entries which have been disabled due to trigger conditions
+                  if((*CsICollection)[i]->GetId() == j){     // check whether entry belongs to the detector we are looking at
+                    if((partHit.E[partHit.CsIfold] == 0.) && ((*CsICollection)[i]->GetKE() > 0.)){ // first entry for a given detector with nonzero energy
+                      partHit.x[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetPos().getX() / mm;
+                      partHit.y[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetPos().getY() / mm;
+                      partHit.z[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetPos().getZ() / mm;
+                      partHit.px[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetMom().getX() / MeV;
+                      partHit.py[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetMom().getY() / MeV;
+                      partHit.pz[partHit.CsIfold] =
+                          (*CsICollection)[i]->GetMom().getZ() / MeV;
+                      partHit.b[partHit.CsIfold] = (*CsICollection)[i]->GetBeta();
+                      partHit.E[partHit.CsIfold] = (*CsICollection)[i]->GetEdep() / MeV;
+                      partHit.dE[partHit.CsIfold] = (*CsICollection)[i]->GetKE() / MeV;
+                      partHit.w[partHit.CsIfold] = (*CsICollection)[i]->GetWeight();
+                      partHit.A[partHit.CsIfold] = (*CsICollection)[i]->GetA();
+                      partHit.Z[partHit.CsIfold] = (*CsICollection)[i]->GetZ();
+                      partHit.Id[partHit.CsIfold] = (*CsICollection)[i]->GetId();
+                      partHit.r[partHit.CsIfold] = (*CsICollection)[i]->GetRingId();
+                    }else if((*CsICollection)[i]->GetEdep() > 0.){ // later entries for a given detector with nonzero energy
+                      partHit.E[partHit.CsIfold] += (*CsICollection)[i]->GetEdep() / MeV;
+                      partHit.dE[partHit.CsIfold] = (*CsICollection)[i]->GetEdep() / MeV;
+                      partHit.r[partHit.CsIfold] = (*CsICollection)[i]->GetRingId();
+                    }
+                    // getc(stdin);
                   }
                 }
-            // getc(stdin);
+              }
+            }
           }
 
-      if (partHit.E[partHit.CsIfold] > 0.){
+      if(partHit.E[partHit.CsIfold] > 0.){
         //printf("energy: %10.10f\n",partHit.E[partHit.CsIfold]/MeV);
         partHit.CsIfold++; // increase fold if energy in a given detector is greater than 0
+      }else{
+        //invalid hit, set values flagging this as such
+        partHit.r[partHit.CsIfold] = 11;
+        partHit.x[partHit.CsIfold] = -100;
+        partHit.y[partHit.CsIfold] = -100;
+        partHit.z[partHit.CsIfold] = -100;
       }
     }
   } // end of CsI collection entry saving
-
-	
 
   //TIGRESS/GRIFFIN event tracking
   GHit.Gfold = 0;
@@ -1648,33 +1610,4 @@ void Results::GroupCosDist() {
   h->GetYaxis()->SetTitle("Counts");
   h->SetLineColor(kRed);
   h->Draw();
-}
-
-//=====================================================================================
-G4double Results::CalculatePath(G4ThreeVector iPos, G4ThreeVector Pos) {
-  G4double xd, yd, zd;
-  G4double dist;
-
-  xd = Pos.getX() - iPos.getX();
-  yd = Pos.getY() - iPos.getY();
-  zd = Pos.getZ() - iPos.getZ();
-
-  dist = sqrt(xd * xd + yd * yd + zd * zd);
-
-  return dist;
-}
-//=====================================================================================
-G4double Results::CalculateBirksLawStep(G4int id, G4double dE, G4double dEdx) {
-  // G4double S=1.0; // absolute scinitallation yeild for CsI (can take from
-  // arXiv 1502:03800v1 for low E heavy ions).
-  G4double dL; // differential light yield
-
-  //   printf("Birks constant for position %2d is %6.3f um/MeV %6.3f
-  //   (mg/cm^2)/MeV\n",id,kB[id-1],kBm[id-1]);
-  // getc(stdin);
-
-  // dL = S*dE/(1+kB[id-1]*dEdx); // for dE in MeV/um
-  dL = S[id - 1] * dE / (1 + kBm[id - 1] * dEdx); // for dE in MeV/(mg/cm^2)
-
-  return dL;
 }

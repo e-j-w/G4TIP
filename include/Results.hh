@@ -110,12 +110,7 @@ typedef struct {
   Int_t Z[NCsI];
   Int_t Id[NCsI];
   Int_t r[NCsI];
-  Double_t path[NCsI]; // path length in material
   Double_t dE[NCsI];   // energy deposit for step
-  Double_t dEdx[NCsI]; // dE/dx in MeV/um
-  Double_t dLdx[NCsI]; // Birks Law dL/dx
-  Double_t LY[NCsI];   // Birks Law light yield. LY = sum over dL/dx
-                       // Double_t Q;    // Quenching factor LY/E
 } CsIInf;
 
 typedef struct {
@@ -213,8 +208,6 @@ public:
   void GetCsIBallPositions();
   void GroupCosDist();
   G4double FWHM_response(G4double);
-  G4double CalculatePath(G4ThreeVector, G4ThreeVector);
-  G4double CalculateBirksLawStep(G4int, G4double, G4double);
 
   G4ThreeVector tigressFwdPos[GN][GS];
   G4ThreeVector tigressBackPos[GN][GS];
