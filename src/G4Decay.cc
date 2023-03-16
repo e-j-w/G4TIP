@@ -60,12 +60,8 @@
 #include "G4VExtDecayer.hh"
 
 // constructor
-G4Decay::G4Decay(const G4String& processName)
-                               :G4VRestDiscreteProcess(processName, fDecay),
-				verboseLevel(1),
-                                HighestValue(20.0),
-				fRemainderLifeTime(-1.0),
-                                pExtDecayer(0)
+G4Decay::G4Decay(const G4String& processName):G4VRestDiscreteProcess(processName, fDecay),
+verboseLevel(1),HighestValue(20.0),fRemainderLifeTime(-1.0),pExtDecayer(0)
 {
   // set Process Sub Type
   SetProcessSubType(static_cast<int>(DECAY));

@@ -12,7 +12,9 @@ For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma
 
 ## Installation
 
-This code has been tested on Ubuntu 14.04/16.04, CentOS 7, and Arch Linux (as of September 2020).  Follow the instructions below to set up the required dependencies.
+This code has been tested on CentOS 7 and Ubuntu 20.04.  Previous versions have been tested on Ubuntu 14.04/16.04 and Arch Linux (from September 2020), but compatibility with these distros is not guaranteed.  If you're on a non-Linux platform: good luck!
+
+Follow the instructions below to set up the required dependencies.
 
 ### ROOT
 

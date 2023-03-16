@@ -90,9 +90,9 @@ CsI_array_spherical::CsI_array_spherical(G4LogicalVolume *experimentalHall_log,
       G4int curr_det = ndet_cumulative + j;
       id[curr_det] = curr_det + 1;
       ring[curr_det] = i;
-      G4double phideg = 180 * deg / ndet_ring;
+      G4double phideg = 180.0 * deg / ndet_ring;
       // Position vector
-      pos[curr_det].setRThetaPhi(radial, avgdeg, 2 * phideg * j);
+      pos[curr_det].setRThetaPhi(radial, avgdeg, 2.0 * phideg * j);
       // Crystal size attributes
       dim[curr_det].setRThetaPhi(thick, widdeg,
                                  phideg); // Only angles are half-width

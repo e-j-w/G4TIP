@@ -5,8 +5,8 @@
 #include "ReactionFusEvap.hh"
 
 ReactionFusEvap::ReactionFusEvap(Projectile *Proj, DetectorConstruction *Det, const G4String &aName)
-  : G4VProcess(aName), theProjectile(Proj), theDetector(Det)
-{
+  : G4VProcess(aName), theProjectile(Proj), theDetector(Det){
+  
   proton = G4Proton::ProtonDefinition();
   neutron = G4Neutron::NeutronDefinition();
   alpha = G4Alpha::AlphaDefinition();
@@ -1017,9 +1017,9 @@ ReactionFusEvap::ReactionFusEvap(Projectile *Proj, DetectorConstruction *Det, co
   FELookupTable.push_back({0.999999999999964,34.519999080506807});
   FELookupTable.push_back({0.999999999999982,35.226731425301175});
 
-  if (verboseLevel > 1) {
+  if(GetVerboseLevel()>1) {
     G4cout << GetProcessName() << " is created " << G4endl;
-  };
+  }
 }
 //---------------------------------------------------------------------
 ReactionFusEvap::~ReactionFusEvap() { ; }
@@ -1033,16 +1033,15 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
   //G4ThreeVector pInit = aTrack.GetMomentum();
   //G4cout << "Initial Momentum (beam):" << pInit << G4endl;
 
-  while (killTrack ==
-         true) // repeat the reaction code until a good event is obtained
-  {
-    if (numRepeats > maxNumRepeats) {
-      G4cout<<"ERROR: Maximum number of failed attempts to simulate fusion-evaporation ("<<maxNumRepeats<<") was exceeded!"<<G4endl;
+  while(killTrack == true){ // repeat the reaction code until a good event is obtained
+
+    if(numRepeats > maxNumRepeats){
+      G4cout << "ERROR: Maximum number of failed attempts to simulate fusion-evaporation ("
+      << maxNumRepeats << ") was exceeded!" << G4endl;
       G4cout << "This is likely caused by the reaction parameters being set to "
                 "non-physical values.  Modify the reaction parameters and try "
                 "again.  The number of attempts done before displaying this "
-                "message may be set using /Reaction/MaxNumAttempts"
-             << G4endl;
+                "message may be set using /Reaction/MaxNumAttempts" << G4endl;
       exit(-1);
     }
 
@@ -1055,17 +1054,23 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
     G4DynamicParticle *EvapN[MAXNUMEVAP];
     G4DynamicParticle *EvapA[MAXNUMEVAP];
     RecoilOut = new G4DynamicParticle();
-    for (int i = 0; i < nP; i++) // protons
-      if (i < MAXNUMEVAP)
+    for(int i = 0; i < nP; i++){ // protons
+      if(i < MAXNUMEVAP){
         EvapP[i] = new G4DynamicParticle();
-    for (int i = 0; i < nN; i++) // neutrons
-      if (i < MAXNUMEVAP)
+      }
+    }
+    for(int i = 0; i < nN; i++){ // neutrons
+      if(i < MAXNUMEVAP){
         EvapN[i] = new G4DynamicParticle();
-    for (int i = 0; i < nA; i++) // alphas
-      if (i < MAXNUMEVAP)
+      }
+    }
+    for(int i = 0; i < nA; i++){ // alphas
+      if(i < MAXNUMEVAP){
         EvapA[i] = new G4DynamicParticle();
+      }
+    }
 
-    if (reaction_here) {
+    if(reaction_here){
       reaction_here = false;
 
       // get properties of the beam-target system
@@ -1077,129 +1082,144 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
       // G4cout << "Calculated initExi: "<< initExi << MeV <<G4endl;
       // getc(stdin);
 
-      // generate delta Exi values for each particle to be evaporated
-      for (int i = 0; i < (nP + nN + nA); i++)
-        if (i < MAXNUMEVAP) {
-          evapdeltaExi[i] = 0.;
-          // clamp delta Exi values to physically possible values
-          //while ( ((evapdeltaExi[i] + QEvap[i]) <= 0.0) || ((evapdeltaExi[i] + QEvap[i]) > initExi) ){
-	  while( (evapdeltaExi[i] <= 0.0) || (evapdeltaExi[i] > (initExi+QEvap[i]) ) )
-	    {
-	      if(useTabulatedExi)
-		evapdeltaExi[i] = getTabulatedExi(QEvap[i]);
-	      else
-		evapdeltaExi[i] = getExi(exiV, exikT);
-	    }
+      // generate energy values for each particle to be evaporated
+      for(int i = 0; i < (nP + nN + nA); i++){
+        if(i < MAXNUMEVAP){
+          evapE[i] = 0.;
+          // clamp particle energies to physically possible values
+          //while ( ((evapE[i] + QEvap[i]) <= 0.0) || ((evapE[i] + QEvap[i]) > initExi) ){
+          int exiAttempts = 0;
+          while( (evapE[i] <= 0.0) || (evapE[i] > (initExi+QEvap[i]) ) ){
+            if(exiAttempts > maxNumRepeats){
+              //we can't get a valid particle energy
+              killTrack = true;
+              break;
+            }
+            if(useTabulatedExi){
+              evapE[i] = getTabulatedExi(QEvap[i]);
+            }else{
+              evapE[i] = getExi(exiV, exikT);
+            }
+            exiAttempts++;
+          }
         }
+      }
 
-      // FILE *out1, *out2;            //////////////////////////////////////////////////////////////////////////////////////////////
+      // FILE *out1, *out2;
       // if((out1=fopen("exi1.txt","a"))==NULL)
       // 	{printf("Cannot open output\n");exit(-1);}
       // if((out2=fopen("exi2.txt","a"))==NULL)
       // 	{printf("Cannot open output\n");exit(-1);}
-      // fprintf(out1,"%.5f\n",evapdeltaExi[0]);
-      // fprintf(out2,"%.5f\n",evapdeltaExi[1]);
+      // fprintf(out1,"%.5f\n",evapE[0]);
+      // fprintf(out2,"%.5f\n",evapE[1]);
       // fclose(out1);
       // fclose(out2);
       
-      // check that sum of delta Exi values is in bounds
-      totalEvapdeltaExi = 0;
-      totalQEvap = 0;
-      if(comments==1)
-	G4cout<<"Initial energy compound "<<initExi<<G4endl;
-      for (int i = 0; i < (nP + nN + nA); i++)
-        if (i < MAXNUMEVAP)
-	  {
-	    totalEvapdeltaExi += evapdeltaExi[i];
-	    totalQEvap += QEvap[i];
-	    if(comments==1)
-	      {
-		G4cout<<"Total evaporation energy"<<totalEvapdeltaExi<<G4endl;
-		G4cout<<"Total Q value enerrgy   "<<totalQEvap<<G4endl;
-		getc(stdin);
-	      }
-	  }
-      // if (totalEvapdeltaExi > initExi) // not physically possible!
-      //   killTrack = true;
-      if ((initExi - totalEvapdeltaExi + totalQEvap) < Egammatot) // not enough energy to emit gamma cascade
-        killTrack = true;
+      if(killTrack == false){
+        // check that sum of particle energy values is in bounds
+        totalEvapE = 0;
+        totalQEvap = 0;
+        if(GetVerboseLevel()>1){
+          G4cout<<"Initial energy of compound: "<<initExi<<G4endl;
+        }
+        for(int i = 0; i < (nP + nN + nA); i++){
+          if(i < MAXNUMEVAP){
+            totalEvapE += evapE[i];
+            totalQEvap += QEvap[i];
+            if(GetVerboseLevel()>1){
+              G4cout<<"Total evaporation energy"<<totalEvapE<<G4endl;
+              G4cout<<"Total Q value energy    "<<totalQEvap<<G4endl;
+            }
+          }
+        }
+        // if (totalEvapE > initExi) // not physically possible!
+        //   killTrack = true;
+        if((initExi - totalEvapE + totalQEvap) < Egammatot){ // not enough energy to emit gamma cascade
+          killTrack = true;
+        }
+      }
 
-      if (killTrack == false)
-        if (SetupReactionProducts(aTrack, RecoilOut))
-	  {
-	    aParticleChange.ProposeTrackStatus(fStopAndKill);
-	    aParticleChange.SetNumberOfSecondaries(1 + nP + nN + nA);
+      if(killTrack == false){
+        if(SetupReactionProducts(aTrack, RecoilOut)){
+          aParticleChange.ProposeTrackStatus(fStopAndKill);
+          aParticleChange.SetNumberOfSecondaries(1 + nP + nN + nA);
 
-	    // generate the secondaries (alphas, protons, neutrons) from fusion evaporation and correct the momentum of the recoiling nucleus
+          // generate the secondaries (alphas, protons, neutrons)
+          //from fusion evaporation and correct the momentum of
+          //the recoiling nucleus
 
-
-	    if(comments==1)
-	      {
-		G4cout << "---------------------" << G4endl;
-		G4cout << "---------------------" << G4endl;
-		G4cout << "New Reaction" << G4endl;
-		G4cout << "---------------------" << G4endl;
-		G4cout << "---------------------" << G4endl;
-	      }
-	    
-	    for (int i = 0; i < nP; i++) // protons
-	      if (i < MAXNUMEVAP) // check that the particle can be evaporated
-		{
-		  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapdeltaExi[i], QEvap[i], cmv);
-		  aParticleChange.AddSecondary(EvapP[i], posIn, true); // evaporate the particle (momentum determined by EvaorateWithMomentumCorrection function)
-		}
-	      else
-		killTrack = true;        // this is no longer the desired reaction channel, kill it
-	    
-	    for (int i = 0; i < nN; i++) // neutrons
-	      if (i < MAXNUMEVAP) // check that the particle can be evaporated
-		{
-		  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapdeltaExi[i + nP], QEvap[i + nP], cmv);
-		  aParticleChange.AddSecondary(EvapN[i], posIn, true); // evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-		}
-	      else
-		killTrack = true;        // this is no longer the desired reaction channel, kill it
-	    
-	    for (int i = 0; i < nA; i++) // alphas
-	      if (i < MAXNUMEVAP) // check that the particle can be evaporated
-		{
-		  EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapdeltaExi[i + nP + nN], QEvap[i + nP + nN], cmv);
-		  aParticleChange.AddSecondary(EvapA[i], posIn, true); // evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
-		}
-	      else
-		killTrack = true;        // this is no longer the desired reaction channel, kill it
-
-
+          if(GetVerboseLevel()>1){
+            G4cout << "---------------------" << G4endl;
+            G4cout << "---------------------" << G4endl;
+            G4cout << "New Reaction" << G4endl;
+            G4cout << "---------------------" << G4endl;
+            G4cout << "---------------------" << G4endl;
+          }
+          
+          for(int i = 0; i < nP; i++){ // protons
+            if(i < MAXNUMEVAP){ // check that the particle can be evaporated
+              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapP[i], proton, evapE[i], QEvap[i], cmv);
+              aParticleChange.AddSecondary(EvapP[i], posIn, true); // evaporate the particle (momentum determined by EvaorateWithMomentumCorrection function)
+            }else{
+              killTrack = true; // this is no longer the desired reaction channel, kill it
+            }
+          }
+          for(int i = 0; i < nN; i++){ // neutrons
+            if(i < MAXNUMEVAP){ // check that the particle can be evaporated
+              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapN[i], neutron, evapE[i + nP], QEvap[i + nP], cmv);
+              aParticleChange.AddSecondary(EvapN[i], posIn, true); // evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+            }else{
+              killTrack = true; // this is no longer the desired reaction channel, kill it
+            }
+          }
+          for(int i = 0; i < nA; i++){ // alphas
+            if(i < MAXNUMEVAP){ // check that the particle can be evaporated
+              EvaporateWithMomentumCorrection(RecoilOut, RecoilOut, EvapA[i], alpha, evapE[i + nP + nN], QEvap[i + nP + nN], cmv);
+              aParticleChange.AddSecondary(EvapA[i], posIn, true); // evaporate the particle (momentum determined by EvaporateWithMomentumCorrection function)
+            }else{
+              killTrack = true; // this is no longer the desired reaction channel, kill it
+            }
+          }
+        }
+      }
 	    
 	    // Check that the angle of at least one of the evaporated particles
-	    // (in the lab frame) in in the user specified range.
+	    // (in the lab frame) is in the user specified angular range.
 	    // Otherwise, kill the track.
-	    if ((constrainedAngle == true) && (killTrack == false)) {
+	    if((constrainedAngle == true) && (killTrack == false)){
 	      G4bool goodEvapAngle = false;
-	      for (int i = 0; i < nP; i++)
-		if (goodEvapAngle == false)
-		  if (EvapP[i]->GetMomentumDirection().getTheta() < maxEvapAngle)
-		    if (EvapP[i]->GetMomentumDirection().getTheta() >
-			minEvapAngle)
-		      goodEvapAngle = true; // at least one of the emitted particles satisfies the specified angular range
-	      for (int i = 0; i < nN; i++)
-		if (goodEvapAngle == false)
-		  if (EvapN[i]->GetMomentumDirection().getTheta() < maxEvapAngle)
-		    if (EvapN[i]->GetMomentumDirection().getTheta() >
-			minEvapAngle)
-		      goodEvapAngle = true; // at least one of the emitted particles satisfies the specified angular range
-	      for (int i = 0; i < nA; i++)
-		if (goodEvapAngle == false)
-		  if (EvapA[i]->GetMomentumDirection().getTheta() < maxEvapAngle)
-		    if (EvapA[i]->GetMomentumDirection().getTheta() >
-			minEvapAngle)
-		      goodEvapAngle = true; // at least one of the emitted particles satisfies the specified angular range
-	      if (goodEvapAngle == false)
-		killTrack = true;
-	    }
+	      for(int i = 0; i < nP; i++){
+          if(goodEvapAngle == false){
+            if(EvapP[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
+              if(EvapP[i]->GetMomentumDirection().getTheta() > minEvapAngle){
+                goodEvapAngle = true;
+              }
+            }
+          }
+        }
+	      for(int i = 0; i < nN; i++){
+          if(goodEvapAngle == false){
+            if(EvapN[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
+              if(EvapN[i]->GetMomentumDirection().getTheta() > minEvapAngle){
+                goodEvapAngle = true;
+              }
+            }
+          }
+        }
+	      for(int i = 0; i < nA; i++){
+          if(goodEvapAngle == false){
+            if(EvapA[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
+              if(EvapA[i]->GetMomentumDirection().getTheta() > minEvapAngle){
+                goodEvapAngle = true;
+              }
+            }
+          }
+        }
+	      if(goodEvapAngle == false)
+          killTrack = true;
+      }
 
-	    if (killTrack == false) {
-
+	    if(killTrack == false){
 	      // store the proper momentum from evaporation and generate the residual nucleus
 	      pRes_correct = RecoilOut->GetMomentum();
 	      RecoilOut->SetDefinition(residual[0]); // give the residual the gamma decay process specified in TargetFaceCrossSection()
@@ -1211,26 +1231,31 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
 	    }
 	  }
 
-      // repeat the reaction if neccessary
-      if (killTrack == true) {
-        aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
-        // G4cout << "Track killed, repeating..." << G4endl;
-        reaction_here = true; // allow the reaction to repeat
+    // repeat the reaction if neccessary
+    if(killTrack == true){
+      aParticleChange.ProposeTrackStatus(fKillTrackAndSecondaries);
+      // G4cout << "Track killed, repeating..." << G4endl;
+      reaction_here = true; // allow the reaction to repeat
 
-        // deallocate (prevent memory leak)
-        delete RecoilOut;
-        for (int i = 0; i < nP; i++) // protons
-          if (i < MAXNUMEVAP)
-            delete EvapP[i];
-        for (int i = 0; i < nN; i++) // neutrons
-          if (i < MAXNUMEVAP)
-            delete EvapN[i];
-        for (int i = 0; i < nA; i++) // alphas
-          if (i < MAXNUMEVAP)
-            delete EvapA[i];
-
-        numRepeats++;
+      // deallocate (prevent memory leak)
+      delete RecoilOut;
+      for(int i = 0; i < nP; i++){ // protons
+        if(i < MAXNUMEVAP){
+          delete EvapP[i];
+        }
       }
+      for(int i = 0; i < nN; i++){ // neutrons
+        if(i < MAXNUMEVAP){
+          delete EvapN[i];
+        }
+      }
+      for(int i = 0; i < nA; i++){ // alphas
+        if(i < MAXNUMEVAP){
+          delete EvapA[i];
+        }
+      }
+
+      numRepeats++;
     }
   }
 
@@ -1248,20 +1273,19 @@ ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4d
 
   //G4cout << "PostStepGetPhysicalInteractionLength, name: " << name << G4endl;
 
-  if (name == "target_log") {
-    G4UserLimits *pUserLimits =
-        aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits();
+  if(name == "target_log"){
+    G4UserLimits *pUserLimits = aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits();
     G4double ZReaction = pUserLimits->GetUserMinRange(aTrack);
     G4double ZCurrent = aTrack.GetPosition().getZ();
     G4double Z = ZReaction - ZCurrent;
-    if (Z < 0) {
+    if(Z < 0){
       // 	      G4cout<<" Past the reaction point"<<G4endl;
       // 	      G4cout<<" Volume "<<name<<G4endl;
       // 	      G4cout<<" Z[mm]: reaction "<<ZReaction/mm<<" current
       // "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
       return DBL_MAX;
     }
-    if (Z > eps) {
+    if(Z > eps){
       G4ThreeVector dir = aTrack.GetDynamicParticle()->GetMomentumDirection();
 
       dir *= (ZReaction - ZCurrent);
@@ -1271,10 +1295,9 @@ ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4d
       // "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
       return dir.mag();
     }
-    if (Z <= eps) {
+    if(Z <= eps){
       reaction_here = true;
-      aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits()->SetUserMinRange(
-          -DBL_MAX);
+      aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits()->SetUserMinRange(-DBL_MAX);
       return 0.;
     }
   }
@@ -1290,10 +1313,10 @@ G4bool ReactionFusEvap::SetupReactionProducts(const G4Track &aTrack,
   G4ThreeVector dirIn; // momentum direction of incoming particle
 
   Ain = aTrack.GetDynamicParticle()->GetDefinition()->GetAtomicMass();
-  if (Ain != A1)
+  if(Ain != A1)
     return FALSE;
   Zin = aTrack.GetDynamicParticle()->GetDefinition()->GetAtomicNumber();
-  if (Zin != Z1)
+  if(Zin != Z1)
     return FALSE;
 
   dirIn = aTrack.GetMomentumDirection();
@@ -1351,14 +1374,13 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(G4DynamicParticle *Compoun
   G4int rrecZ = Compound->GetDefinition()->GetAtomicNumber() - EvaporatedParticleDef->GetAtomicNumber();
   RecoilResidual = G4IonTable::GetIonTable()->GetIon(rrecZ, rrecA, 0); // 3rd parameter is excitation energy - what does this do?
 
-  if(comments==1)
-    {
-      G4cout << "===========" << G4endl;
-      G4cout << "===========" << G4endl;
-      G4cout << "Compound mass: " << Compound->GetMass() << G4endl;
-      G4cout << "Residual mass: " << RecoilResidual->GetPDGMass() << G4endl;
-      G4cout << "===========" << G4endl;
-    }
+  if(GetVerboseLevel()>1){
+    G4cout << "===========" << G4endl;
+    G4cout << "===========" << G4endl;
+    G4cout << "Compound mass: " << Compound->GetMass() << G4endl;
+    G4cout << "Residual mass: " << RecoilResidual->GetPDGMass() << G4endl;
+    G4cout << "===========" << G4endl;
+  }
 
   /////// MATT COMMENTED
   // deltaExi = deltaExi + Qevap; // amount of the excitation energy that goes into KE of the products
@@ -1383,8 +1405,9 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(G4DynamicParticle *Compoun
   // << " MeV." << G4endl;
 
 
-  if(comments==1)
+  if(GetVerboseLevel()>1){
     G4cout << "CM energy of evaporated particle " << particleCMEnergy << " MeV" << G4endl;
+  }
 
   
   // set up the momentum of the evaporated particle
@@ -1397,21 +1420,19 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(G4DynamicParticle *Compoun
   // calculate velocity vector of emitted particle in CM frame
   vParticle = vParticle * vParticleMag;
 
-  if(comments==1)
-    {
-      G4cout << "CM velocity of evaporated particle " << vParticle << G4endl;
-      G4cout << "CM momentum of evaporated particle " << vParticle * EvaporatedParticleDef->GetPDGMass() << G4endl;
-    }
+  if(GetVerboseLevel()>1){
+    G4cout << "CM velocity of evaporated particle " << vParticle << G4endl;
+    G4cout << "CM momentum of evaporated particle " << vParticle * EvaporatedParticleDef->GetPDGMass() << G4endl;
+  }
   
   // boost velocity to lab frame
   vParticle += cmv;
 
-  if(comments==1)
-    {
-      G4cout << "Velocity of CM of system " << cmv << G4endl;
-      G4cout << "LAB velocity of evaporated particle" << vParticle << G4endl;
-      G4cout << "===========" << G4endl;
-    }
+  if(GetVerboseLevel()>1){
+    G4cout << "Velocity of CM of system " << cmv << G4endl;
+    G4cout << "LAB velocity of evaporated particle" << vParticle << G4endl;
+    G4cout << "===========" << G4endl;
+  }
   
   // get lab frame momentum
   pParticle = vParticle * EvaporatedParticleDef->GetPDGMass();
@@ -1419,11 +1440,10 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(G4DynamicParticle *Compoun
   // determine the momentum of the residual particle
   pRec = Compound->GetMomentum(); // initially, residual has the same momentum as the compound system
 
-  if(comments==1)
-    {
-      G4cout << "LAB compound momentum: " << pRec << G4endl;
-      G4cout << "LAB compound KE: " << Compound->GetKineticEnergy() << G4endl;
-    }
+  if(GetVerboseLevel()>1){
+    G4cout << "LAB compound momentum: " << pRec << G4endl;
+    G4cout << "LAB compound KE: " << Compound->GetKineticEnergy() << G4endl;
+  }
   
   pRec -= pParticle; // subtract momentum of the emitted particle from the residual
 
@@ -1433,33 +1453,25 @@ void ReactionFusEvap::EvaporateWithMomentumCorrection(G4DynamicParticle *Compoun
   ResidualOut->SetDefinition(RecoilResidual);
   ResidualOut->SetMomentum(pRec);
 
+  if(GetVerboseLevel()>1){
+    G4ThreeVector vCM = ResidualOut->GetMomentum()/(ResidualOut->GetMass()+Qevap) - cmv;
+    G4ThreeVector pCM = vCM * (ResidualOut->GetMass()+Qevap);
+    G4double ECM = 0.5*(ResidualOut->GetMass()+Qevap)*vCM*vCM;
+    G4cout << "===========" << G4endl;
+    G4cout << "CM Residual Velocity " << vCM << G4endl;
+    G4cout << "CM Residual Momentum " << pCM << G4endl;
+    G4cout << "CM Residual KE " << ECM << G4endl;
 
-
-
-  if(comments==1)
-    {
-      G4ThreeVector vCM = ResidualOut->GetMomentum()/(ResidualOut->GetMass()+Qevap) - cmv;
-      G4ThreeVector pCM = vCM * (ResidualOut->GetMass()+Qevap);
-      G4double ECM = 0.5*(ResidualOut->GetMass()+Qevap)*vCM*vCM;
-      G4cout << "===========" << G4endl;
-      G4cout << "CM Residual Velocity " << vCM << G4endl;
-      G4cout << "CM Residual Momentum " << pCM << G4endl;
-      G4cout << "CM Residual KE " << ECM << G4endl;
-
-
-
-      G4cout << "===========" << G4endl;
-      G4cout << "LAB Residual momentum " << ResidualOut->GetMomentum() << G4endl;
-      // G4cout << "Sanity Check LAB RESP " << pRec << G4endl;
-      G4cout << "LAB Particle momentum " << EvaporatedParticle->GetMomentum() << G4endl;
-      // G4cout << "Sanity Check LAB EVPP " << pParticle << G4endl;
-      G4cout << "===========" << G4endl;
-      G4cout << "LAB Residual KE: " << ResidualOut->GetKineticEnergy() << " MeV" << G4endl;
-      G4cout << "LAB Particle KE: " << EvaporatedParticle->GetKineticEnergy() << " MeV" << G4endl;
-      G4cout << "===========" << G4endl;
-      getc(stdin);
-    }
-
+    G4cout << "===========" << G4endl;
+    G4cout << "LAB Residual momentum " << ResidualOut->GetMomentum() << G4endl;
+    // G4cout << "Sanity Check LAB RESP " << pRec << G4endl;
+    G4cout << "LAB Particle momentum " << EvaporatedParticle->GetMomentum() << G4endl;
+    // G4cout << "Sanity Check LAB EVPP " << pParticle << G4endl;
+    G4cout << "===========" << G4endl;
+    G4cout << "LAB Residual KE: " << ResidualOut->GetKineticEnergy() << " MeV" << G4endl;
+    G4cout << "LAB Particle KE: " << EvaporatedParticle->GetKineticEnergy() << " MeV" << G4endl;
+    G4cout << "===========" << G4endl;
+  }
   
   // G4cout << "Evaporated particle energy (MeV): " <<
   // EvaporatedParticle->GetKineticEnergy() << ", angle (deg): " <<
@@ -1506,7 +1518,7 @@ void ReactionFusEvap::TargetFaceCrossSection() {
   G4cout << "---------- SETUP OF DECAY PRODUCTS ----------" << G4endl;
 
   Eexcit = 0.;
-  for (int i = 0; i < numDecays; i++)
+  for(int i = 0; i < numDecays; i++)
     Eexcit += Egamma[i];
   Egammatot = Eexcit; // store the total energy used by gamma emission
 
@@ -1516,8 +1528,7 @@ void ReactionFusEvap::TargetFaceCrossSection() {
   A1 = theProjectile->getA();
   Z1 = theProjectile->getZ();
 
-  switch(theDetector->GetTargetType())
-  {
+  switch(theDetector->GetTargetType()){
     case 2:
       //plunger
       A2 = theDetector->GetPlunger()->getTargetMass();
@@ -1552,17 +1563,15 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       }
       
       break;
-  } 
+  }
 
   
 
   // set properties of the compound (which we assume does not gamma decay)
-  compound = G4IonTable::GetIonTable()->GetIon(
-      Z1 + Z2, A1 + A2,
-      0); // Z2,A2 are set to target charge and mass as defined in Target.cc
+  compound = G4IonTable::GetIonTable()->GetIon(Z1 + Z2, A1 + A2, 0); // Z2,A2 are set to target charge and mass as defined in Target.cc
   /*G4cout << "target A,Z: " << A2 << "," << Z2 << G4endl;
-G4cout << "compound A,Z: " << compound->GetAtomicMass() << "," <<
-compound->GetAtomicNumber() << G4endl;
+  G4cout << "compound A,Z: " << compound->GetAtomicMass() << "," <<
+  compound->GetAtomicNumber() << G4endl;
   getc(stdin);*/
 
   DA = nN * neutron->GetAtomicMass() + nP * proton->GetAtomicMass() +
@@ -1621,12 +1630,11 @@ compound->GetAtomicNumber() << G4endl;
   // set properties (including gamma decay processes) of the residual species in
   // the cascade
   G4ProcessManager *default_pm = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, 0.0)->GetProcessManager();
-  if (numDecays > 0)
-    for (int i = 0; i < numDecays; i++) {
+  if (numDecays > 0){
+    for(int i = 0; i < numDecays; i++){
 
       // define the residual species
-      residual[i] =
-          G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, Eexcit);
+      residual[i] = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, Eexcit);
       if (i > 0)
         residual[i] = ResDec[i - 1]->GetDaughterNucleus(); // the next residual
                                                            // nucleus is the
@@ -1650,19 +1658,16 @@ compound->GetAtomicNumber() << G4endl;
       // ResDecTab[i]->DumpInfo();
 
       // make sure that the residual has the decay process in its manager
-      if (residual[i]->GetProcessManager() == NULL) {
+      if(residual[i]->GetProcessManager() == NULL){
         G4cerr << "Could not find process manager for gamma cascade step "
                << i + 1 << " of the residual nucleus." << G4endl;
         exit(EXIT_FAILURE);
       }
       decay[i] = new G4Decay();
       /*if(i>0)
-              if
-         (residual[i]->GetProcessManager()->GetProcessActivation(decay[i-1]) ==
-         true)
-                      printf("WARNING: previous decay present!!\n");*/
-      if (residual[i]->GetProcessManager()->GetProcessActivation(decay[i]) ==
-          false) {
+        if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i-1]) == true)
+          printf("WARNING: previous decay present!!\n");*/
+      if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i]) == false){
         G4cout << "-> adding the residual nucleus decay process for step "
                << i + 1 << " of the cascade." << G4endl;
         residual[i]->GetProcessManager()->SetParticleType(residual[i]); // neccesary for decay process to be added successfully
@@ -1674,12 +1679,12 @@ compound->GetAtomicNumber() << G4endl;
       Eexcit -= Egamma[i]; // modify total excitation energy for the next
                            // residual species
     }
-  else {
+  }else{
     G4cout << "No decay process specified for the residual nucleus!" << G4endl;
   }
 
   // print cascade info
-  for (int i = 0; i < numDecays; i++) {
+  for(int i = 0; i < numDecays; i++){
     // Print info
     G4cout << "STEP " << i + 1 << " OF THE CASCADE" << G4endl
            << "Residual lifetime: " << residual[i]->GetPDGLifeTime() / ns
@@ -1699,20 +1704,17 @@ compound->GetAtomicNumber() << G4endl;
 // Adds a decay to the residual nucleus gamma cascade.  Must be called before
 // TargetFaceCrossSection()
 void ReactionFusEvap::AddDecay(G4double E, G4double T) {
-  if (numDecays < MAXNUMDECAYS) {
+  if(numDecays < MAXNUMDECAYS){
     Egamma[numDecays] = E;
     tau[numDecays] = T;
     numDecays++;
-  } else {
-    G4cout << "WARNING: Too many gammas added to the residual nucleus cascade, "
+  }else{
+    G4cout << "ERROR: Too many gammas added to the residual nucleus cascade, "
               "maximum number is "
            << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
-    getc(stdin);
+    exit(-1);
   }
 }
-
-
-
 
 G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
   G4double exi=0.0;
@@ -1726,43 +1728,40 @@ G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
   it1=FELookupTable.end()-1;
   it2=(*it1).begin();
   r_max=*(it2);
-  if(r>=r_max)
-    {
-      G4cout<<"Happened"<<G4endl;
-      // srand(time(NULL));
-      x=*(it2+1);
+  if(r>=r_max){
+    G4cout<<"r greater than "<<r_max<<G4endl;
+    // srand(time(NULL));
+    x=*(it2+1);
+    exi=kT*x;
+    exi+=V;
+    return exi;
+  }
+  
+  for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++){
+    it2=(*it1).begin();
+    r_max=*(it2);
+    if(r<r_max){
+      x_max=*(it2+1);
+      x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
       exi=kT*x;
       exi+=V;
+
+      // exi=V+kT*x;
+      // G4cout<<"Rand is: "<<r<<G4endl;
+      // G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
+      // G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
+      // G4cout<<"X: "<<x<<G4endl;
+      
+      // G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
+      // getc(stdin);
+      
+      // G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
+      // getc(stdin);
       return exi;
     }
-  
-  for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++)
-    {
-      it2=(*it1).begin();
-      r_max=*(it2);
-      if(r<r_max)
-	{
-	  x_max=*(it2+1);
-	  x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
-	  exi=kT*x;
-	  exi+=V;
-
-	  // exi=V+kT*x;
-	  // G4cout<<"Rand is: "<<r<<G4endl;
-	  // G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
-	  // G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
-	  // G4cout<<"X: "<<x<<G4endl;
-	  
-	  // G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
-	  // getc(stdin);
-	  
-	  // G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
-	  // getc(stdin);
-	  return exi;
-	}
-      r_min=*(it2);
-      x_min=*(it2+1);
-    }
+    r_min=*(it2);
+    x_min=*(it2+1);
+  }
   G4cout<<"Some form of error"<<G4endl;
   G4cout<<"R is: "<<std::setprecision(10)<<(r)<<G4endl;
   return exi;
@@ -1790,27 +1789,24 @@ void ReactionFusEvap::ReadTabulatedExi(G4String fileName){
   char str[256],str1[256],str2[256];
   int index=0;
   numTabulatedExiVals=0;
-  if((table=fopen(fileName.c_str(),"r"))==NULL)
-    {
-      printf("ERROR: Cannot open the tabulated dExi file %s!\n",fileName.c_str());
-      exit(-1);
+  if((table=fopen(fileName.c_str(),"r"))==NULL){
+    printf("ERROR: Cannot open the tabulated dExi file %s!\n",fileName.c_str());
+    exit(-1);
+  }
+  while(!(feof(table))){//go until the end of file is reached
+    if(fgets(str,256,table)!=NULL){
+      sscanf(str,"%s %s",str1,str2);
+      if(strcmp(str1,"<END>")==0)
+        break;
+      if(index >= MAXEXIDISTENTRIES){
+        printf("WARNING: too many entries in tabulated dExi file %s, truncating...\n",fileName.c_str());
+        break;
+      }
+      exitDistE[index] = atof(str1);
+      exiDistCounts[index] = atof(str2);
+      index++;
     }
-  while(!(feof(table)))//go until the end of file is reached
-    {
-			if(fgets(str,256,table)!=NULL)
-				{
-					sscanf(str,"%s %s",str1,str2);
-					if(strcmp(str1,"<END>")==0)
-          	break;
-          if(index >= MAXEXIDISTENTRIES){
-            printf("WARNING: too many entries in tabulated dExi file %s, truncating...\n",fileName.c_str());
-            break;
-          }
-          exitDistE[index] = atof(str1);
-          exiDistCounts[index] = atof(str2);
-          index++;
-				}
-		}
+  }
   numTabulatedExiVals=index;
 
   //make cumulative distribution

@@ -174,7 +174,7 @@ private:
   G4double Egamma[MAXNUMDECAYS], tau[MAXNUMDECAYS], Eexcit, Egammatot;
   G4int numDecays;
   G4double QRxn, QEvap[MAXNUMEVAP], totalQEvap; // Q values for the beam-target reaction and evaporation process(es)
-  G4double initExi, evapdeltaExi[MAXNUMEVAP], totalEvapdeltaExi; // excitation energy parameters
+  G4double initExi, evapE[MAXNUMEVAP], totalEvapE; // excitation energy parameters
 
   G4double exiV, exikT;
   // G4double exix0, exiw, exitau; // evaporated particle excitation energy distribution parameters
@@ -199,8 +199,6 @@ private:
   G4int gammaAngDist;
 
   vector<vector<G4double>> FELookupTable;
-
-  G4int comments=0;
 
 };
 
