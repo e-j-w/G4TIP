@@ -81,7 +81,7 @@ One of the reaction mechanisms (`/Physics/FusionEvaporation` or `/Physics/Coulex
 | /Physics/FusionEvaporation | Use the fusion-evaporation reaction mechanism. The reaction should be further configured using the reaction parameters listed [below](#fusevappar). |
 | /Physics/Coulex | Use the Coulomb excitation reaction mechanism. The reaction should be further configured using the reaction parameters listed [below](#coulexpar) |
 | /Physics/IgnoreNeutrons | Ignore neutron interactions in the simulation.  Useful if there are no neutrons produced in the reaction and you want to speed up the simulation. |
-| /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH.  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
+| /Physics/StoppingTable PATH | Use custom stopping power tables from the directory specified by PATH (needs to be an **absolute** file path).  The format of the tables is expected to be the same as those provided in the default GEANT4 dataset.  If not set, GEANT4 will use its default ICRU73-based stopping power tables. |
 
 ### Detectors and geometry
 

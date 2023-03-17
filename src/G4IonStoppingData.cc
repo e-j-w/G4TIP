@@ -398,6 +398,8 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
                       
   G4String fileName = G4String( file.str().c_str() );
 
+  //G4cout << "Building physics vector from ion stopping data in file: " << fileName << G4endl;
+
   std::ifstream ifilestream( fileName );
 
   if ( !ifilestream.is_open() ) 
@@ -405,6 +407,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
       //G4cout << "Cannot open custom stopping data with filename: " << fileName << G4endl;
       return false;
     }
+  //G4cout << "Opened custom stopping data with filename: " << fileName << G4endl;
     
   G4LPhysicsFreeVector* physicsVector = new G4LPhysicsFreeVector(); 
 
@@ -453,6 +456,8 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
                       
   G4String fileName = G4String( file.str().c_str() );
 
+  //G4cout << "Building physics vector from ion stopping data in file: " << fileName << G4endl;
+
   std::ifstream ifilestream( fileName );
 
   if ( !ifilestream.is_open() ) 
@@ -460,6 +465,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
       //G4cout << "Cannot open custom stopping data with filename: " << fileName << G4endl;
       return false;
     }
+  //G4cout << "Opened custom stopping data with filename: " << fileName << G4endl;
   
   G4LPhysicsFreeVector* physicsVector = new G4LPhysicsFreeVector(); 
 
@@ -568,6 +574,13 @@ void G4IonStoppingData::DumpMap() {
       }
   }
 
+}
+
+G4bool G4IonStoppingData::CheckEmpty(){
+  if((dedxMapMaterials.size() + dedxMapElements.size()) <= 0){
+    return true;
+  }
+  return false;
 }
 
 // #########################################################################

@@ -1,7 +1,6 @@
 #include "PhysicsList.hh"
 
-PhysicsList::PhysicsList(Projectile* Proj, Recoil* Rec, DetectorConstruction* Det) : theProjectile(Proj), theRecoil(Rec), theDetector(Det) 
-{
+PhysicsList::PhysicsList(Projectile* Proj, Recoil* Rec, DetectorConstruction* Det) : theProjectile(Proj), theRecoil(Rec), theDetector(Det){
   stepSize = 0.05 * um;
   customStopping = false;
   reactionType = -1;
@@ -9,7 +8,7 @@ PhysicsList::PhysicsList(Projectile* Proj, Recoil* Rec, DetectorConstruction* De
 
 PhysicsList::~PhysicsList() { ; }
 
-void PhysicsList::ConstructParticle() {
+void PhysicsList::ConstructParticle(){
   // In this method, static member functions should be called
   // for all particles which you want to use.
   // This ensures that objects of these particle types will be
@@ -29,20 +28,18 @@ void PhysicsList::ConstructParticle() {
   iConstructor.ConstructParticle();
 }
 
-void PhysicsList::ConstructProcess() {
+void PhysicsList::ConstructProcess(){
   // Define transportation process
 
   AddTransportation();
   ConstructEM();
 }
 
-void PhysicsList::ConstructEM() {
+void PhysicsList::ConstructEM(){
   G4cout << "Setting up physics..." << G4endl;
   G4cout << "Step size: " << stepSize / um << " um" << G4endl;
-  if (customStopping)
-    G4cout
-        << "Will use custom GenericIon stopping power tables from directory: "
-        << cspath << G4endl;
+  if(customStopping)
+    G4cout << "Will use custom GenericIon stopping power tables from directory: " << cspath << G4endl;
   else
     G4cout << "Will use default GenericIon stopping power tables." << G4endl;
 
@@ -95,18 +92,29 @@ void PhysicsList::ConstructEM() {
       pmanager->AddDiscreteProcess(cs);*/
 
       G4ionIonisation *ionIoni = new G4ionIonisation();
+      
       G4IonParametrisedLossModel *theModel =
           new G4IonParametrisedLossModel(); // ICRU 73 based model, valid for Z
                                             // = 3 to 26, modified by JW to
                                             // allow for custom stopping powers
-      if (customStopping) {
+      if(customStopping){
+        G4IonStoppingData *isd = new G4IonStoppingData(cspath);
+        for(int Z1 = 1; Z1 < 100; Z1++){
+          for(int Z2 = 1; Z2 < 100; Z2++){
+            isd->BuildPhysicsVector(Z1,Z2);
+          }
+        }
         theModel->RemoveDEDXTable("ICRU73");
-        theModel->AddDEDXTable("Custom", new G4IonStoppingData(cspath),
-                               new G4IonDEDXScalingICRU73()); // add stopping
-                                                              // power data from
-                                                              // data files
+        theModel->AddDEDXTable("Custom", isd, new G4IonDEDXScalingICRU73()); // add stopping power data from data files
+        if(isd->CheckEmpty()){
+          G4cout << "ERROR: Ion stopping data is empty!" << G4endl;
+          G4cout << "Are you using custom stopping tables with the wrong path?" << G4endl;
+          exit(-1);
+        }
+        isd->DumpMap();
       }
       theModel->ListDEDXTables();
+      //theModel->PrintDEDXTable(theProjectile,const G4Material *,0.1,10.0,20,false);
       ionIoni->SetStepFunction(
           0.05, stepSize); // small step size needed for short lifetimes?
       ionIoni->SetEmModel(theModel);

@@ -151,6 +151,9 @@ class G4IonStoppingData : public G4VIonDEDXTable {
    // Function printing the ion-material pairs of available vectors to stdout
    void DumpMap();
 
+   // Function checking whether the ion stopping data is empty (added by JW)
+   G4bool CheckEmpty();
+
  private:
    // Subdirectory of G4LEDATA
    G4String subDir;
