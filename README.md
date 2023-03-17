@@ -37,7 +37,7 @@ export PATH=$PATH:$ROOTSYS/bin
 
 ### GEANT4
 
-The code is tested with GEANT4 v10.6.  It may still work with older versions.
+The code is tested with GEANT4 v10.6.  It may still work with other 10.x versions.
 
 [GEANT4 source code](https://geant4.web.cern.ch/support/download)
 
@@ -230,7 +230,7 @@ Some GEANT4 classes have been backported from version 9.4 for use in this code:
 
 G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
 
-G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only gamma decay.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of internal conversion decays.
+G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only gamma decay.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of decays.
 
 G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 

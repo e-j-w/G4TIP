@@ -16,7 +16,7 @@ if [ "$#" -eq 2 ]; then
 					  sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
 				  fi
 
-				./TIP_FE_RDM $1
+				./G4TIP $1
 				
 		done
 
@@ -41,7 +41,7 @@ if [ "$#" -eq 3 ]; then
 					  sed -i 's/'"$RUNNAME$RUNMINUS"'/'"$RUNNAME$RUN"'/g' $1
 				  fi
 
-				./TIP_FE_RDM $1
+				./G4TIP $1
 				
 		done
 

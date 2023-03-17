@@ -36,11 +36,10 @@
 /FusionEvaporation/N_neutrons 0
 /FusionEvaporation/N_alpha 2
 /FusionEvaporation/CompoundFormationQ 23.651 MeV
-/FusionEvaporation/Q1 -10.643 MeV
-/FusionEvaporation/Q2 -10.615 MeV
-/FusionEvaporation/Centroid 14.16082
-/FusionEvaporation/Width 1.001135
-/FusionEvaporation/Tau 2.286506
+/FusionEvaporation/SE1 10.643 MeV
+/FusionEvaporation/SE2 10.615 MeV
+/FusionEvaporation/CoulombBarrier -0.5
+/FusionEvaporation/Temperature 1.5
 #/FusionEvaporation/ConstrainParticleAngularRange
 #/FusionEvaporation/MaxParticleAngle 50.0 deg
 /Results/Tree/CsIDetectorID 0
