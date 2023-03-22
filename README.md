@@ -202,11 +202,13 @@ These commands will only be used if `/Physics/Coulex` is set.
 | /Trigger/DefinedParticleAndGamma | Trigger on events containing at least one hit with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
 | /Trigger/DefinedParticleCoincAndGamma | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z, and one gamma ray. |
 | /Trigger/DefinedParticleCoincAnd2GammaCores | Trigger on events containing at least two hits with the particle defined by /Trigger/A and /Trigger/Z (or any particle if those commands are not used), and two hits in the TIGRESS/GRIFFIN array. |
-| /Trigger/DisableGriffin NUM | Removes the TIGRESS/GRIFFIN detector with index NUM from the trigger. |
-| /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET and core index COL from the trigger. |
-| /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM from the trigger. |
-| /Trigger/DisableCsIRange LOW HIGH | Removes CsI detectors with index between LOW and HIGH (inclusive) from the trigger. |
-| /Trigger/CsIThreshold NUMBER MeV | Sets a lower energy threshold for detection of hits in CsI detectors. |
+| /Trigger/DisableGriffin NUM | Removes the TIGRESS/GRIFFIN detector with index NUM (1-indexed) from the trigger. |
+| /Trigger/DisableGriffinDetCol DET COL | Removes the TIGRESS/GRIFFIN detector core with detector index DET (1-indexed) and core index COL (0-indexed) from the trigger. |
+| /Trigger/DisableCsI NUM | Removes the CsI detector with index NUM (1-indexed) from the trigger. |
+| /Trigger/DisableCsIRange LOW HIGH | Removes CsI detectors with index between LOW and HIGH (inclusive, 1-indexed) from the trigger. |
+| /Trigger/CsIThreshold NUMBER MeV | Sets a lower energy threshold for detection of hits in CsI detectors.  This threshold is a hard cutoff, use `/Trigger/CsILinearThreshold` instead if a more gradual threshold is needed. |
+| /Trigger/CsILinearThreshold LOW HIGH | Sets a linear lower energy threshold for detection of hits in CsI detectors, ranging from the value of LOW (in MeV) where no hits are detected to HIGH (in MeV), where all events are detected. |
+| /Trigger/WeightCsIRange LOW HIGH VALUE | Weights CsI detectors with index between LOW and HIGH (inclusive, 1-indexed) waith the specified value (between 0 and 1).  The weight value specifies the probability that a hit in the weighted detector will be included in the trigger. | 
 
 <sup>1</sup>If none of /Trigger/A, /Trigger/Z, /Trigger/ARange, and /Trigger/ZRange are set, the particle trigger will be applied to any charged particle.
 

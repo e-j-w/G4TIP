@@ -1,8 +1,7 @@
 #include "EventAction_Messenger.hh"
 
 
-EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
-  :aEventAction(Chamb)
+EventAction_Messenger::EventAction_Messenger(EventAction* Chamb):aEventAction(Chamb)
 { 
  
   EventActionDir = new G4UIdirectory("/Trigger/");
@@ -75,13 +74,14 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb)
   CETCmd->SetParameterName("CET",false);
   CETCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  CELTCmd = new G4UIcmdWithAString("/Trigger/CsILinearThreshold",this);
+  CELTCmd->SetGuidance("Set a linear low energy threshold for the CsI detector(s), specifying the energy range over which the threshold occurs, in MeV.");
+  CELTCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   RTCmd = new G4UIcmdWithoutParameter("/Trigger/ReportNumTriggers",this);
   RTCmd->SetGuidance("Report the number of triggered events.");
 
-
 }
-
-
 
 EventAction_Messenger::~EventAction_Messenger()
 {
@@ -105,6 +105,7 @@ EventAction_Messenger::~EventAction_Messenger()
   delete TDCRCmd;
   delete TWCRCmd;
   delete CETCmd;
+  delete CELTCmd;
   delete RTCmd;
 }
 
@@ -113,133 +114,151 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
 
   // gamma singles
- if( command == GSCmd )
-   { aEventAction->SetTriggerGammaSing(); }
+  if( command == GSCmd ){
+    aEventAction->SetTriggerGammaSing();
+  }
 
- // user defined particle singles
- if( command == TAZCmd )
-   { aEventAction->SetTriggerParticleSing(); }
- if( command == TAZ1Cmd )
-   { aEventAction->SetTriggerParticleSing1Hit(); }
+  // user defined particle singles
+  if( command == TAZCmd ){
+    aEventAction->SetTriggerParticleSing();
+  }
+  if( command == TAZ1Cmd ){
+    aEventAction->SetTriggerParticleSing1Hit();
+  }
 
- // user defined particle-particle concidences
- if( command == TAZCCmd )
-   { aEventAction->SetTriggerParticleCoinc(); }
- 
+  // user defined particle-particle concidences
+  if( command == TAZCCmd ){
+    aEventAction->SetTriggerParticleCoinc();
+  }
    
- // user defined particle-gamma concidences
- if( command == TAZGCmd )
-   { aEventAction->SetTriggerParticleAndGamma(); }
- if( command == TAZCGCmd )
-   { aEventAction->SetTriggerParticleCoincAndGamma(); }
- if( command == TAZC2GCmd )
-   { aEventAction->SetTriggerParticleCoincAnd2GammaCores(); }
+  // user defined particle-gamma concidences
+  if( command == TAZGCmd ){
+    aEventAction->SetTriggerParticleAndGamma();
+  }
+  if( command == TAZCGCmd ){
+    aEventAction->SetTriggerParticleCoincAndGamma();
+  }
+  if( command == TAZC2GCmd ){
+    aEventAction->SetTriggerParticleCoincAnd2GammaCores();
+  }
 
   //A and Z of user defined particle
-  if( command == TACmd )
-    { aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));}
-  if( command == TZCmd )
-    { aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));}
+  if( command == TACmd ){
+    aEventAction->setTriggerA(TACmd->GetNewIntValue(newValue));
+  }
+  if( command == TZCmd ){
+    aEventAction->setTriggerZ(TZCmd->GetNewIntValue(newValue));
+  }
 
-  if( command == TARangeCmd )
-    {
-      int min,max;
-      if(sscanf(newValue,"%i %i",&min,&max)==2)
-        {
-          aEventAction->setTriggerARange(min,max);
-        }
+  if( command == TARangeCmd ){
+    int min,max;
+    if(sscanf(newValue,"%i %i",&min,&max)==2){
+      aEventAction->setTriggerARange(min,max);
     }
-  if( command == TZRangeCmd )
-    {
-      int min,max;
-      if(sscanf(newValue,"%i %i",&min,&max)==2)
-        {
-          aEventAction->setTriggerZRange(min,max);
-        }
+  }
+  if( command == TZRangeCmd ){
+    int min,max;
+    if(sscanf(newValue,"%i %i",&min,&max)==2){
+      aEventAction->setTriggerZRange(min,max);
     }
+  }
 
-
- if( command == TIDCmd )
-   { aEventAction->setTID(TIDCmd->GetNewIntValue(newValue));}
+  if( command == TIDCmd ){
+    aEventAction->setTID(TIDCmd->GetNewIntValue(newValue));
+  }
    
-  if( command == TDGCCmd )
-    {
-      int det,col;
-      if(sscanf(newValue,"%i %i",&det,&col)==2)
-        if(((det-1)>=0)&&(col>=0))
-          if((det-1)<16)
-            if(col<4)
-              {
-                aEventAction->DisableGriffinCryst(det-1,col);
-                G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< col << "." <<G4endl;
-              }
-          
-    }
+  if( command == TDGCCmd ){
+    int det,col;
+    if(sscanf(newValue,"%i %i",&det,&col)==2)
+      if(((det-1)>=0)&&(col>=0))
+        if((det-1)<16)
+          if(col<4){
+            aEventAction->DisableGriffinCryst(det-1,col);
+            G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< col << "." <<G4endl;
+          }
+  }
 
-  if( command == TDGCmd )
-    {
-      int det;
-      if(sscanf(newValue,"%i",&det)==1)
-        if((det-1)>=0)
-          if((det-1)<16)
-            for(int i=0;i<4;i++)
-              {
-                aEventAction->DisableGriffinCryst(det-1,i);
-                G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< i << "." <<G4endl;
-              }
-          
-    }
+  if( command == TDGCmd ){
+    int det;
+    if(sscanf(newValue,"%i",&det)==1)
+      if((det-1)>=0)
+        if((det-1)<16)
+          for(int i=0;i<4;i++)
+          {
+            aEventAction->DisableGriffinCryst(det-1,i);
+            G4cout<<"Disabling Griffin detector "<< det <<", crystal "<< i << "." <<G4endl;
+          }
+  }
   
-  if( command == TDCCmd )
-    {
-      int det;
-      if(sscanf(newValue,"%i",&det)==1)
-        if(det>0)
-          if(det<=NCsISph)
-            {
-              aEventAction->DisableCsI(det-1);
-              G4cout<<"Disabling CsI detector "<< det << "." <<G4endl;
-            }
-          
+  if( command == TDCCmd ){
+    int det;
+    if(sscanf(newValue,"%i",&det)==1){
+      if(det>0){
+        if(det<=NCsISph){
+          aEventAction->DisableCsI(det-1);
+          G4cout<<"Disabling CsI detector "<< det << "." <<G4endl;
+        }
+      }
     }
+  }
   
-  if( command == TDCRCmd )
-    {
-      int detLow,detHigh;
-      if(sscanf(newValue,"%i %i",&detLow,&detHigh)==2)
-        if((detLow>0)&&(detHigh>=detLow))
-          if(detHigh<=NCsISph)
-          	{
-          		G4cout<<"Disabling CsI detectors "<< detLow << " to " << detHigh << "." <<G4endl;
-		        	for(int i=detLow;i<=detHigh;i++)
-				        aEventAction->DisableCsI(i-1);
-		        }
-          
+  if( command == TDCRCmd ){
+    int detLow,detHigh;
+    if(sscanf(newValue,"%i %i",&detLow,&detHigh)==2){
+      if((detLow>0)&&(detHigh>=detLow)){
+        if(detHigh<=NCsISph){
+          G4cout<<"Disabling CsI detectors "<< detLow << " to " << detHigh << "." <<G4endl;
+          for(int i=detLow;i<=detHigh;i++)
+            aEventAction->DisableCsI(i-1);
+        }
+      }
+    }else{
+      G4cout<<"ERROR: /Trigger/DisableCsIRange command has an invalid string (" << newValue << ")" << G4endl;
+      exit(-1);
     }
+  }
   
-  if( command == TWCRCmd )
-    {
-      int detLow,detHigh;
-      double weight=0.0;
-      if(sscanf(newValue,"%i %i %lf",&detLow,&detHigh,&weight)==3)
-        if((detLow>0)&&(detHigh>=detLow))
-          if(detHigh<=NCsISph)
-          	{
-          		G4cout<<"Weighting CsI detectors "<< detLow << " to " << detHigh << " with weight " << weight << "." <<G4endl;
-		        	for(int i=detLow;i<=detHigh;i++)
-				        aEventAction->WeightCsI(i-1,weight);
-		        }
-          
+  if( command == TWCRCmd ){
+    int detLow,detHigh;
+    double weight=0.0;
+    if(sscanf(newValue,"%i %i %lf",&detLow,&detHigh,&weight)==3){
+      if((detLow>0)&&(detHigh>=detLow)){
+        if(detHigh<=NCsISph){
+          G4cout<<"Weighting CsI detectors "<< detLow << " to " << detHigh << " with weight " << weight << "." <<G4endl;
+          for(int i=detLow;i<=detHigh;i++)
+            aEventAction->WeightCsI(i-1,weight);
+        }
+      }
+    }else{
+      G4cout<<"ERROR: /Trigger/WeightCsIRange command has an invalid string (" << newValue << ")" << G4endl;
+      exit(-1);
     }
+  }
 
-  if( command == CETCmd )
-    {
-      aEventAction->SetCsIThreshold(CETCmd->GetNewDoubleValue(newValue));
-      G4cout << "Setting CsI low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
-    }
+  if( command == CETCmd ){
+    aEventAction->SetCsIThreshold(CETCmd->GetNewDoubleValue(newValue));
+    G4cout << "Setting CsI low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
+  }
 
-  if( command == RTCmd )
-   { aEventAction->reportTriggers(); }
+  if( command == CELTCmd ){
+    double tLow,tHigh;
+    if(sscanf(newValue,"%lf %lf",&tLow,&tHigh)==2){
+      if(tHigh>=tLow){
+        G4cout<<"Setting CsI low energy linear threshold between "<< tLow << " and " << tHigh << " MeV." <<G4endl;
+        aEventAction->SetCsILinearThreshold(tLow,tHigh);
+      }else{
+        G4cout<<"ERROR: CsI low energy linear threshold has invalid or negative range (" << tLow << " to " << tHigh << ")." << G4endl;
+        exit(-1);
+      }
+    }else{
+      G4cout<<"ERROR: /Trigger/CsILinearThreshold command has an invalid string (" << newValue << ")" << G4endl;
+      exit(-1);
+    }
+  }
+
+  if( command == RTCmd ){
+    aEventAction->reportTriggers();
+  }
 
 }
 

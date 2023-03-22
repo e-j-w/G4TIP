@@ -29,6 +29,15 @@ using namespace CLHEP;
   trigger 10 AND 1                  16 (particle-gamma coinc, only 1 of each needed)
  */
 
+#define GAMMA_SINGLES_TRIGGER                          1
+#define DEFINEDPARTICLE_SINGLES_TRIGGER                10
+#define PARTICLE_COINC_TRIGGER                         11
+#define DEFINEDPARTICLE_COINC_TRIGGER                  12
+#define DEFINEDPARTICLE_COINC_AND_GAMMA_TRIGGER        13
+#define DEFINEDPARTICLE_COINC_AND_GAMMA_COINC_TRIGGER  14
+#define DEFINEDPARTICLE_ONEPARTICLE_TRIGGER            15
+#define DEFINEDPARTICLE_AND_GAMMA_TRIGGER              16
+
 class EventAction : public G4UserEventAction
 {
   public:
@@ -37,6 +46,7 @@ class EventAction : public G4UserEventAction
   void BeginOfEventAction(const G4Event*);
   void EndOfEventAction(const G4Event*);
   void AddGriffinCrystDet(G4double, G4double, G4ThreeVector, G4int, G4int, G4double);
+  G4bool passesCsIThresold(G4double);
   void SetTriggerGammaSing(){setTrigger=1;};
   void SetTriggerParticleSing(){setTrigger=10;};
   void SetTriggerParticleSing1Hit(){setTrigger=15;};
@@ -47,7 +57,8 @@ class EventAction : public G4UserEventAction
   void DisableGriffinCryst(int det,int col){GriffinCrystDisabled[det][col]=1;};
   void DisableCsI(int det){CsIDisabled[det]=1;};
   void WeightCsI(int det, double weight){CsIWeight[det]=weight;};
-  void SetCsIThreshold(G4double x){CsIThreshold=x;};
+  void SetCsIThreshold(G4double x){CsIThreshold[0]=x; CsIThreshold[1]=x;};
+  void SetCsILinearThreshold(G4double low, G4double high){CsIThreshold[0]=low; CsIThreshold[1]=high;};
 
   void setTriggerA(G4int);
   void setTriggerZ(G4int);
@@ -66,8 +77,8 @@ class EventAction : public G4UserEventAction
   double        tt,rate;
   RunAction*    run_action;
   size_t        soa,sov,sois,soas,sovs,soc,soi;
-  unsigned long long int  one,eventTrigger,setTrigger,testTrigger;
-  G4double      CsIThreshold;
+  unsigned long long int  eventTrigger,setTrigger,testTrigger;
+  G4double      CsIThreshold[2];
   G4int         CsIIDTrigger;
 
   //GRIFFIN/TIGRESS interaction information

@@ -17,7 +17,8 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   Zt=2;
   triggerAZ=0;
   SetTriggerParticleSing();
-  CsIThreshold=0.;
+  CsIThreshold[0]=0.;
+  CsIThreshold[1]=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
   memset(CsIDisabled,0,sizeof(CsIDisabled));
   for(int i=0;i<NCsISph;i++){
@@ -69,18 +70,15 @@ void EventAction::EndOfEventAction(const G4Event* evt)
 
   G4int evtNb=evt->GetEventID();
 
-  if (evtNb%100 == 0) 
-    {
-      gettimeofday(&tc,NULL);
-      ts=run_action->GetStartTime();
-      timersub(&tc,&ts,&td);
-      tt=td.tv_sec;
-      rate=(float)evtNb/tt;
-      G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<tt<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
-
+  if(evtNb%100 == 0){
+    gettimeofday(&tc,NULL);
+    ts=run_action->GetStartTime();
+    timersub(&tc,&ts,&td);
+    tt=td.tv_sec;
+    rate=(float)evtNb/tt;
+    G4cout<<" Number of processed events "<<std::setw(9)<<evtNb<<" in "<<std::setw(9)<<tt<<" sec. at "<<std::fixed<<std::setw(9)<<std::setprecision(2)<<rate<<" events per second\r"<<std::flush;
   }
 
-  one=1;
   eventTrigger=1;
   G4int Np;
 
@@ -93,187 +91,182 @@ void EventAction::EndOfEventAction(const G4Event* evt)
   
   int numDetHits=0;
   
-  if(evt->GetHCofThisEvent()!=NULL) 
-    {  
-      CsI=(TrackerCsIHitsCollection*)(evt->GetHCofThisEvent()->GetHC(CsICollectionID)); 
-      HI=(TrackerIonHitsCollection*)(evt->GetHCofThisEvent()->GetHC(ionCollectionID));
-      Np=CsI->entries();
-      //G4cout<<" Number of entries: "<<Np<<G4endl;
-      //G4bool allHitsInOne=true;
+  if(evt->GetHCofThisEvent()!=NULL){
 
-      // CsI trigger
-      if(Np>0) 
-	      {
-	      
-	      	//nullify hits in disabled CsI detectors
-	      	for(int i=0;i<Np;i++)
-          	if(CsIDisabled[(*CsI)[i]->GetId()-1]==1)
-	          	(*CsI)[i]->SetDisabled();
-	        
-	      
-	        G4double partECsI[NCsISph]; //total energy deposit of particle in each detector
-          G4double partACsI[NCsISph]; //A of particle in each detector
-          G4double partZCsI[NCsISph]; //Z of particle in each detector
-	        memset(partECsI,0,sizeof(partECsI));
-	        for(int i=0;i<Np;i++)
-	        	if((*CsI)[i]->GetDisabled()==0)
-			        {
-		            //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
-		            if((CsIIDTrigger==0)||(((*CsI)[i]->GetId()-1)==CsIIDTrigger)) //CsI detector ID trigger
-                  {
-                    if(triggerAZ==1) // user defined particle trigger
-                      {
-                        if((*CsI)[i]->GetA()==At) // user defined particle trigger
-                          if((*CsI)[i]->GetZ()==Zt)
-                            {
-                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
-                              partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
-                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
-                              //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
-                            }
-                      }
-                    else if(triggerAZ == 2) //user defined particle trigger range
-                      {
-                        if( ((*CsI)[i]->GetA()>=Atmin)&&((*CsI)[i]->GetA()<=Atmax) ) // user defined particle trigger range
-                          if( ((*CsI)[i]->GetZ()>=Ztmin)&&((*CsI)[i]->GetZ()<=Ztmax) )
-                            {
-                              partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
-                              partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
-                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
-                              //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
-                            }
-                      }
-                    else // trigger on any charged particle
-                      {
-                        if((*CsI)[i]->GetA()>0)
-                          {
-                            partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
-                            partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
-                              partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
-                            //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
-                          }
-                      }
-                  }
-			        }
-          
-          //determine the number of CsI hits
-          switch (theDetector->GetAncArrayType())
-          {
-            case 2:
-              // no ancillary array
-              break;
-            case 1:
-              //CsI ball
-              for(int i=0;i<NCsISph;i++)
-				      	if(CsIDisabled[i]==0) //check if detector is disabled
-							    if(partECsI[i]>=CsIThreshold)
-                    {
-                      numDetHits+=1.0*CsIWeight[i];
-                      if((partACsI[i]==4)&&(partZCsI[i]==2))
-                        numACsIHits+=1.0*CsIWeight[i];
-                      if((partACsI[i]==1)&&(partZCsI[i]==1))
-                        numPCsIHits+=1.0*CsIWeight[i];
-                    }
-              break;
-            default:
-              //CsI wall
-              for(int i=0;i<NCsI;i++)
-	        			if(CsIDisabled[i]==0) //check if detector is disabled
-							    if(partECsI[i]>=CsIThreshold)
-                    {
-                      numDetHits+=1.0*CsIWeight[i];
-                      if((partACsI[i]==4)&&(partZCsI[i]==2))
-                        numACsIHits+=1.0*CsIWeight[i];
-                      if((partACsI[i]==1)&&(partZCsI[i]==1))
-                        numPCsIHits+=1.0*CsIWeight[i];
-                    }
-              break;
+    CsI=(TrackerCsIHitsCollection*)(evt->GetHCofThisEvent()->GetHC(CsICollectionID)); 
+    HI=(TrackerIonHitsCollection*)(evt->GetHCofThisEvent()->GetHC(ionCollectionID));
+    Np=CsI->entries();
+    //G4cout<<" Number of entries: "<<Np<<G4endl;
+    //G4bool allHitsInOne=true;
+
+    // CsI trigger
+    if(Np>0){
+    
+      //nullify hits in disabled CsI detectors
+      for(int i=0;i<Np;i++)
+        if(CsIDisabled[(*CsI)[i]->GetId()-1]==1)
+          (*CsI)[i]->SetDisabled();
+      
+    
+      G4double partECsI[NCsISph]; //total energy deposit of particle in each detector
+      G4double partACsI[NCsISph]; //A of particle in each detector
+      G4double partZCsI[NCsISph]; //Z of particle in each detector
+      memset(partECsI,0,sizeof(partECsI));
+      for(int i=0;i<Np;i++){
+        if((*CsI)[i]->GetDisabled()==0){
+          //G4cout<<" Hit detector: "<<(*CsI)[i]->GetId()<<G4endl;
+          if((CsIIDTrigger==0)||(((*CsI)[i]->GetId()-1)==CsIIDTrigger)){ //CsI detector ID trigger
+            if(triggerAZ==1){ // user defined particle trigger
+              if((*CsI)[i]->GetA()==At) // user defined particle trigger
+                if((*CsI)[i]->GetZ()==Zt){
+                  partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
+                  partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                  partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                  //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+                }
+            }else if(triggerAZ == 2){ //user defined particle trigger range
+              if( ((*CsI)[i]->GetA()>=Atmin)&&((*CsI)[i]->GetA()<=Atmax) ){ // user defined particle trigger range
+                if( ((*CsI)[i]->GetZ()>=Ztmin)&&((*CsI)[i]->GetZ()<=Ztmax) ){
+                  partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
+                  partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                  partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                  //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+                }
+              }
+            }else{ // trigger on any charged particle
+              if((*CsI)[i]->GetA()>0){
+                partECsI[(*CsI)[i]->GetId()-1]+=(*CsI)[i]->GetEdep()/MeV;
+                partACsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetA();
+                partZCsI[(*CsI)[i]->GetId()-1]=(*CsI)[i]->GetZ();
+                //printf("particle A=%i Z=%i   CsI partial energy deposit is %9.3f in detector ID %i \n",(*CsI)[i]->GetA(),(*CsI)[i]->GetZ(),partECsI[(*CsI)[i]->GetId()-1],(*CsI)[i]->GetId());
+              }
+            }
           }
+        }
+      }
+      
+      //determine the number of CsI hits
+      switch(theDetector->GetAncArrayType()){
+        case 2:
+          // no ancillary array
+          break;
+        case 1:
+          //CsI ball
+          for(int i=0;i<NCsISph;i++){
+            if(CsIDisabled[i]==0){ //check if detector is disabled
+              if(passesCsIThresold(partECsI[i])){
+                if((CsIWeight[i] >= 1.0)||(RandFlat::shoot() <= CsIWeight[i])){
+                  numDetHits+=1.0;
+                  if((partACsI[i]==4)&&(partZCsI[i]==2))
+                    numACsIHits+=1.0;
+                  if((partACsI[i]==1)&&(partZCsI[i]==1))
+                    numPCsIHits+=1.0;
+                }
+              }
+            }
+          }
+          break;
+        default:
+          //CsI wall
+          for(int i=0;i<NCsI;i++){
+            if(CsIDisabled[i]==0){ //check if detector is disabled
+              if(passesCsIThresold(partECsI[i])){
+                if((CsIWeight[i] >= 1.0)||(RandFlat::shoot() <= CsIWeight[i])){
+                  numDetHits+=1.0;
+                  if((partACsI[i]==4)&&(partZCsI[i]==2))
+                    numACsIHits+=1.0;
+                  if((partACsI[i]==1)&&(partZCsI[i]==1))
+                    numPCsIHits+=1.0;
+                }
+              }
+            }
+          }
+          break;
+      }
 
-          //increment the counter for number of CsI hits (before triggering)
-          numCsIhits+=numDetHits;
-	        
-	        //set entries in detectors below energy threshold to 0
-	        for(int i=0;i<Np;i++)
-            if(((*CsI)[i]->GetKE() / MeV)<CsIThreshold)
-	            (*CsI)[i]->SetKE(0.0);
-	        
-	        //CsI singles trigger
-	        if(numDetHits>0)  
-	          eventTrigger|=(one<<10);
-	        if(numDetHits==1)  
-	          eventTrigger|=(one<<15);
+      //increment the counter for number of CsI hits (before triggering)
+      numCsIhits+=numDetHits;
+      
+      //set entries in detectors below energy threshold to 0
+      for(int i=0;i<Np;i++)
+        if(!(passesCsIThresold((*CsI)[i]->GetKE() / MeV)))
+          (*CsI)[i]->SetKE(0.0);
+      
+      //CsI singles trigger
+      if(numDetHits>0)
+        eventTrigger|=(1U<<DEFINEDPARTICLE_SINGLES_TRIGGER);
+      if(numDetHits==1)  
+        eventTrigger|=(1U<<DEFINEDPARTICLE_ONEPARTICLE_TRIGGER);
 
-          //particle-particle coincidence trigger
-          //ie. particle hits in two or more different detectors
-          if(numDetHits>1)
-            eventTrigger|=(one<<11);
+      //particle-particle coincidence trigger
+      //ie. particle hits in two or more different detectors
+      if(numDetHits>1)
+        eventTrigger|=(1U<<PARTICLE_COINC_TRIGGER);
 
-          if((eventTrigger&(one<<10))&&(eventTrigger&(one<<11)))
-            eventTrigger|=(one<<12);
-	  
-          /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
-          printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
-          printf("CsI eventTrigger is %d\n",eventTrigger);
-          getc(stdin);*/ 
-	      } // end CsI trigger
-	      
-     
-  
-      // HPGe trigger
+      if((eventTrigger&(1U<<DEFINEDPARTICLE_SINGLES_TRIGGER))&&(eventTrigger&(1U<<PARTICLE_COINC_TRIGGER)))
+        eventTrigger|=(1U<<DEFINEDPARTICLE_COINC_TRIGGER);
+
+      /*printf("recoil CsI total energy deposit is %9.3f\n",rECsI);
+      printf("proj   CsI total energy deposit is %9.3f\n",pECsI);
+      printf("CsI eventTrigger is %d\n",eventTrigger);
+      getc(stdin);*/ 
+    } // end CsI trigger
+      
+    
+
+    // HPGe trigger
+    if(GriffinFold>0)
+      eventTrigger|=(1U<<GAMMA_SINGLES_TRIGGER);
+    // end HPGe trigger
+    
+    //particle AND gamma singles trigger
+    if((eventTrigger&(1U<<DEFINEDPARTICLE_SINGLES_TRIGGER))&&(eventTrigger&(1U<<GAMMA_SINGLES_TRIGGER)))
+      eventTrigger|=(1U<<DEFINEDPARTICLE_AND_GAMMA_TRIGGER);
+
+    //particle-particle coincidence AND gamma singles trigger
+    if((eventTrigger&(1U<<DEFINEDPARTICLE_COINC_TRIGGER))&&(eventTrigger&(1U<<GAMMA_SINGLES_TRIGGER)))
+      eventTrigger|=(1U<<DEFINEDPARTICLE_COINC_AND_GAMMA_TRIGGER);
+    
+    //2+ unsupressed Griffin cores and 2 CsI (Nov 2013 S1232 trigger)  
+    if((eventTrigger&(1U<<DEFINEDPARTICLE_COINC_TRIGGER))&&(GriffinFold>1))
+      eventTrigger|=(1U<<DEFINEDPARTICLE_COINC_AND_GAMMA_COINC_TRIGGER);
+
+    /*G4cout << "Set trigger is " << setTrigger << G4endl;
+    G4cout << "HPGe fold is " << GriffinFold << G4endl;
+    G4cout << "CsI fold is " << numDetHits << G4endl;
+    for(testTrigger=1;testTrigger<=14;testTrigger++)
+      {
+        if(eventTrigger&(1U<<testTrigger))
+          G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
+      }*/
+
+    if(eventTrigger&(1U<<setTrigger)){
+      //increment triggered event and CsI hit counters
+      numTriggeredEvents++;
+      numTriggeredCsIHits+=numDetHits;
+    
       if(GriffinFold>0)
-        eventTrigger|=(one<<1);
-      // end HPGe trigger
-      
-      //particle AND gamma singles trigger
-      if((eventTrigger&(one<<10))&&(eventTrigger&(one<<1)))
-        eventTrigger|=(one<<16);
-
-      //particle-particle coincidence AND gamma singles trigger
-      if((eventTrigger&(one<<12))&&(eventTrigger&(one<<1)))
-        eventTrigger|=(one<<13);
-      
-      //2+ unsupressed Griffin cores and 2 CsI (Nov 2013 S1232 trigger)  
-      if((eventTrigger&(one<<12))&&(GriffinFold>1))
-        eventTrigger|=(one<<14);
-
-      /*G4cout << "Set trigger is " << setTrigger << G4endl;
-      G4cout << "HPGe fold is " << GriffinFold << G4endl;
-      G4cout << "CsI fold is " << numDetHits << G4endl;
-      for(testTrigger=1;testTrigger<=14;testTrigger++)
-        {
-          if(eventTrigger&(one<<testTrigger))
-            G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
-        }*/
-  
-      if(eventTrigger&(one<<setTrigger))
-        {
-          //increment triggered event and CsI hit counters
-          numTriggeredEvents++;
-          numTriggeredCsIHits+=numDetHits;
-        
-	        if(GriffinFold>0)
-	          for(G4int det=0;det<16;det++)
-	            for(G4int cry=0;cry<4;cry++)
-	              if(GriffinCrystEnergyDet[det][cry]>0){
-                  GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
-                  if(theDetector->GetUseTIGRESSSegments()){
-                    for(G4int seg=0;seg<8;seg++){
-                      if(TigressSegWeightDet[det][cry][seg]>0.){
-                        TigressSegPosDet[det][cry][seg]/=TigressSegEnergyDet[det][cry][seg];
-                        TigressSegPosCylDet[det][cry][seg]/=TigressSegEnergyDet[det][cry][seg];
-                        //G4cout << "r: " << TigressSegPosCylDet[det][cry][seg].getX() << ", phi: " << TigressSegPosCylDet[det][cry][seg].getY() << ", z: " << TigressSegPosCylDet[det][cry][seg].getZ() << ", w: " << TigressSegWeightDet[det][cry][seg] << G4endl;
-                      }
-                    }
+        for(G4int det=0;det<16;det++)
+          for(G4int cry=0;cry<4;cry++)
+            if(GriffinCrystEnergyDet[det][cry]>0){
+              GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
+              if(theDetector->GetUseTIGRESSSegments()){
+                for(G4int seg=0;seg<8;seg++){
+                  if(TigressSegWeightDet[det][cry][seg]>0.){
+                    TigressSegPosDet[det][cry][seg]/=TigressSegEnergyDet[det][cry][seg];
+                    TigressSegPosCylDet[det][cry][seg]/=TigressSegEnergyDet[det][cry][seg];
+                    //G4cout << "r: " << TigressSegPosCylDet[det][cry][seg].getX() << ", phi: " << TigressSegPosCylDet[det][cry][seg].getY() << ", z: " << TigressSegPosCylDet[det][cry][seg].getZ() << ", w: " << TigressSegWeightDet[det][cry][seg] << G4endl;
                   }
                 }
-		              
-	        results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegHitsDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
-          //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
-        }
-
+              }
+            }
+              
+      results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegHitsDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
+      //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;
     }
-    // getc(stdin);
+
+  }
+  // getc(stdin);
 }
 //*********************************************************************//
 void EventAction::AddGriffinCrystDet(G4double de, G4double w, G4ThreeVector pos, G4int det, G4int cry, G4double t) 
@@ -471,4 +464,21 @@ void EventAction::reportTriggers()
   G4cout<<"Total number of CsI proton hits in all events: "<<numPCsIHits<< G4endl;
   G4cout<<"Total number of CsI alpha hits in all events: "<<numACsIHits<< G4endl;
   G4cout<<"Total number of CsI hits in triggered events: "<<numTriggeredCsIHits<< G4endl;
+}
+//---------------------------------------------------------
+//function which specifies whether a CsI hit of a given energy 
+//passes the energy threshold
+G4bool EventAction::passesCsIThresold(G4double energy)
+{
+  if(energy <= CsIThreshold[0]){
+    return false;
+  }else if(energy >= CsIThreshold[1]){
+    return true;
+  }else{
+    G4double p = (energy - CsIThreshold[0])/(CsIThreshold[1] - CsIThreshold[0]);
+    if(RandFlat::shoot() <= p){
+      return true;
+    }
+    return false;
+  }
 }
