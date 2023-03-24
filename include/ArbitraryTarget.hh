@@ -43,6 +43,7 @@ class ArbitraryTarget
   void setNTStep(G4int);
   void SetTarThickness(G4int, G4double);
   void setTargetPosition(G4int, G4double);
+  void attachLayers(G4int, G4int, G4bool);
   void Report();
   G4LogicalVolume* GetTargetLog(unsigned int layer){return Target_log[layer];}
   G4Tubs* GetTarget(unsigned int layer){return aTargetLayer[layer];}
@@ -60,9 +61,6 @@ class ArbitraryTarget
 
   bool CheckAndAddLayers(int);
 
-  
-
-
   private:
 
   void setTargetExAndLayer(G4int, G4double);
@@ -74,10 +72,12 @@ class ArbitraryTarget
   // dimensions
   G4double Target_radius;
   G4double Target_thickness[NATARGETLAYERS];
+  G4bool   Target_thickness_set[NATARGETLAYERS];
 
   //materials
   Materials* materials;
   G4Material* TargetMaterial[NATARGETLAYERS];
+  G4bool      Target_material_set[NATARGETLAYERS];
 
   G4int TargetA[NATARGETLAYERS],TargetZ[NATARGETLAYERS];
   G4double TargetLayerPosition[NATARGETLAYERS]; //positions of target layers (0=chamber center)

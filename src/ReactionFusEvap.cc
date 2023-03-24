@@ -1042,7 +1042,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
                 "non-physical values.  Modify the reaction parameters and try "
                 "again.  The number of attempts done before displaying this "
                 "message may be set using /Reaction/MaxNumAttempts" << G4endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
     }
 
     killTrack = false;
@@ -1107,9 +1107,9 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
 
       // FILE *out1, *out2;
       // if((out1=fopen("exi1.txt","a"))==NULL)
-      // 	{printf("Cannot open output\n");exit(-1);}
+      // 	{printf("Cannot open output\n");exit(EXIT_FAILURE);}
       // if((out2=fopen("exi2.txt","a"))==NULL)
-      // 	{printf("Cannot open output\n");exit(-1);}
+      // 	{printf("Cannot open output\n");exit(EXIT_FAILURE);}
       // fprintf(out1,"%.5f\n",evapE[0]);
       // fprintf(out2,"%.5f\n",evapE[1]);
       // fclose(out1);
@@ -1585,28 +1585,28 @@ void ReactionFusEvap::TargetFaceCrossSection() {
     G4cout << "Set an appropriate value using /Projectile/Z in the batch file "
               "and try again."
            << G4endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   if ((A1 > 1000) || (A1 < 1)) {
     G4cout << "ERROR: Invalid projectile mass number: " << A1 << G4endl;
     G4cout << "Set an appropriate value using /Projectile/A in the batch file "
               "and try again."
            << G4endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   if ((Z2 > 1000) || (Z2 < 1)) {
     G4cout << "ERROR: Invalid target atomic number: " << Z2 << G4endl;
     G4cout << "Set an appropriate value using /Target/Z in the batch file and "
               "try again."
            << G4endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   if ((A2 > 1000) || (A2 < 1)) {
     G4cout << "ERROR: Invalid target mass number: " << A2 << G4endl;
     G4cout << "Set an appropriate value using /Target/A in the batch file and "
               "try again."
            << G4endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   if(targetHasBacking){
     if ((Z3 > 1000) || (Z3 < 1)) {
@@ -1614,14 +1614,14 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       G4cout << "Set an appropriate value using /Backing/Z in the batch file and "
                 "try again."
             << G4endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
     }
     if ((A3 > 1000) || (A3 < 1)) {
       G4cout << "ERROR: Invalid backing mass number: " << A3 << G4endl;
       G4cout << "Set an appropriate value using /Backing/A in the batch file and "
                 "try again."
             << G4endl;
-      exit(-1);
+      exit(EXIT_FAILURE);
     }
   }
   
@@ -1712,7 +1712,7 @@ void ReactionFusEvap::AddDecay(G4double E, G4double T) {
     G4cout << "ERROR: Too many gammas added to the residual nucleus cascade, "
               "maximum number is "
            << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -1791,7 +1791,7 @@ void ReactionFusEvap::ReadTabulatedExi(G4String fileName){
   numTabulatedExiVals=0;
   if((table=fopen(fileName.c_str(),"r"))==NULL){
     printf("ERROR: Cannot open the tabulated dExi file %s!\n",fileName.c_str());
-    exit(-1);
+    exit(EXIT_FAILURE);
   }
   while(!(feof(table))){//go until the end of file is reached
     if(fgets(str,256,table)!=NULL){

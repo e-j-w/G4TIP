@@ -58,6 +58,13 @@ ArbitraryTarget_Messenger::ArbitraryTarget_Messenger(ArbitraryTarget* Tar)
     TPCmd[i]->SetParameterName("choice",false);
     TPCmd[i]->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    snprintf(str,256,"/Target/Layer%i/AttachToLayer",i+1);
+    snprintf(guideStr,256,"Attach target layer %i to another layer.",i+1);
+    TACmd[i] = new G4UIcmdWithAString(str,this);
+    TACmd[i]->SetGuidance(guideStr);
+    TACmd[i]->SetParameterName("choice",false);
+    TACmd[i]->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   }
   
   TRLCmd = new G4UIcmdWithAnInteger("/Target/ReactionLayer",this);
@@ -109,6 +116,7 @@ ArbitraryTarget_Messenger::~ArbitraryTarget_Messenger()
       delete TQCmd[i];
       delete TPCmd[i];
       delete TTarCmd[i];
+      delete TACmd[i];
       delete TargetLayerDir[i];
     }
 }
@@ -117,50 +125,78 @@ void ArbitraryTarget_Messenger::SetNewValue(G4UIcommand* command,G4String newVal
 { 
 
   for(int i=0;i<NATARGETLAYERS;i++){
-    if( command == TMatCmd[i] )
-      {
-        if(aArbitraryTarget->CheckAndAddLayers(i))
-          aArbitraryTarget->setTargetMaterial(i, newValue);
-      } 
-    if( command == TMCmd[i] )
-      { 
-        if(aArbitraryTarget->CheckAndAddLayers(i))
-          aArbitraryTarget->setTargetMass(i, TMCmd[i]->GetNewIntValue(newValue));
+    if( command == TMatCmd[i] ){
+      if(aArbitraryTarget->CheckAndAddLayers(i))
+        aArbitraryTarget->setTargetMaterial(i, newValue);
+      break;
+    } 
+    if( command == TMCmd[i] ){ 
+      if(aArbitraryTarget->CheckAndAddLayers(i))
+        aArbitraryTarget->setTargetMass(i, TMCmd[i]->GetNewIntValue(newValue));
+      break;
+    }
+    if( command == TQCmd[i] ){
+      if(aArbitraryTarget->CheckAndAddLayers(i)) 
+        aArbitraryTarget->setTargetCharge(i, TQCmd[i]->GetNewIntValue(newValue));
+      break;
+    }
+    if( command == TZCmd[i] ){
+      if(aArbitraryTarget->CheckAndAddLayers(i)) 
+        aArbitraryTarget->setTargetZ(i, TZCmd[i]->GetNewDoubleValue(newValue));
+      break;
+    }
+    if( command == TTarCmd[i] ){
+      if(aArbitraryTarget->CheckAndAddLayers(i))
+        aArbitraryTarget->SetTarThickness(i,TTarCmd[i]->GetNewDoubleValue(newValue));
+      break;
+    }
+    if( command == TPCmd[i] ){
+      if(aArbitraryTarget->CheckAndAddLayers(i)) 
+        aArbitraryTarget->setTargetPosition(i, TPCmd[i]->GetNewDoubleValue(newValue));
+      break;
+    }
+    if( command == TACmd[i] ){
+      G4int layer1;
+      char str[64];
+      if(sscanf(newValue, "%i %s", &layer1, str) == 2) {
+        if(strcmp(str,"downstream")==0){
+          aArbitraryTarget->attachLayers(layer1-1, i, true);
+        }else if(strcmp(str,"upstream")==0){
+          aArbitraryTarget->attachLayers(layer1-1, i, false);
+        }else{
+          G4cerr << "ERROR: /Target/Layer" << i << "/AttachToLayer command has invalid upstream/downstream specifier." << G4endl;
+          G4cerr << "Valid format for this command is: /Target/Layer"  << i << "/AttachToLayer layer_index us/ds," << G4endl;
+          G4cerr << "where 'us/ds' is 'upstream' or 'downstream'." << G4endl;
+          exit(EXIT_FAILURE);
+        }
+      }else{
+        G4cerr << "ERROR: /Target/Layer" << i << "/AttachToLayer command is improperly formatted." << G4endl;
+        G4cerr << "Valid format for this command is: /Target/Layer"  << i << "/AttachToLayer layer_index us/ds," << G4endl;
+        G4cerr << "where 'us/ds' is 'upstream' or 'downstream'." << G4endl;
+        exit(EXIT_FAILURE);
       }
-    if( command == TQCmd[i] )
-      {
-        if(aArbitraryTarget->CheckAndAddLayers(i)) 
-          aArbitraryTarget->setTargetCharge(i, TQCmd[i]->GetNewIntValue(newValue));
-      }
-    if( command == TZCmd[i] )
-      {
-        if(aArbitraryTarget->CheckAndAddLayers(i)) 
-          aArbitraryTarget->setTargetZ(i, TZCmd[i]->GetNewDoubleValue(newValue));
-      }
-    if( command == TTarCmd[i] )
-      {
-        if(aArbitraryTarget->CheckAndAddLayers(i))
-          aArbitraryTarget->SetTarThickness(i,TTarCmd[i]->GetNewDoubleValue(newValue));
-      }
-    if( command == TPCmd[i] )
-      {
-        if(aArbitraryTarget->CheckAndAddLayers(i)) 
-          aArbitraryTarget->setTargetPosition(i, TPCmd[i]->GetNewDoubleValue(newValue));
-      }
+      break;
+    } 
   }
   
-  if( command == TRLCmd )
-    { aArbitraryTarget->setTargetExLayer(TRLCmd->GetNewIntValue(newValue)-1);}
-  if( command == TExCmd )
-    { aArbitraryTarget->setTargetEx(TExCmd->GetNewDoubleValue(newValue));}
-  if( command == TTauCmd )
-    { aArbitraryTarget->setTargetTau(TTauCmd->GetNewDoubleValue(newValue));}
-  if( command == TRCmd )
-    { aArbitraryTarget->setTargetR(TRCmd->GetNewDoubleValue(newValue));}
-  if( command == NTSCmd )
-    { aArbitraryTarget->setNTStep(NTSCmd->GetNewIntValue(newValue));}
-  if( command == TRepCmd )
-    { aArbitraryTarget->Report();}
+  if( command == TRLCmd ){
+    aArbitraryTarget->setTargetExLayer(TRLCmd->GetNewIntValue(newValue)-1);
+  }
+  if( command == TExCmd ){
+    aArbitraryTarget->setTargetEx(TExCmd->GetNewDoubleValue(newValue));
+  }
+  if( command == TTauCmd ){
+    aArbitraryTarget->setTargetTau(TTauCmd->GetNewDoubleValue(newValue));
+  }
+  if( command == TRCmd ){
+    aArbitraryTarget->setTargetR(TRCmd->GetNewDoubleValue(newValue));
+  }
+  if( command == NTSCmd ){
+    aArbitraryTarget->setNTStep(NTSCmd->GetNewIntValue(newValue));
+  }
+  if( command == TRepCmd ){
+    aArbitraryTarget->Report();
+  }
 
 
 }

@@ -154,9 +154,9 @@ void ReactionFusEvap_Messenger::SetNewValue(G4UIcommand *command, G4String newVa
 
   if (command == ADecCmd) {
     G4double E, T;
-    if (sscanf(newValue, "%lf %lf", &E, &T) == 2) {
+    if(sscanf(newValue, "%lf %lf", &E, &T) == 2){
       theReaction->AddDecay(E, T);
-    } else {
+    }else{
       G4cerr << "Reaction Messenger: Incorrect parameters for command "
                 "/Reaction/AddDecay.  Aborting." << G4endl;
       exit(EXIT_FAILURE);
