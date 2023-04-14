@@ -108,7 +108,7 @@ These commands configure the default target type, which is always used unless `/
 | /Target/LayerX/Thickness NUMBER um | The thickness of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer).  Alternatively this can be specified in mg/cm<sup>2</sup> using `/Target/LayerX/ThicknessMgCm2`. |
 | /Target/LayerX/Position NUMBER um | The position of the layer (where X is the layer number, eg. `Layer1` for the first layer, `Layer2` for the second layer). |
 | /Target/LayerX/AttachToLayer LAYER us/ds | Alternative to `/Target/LayerX/Position`, where layer X is attached to layer LAYER.  The value of 'us/ds' is 'upstream' or 'downstream', specifying whether layer X is mounted upstream or downstream of layer LAYER.   |
-| /Target/LayerX/A NUMBER | The mass number of the layer. |
+| /Target/LayerX/A NUMBER | The mass number of the layer.  This is needed for the layer in which the reaction takes place, but not for other layers. |
 | /Target/LayerX/Material STRING<sup>1</sup> | The layer material. |
 | /Target/ReactionLayer NUMBER | The layer at which the reaction (Coulex, fusion-evaporation, etc.) takes place (eg. if NUMBER is 1, then the reaction takes place in `Layer1`). |
 

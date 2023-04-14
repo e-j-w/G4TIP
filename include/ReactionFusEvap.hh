@@ -162,7 +162,7 @@ private:
   G4ParticleDefinition *proton, *alpha, *neutron;
   G4bool killTrack;
   G4ThreeVector posIn;
-  G4double A1, Z1, A2, Z2, A3, Z3, DA, DZ;
+  G4double A1, Z1, A2, Z2, DA, DZ;
   G4int nP, nN, nA;
   G4int maxNumEvap;
   G4bool targetHasBacking; //true if the target has a layer downstream of the target layer (eg. DSAM, plunger)

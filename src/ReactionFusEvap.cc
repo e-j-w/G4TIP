@@ -1534,18 +1534,12 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       A2 = theDetector->GetPlunger()->getTargetMass();
       Z2 = theDetector->GetPlunger()->getTargetCharge();
 
-      A3 = theDetector->GetPlunger()->getStopperMass();
-      Z3 = theDetector->GetPlunger()->getStopperCharge();
-
       targetHasBacking=true;
       break;
     case 1:
       //dsam target
       A2 = theDetector->GetTarget()->getTargetMass();
       Z2 = theDetector->GetTarget()->getTargetCharge();
-
-      A3 = theDetector->GetTarget()->getBackingMass();
-      Z3 = theDetector->GetTarget()->getBackingCharge();
 
       targetHasBacking=true;
       break;
@@ -1555,8 +1549,6 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       Z2 = theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer());
 
       if(theDetector->GetArbitraryTarget()->getTargetExLayer() < (theDetector->GetArbitraryTarget()->getNumberOfLayers()-1)){
-        A3 = theDetector->GetArbitraryTarget()->getTargetMass(theDetector->GetArbitraryTarget()->getTargetExLayer()+1);
-        Z3 = theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer()+1);
         targetHasBacking=true;
       }else{
         targetHasBacking=false;
@@ -1608,24 +1600,6 @@ void ReactionFusEvap::TargetFaceCrossSection() {
            << G4endl;
     exit(EXIT_FAILURE);
   }
-  if(targetHasBacking){
-    if ((Z3 > 1000) || (Z3 < 1)) {
-      G4cout << "ERROR: Invalid backing atomic number: " << Z3 << G4endl;
-      G4cout << "Set an appropriate value using /Backing/Z in the batch file and "
-                "try again."
-            << G4endl;
-      exit(EXIT_FAILURE);
-    }
-    if ((A3 > 1000) || (A3 < 1)) {
-      G4cout << "ERROR: Invalid backing mass number: " << A3 << G4endl;
-      G4cout << "Set an appropriate value using /Backing/A in the batch file and "
-                "try again."
-            << G4endl;
-      exit(EXIT_FAILURE);
-    }
-  }
-  
-
 
   // set properties (including gamma decay processes) of the residual species in
   // the cascade
@@ -1776,8 +1750,6 @@ void ReactionFusEvap::SetupReaction() {
   G4cout << "---> Reaction setup completed." << G4endl;
   G4cout << "---> BEAM PROPERTIES:     A = " << A1 << ", Z = " << Z1 << ", N = " << A1 - Z1 << G4endl;
   G4cout << "---> TARGET PROPERTIES:   A = " << A2 << ", Z = " << Z2 << ", N = " << A2 - Z2 << G4endl;
-  if(targetHasBacking)
-    G4cout << "---> BACKING PROPERTIES:  A = " << A3 << ", Z = " << Z3 << ", N = " << A3 - Z3 << G4endl;
   G4cout << "---> COMPOUND PROPERTIES: A = " << A1 + A2 << ", Z = " << Z1 + Z2 << ", N = " << A1 + A2 - Z1 - Z2 << G4endl;
   G4cout << "---> RESIDUAL PROPERTIES: A = " << A1 + A2 - DA << ", Z = " << Z1 + Z2 - DZ << ", N = " << A1 + A2 - DA - Z1 - Z2 + DZ << G4endl;
   // getc(stdin);
