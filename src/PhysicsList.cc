@@ -168,8 +168,8 @@ void PhysicsList::ConstructEM(){
           theElasticProcess->RegisterMe(theElasticModel);*/
         pmanager->AddDiscreteProcess(theElasticProcess);
         // inelastic scattering
-        G4NeutronInelasticProcess *theInelasticProcess =
-            new G4NeutronInelasticProcess("inelastic");
+        G4HadronInelasticProcess *theInelasticProcess =
+            new G4HadronInelasticProcess("inelastic");
         G4NeutronHPInelastic *theInelasticModel =
             new G4NeutronHPInelastic; // new for geant4.10.1
         // G4LENeutronInelastic* theInelasticModel = new G4LENeutronInelastic;
@@ -177,12 +177,12 @@ void PhysicsList::ConstructEM(){
         theInelasticProcess->RegisterMe(theInelasticModel);
         pmanager->AddDiscreteProcess(theInelasticProcess);
         // fission
-        G4HadronFissionProcess *theFissionProcess = new G4HadronFissionProcess;
+        G4NeutronFissionProcess *theFissionProcess = new G4NeutronFissionProcess;
         G4LFission *theFissionModel = new G4LFission;
         theFissionProcess->RegisterMe(theFissionModel);
         pmanager->AddDiscreteProcess(theFissionProcess);
         // capture
-        G4HadronCaptureProcess *theCaptureProcess = new G4HadronCaptureProcess;
+        G4NeutronCaptureProcess *theCaptureProcess = new G4NeutronCaptureProcess;
 
         G4NeutronHPCapture *theCaptureModel =
             new G4NeutronHPCapture; // new for geant4.10.1

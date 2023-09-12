@@ -284,12 +284,12 @@ G4double ArbitraryTarget::GetTargetNV(G4int layer, G4int Z)
     G4cerr << "ERROR: attempted to get NV for invalid target layer (" << layer << ")" << G4endl;
     exit(EXIT_FAILURE);
   }
-  const G4ElementVector* theElementVector = Target_log[layer]->GetMaterial()->GetElementVector();
-  const G4double* NbOfAtomsPerVolume = Target_log[layer]->GetMaterial()->GetVecNbOfAtomsPerVolume();
+  const G4ElementVector *theElementVector = Target_log[layer]->GetMaterial()->GetElementVector();
+  const G4double *NbOfAtomsPerVolume = Target_log[layer]->GetMaterial()->GetVecNbOfAtomsPerVolume();
   const size_t NumberOfElements=Target_log[layer]->GetMaterial()->GetNumberOfElements();
 
-  for ( size_t i=0 ; i < NumberOfElements ; i++ ){
-    G4Element* element = (*theElementVector)[i];
+  for(size_t i=0; i < NumberOfElements; i++){
+    const G4Element* element = (*theElementVector)[i];
     if(element->GetZ()==Z)
       return 1000.*NbOfAtomsPerVolume[i];//per cubic centimeter, factor of 1000 is unexpected but necessary
   }

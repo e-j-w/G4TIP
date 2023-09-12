@@ -12,9 +12,21 @@ For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma
 
 ## Installation
 
-This code has been tested on CentOS 7 and Ubuntu 20.04.  Previous versions have been tested on Ubuntu 14.04/16.04 and Arch Linux (from September 2020), but compatibility with these distros is not guaranteed.  If you're on a non-Linux platform: good luck!
+**This branch is only compatible with GEANT4 version 11.x.  For GEANT4 version 10.x, see the [Geant4.10](https://github.com/e-j-w/G4TIP/tree/Geant4.10) branch.**
+
+The current version of the code has been tested on Arch Linux, as of September 2023.  Previous versions have been tested on Ubuntu 14.04/16.04/20.04 and CentOS 7, but compatibility with these distros is not guaranteed.  Check the   If you're on a non-Linux platform: good luck!
 
 Follow the instructions below to set up the required dependencies.
+
+### Packages
+
+Depending on the OS, some additional packages may be needed for GEANT4.
+
+#### Arch Linux
+
+```
+sudo pacman -S nlohmann-json xxhash onetbb
+```
 
 ### ROOT
 
@@ -37,20 +49,20 @@ export PATH=$PATH:$ROOTSYS/bin
 
 ### GEANT4
 
-The code is tested with GEANT4 v10.6.  It may still work with other 10.x versions.
+**This branch is only compatible with GEANT4 version 11.x.  For GEANT4 version 10.x, see the [Geant4.10](https://github.com/e-j-w/G4TIP/tree/Geant4.10) branch.**
 
 [GEANT4 source code](https://geant4.web.cern.ch/support/download)
 
 [GEANT4 build and install guide](https://geant4-userdoc.web.cern.ch/geant4-userdoc/UsersGuides/InstallationGuide/html/installguide.html)
 
-GEANT4 should be built with its data files and the Qt visualization drivers, using the `-DGEANT4_INSTALL_DATA=ON` and `-DGEANT4_USE_QT` switches specified in its install guide.  Set up environment variables for GEANT4 by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
+GEANT4 should be built with its data files and the Qt visualization drivers, using the `-DGEANT4_INSTALL_DATA=ON` and `-DGEANT4_USE_QT` switches specified in its install guide.  The `-DGEANT4_INSTALL_PACKAGE_CACHE=OFF` switch may also be needed for compatibility with recent CMake versions.  Set up environment variables for GEANT4 by adding the following lines to your `~/.bashrc` (substituting the appropriate paths):
 
 ```
 #for GEANT4
 export G4INSTALL=/path/to/geant4_install_directory
 source $G4INSTALL/bin/geant4.sh
 #substitute GEANT4_VERSION in the next line with the appropriate directory
-source $G4INSTALL/share/GEANT4_VERSION/geant4make/geant4make.sh
+source $G4INSTALL/share/Geant4/geant4make/geant4make.sh
 ```
 
 ### Redacted files
@@ -249,7 +261,7 @@ C. Morse - Finding and fixing memory leaks.
 
 K. Starosta - Initial TIP codebase.
 
-J. Williams - Fusion-evaporation implementation, DSAM and arbitrary target implementation.
+J. Williams - Fusion-evaporation implementation, DSAM and arbitrary target implementation, GEANT4 10.x and 11.x ports.
 
 F. Wu - Reaction code work and auditing.
 

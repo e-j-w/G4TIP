@@ -3,11 +3,7 @@
 // Plunger or DSAM target
 // Implements CsI wall and ball arrays
 
-#ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#else
 #include "G4RunManager.hh"
-#endif
 
 #include "G4UImanager.hh"
 #include "G4UIExecutive.hh"
@@ -44,11 +40,7 @@ int main(int argc, char **argv) {
   G4cout << " Seed set to  " << myseed << G4endl;
 
   // Construct the default run manager
-  #ifdef G4MULTITHREADED
-    G4MTRunManager* runManager = new G4MTRunManager;
-  #else
-    G4RunManager* runManager = new G4RunManager;
-  #endif
+  G4RunManager* runManager = new G4RunManager;
 
   // set mandatory initialization classes
   DetectorConstruction *theDetector = new DetectorConstruction();

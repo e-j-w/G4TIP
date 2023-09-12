@@ -80,7 +80,7 @@
 #include "G4IonParametrisedLossModel.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4LPhysicsFreeVector.hh"
+#include "G4PhysicsFreeVector.hh"
 #include "G4IonStoppingData.hh"
 #include "G4VIonDEDXTable.hh"
 #include "G4VIonDEDXScalingAlgorithm.hh"
@@ -1075,10 +1075,10 @@ void G4IonParametrisedLossModel::BuildRangeVector(
 
   G4double logDeltaIntegr = logDeltaEnergy / G4double(nmbSubBins);
 
-  G4LPhysicsFreeVector* energyRangeVector =
-                              new G4LPhysicsFreeVector(nmbBins+1,
+  G4PhysicsFreeVector* energyRangeVector =
+                              new G4PhysicsFreeVector(nmbBins+1,
                                                        lowerEnergy,
-                                                       upperEnergy);
+                                                       upperEnergy, true); //final boolean argument specifies spline 
 
   G4double dedxLow = ComputeDEDXPerVolume(material,
                                           particle,
@@ -1137,25 +1137,22 @@ void G4IonParametrisedLossModel::BuildRangeVector(
 #endif
 
   }
-  energyRangeVector -> SetSpline(true);
 
   G4double lowerRangeEdge =
                     energyRangeVector -> Value(lowerEnergy);
   G4double upperRangeEdge =
                     energyRangeVector -> Value(upperEnergy);
 
-  G4LPhysicsFreeVector* rangeEnergyVector
-                      = new G4LPhysicsFreeVector(nmbBins+1,
+  G4PhysicsFreeVector* rangeEnergyVector
+                      = new G4PhysicsFreeVector(nmbBins+1,
                                                  lowerRangeEdge,
-                                                 upperRangeEdge);
+                                                 upperRangeEdge, true); //final boolean argument specifies spline
 
   for(size_t i = 0; i < nmbBins+1; i++) {
       G4double energy = energyRangeVector -> Energy(i);
       rangeEnergyVector ->
              PutValues(i, energyRangeVector -> Value(energy), energy);
   }
-
-  rangeEnergyVector -> SetSpline(true);
 
 #ifdef PRINT_DEBUG_TABLES
   G4cout << *energyLossVector

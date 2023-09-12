@@ -52,6 +52,6 @@
 /Trigger/CsIThreshold 0.5 MeV
 #/Print/CsI_Track_Set
 #/Print/Track_Set
-/run/beamOn 50000000
+/run/beamOn 10000
 #/Results/Tree/Report
 /Results/Tree/Save run1_1274level_rdm.root

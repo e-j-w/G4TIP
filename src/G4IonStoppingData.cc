@@ -51,7 +51,7 @@
 
 #include "G4IonStoppingData.hh" 
 #include "G4PhysicsVector.hh"
-#include "G4LPhysicsFreeVector.hh"
+#include "G4PhysicsFreeVector.hh"
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -409,7 +409,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
     }
   //G4cout << "Opened custom stopping data with filename: " << fileName << G4endl;
     
-  G4LPhysicsFreeVector* physicsVector = new G4LPhysicsFreeVector(); 
+  G4PhysicsFreeVector* physicsVector = new G4PhysicsFreeVector(true); //boolean argument specifies spline 
 
   if( !physicsVector -> Retrieve(ifilestream, true) ) {
      G4cout << "Cannot retrieve physics vector from stopping data file: " << fileName << G4endl;
@@ -417,8 +417,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
      return false;
   }
 
-  physicsVector -> ScaleVector( MeV, MeV * cm2 /( 0.001 * g) ); 
-  physicsVector -> SetSpline( true );
+  physicsVector -> ScaleVector( MeV, MeV * cm2 /( 0.001 * g) );
   physicsVector -> FillSecondDerivatives();
 
   // Retrieved vector is added to material store
@@ -467,7 +466,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
     }
   //G4cout << "Opened custom stopping data with filename: " << fileName << G4endl;
   
-  G4LPhysicsFreeVector* physicsVector = new G4LPhysicsFreeVector(); 
+  G4PhysicsFreeVector* physicsVector = new G4PhysicsFreeVector(true); //boolean argument specifies spline 
 
   if( !physicsVector -> Retrieve(ifilestream, true) ) {
      G4cout << "Cannot retrieve physics vector from stopping data file: " << fileName << G4endl;
@@ -475,8 +474,7 @@ G4bool G4IonStoppingData::BuildPhysicsVector(
      return false;
   }
 
-  physicsVector -> ScaleVector( MeV, MeV * cm2 /( 0.001 * g) ); 
-  physicsVector -> SetSpline( true );
+  physicsVector -> ScaleVector( MeV, MeV * cm2 /( 0.001 * g) );
   physicsVector -> FillSecondDerivatives();
 
   // Retrieved vector is added to material store

@@ -272,17 +272,13 @@ G4double Target::GetTargetNV(G4int Z)
   const G4double* NbOfAtomsPerVolume = Target_log->GetMaterial()->GetVecNbOfAtomsPerVolume();
   const size_t NumberOfElements=Target_log->GetMaterial()->GetNumberOfElements();
 
-  for ( size_t i=0 ; i < NumberOfElements ; i++ )
-  {
-    G4Element* element = (*theElementVector)[i];
-  
+  for(size_t i=0; i < NumberOfElements; i++){
+    const G4Element* element = (*theElementVector)[i];
     if(element->GetZ()==Z)
       return 1000.*NbOfAtomsPerVolume[i];//per cubic centimeter, factor of 1000 is unexpected but necessary
- 
   }
- 
   
-   return 0.; 
+  return 0.; 
 }
 //-----------------------------------------------------------------------------
 void Target::SetTarThickness(G4double Z)
