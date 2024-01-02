@@ -1183,12 +1183,12 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
         }
       }
 	    
-	    // Check that the angle of at least one of the evaporated particles
-	    // (in the lab frame) is in the user specified angular range.
-	    // Otherwise, kill the track.
-	    if((constrainedAngle == true) && (killTrack == false)){
-	      G4bool goodEvapAngle = false;
-	      for(int i = 0; i < nP; i++){
+      // Check that the angle of at least one of the evaporated particles
+      // (in the lab frame) is in the user specified angular range.
+      // Otherwise, kill the track.
+      if((constrainedAngle == true) && (killTrack == false)){
+	G4bool goodEvapAngle = false;
+	for(int i = 0; i < nP; i++){
           if(goodEvapAngle == false){
             if(EvapP[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
               if(EvapP[i]->GetMomentumDirection().getTheta() > minEvapAngle){
@@ -1197,7 +1197,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
             }
           }
         }
-	      for(int i = 0; i < nN; i++){
+	for(int i = 0; i < nN; i++){
           if(goodEvapAngle == false){
             if(EvapN[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
               if(EvapN[i]->GetMomentumDirection().getTheta() > minEvapAngle){
@@ -1206,7 +1206,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
             }
           }
         }
-	      for(int i = 0; i < nA; i++){
+	for(int i = 0; i < nA; i++){
           if(goodEvapAngle == false){
             if(EvapA[i]->GetMomentumDirection().getTheta() < maxEvapAngle){
               if(EvapA[i]->GetMomentumDirection().getTheta() > minEvapAngle){
@@ -1215,7 +1215,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
             }
           }
         }
-	      if(goodEvapAngle == false)
+	if(goodEvapAngle == false)
           killTrack = true;
       }
 
@@ -1517,12 +1517,11 @@ G4ThreeVector ReactionFusEvap::GetCMVelocity(const G4Track &aTrack) {
 void ReactionFusEvap::TargetFaceCrossSection() {
   G4cout << "---------- SETUP OF DECAY PRODUCTS ----------" << G4endl;
 
-  Eexcit = 0.;
-  for(int i = 0; i < numDecays; i++)
-    Eexcit += Egamma[i];
-  Egammatot = Eexcit; // store the total energy used by gamma emission
-
-  DA = 0.;
+  // Eexcit = 0.; //0.000001;
+  // for(int i = 0; i < numDecays; i++)
+  //   Eexcit += Egamma[i] + ( Egamma[i]*Egamma[i] / 2 / (28.*1000.) );//Egamma[i];
+  
+  // Egammatot = Eexcit; // store the total energy used by gamma emissionDA = 0.;
   DZ = 0.;
 
   A1 = theProjectile->getA();
@@ -1534,12 +1533,18 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       A2 = theDetector->GetPlunger()->getTargetMass();
       Z2 = theDetector->GetPlunger()->getTargetCharge();
 
+      A3 = theDetector->GetPlunger()->getStopperMass();
+      Z3 = theDetector->GetPlunger()->getStopperCharge();
+
       targetHasBacking=true;
       break;
     case 1:
       //dsam target
       A2 = theDetector->GetTarget()->getTargetMass();
       Z2 = theDetector->GetTarget()->getTargetCharge();
+
+      A3 = theDetector->GetTarget()->getBackingMass();
+      Z3 = theDetector->GetTarget()->getBackingCharge();
 
       targetHasBacking=true;
       break;
@@ -1549,6 +1554,8 @@ void ReactionFusEvap::TargetFaceCrossSection() {
       Z2 = theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer());
 
       if(theDetector->GetArbitraryTarget()->getTargetExLayer() < (theDetector->GetArbitraryTarget()->getNumberOfLayers()-1)){
+        A3 = theDetector->GetArbitraryTarget()->getTargetMass(theDetector->GetArbitraryTarget()->getTargetExLayer()+1);
+        Z3 = theDetector->GetArbitraryTarget()->getTargetCharge(theDetector->GetArbitraryTarget()->getTargetExLayer()+1);
         targetHasBacking=true;
       }else{
         targetHasBacking=false;
@@ -1600,145 +1607,191 @@ void ReactionFusEvap::TargetFaceCrossSection() {
            << G4endl;
     exit(EXIT_FAILURE);
   }
-
+  if(targetHasBacking){
+    if ((Z3 > 1000) || (Z3 < 1)) {
+      G4cout << "ERROR: Invalid backing atomic number: " << Z3 << G4endl;
+      G4cout << "Set an appropriate value using /Backing/Z in the batch file and "
+                "try again."
+            << G4endl;
+      exit(EXIT_FAILURE);
+    }
+    if ((A3 > 1000) || (A3 < 1)) {
+      G4cout << "ERROR: Invalid backing mass number: " << A3 << G4endl;
+      G4cout << "Set an appropriate value using /Backing/A in the batch file and "
+                "try again."
+            << G4endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  
+  
   // set properties (including gamma decay processes) of the residual species in
   // the cascade
   G4ProcessManager *default_pm = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, 0.0)->GetProcessManager();
-  if (numDecays > 0){
-    for(int i = 0; i < numDecays; i++){
 
-      // define the residual species
-      residual[i] = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, Eexcit);
-      if (i > 0)
-        residual[i] = ResDec[i - 1]->GetDaughterNucleus(); // the next residual
-                                                           // nucleus is the
-                                                           // daughter of the
-                                                           // previous one
-      
-      //set up process manager (want separate ones for each step since each has its own decay process)
-      ResProcMan[i] = new G4ProcessManager(default_pm[0]);
-      residual[i]->SetProcessManager(ResProcMan[i]);
 
-      // set up lifetime
-      residual[i]->SetPDGStable(false);
-      residual[i]->SetPDGLifeTime(tau[i]);
-
-      // set up gamma decay channel
-      ResDecTab[i] = new G4DecayTable();
-      residual[i]->SetDecayTable(ResDecTab[i]);
-      ResDec[i] = new GammaDecayChannel(-1, residual[i], 1, Egamma[i], Eexcit, gammaAngDist);
-      ResDecTab[i]->Insert(ResDec[i]);
-
-      // ResDecTab[i]->DumpInfo();
-
-      // make sure that the residual has the decay process in its manager
-      if(residual[i]->GetProcessManager() == NULL){
-        G4cerr << "Could not find process manager for gamma cascade step "
-               << i + 1 << " of the residual nucleus." << G4endl;
-        exit(EXIT_FAILURE);
-      }
-      decay[i] = new G4Decay();
-      /*if(i>0)
-        if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i-1]) == true)
-          printf("WARNING: previous decay present!!\n");*/
-      if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i]) == false){
-        G4cout << "-> adding the residual nucleus decay process for step "
-               << i + 1 << " of the cascade." << G4endl;
-        residual[i]->GetProcessManager()->SetParticleType(residual[i]); // neccesary for decay process to be added successfully
-        residual[i]->GetProcessManager()->AddProcess(decay[i], 1, -1, 5);
-        //residual[i]->GetProcessManager()->RemoveProcess( residual[i]->GetProcessManager()->GetProcessListLength()-1 );
-      }
-      // residual[i]->GetProcessManager()->DumpInfo();
-
-      Eexcit -= Egamma[i]; // modify total excitation energy for the next
-                           // residual species
+  Eexcit = 0.;
+  for(int i = numDecays-1; i >=0; i--)
+    {
+      G4cout << "DECAY NUMBER: " << i+1 << G4endl;
+      level[i] = G4IonTable::GetIonTable()->GetIon(Z1+Z2-DZ,A1+A2-DA,Eexcit);
+      Eexcit += Egamma[i] + (Egamma[i]*Egamma[i] / 2 / level[i]->GetPDGMass());
+      G4cout << "Excitation energy before decay " << i+1 << " is " << Eexcit << " [MeV]" << G4endl;
+      G4cout << "Excitation energy of final level " << ((G4Ions *)level[i])->GetExcitationEnergy() / keV << " keV" << G4endl;
+      G4cout << "Proton number of state " << ((G4Ions *)level[i])->GetAtomicNumber() << G4endl;
+      G4cout << "Mass number of state " << ((G4Ions *)level[i])->GetAtomicMass() << G4endl;
     }
-  }else{
-    G4cout << "No decay process specified for the residual nucleus!" << G4endl;
-  }
 
-  // print cascade info
-  for(int i = 0; i < numDecays; i++){
-    // Print info
-    G4cout << "STEP " << i + 1 << " OF THE CASCADE" << G4endl
-           << "Residual lifetime: " << residual[i]->GetPDGLifeTime() / ns
-           << " ns" << G4endl << "Initial excitation energy: "
-           << ((G4Ions *)residual[i])->GetExcitationEnergy() / keV << " keV"
-           << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma() / keV
-           << " keV" << G4endl << "Final excitation energy: "
-           << ResDec[i]->GetDaughterExcitation() / keV << " keV" << G4endl;
-     //ResDecTab[i]->DumpInfo();
-     //residual[i]->GetProcessManager()->DumpInfo();
-  }
+  Egammatot = Eexcit;
 
-  G4cout << "---------- END OF DECAY PRODUCT SETUP ----------" << G4endl;
-  // getc(stdin);
-}
-//---------------------------------------------------------
-// Adds a decay to the residual nucleus gamma cascade.  Must be called before
-// TargetFaceCrossSection()
-void ReactionFusEvap::AddDecay(G4double E, G4double T) {
-  if(numDecays < MAXNUMDECAYS){
-    Egamma[numDecays] = E;
-    tau[numDecays] = T;
-    numDecays++;
-  }else{
-    G4cout << "ERROR: Too many gammas added to the residual nucleus cascade, "
-              "maximum number is "
-           << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
-    exit(EXIT_FAILURE);
-  }
-}
-
-G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
-  G4double exi=0.0;
-  // G4double r=(G4double)rand()/(G4double)RAND_MAX;
-  G4double r=RandFlat::shoot();
-  vector<vector<G4double>>::iterator it1;
-  vector<G4double>::iterator it2;
-  G4double r_min=0,r_max,x_min=0,x_max;
-  G4double x=0.0;
   
-  it1=FELookupTable.end()-1;
-  it2=(*it1).begin();
-  r_max=*(it2);
-  if(r>=r_max){
-    G4cout<<"r greater than "<<r_max<<G4endl;
-    // srand(time(NULL));
-    x=*(it2+1);
-    exi=kT*x;
-    exi+=V;
-    return exi;
-  }
   
-  for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++){
+  
+  if (numDecays > 0)
+    {
+      // residual[0] = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + Z2 - DA, Eexcit);
+      for(int i = 0; i < numDecays; i++)
+	{
+
+	  // define the residual species
+	  residual[i] = G4IonTable::GetIonTable()->GetIon(Z1 + Z2 - DZ, A1 + A2 - DA, Eexcit);
+      
+	  if (i > 0)
+	    residual[i] = ResDec[i - 1]->GetDaughterNucleus(); // the next residual
+	  // nucleus is the
+	  // daughter of the
+	  // previous one
+      
+	  //set up process manager (want separate ones for each step since each has its own decay process)
+	  ResProcMan[i] = new G4ProcessManager(default_pm[0]);
+	  residual[i]->SetProcessManager(ResProcMan[i]);
+
+	  // set up lifetime
+	  residual[i]->SetPDGStable(false);
+	  residual[i]->SetPDGLifeTime(tau[i]);
+
+	  // set up gamma decay channel
+	  ResDecTab[i] = new G4DecayTable();
+	  residual[i]->SetDecayTable(ResDecTab[i]);
+	  ResDec[i] = new GammaDecayChannel(-1, residual[i], 1, Egamma[i], Eexcit, gammaAngDist);
+	  ResDecTab[i]->Insert(ResDec[i]);
+
+	  // ResDecTab[i]->DumpInfo();
+
+	  // make sure that the residual has the decay process in its manager
+	  if(residual[i]->GetProcessManager() == NULL)
+	    {
+	      G4cerr << "Could not find process manager for gamma cascade step "
+		     << i + 1 << " of the residual nucleus." << G4endl;
+	      exit(EXIT_FAILURE);
+	    }
+	  decay[i] = new G4Decay();
+	  /*if(i>0)
+	    if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i-1]) == true)
+	    printf("WARNING: previous decay present!!\n");*/
+	  if(residual[i]->GetProcessManager()->GetProcessActivation(decay[i]) == false)
+	    {
+	      G4cout << "-> adding the residual nucleus decay process for step "
+		     << i + 1 << " of the cascade." << G4endl;
+	      residual[i]->GetProcessManager()->SetParticleType(residual[i]); // neccesary for decay process to be added successfully
+	      residual[i]->GetProcessManager()->AddProcess(decay[i], 1, -1, 5);
+	      //residual[i]->GetProcessManager()->RemoveProcess( residual[i]->GetProcessManager()->GetProcessListLength()-1 );
+	    }
+	  // residual[i]->GetProcessManager()->DumpInfo();
+
+	  //Eexcit -= Egamma[i]; // modify total excitation energy for the next
+	  // residual species
+	  Eexcit -= (Egamma[i] + (Egamma[i]*Egamma[i] / 2 / residual[i]->GetPDGMass()));
+	}
+      }
+    else
+      {
+	G4cout << "No decay process specified for the residual nucleus!" << G4endl;
+      }
+
+      // print cascade info
+      for(int i = 0; i < numDecays; i++)
+	{
+	  // Print info
+	  G4cout << "STEP " << i + 1 << " OF THE CASCADE" << G4endl
+		 << "Residual lifetime: " << residual[i]->GetPDGLifeTime() / ns
+		 << " ns" << G4endl << "Initial excitation energy: "
+		 << ((G4Ions *)residual[i])->GetExcitationEnergy() / keV << " keV"
+		 << G4endl << "Gamma decay energy: " << ResDec[i]->GetEGamma() / keV
+		 << " keV" << G4endl << "Final excitation energy: "
+	         << ResDec[i]->GetDaughterExcitation() / keV << " keV" << G4endl;
+	  //ResDecTab[i]->DumpInfo();
+	  //residual[i]->GetProcessManager()->DumpInfo();
+	}
+
+      G4cout << "---------- END OF DECAY PRODUCT SETUP ----------" << G4endl;
+    // getc(stdin);
+    }
+  //---------------------------------------------------------
+  // Adds a decay to the residual nucleus gamma cascade.  Must be called before
+  // TargetFaceCrossSection()
+  void ReactionFusEvap::AddDecay(G4double E, G4double T) {
+    if(numDecays < MAXNUMDECAYS){
+      Egamma[numDecays] = E;
+      tau[numDecays] = T;
+      numDecays++;
+    }else{
+      G4cout << "ERROR: Too many gammas added to the residual nucleus cascade, "
+	"maximum number is "
+	     << MAXNUMDECAYS << " (change in Reaction.hh)." << G4endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  G4double ReactionFusEvap::getExi(G4double V, G4double kT) {
+    G4double exi=0.0;
+    // G4double r=(G4double)rand()/(G4double)RAND_MAX;
+    G4double r=RandFlat::shoot();
+    vector<vector<G4double>>::iterator it1;
+    vector<G4double>::iterator it2;
+    G4double r_min=0,r_max,x_min=0,x_max;
+    G4double x=0.0;
+  
+    it1=FELookupTable.end()-1;
     it2=(*it1).begin();
     r_max=*(it2);
-    if(r<r_max){
-      x_max=*(it2+1);
-      x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
+    if(r>=r_max){
+      G4cout<<"r greater than "<<r_max<<G4endl;
+      // srand(time(NULL));
+      x=*(it2+1);
       exi=kT*x;
       exi+=V;
-
-      // exi=V+kT*x;
-      // G4cout<<"Rand is: "<<r<<G4endl;
-      // G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
-      // G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
-      // G4cout<<"X: "<<x<<G4endl;
-      
-      // G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
-      // getc(stdin);
-      
-      // G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
-      // getc(stdin);
       return exi;
     }
-    r_min=*(it2);
-    x_min=*(it2+1);
-  }
-  G4cout<<"Some form of error"<<G4endl;
-  G4cout<<"R is: "<<std::setprecision(10)<<(r)<<G4endl;
-  return exi;
+  
+    for(it1=FELookupTable.begin();it1 != FELookupTable.end(); it1++){
+      it2=(*it1).begin();
+      r_max=*(it2);
+      if(r<r_max){
+	x_max=*(it2+1);
+	x=x_min + (r-r_min)*(x_max-x_min)/(r_max-r_min);
+	exi=kT*x;
+	exi+=V;
+
+	// exi=V+kT*x;
+	// G4cout<<"Rand is: "<<r<<G4endl;
+	// G4cout<<"Rmin: "<<r_min<<" Rmax: "<<r_max<<G4endl;
+	// G4cout<<"Xmin: "<<x_min<<" Xmax: "<<x_max<<G4endl;
+	// G4cout<<"X: "<<x<<G4endl;
+      
+	// G4cout<<"Rand is: "<<ra<<" R is: "<<r<<" and X is: "<<x<<G4endl;
+	// getc(stdin);
+      
+	// G4cout<<"exi is: "<<std::setprecision(5)<<exi<<G4endl;
+	// getc(stdin);
+	return exi;
+      }
+      r_min=*(it2);
+      x_min=*(it2+1);
+    }
+    G4cout<<"Some form of error"<<G4endl;
+    G4cout<<"R is: "<<std::setprecision(10)<<(r)<<G4endl;
+    return exi;
 }
 
 //---------------------------------------------------------
@@ -1750,6 +1803,8 @@ void ReactionFusEvap::SetupReaction() {
   G4cout << "---> Reaction setup completed." << G4endl;
   G4cout << "---> BEAM PROPERTIES:     A = " << A1 << ", Z = " << Z1 << ", N = " << A1 - Z1 << G4endl;
   G4cout << "---> TARGET PROPERTIES:   A = " << A2 << ", Z = " << Z2 << ", N = " << A2 - Z2 << G4endl;
+  if(targetHasBacking)
+    G4cout << "---> BACKING PROPERTIES:  A = " << A3 << ", Z = " << Z3 << ", N = " << A3 - Z3 << G4endl;
   G4cout << "---> COMPOUND PROPERTIES: A = " << A1 + A2 << ", Z = " << Z1 + Z2 << ", N = " << A1 + A2 - Z1 - Z2 << G4endl;
   G4cout << "---> RESIDUAL PROPERTIES: A = " << A1 + A2 - DA << ", Z = " << Z1 + Z2 - DZ << ", N = " << A1 + A2 - DA - Z1 - Z2 + DZ << G4endl;
   // getc(stdin);
