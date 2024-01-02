@@ -95,11 +95,12 @@ GammaDecayChannel::GammaDecayChannel (G4int Verbose,
   SetParent (theParentNucleus);
   CheckAndFillParent();
   G4MT_parent_mass = theParentNucleus->GetPDGMass();
+  // G4cout << G4MT_parent_mass << G4endl;
   SetBR (theBR);
   SetNumberOfDaughters (2);
   SetDaughter(0, "gamma");
-  FillDaughterNucleus (1, theParentNucleus->GetBaryonNumber(), int(theParentNucleus->GetPDGCharge()/eplus), EexcitInitial-Egamma);
-  Qtransition = Egamma;
+  Qtransition = Egamma + Egamma*Egamma/2/G4MT_parent_mass ;//Egamma;
+  FillDaughterNucleus (1, theParentNucleus->GetBaryonNumber(), int(theParentNucleus->GetPDGCharge()/eplus), EexcitInitial-Qtransition);//EexcitInitial-Egamma);
   halflifethreshold = 1e-6*second;
   applyICM = true;
   applyARM = true;
