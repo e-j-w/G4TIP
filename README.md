@@ -14,7 +14,7 @@ For fusion-evaporation, arbitrary step-wise decay of the residual nucleus (gamma
 
 **This branch is only compatible with GEANT4 version 11.x.  For GEANT4 version 10.x, see the [Geant4.10](https://github.com/e-j-w/G4TIP/tree/Geant4.10) branch.**
 
-The current version of the code has been tested on Arch Linux, as of September 2023.  Previous versions have been tested on Ubuntu 14.04/16.04/20.04 and CentOS 7, but compatibility with these distros is not guaranteed.  Check the   If you're on a non-Linux platform: good luck!
+The current version of the code has been tested on Arch Linux, as of September 2023.  Previous versions have been tested on Ubuntu 14.04/16.04/20.04 and CentOS 7, but compatibility with these distros is not guaranteed.  If you're on a non-Linux platform: good luck!
 
 Follow the instructions below to set up the required dependencies.
 
