@@ -68,7 +68,9 @@ void PhysicsList::ConstructEM(){
       pmanager->AddProcess(new G4eplusAnnihilation, 0, -1, 4);
     } else if (particleName == "proton") {
       pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
-      pmanager->AddProcess(new G4hIonisation, -1, 2, 2);
+      G4hIonisation *protonIoni = new G4hIonisation(); 
+      protonIoni->SetStepFunction(0.05, 0.05 * um); 
+      pmanager->AddProcess(protonIoni, -1, 2, 2);
     } else if (particleName == "alpha") {
       pmanager->AddProcess(new G4hMultipleScattering, -1, 1, 1);
       G4ionIonisation *alphaIoni = new G4ionIonisation();

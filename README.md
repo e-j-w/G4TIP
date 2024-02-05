@@ -239,6 +239,8 @@ G4Decay (from GEANT4.10.3) - modified to suppress warnings.
 
 ## Contributors<a name="contributors"></a>
 
+H. Asch - Bugfixes.
+
 A. Chester - CsI wall code, Coulex implementation, plunger implementation.
 
 T. Ma - CsI ball code.
