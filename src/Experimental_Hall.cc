@@ -34,7 +34,7 @@ G4VPhysicalVolume* Experimental_Hall::Construct()
 //-----------------------------------------------------------------------------
 void Experimental_Hall::setInvisible()
 {
-  ExperimentalHall_log-> SetVisAttributes (G4VisAttributes::Invisible);
+  ExperimentalHall_log-> SetVisAttributes (G4VisAttributes::GetInvisible());
    G4cout<<"Experimental Hall is invisible"<<G4endl;
 }
 //-----------------------------------------------------------------------------

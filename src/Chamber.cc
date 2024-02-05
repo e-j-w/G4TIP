@@ -81,7 +81,7 @@ void Chamber::setMaterial(G4String materialName)
 //-----------------------------------------------------------------------------
 void Chamber::setInvisible()
 {
-  Chamber_log-> SetVisAttributes (G4VisAttributes::Invisible);
+  Chamber_log-> SetVisAttributes(G4VisAttributes::GetInvisible());
    G4cout<<"Chamber is invisible"<<G4endl;
 }
 //-----------------------------------------------------------------------------

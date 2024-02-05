@@ -81,7 +81,7 @@ class G4BetheBlochModel;
 class G4ParticleChangeForLoss;
 class G4VIonDEDXTable;
 class G4VIonDEDXScalingAlgorithm;
-class G4LPhysicsFreeVector;
+class G4PhysicsFreeVector;
 class G4MaterialCutsCouple;
 
 typedef std::list<G4IonDEDXHandler*> LossTableList;
@@ -267,10 +267,10 @@ class G4IonParametrisedLossModel : public G4VEmModel {
    // # 
    // ######################################################################
 
-   typedef std::map<IonMatCouple, G4LPhysicsFreeVector*> RangeEnergyTable; 
+   typedef std::map<IonMatCouple, G4PhysicsFreeVector*> RangeEnergyTable; 
    RangeEnergyTable r;
 
-   typedef std::map<IonMatCouple, G4LPhysicsFreeVector*> EnergyRangeTable; 
+   typedef std::map<IonMatCouple, G4PhysicsFreeVector*> EnergyRangeTable; 
    EnergyRangeTable E;
 
    // ######################################################################
