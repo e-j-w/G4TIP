@@ -59,13 +59,14 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*){
 					// newHitI->Print(); 
 					// getc(stdin);
 				}
+
 				G4TrackStatus TrackStatus;
 				TrackStatus=aStep->GetTrack()->GetTrackStatus();
 				if((TrackStatus==fStopButAlive) || (TrackStatus==fStopAndKill)){
 					TrackerCsIHit* newHitF = new TrackerCsIHit();
 					newHitF->SetBeta(aStep->GetPostStepPoint()->GetBeta());
 					newHitF->SetKE(aStep->GetPostStepPoint()->GetKineticEnergy());
-					newHitF->SetEdep(aStep->GetTotalEnergyDeposit());
+					newHitF->SetEdep(0.0);
 					newHitF->SetMom(aStep->GetPostStepPoint()->GetMomentum());
 					newHitF->SetPos(aStep->GetPostStepPoint()->GetPosition());
 					newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
@@ -78,7 +79,7 @@ G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*){
 					CsICollection->insert(newHitF);
 					newHitF->Draw();
 					// printf("newHitF\n");
-					// newHitF->Print(); 
+					// newHitF->Print();
 					// getc(stdin);
 				}
 				return true;
