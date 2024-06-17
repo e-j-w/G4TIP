@@ -118,6 +118,7 @@ typedef struct {
   Int_t GId[GN * GS];
   Int_t GCry[GN * GS];
   Int_t GRing[GN * GS];
+  Int_t GSegRing[GN * GS];
   Double_t Gx[GN * GS];
   Double_t Gy[GN * GS];
   Double_t Gz[GN * GS];
