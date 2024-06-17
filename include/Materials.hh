@@ -24,6 +24,7 @@ class Materials
   G4Material* Ge;
   G4Material* Cu;
   G4Material* C;
+  G4Material* Oxygen18;
   G4Material* Mg;
   G4Material* In;
   G4Material* H;

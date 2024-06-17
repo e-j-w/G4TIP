@@ -10,6 +10,7 @@
   Au = man->FindOrBuildMaterial("G4_Au");
   Be = man->FindOrBuildMaterial("G4_Be"); 
   C = man->FindOrBuildMaterial("G4_C");
+  Oxygen18 = new G4Material("O18",8.,17.999*g/mole, 1.141*g/cm3);
   Cu = man->FindOrBuildMaterial("G4_Cu");
   Ca = new G4Material("Ca40", 20., 40.08*g/mole, 1.55*g/cm3);
   G4Ca = man->FindOrBuildMaterial("G4_Ca");

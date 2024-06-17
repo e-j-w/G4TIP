@@ -265,6 +265,9 @@ void Results::TreeCreate() {
     tree->Branch("TigressID", GHit.GId, "GId[Gfold]/I");
     tree->Branch("TigressCrystal", GHit.GCry, "GCry[Gfold]/I");
     tree->Branch("TigressRing", GHit.GRing, "GRing[Gfold]/I");
+    if(theDetector->GetUseTIGRESSSegments()){
+      tree->Branch("TigressSegmentRing", GHit.GSegRing, "GSegRing[Gfold]/I");
+    }
     tree->Branch("Gx", GHit.Gx, "Gx[Gfold]/D");
     tree->Branch("Gy", GHit.Gy, "Gy[Gfold]/D");
     tree->Branch("Gz", GHit.Gz, "Gz[Gfold]/D");
@@ -1166,6 +1169,8 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
   memset(maxGe, 0, sizeof(maxGe));
   memset(&GHit.GId, 0, sizeof(GHit.GId));
   memset(&GHit.GCry, 0, sizeof(GHit.GCry));
+  memset(&GHit.GRing, 0, sizeof(GHit.GRing));
+  memset(&GHit.GSegRing, 0, sizeof(GHit.GSegRing));
   memset(&GHit.GE, 0, sizeof(GHit.GE));
   memset(&GHit.GT, 0, sizeof(GHit.GT));
   memset(&GHit.GIdAB, 0, sizeof(GHit.GIdAB));
@@ -1188,6 +1193,23 @@ void Results::FillTree(G4int evtNb, TrackerIonHitsCollection *IonCollection,
         GHit.GRing[GHit.Gfold] = RingMap(
             GHit.GId[GHit.Gfold],
             GHit.GCry[GHit.Gfold]); // get the ring in which the hit occured
+        if(theDetector->GetUseTIGRESSSegments()){
+          //get the max E segment
+          G4int segId = -1;
+          G4double maxSegE = 0.;
+          for (k = 0; k < TSEG; k++) { // number of segments
+            if(tse[i][j][k] > maxSegE){
+              maxSegE = tse[i][j][k];
+              segId = k+1; //ID of the segment with the highest energy
+            }
+          }
+          GHit.GSegRing[GHit.Gfold] = SegmentRingMap(
+            GHit.GId[GHit.Gfold],
+            GHit.GCry[GHit.Gfold],segId); // get the segment ring in which the hit occured
+
+          //cout << "pos: " << GHit.GIdAB[GHit.GfoldAB] << ", cry: " << GHit.GCryAB[GHit.GfoldAB] << ", seg: " << segId << endl;
+          //cout << "seg ring: " << GHit.GSegRingAB[GHit.GfoldAB] << endl;
+        }
         GHit.Gx[GHit.Gfold] = gp[i][j].getX();
         GHit.Gy[GHit.Gfold] = gp[i][j].getY();
         GHit.Gz[GHit.Gfold] = gp[i][j].getZ();
