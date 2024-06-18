@@ -59,6 +59,7 @@ class EventAction : public G4UserEventAction
   void WeightCsI(int det, double weight){CsIWeight[det]=weight;};
   void SetCsIThreshold(G4double x){CsIThreshold[0]=x; CsIThreshold[1]=x;};
   void SetCsILinearThreshold(G4double low, G4double high){CsIThreshold[0]=low; CsIThreshold[1]=high;};
+  void SetGammaThreshold(G4double x){GammaThreshold=x;};
 
   void setTriggerA(G4int);
   void setTriggerZ(G4int);
@@ -79,6 +80,7 @@ class EventAction : public G4UserEventAction
   size_t        soa,sov,sois,soas,sovs,soc,soi;
   unsigned long long int  eventTrigger,setTrigger,testTrigger;
   G4double      CsIThreshold[2];
+  G4double      GammaThreshold;
   G4int         CsIIDTrigger;
 
   //GRIFFIN/TIGRESS interaction information

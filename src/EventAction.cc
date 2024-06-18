@@ -19,6 +19,7 @@ EventAction::EventAction(Results* RE,RunAction* RA,Projectile* proj,DetectorCons
   SetTriggerParticleSing();
   CsIThreshold[0]=0.;
   CsIThreshold[1]=0.;
+  GammaThreshold=0.;
   memset(GriffinCrystDisabled,0,sizeof(GriffinCrystDisabled));
   memset(CsIDisabled,0,sizeof(CsIDisabled));
   for(int i=0;i<NCsISph;i++){
@@ -212,7 +213,29 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       getc(stdin);*/ 
     } // end CsI trigger
       
-    
+    //zero out HPGe hits below threshold
+    if(GammaThreshold>0.){
+      if(GriffinFold>0){
+        for(G4int det=0;det<16;det++){
+          for(G4int cry=0;cry<4;cry++){
+            if((GriffinCrystEnergyDet[det][cry]>0)&&(GriffinCrystEnergyDet[det][cry]<GammaThreshold)){
+              GriffinCrystWeightDet[det][cry]=0;
+              GriffinCrystEnergyDet[det][cry]=0;
+              if(theDetector->GetUseTIGRESSSegments()){
+                for(G4int seg=0;seg<8;seg++){
+                  if(TigressSegWeightDet[det][cry][seg]>0.){
+                    TigressSegHitsDet[det][cry][seg]=0;
+                    TigressSegWeightDet[det][cry][seg]=0;
+                    TigressSegEnergyDet[det][cry][seg]=0;
+                  }
+                }
+              }
+              GriffinFold--;
+            }
+          }
+        }
+      }
+    }
 
     // HPGe trigger
     if(GriffinFold>0)
@@ -245,9 +268,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
       numTriggeredEvents++;
       numTriggeredCsIHits+=numDetHits;
     
-      if(GriffinFold>0)
-        for(G4int det=0;det<16;det++)
-          for(G4int cry=0;cry<4;cry++)
+      if(GriffinFold>0){
+        for(G4int det=0;det<16;det++){
+          for(G4int cry=0;cry<4;cry++){
             if(GriffinCrystEnergyDet[det][cry]>0){
               GriffinCrystPosDet[det][cry]/=GriffinCrystEnergyDet[det][cry];
               if(theDetector->GetUseTIGRESSSegments()){
@@ -260,6 +283,9 @@ void EventAction::EndOfEventAction(const G4Event* evt)
                 }
               }
             }
+          }
+        }
+      }
               
       results->FillTree(evtNb,HI,CsI,GriffinCrystWeightDet,GriffinCrystEnergyDet,GriffinCrystPosDet,GriffinCrystTimeDet,TigressSegHitsDet,TigressSegWeightDet,TigressSegEnergyDet,TigressSegPosDet,TigressSegPosCylDet);
       //G4cout<<"Event fulfills trigger condition "<<setTrigger<<G4endl;

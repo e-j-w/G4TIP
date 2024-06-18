@@ -78,6 +78,11 @@ EventAction_Messenger::EventAction_Messenger(EventAction* Chamb):aEventAction(Ch
   CELTCmd->SetGuidance("Set a linear low energy threshold for the CsI detector(s), specifying the energy range over which the threshold occurs, in MeV.");
   CELTCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  GETCmd = new G4UIcmdWithADoubleAndUnit("/Trigger/GammaThreshold",this);
+  GETCmd->SetGuidance("Set a low energy threshold for gamma rays.");
+  GETCmd->SetParameterName("GET",false);
+  GETCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
   RTCmd = new G4UIcmdWithoutParameter("/Trigger/ReportNumTriggers",this);
   RTCmd->SetGuidance("Report the number of triggered events.");
 
@@ -238,6 +243,11 @@ void EventAction_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if( command == CETCmd ){
     aEventAction->SetCsIThreshold(CETCmd->GetNewDoubleValue(newValue));
     G4cout << "Setting CsI low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
+  }
+
+  if( command == GETCmd ){
+    aEventAction->SetGammaThreshold(CETCmd->GetNewDoubleValue(newValue)*1000.);
+    G4cout << "Setting gamma-ray low energy threshold to "<< CETCmd->GetNewDoubleValue(newValue) << " MeV." << G4endl;
   }
 
   if( command == CELTCmd ){
