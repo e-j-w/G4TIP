@@ -222,6 +222,7 @@ These commands will only be used if `/Physics/Coulex` is set.
 | /Trigger/CsIThreshold NUMBER MeV | Sets a lower energy threshold for detection of hits in CsI detectors.  This threshold is a hard cutoff, use `/Trigger/CsILinearThreshold` instead if a more gradual threshold is needed. |
 | /Trigger/CsILinearThreshold LOW HIGH | Sets a linear lower energy threshold for detection of hits in CsI detectors, ranging from the value of LOW (in MeV) where no hits are detected to HIGH (in MeV), where all events are detected. |
 | /Trigger/WeightCsIRange LOW HIGH VALUE | Weights CsI detectors with index between LOW and HIGH (inclusive, 1-indexed) waith the specified value (between 0 and 1).  The weight value specifies the probability that a hit in the weighted detector will be included in the trigger. | 
+| /Trigger/GammaThreshold NUMBER MeV | Sets a lower energy threshold for detection of hits in the TIGRESS/GRIFFIN array.  This threshold is a hard cutoff. |
 
 <sup>1</sup>If none of /Trigger/A, /Trigger/Z, /Trigger/ARange, and /Trigger/ZRange are set, the particle trigger will be applied to any charged particle.
 

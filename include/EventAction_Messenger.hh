@@ -44,6 +44,7 @@ class EventAction_Messenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit* CETCmd;
     G4UIcmdWithAString*        CELTCmd;
     G4UIcmdWithoutParameter*   RTCmd;
+    G4UIcmdWithADoubleAndUnit* GETCmd;
 
 };
 
