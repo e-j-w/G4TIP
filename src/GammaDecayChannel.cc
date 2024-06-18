@@ -262,10 +262,10 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
     for(int i=0;i<products->entries();i++){
       if(products->operator[](i)->GetDefinition()==G4Gamma::Definition()){
         //products->operator[](i)->DumpInfo();
-        //G4cout <<  products->operator[](i)->GetMomentum().getTheta()*180./3.14 << G4endl;
+        //G4cout << "Theta: " << products->operator[](i)->GetMomentum().getTheta()*180./3.14 << " degrees" << G4endl;
         G4double angle = products->operator[](i)->GetMomentum().getTheta();
         G4double cosangle = cos(angle);
-        //G4cout <<  cosangle << G4endl;
+        //G4cout << cosangle << G4endl;
         G4double lpval = 0.;
         if(gammaAngDist==1)
           lpval = 0.5*(3.*cosangle*cosangle - 1.); //2nd order legendre polynomial
@@ -278,12 +278,11 @@ G4DecayProducts *GammaDecayChannel::DecayIt (G4double theParentMass)
         //generate random number between -1 and 1 to bias legendre polynomial against 
         G4double num = CLHEP::RandFlat::shoot()*2.0;
         num=num-1.0;
-        //G4cout <<  num << G4endl;
+        //G4cout << num << G4endl;
         if(num>lpval){
           //G4cout << "Biasing..." << G4endl;
           //remove everything from products
-          //products->G4DecayProductVector.erase(i);
-          for(int j=0;j<=products->entries();j++){
+          while(products->entries()>0){
             products->PopProducts();
           }
           //G4cout << "entries left: " << products->entries() << G4endl;
