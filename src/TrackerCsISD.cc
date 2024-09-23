@@ -1,7 +1,5 @@
 #include "TrackerCsISD.hh"
 
-
-
 TrackerCsISD::TrackerCsISD(G4String name):G4VSensitiveDetector(name){
   G4String HCname;
   collectionName.insert(HCname="CsICollection");
@@ -18,80 +16,81 @@ void TrackerCsISD::Initialize(G4HCofThisEvent*){
 
 
 G4bool TrackerCsISD::ProcessHits(G4Step* aStep,G4TouchableHistory*){
+	
+	G4double DE = aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy();
+	if(DE<0.001*eV) return false;
 
-  G4double DE = aStep->GetPreStepPoint()->GetKineticEnergy() - aStep->GetPostStepPoint()->GetKineticEnergy();
-  if(DE<0.001*eV) return false;
+	const G4DynamicParticle* aParticle = aStep->GetTrack()->GetDynamicParticle();
+	const G4String type = aParticle->GetDefinition()->GetParticleType();
+	const G4double len = aStep->GetStepLength();
 
-  G4Track* theTrack;
-  theTrack=aStep->GetTrack();
-  const G4DynamicParticle* aParticle= theTrack->GetDynamicParticle();
-  const G4String type =  aParticle->GetDefinition()->GetParticleType();
-  const G4double len=aStep->GetStepLength();
+	//if(type=="nucleus")
+	if((type=="nucleus")||(type=="baryon")){ //some evaporated particles classified as baryons by GEANT4 
 
-  //if(type=="nucleus")
-  if((type=="nucleus")||(type=="baryon")) //some evaporated particles classified as baryons by GEANT4 
-    {
-      //G4cout << "Hit in CsI of particle type: " << type << G4endl;
-			//parse the detector index and ring from its name, set in CsI_detector_spherical::setName
-      char name[132],s1[10],s2[10],s3[10];
-      strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
-      sscanf(name,"%s %s %s",s1,s2,s3);
+		//G4cout << "Hit in CsI of particle type: " << type << G4endl;
+		//parse the detector index and ring from its name, set in CsI_detector_spherical::setName
+		
+		strcpy(name,aStep->GetPostStepPoint()->GetTouchable()->GetVolume()->GetName()); 
+		sscanf(name,"%s %s %s",s1,s2,s3);
 
-      if(strcmp(s1,"CsI")==0){
-				if(len>0.){
-					TrackerCsIHit* newHitI = new TrackerCsIHit();
-					
-					newHitI->SetBeta(aStep->GetPreStepPoint()->GetBeta());
-					newHitI->SetKE(aStep->GetPreStepPoint()->GetKineticEnergy());
-					newHitI->SetEdep(aStep->GetTotalEnergyDeposit());
-					newHitI->SetPos(aStep->GetPreStepPoint()->GetPosition());
-					newHitI->SetMom(aStep->GetPreStepPoint()->GetMomentum());
-					newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
-					newHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
-					newHitI->SetWeight(aStep->GetTrack()->GetWeight());
-					newHitI->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
-					newHitI->SetId(atoi(s2));
-					newHitI->SetRingId(atoi(s3));
-					newHitI->SetPathLength(len);
-					CsICollection->insert(newHitI);
-					newHitI->Draw();
-					//  printf("newHitI len %f\n",len/um);
-					// newHitI->Print(); 
-					// getc(stdin);
-				}
+		if(strcmp(s1,"CsI")==0){
+			if(len>0.){
+				TrackerCsIHit* newHitI = new TrackerCsIHit();
 				
-				G4TrackStatus TrackStatus;
-				TrackStatus=aStep->GetTrack()->GetTrackStatus();
-				if((TrackStatus==fStopButAlive) || (TrackStatus==fStopAndKill)){
-					TrackerCsIHit* newHitF = new TrackerCsIHit();
-					newHitF->SetBeta(aStep->GetPostStepPoint()->GetBeta());
-					newHitF->SetKE(aStep->GetPostStepPoint()->GetKineticEnergy());
-					newHitF->SetEdep(0.0);
-					newHitF->SetMom(aStep->GetPostStepPoint()->GetMomentum());
-					newHitF->SetPos(aStep->GetPostStepPoint()->GetPosition());
-					newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
-					newHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
-					newHitF->SetWeight(aStep->GetTrack()->GetWeight());
-					newHitF->SetTime(aStep->GetPostStepPoint()->GetGlobalTime());
-					newHitF->SetId(atoi(s2));
-					newHitF->SetRingId(atoi(s3));
-					newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?
-					CsICollection->insert(newHitF);
-					newHitF->Draw();
-					// printf("newHitF\n");
-					// newHitF->Print();
-					// getc(stdin);
-				}
-				return true;
-			}else{
-				//G4cout << "Energy deposit in the " << name << G4endl;
-				//G4cout << "E="<<G4BestUnit(edep,"Energy")<<G4endl;
-				//G4cout <<"Event ignored" <<G4endl;
-				//getc(stdin);
-				return false;
+				newHitI->SetBeta(aStep->GetPreStepPoint()->GetBeta());
+				newHitI->SetKE(aStep->GetPreStepPoint()->GetKineticEnergy());
+				newHitI->SetEdep(aStep->GetTotalEnergyDeposit());
+				newHitI->SetPos(aStep->GetPreStepPoint()->GetPosition());
+				newHitI->SetMom(aStep->GetPreStepPoint()->GetMomentum());
+				newHitI->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
+				newHitI->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
+				newHitI->SetWeight(aStep->GetTrack()->GetWeight());
+				newHitI->SetTime(aStep->GetPreStepPoint()->GetGlobalTime());
+				newHitI->SetId(atoi(s2));
+				newHitI->SetRingId(atoi(s3));
+				newHitI->SetPathLength(len);
+				CsICollection->insert(newHitI);
+				newHitI->Draw();
+				//  printf("newHitI len %f\n",len/um);
+				// newHitI->Print(); 
+				// getc(stdin);
 			}
-    }
-  return false;
+			
+			G4TrackStatus TrackStatus;
+			TrackStatus=aStep->GetTrack()->GetTrackStatus();
+			if((TrackStatus==fStopButAlive) || (TrackStatus==fStopAndKill)){
+				TrackerCsIHit* newHitF = new TrackerCsIHit();
+				newHitF->SetBeta(aStep->GetPostStepPoint()->GetBeta());
+				newHitF->SetKE(aStep->GetPostStepPoint()->GetKineticEnergy());
+				newHitF->SetEdep(0.0);
+				newHitF->SetMom(aStep->GetPostStepPoint()->GetMomentum());
+				newHitF->SetPos(aStep->GetPostStepPoint()->GetPosition());
+				newHitF->SetA(aParticle->GetParticleDefinition()->GetAtomicMass());
+				newHitF->SetZ(aParticle->GetParticleDefinition()->GetAtomicNumber());
+				newHitF->SetWeight(aStep->GetTrack()->GetWeight());
+				newHitF->SetTime(aStep->GetPostStepPoint()->GetGlobalTime());
+				newHitF->SetId(atoi(s2));
+				newHitF->SetRingId(atoi(s3));
+				newHitF->SetPathLength(len); // energy deposit = 0 at this step - how to handle w/o path == 0?
+				CsICollection->insert(newHitF);
+				newHitF->Draw();
+				// printf("newHitF\n");
+				// newHitF->Print();
+				// getc(stdin);
+			}
+			//G4cout << "Processed track" << G4endl;
+			return true;
+		}else{
+			//G4cout << "Energy deposit in the " << name << "of particle type " << type << G4endl;
+			//G4cout << "E="<<G4BestUnit(aStep->GetTotalEnergyDeposit(),"Energy") << G4endl;
+			//G4cout << "Event ignored" << G4endl;
+			//getc(stdin);
+			return false;
+		}
+	}
+
+	return false;
+
 }
 
 
