@@ -17,9 +17,6 @@ using namespace std;
 
 using namespace CLHEP;
 
-// this is?
-//#define  eps 0.00001
-
 class Recoil
 {
 public:

@@ -64,7 +64,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
  
 void EventAction::EndOfEventAction(const G4Event* evt)
 {
-  // G4cout<<"+++++ End of event "<<evt->GetEventID()<<G4endl;
+  //G4cout << "+++++ End of event " << evt->GetEventID() << G4endl;
   
   //increment event counter
   numEvents++;
@@ -257,11 +257,10 @@ void EventAction::EndOfEventAction(const G4Event* evt)
     /*G4cout << "Set trigger is " << setTrigger << G4endl;
     G4cout << "HPGe fold is " << GriffinFold << G4endl;
     G4cout << "CsI fold is " << numDetHits << G4endl;
-    for(testTrigger=1;testTrigger<=14;testTrigger++)
-      {
-        if(eventTrigger&(1U<<testTrigger))
-          G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
-      }*/
+    for(testTrigger=1;testTrigger<=14;testTrigger++){
+      if(eventTrigger&(1U<<testTrigger))
+        G4cout<<"Event fulfills trigger condition "<<(int)testTrigger<<G4endl;
+    }*/
 
     if(eventTrigger&(1U<<setTrigger)){
       //increment triggered event and CsI hit counters

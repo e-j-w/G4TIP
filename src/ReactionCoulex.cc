@@ -480,7 +480,7 @@ G4double ReactionCoulex::PostStepGetPhysicalInteractionLength(const G4Track& aTr
       // getc(stdin);
       return DBL_MAX;
     }
-    if(Z>eps)	{
+    if(Z>EPSILON)	{
       G4ThreeVector dir=aTrack.GetDynamicParticle()->GetMomentumDirection();
 	      
       dir*=(ZReaction-ZCurrent);
@@ -490,7 +490,7 @@ G4double ReactionCoulex::PostStepGetPhysicalInteractionLength(const G4Track& aTr
       // getc(stdin);
       return dir.mag();
     }
-    if(Z<=eps) {	   
+    if(Z<=EPSILON) {	   
       reaction_here=true;
       // G4cout<<setprecision(6)<<"ZReaction: "<<ZReaction<<G4endl;
       // getc(stdin);

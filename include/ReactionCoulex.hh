@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define  eps 0.00001
+#define  EPSILON 0.00001
 
 class ReactionCoulex : public G4VProcess 
 {

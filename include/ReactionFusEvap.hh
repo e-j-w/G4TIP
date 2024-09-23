@@ -38,7 +38,7 @@
 
 using namespace std;
 
-#define eps 0.00001
+#define EPSILON 0.00001
 #define MAXNUMEVAP 4
 #define MAXNUMDISTS 2
 #define MAXNUMDECAYS 5

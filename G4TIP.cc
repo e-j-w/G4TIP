@@ -94,8 +94,6 @@ int main(int argc, char **argv) {
   SteppingAction *stepAction = new SteppingAction(theDetector, eventAction);
   runManager->SetUserAction(stepAction);
 
-  
-
   // get the pointer to the UI manager and set verbosities
   G4UImanager *UI = G4UImanager::GetUIpointer();
 
@@ -145,7 +143,6 @@ int main(int argc, char **argv) {
   delete runMessenger;
   delete eventActionMessenger;
   delete runManager;
-  
   
   return 0;
 }

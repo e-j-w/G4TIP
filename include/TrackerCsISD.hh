@@ -39,6 +39,8 @@ class TrackerCsISD : public G4VSensitiveDetector
       G4bool ProcessHits(G4Step*, G4TouchableHistory*);
       void EndOfEvent(G4HCofThisEvent*);
 
+      char name[132],s1[10],s2[10],s3[10];
+
   private:
       TrackerCsIHitsCollection* CsICollection;
       G4bool print;

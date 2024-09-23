@@ -1265,7 +1265,7 @@ G4VParticleChange *ReactionFusEvap::PostStepDoIt(const G4Track &aTrack, const G4
 G4double
 ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4double,
                                                G4ForceCondition *condition) {
-
+                                              
   reaction_here = false;
   *condition = NotForced;
 
@@ -1285,7 +1285,7 @@ ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4d
       // "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
       return DBL_MAX;
     }
-    if(Z > eps){
+    if(Z > EPSILON){
       G4ThreeVector dir = aTrack.GetDynamicParticle()->GetMomentumDirection();
 
       dir *= (ZReaction - ZCurrent);
@@ -1295,7 +1295,7 @@ ReactionFusEvap::PostStepGetPhysicalInteractionLength(const G4Track &aTrack, G4d
       // "<<ZCurrent/mm<<" DZ "<<Z/mm<<G4endl;
       return dir.mag();
     }
-    if(Z <= eps){
+    if(Z <= EPSILON){
       reaction_here = true;
       aTrack.GetVolume()->GetLogicalVolume()->GetUserLimits()->SetUserMinRange(-DBL_MAX);
       return 0.;
