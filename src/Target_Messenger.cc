@@ -54,12 +54,6 @@ Target_Messenger::Target_Messenger(Target* Tar)
   TTarCmd->SetParameterName("choice",false);
   TTarCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-
-  TFrCmd = new G4UIcmdWithADouble("/DSAMTarget/Target/ReactionFraction",this);
-  TFrCmd->SetGuidance("Set reaction fraction on the target");
-  TFrCmd->SetParameterName("choice",false);
-  TFrCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-
   NTSCmd = new G4UIcmdWithAnInteger("/DSAMTarget/Target/NStep",this);
   NTSCmd->SetGuidance("Select the number of steps in the target");
   NTSCmd->SetParameterName("choice",false);
@@ -113,11 +107,6 @@ Target_Messenger::Target_Messenger(Target* Tar)
   BOCmd->SetParameterName("choice",false);
   BOCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  BFrCmd = new G4UIcmdWithADouble("/DSAMTarget/Backing/ReactionFraction",this);
-  BFrCmd->SetGuidance("Set reaction fraction on the backing");
-  BFrCmd->SetParameterName("choice",false);
-  BFrCmd->AvailableForStates(G4State_PreInit,G4State_Idle); 
-
   NBSCmd = new G4UIcmdWithAnInteger("/DSAMTarget/Backing/NStep",this);
   NBSCmd->SetGuidance("Select the number of steps in the backing");
   NBSCmd->SetParameterName("choice",false);
@@ -137,9 +126,7 @@ Target_Messenger::~Target_Messenger()
   delete TMCmd;
   delete TQCmd;
   delete TExCmd;
-  delete TFrCmd;
   delete TTarCmd;
-  delete BFrCmd;
   delete TTauCmd;
   delete BMCmd;
   delete BQCmd;
@@ -173,10 +160,6 @@ void Target_Messenger::SetNewValue(G4UIcommand* command,G4String newValue)
    { aTarget->setTargetEx(TExCmd->GetNewDoubleValue(newValue));}
  if( command == TTauCmd )
    { aTarget->setTargetTau(TTauCmd->GetNewDoubleValue(newValue));}
- if( command == TFrCmd )
-   { aTarget->setFracReactionTarget(TFrCmd->GetNewDoubleValue(newValue));}
-if( command == BFrCmd )
-   { aTarget->setFracReactionBacking(BFrCmd->GetNewDoubleValue(newValue));}
  if( command == TTarCmd )
    { aTarget->SetTarThickness(TTarCmd->GetNewDoubleValue(newValue));}
 

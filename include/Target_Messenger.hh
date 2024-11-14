@@ -46,8 +46,6 @@ class Target_Messenger: public G4UImessenger
     G4UIcmdWithoutParameter*   BRepCmd;
     G4UIcmdWithAnInteger*      NTSCmd;
     G4UIcmdWithAnInteger*      NBSCmd;
-    G4UIcmdWithADouble*        BFrCmd;
-    G4UIcmdWithADouble*        TFrCmd;
 
 };
 

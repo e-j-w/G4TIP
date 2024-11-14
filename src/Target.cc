@@ -21,7 +21,6 @@ Target::Target(G4LogicalVolume* experimentalHall_log,Materials* mat)
   BackingMaterial = materials->FindMaterial("G4_Au");//gold
   NTStep=20;
   NBStep=20;
-  fracReactionBacking=1.;
 }
 
 Target::~Target()
@@ -156,7 +155,6 @@ void Target::Report()
   G4cout<<"---->                Target radius is set to "<<G4BestUnit(aTarget->GetOuterRadius(),"Length")<<G4endl;
   G4cout<<"---->             Target thickness is set to "<<G4BestUnit(2.*aTarget->GetZHalfLength(),"Length")<<G4endl;
   G4cout<<"---->             Target density is set to "<<Target_log->GetMaterial()->GetDensity()/(g/cm3)<<" g/cm3."<<G4endl;
-  G4cout<<"---->  Fraction of reaction on target set to "<<1.-fracReactionBacking<<G4endl;  
   G4cout<<"----> Number of simulation steps in the target is set to "<<NTStep<<G4endl;
 
   G4cout<<"---->                Backing material set to "<<Backing_log->GetMaterial()->GetName()<< G4endl;   
@@ -165,7 +163,6 @@ void Target::Report()
   G4cout<<"---->Backing recoil excitation energy set to "<<BackingEx/keV<<" keV"<<G4endl;   
   G4cout<<"---->               Backing radius is set to "<<G4BestUnit(aBacking->GetOuterRadius(),"Length")<<G4endl;
   G4cout<<"---->            Backing thickness is set to "<<G4BestUnit(2.*aBacking->GetZHalfLength(),"Length")<<G4endl;
-  G4cout<<"----> Fraction of reaction on backing set to "<<fracReactionBacking<<G4endl;  
   G4cout<<"----> Number of simulation steps in the backing is set to "<<NBStep<<G4endl;
 }
 //---------------------------------------------------------------------
@@ -247,23 +244,6 @@ void Target::setTargetTau(G4double x)
 {
   TargetTau=x;
   G4cout<<"---->Target recoil lifetime energy set to "<<TargetTau/1000./ns<<" ps"<<G4endl;  
-}
-//-----------------------------------------------------------------------------
-void Target::setFracReactionBacking(G4double x)
-{
-  if(x<0.) x=0.;
-  if(x>1.) x=1.;
-  fracReactionBacking=x;
-  G4cout<<"---->Fraction of reaction on backing set to "<<fracReactionBacking<<G4endl;  
-}
-//-----------------------------------------------------------------------------
-void Target::setFracReactionTarget(G4double x)
-{
-  x=1.-x;
-  if(x<0.) x=0.;
-  if(x>1.) x=1.;
-  fracReactionBacking=x;
-  G4cout<<"---->Fraction of reaction on target set to "<<1.-fracReactionBacking<<G4endl;  
 }
 //-----------------------------------------------------------------------------
 G4double Target::GetTargetNV(G4int Z)

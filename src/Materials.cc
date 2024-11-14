@@ -26,6 +26,7 @@
   Ta = man->FindOrBuildMaterial("G4_Ta");
   Ag = man->FindOrBuildMaterial("G4_Ag");
   Pb = man->FindOrBuildMaterial("G4_Pb");
+  Zn = man->FindOrBuildMaterial("G4_Zn");
   
   // Compounds
   Vacuum = man->FindOrBuildMaterial("G4_Galactic");

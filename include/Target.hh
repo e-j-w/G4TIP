@@ -48,7 +48,6 @@ class Target
   void setNBStep(G4int);
   void SetTarThickness(G4double);
   void SetBacThickness(G4double);
-  void setFracReactionBacking(G4double);
   void setFracReactionTarget(G4double);
   void setFlagReactionBacking(G4bool flag){flagReactionBacking=flag;}
   void Report();
@@ -68,7 +67,6 @@ class Target
   G4VPhysicalVolume* GetBackingPlacement(){return Backing_phys;} 
   void setTargetReactionDepth(G4double);
   void setBackingReactionDepth(G4double);
-  G4double GetFracReactionBacking(){return fracReactionBacking;};
   G4bool getFlagReactionBacking(){return flagReactionBacking;}
   G4double GetTargetDensity(){ return Target_log->GetMaterial()->GetDensity()/g*cm3;};
   G4double GetTargetThickness(){return 2.*aTarget->GetZHalfLength()/cm;};
@@ -116,7 +114,6 @@ class Target
   G4int NTStep;
   G4int NBStep;
 
-  G4double fracReactionBacking;
   G4bool   flagReactionBacking;
 };
 

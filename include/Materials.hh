@@ -39,6 +39,7 @@ class Materials
   G4Material* S;
   G4Material* Ag;
   G4Material* Pb;
+  G4Material* Zn;
 
   // Compounds
   G4Material* Vacuum;
