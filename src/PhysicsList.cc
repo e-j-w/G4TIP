@@ -95,15 +95,12 @@ void PhysicsList::ConstructEM(){
 
       G4ionIonisation *ionIoni = new G4ionIonisation();
       
-      G4IonParametrisedLossModel *theModel =
-          new G4IonParametrisedLossModel(); // ICRU 73 based model, valid for Z
-                                            // = 3 to 26, modified by JW to
-                                            // allow for custom stopping powers
+      G4IonParametrisedLossModel *theModel = new G4IonParametrisedLossModel(); // ICRU 73/90 based model
       if(customStopping){
-        G4IonStoppingData *isd = new G4IonStoppingData(cspath);
-        for(int Z1 = 1; Z1 < 100; Z1++){
-          for(int Z2 = 1; Z2 < 100; Z2++){
-            isd->BuildPhysicsVector(Z1,Z2);
+        G4IonStoppingData *isd = new G4IonStoppingData(cspath,false);
+        for(int Z1 = 1; Z1 < 120; Z1++){
+          for(int Z2 = 1; Z2 < 120; Z2++){
+            isd->BuildPhysicsVector(Z1,Z2,true);
           }
         }
         theModel->RemoveDEDXTable("ICRU73");

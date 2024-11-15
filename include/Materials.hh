@@ -19,26 +19,26 @@ class Materials
     private:
 
   // Elemental materials
+  G4Material* Ag;
   G4Material* Al;
+  G4Material* Au;
   G4Material* Be;
   G4Material* Ge;
+  G4Material* Ca;
   G4Material* Cu;
   G4Material* C;
-  G4Material* Oxygen18;
-  G4Material* Mg;
-  G4Material* In;
   G4Material* H;
   G4Material* He;
   G4Material* Hf;
+  G4Material* In;
   G4Material* Li;
-  G4Material* Au;
-  G4Material* Ca;
-  G4Material* G4Ca;
-  G4Material* Ta;
+  G4Material* Mg;
   G4Material* Ni;
-  G4Material* S;
-  G4Material* Ag;
+  G4Material* Na;
+  G4Material* Oxygen18;
   G4Material* Pb;
+  G4Material* Ta;
+  G4Material* S;
   G4Material* Zn;
 
   // Compounds

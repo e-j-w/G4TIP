@@ -75,8 +75,6 @@
 // Comments:
 //
 // ===========================================================================
-
-
 #include "G4IonParametrisedLossModel.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
@@ -98,12 +96,10 @@
 #include "G4Exp.hh"
 
 //#define PRINT_TABLE_BUILT
-
-
 // #########################################################################
 
 G4IonParametrisedLossModel::G4IonParametrisedLossModel(
-             const G4ParticleDefinition*, 
+             const G4ParticleDefinition*,
              const G4String& nam)
   : G4VEmModel(nam),
     braggIonModel(0),
@@ -113,23 +109,25 @@ G4IonParametrisedLossModel::G4IonParametrisedLossModel(
     particleChangeLoss(0),
     corrFactor(1.0),
     energyLossLimit(0.01),
-    cutEnergies(0) 
+    cutEnergies(0),
+    isInitialised(false)
 {
   genericIon = G4GenericIon::Definition();
-  genericIonPDGMass = genericIon -> GetPDGMass();
-  corrections = G4LossTableManager::Instance() -> EmCorrections();
- 
-  // The upper limit of the current model is set to 100 TeV
-  SetHighEnergyLimit(100.0 * TeV);
+  genericIonPDGMass = genericIon->GetPDGMass();
+  corrections = G4LossTableManager::Instance()->EmCorrections();
 
   // The Bragg ion and Bethe Bloch models are instantiated
   braggIonModel = new G4BraggIonModel();
   betheBlochModel = new G4BetheBlochModel();
 
   // By default ICRU 73 stopping power tables are loaded:
-  AddDEDXTable("ICRU73",
-	       new G4IonStoppingData("ion_stopping_data/icru73"),
-  	       new G4IonDEDXScalingICRU73());
+  if(!isInitialised) {
+    G4bool icru90 = G4EmParameters::Instance()->UseICRU90Data();
+    isInitialised = true;
+    AddDEDXTable("ICRU73",
+		 new G4IonStoppingData("ion_stopping_data/icru",icru90),
+		 new G4IonDEDXScalingICRU73());
+  }
 
   // The boundaries for the range tables are set
   lowerEnergyEdgeIntegr = 0.025 * MeV;
@@ -142,9 +140,9 @@ G4IonParametrisedLossModel::G4IonParametrisedLossModel(
   cacheChargeSquare = 0;
 
   // Cache parameters are set
-  rangeCacheParticle = 0; 
-  rangeCacheMatCutsCouple = 0; 
-  rangeCacheEnergyRange = 0; 
+  rangeCacheParticle = 0;
+  rangeCacheMatCutsCouple = 0;
+  rangeCacheEnergyRange = 0;
   rangeCacheRangeEnergy = 0;
 
   // Cache parameters are set
@@ -152,9 +150,12 @@ G4IonParametrisedLossModel::G4IonParametrisedLossModel(
   dedxCacheMaterial = 0;
   dedxCacheEnergyCut = 0;
   dedxCacheIter = lossTableList.end();
-  dedxCacheTransitionEnergy = 0.0;  
+  dedxCacheTransitionEnergy = 0.0;
   dedxCacheTransitionFactor = 0.0;
   dedxCacheGenIonMassRatio = 0.0;
+
+  // default generator
+  SetAngularDistribution(new G4DeltaAngle());
 }
 
 // #########################################################################
@@ -258,11 +259,11 @@ void G4IonParametrisedLossModel::Initialise(
   cacheMass = 0;
   cacheElecMassRatio = 0;
   cacheChargeSquare = 0;
-  
+
   // Cached parameters are reset
-  rangeCacheParticle = 0; 
-  rangeCacheMatCutsCouple = 0; 
-  rangeCacheEnergyRange = 0; 
+  rangeCacheParticle = 0;
+  rangeCacheMatCutsCouple = 0;
+  rangeCacheEnergyRange = 0;
   rangeCacheRangeEnergy = 0;
 
   // Cached parameters are reset
@@ -270,89 +271,97 @@ void G4IonParametrisedLossModel::Initialise(
   dedxCacheMaterial = 0;
   dedxCacheEnergyCut = 0;
   dedxCacheIter = lossTableList.end();
-  dedxCacheTransitionEnergy = 0.0;  
+  dedxCacheTransitionEnergy = 0.0;
   dedxCacheTransitionFactor = 0.0;
   dedxCacheGenIonMassRatio = 0.0;
 
+  // By default ICRU 73 stopping power tables are loaded:
+  if(!isInitialised) {
+    G4bool icru90 = G4EmParameters::Instance()->UseICRU90Data();
+    isInitialised = true;
+    AddDEDXTable("ICRU73",
+		 new G4IonStoppingData("ion_stopping_data/icru",icru90),
+		 new G4IonDEDXScalingICRU73());
+  }
   // The cache of loss tables is cleared
   LossTableList::iterator iterTables = lossTableList.begin();
   LossTableList::iterator iterTables_end = lossTableList.end();
 
-  for(;iterTables != iterTables_end; iterTables++) 
-                                       (*iterTables) -> ClearCache();
+  for(;iterTables != iterTables_end; ++iterTables) {
+    (*iterTables) -> ClearCache();
+  }
 
   // Range vs energy and energy vs range vectors from previous runs are
   // cleared
   RangeEnergyTable::iterator iterRange = r.begin();
   RangeEnergyTable::iterator iterRange_end = r.end();
 
-  for(;iterRange != iterRange_end; iterRange++) delete iterRange -> second;
+  for(;iterRange != iterRange_end; ++iterRange) {
+    delete iterRange->second;
+  }
   r.clear();
 
   EnergyRangeTable::iterator iterEnergy = E.begin();
   EnergyRangeTable::iterator iterEnergy_end = E.end();
 
-  for(;iterEnergy != iterEnergy_end; iterEnergy++) delete iterEnergy -> second;
+  for(;iterEnergy != iterEnergy_end; ++iterEnergy) {
+    delete iterEnergy->second;
+  }
   E.clear();
 
-  // The cut energies are (re)loaded
-  size_t size = cuts.size();
-  cutEnergies.clear();
-  for(size_t i = 0; i < size; i++) cutEnergies.push_back(cuts[i]);
+  // The cut energies 
+  cutEnergies = cuts;
 
   // All dE/dx vectors are built
   const G4ProductionCutsTable* coupleTable=
                      G4ProductionCutsTable::GetProductionCutsTable();
-  size_t nmbCouples = coupleTable -> GetTableSize();
+  G4int nmbCouples = (G4int)coupleTable->GetTableSize();
 
 #ifdef PRINT_TABLE_BUILT
     G4cout << "G4IonParametrisedLossModel::Initialise():"
            << " Building dE/dx vectors:"
-           << G4endl;         
+           << G4endl;
 #endif
 
-  for (size_t i = 0; i < nmbCouples; i++) {
+  for (G4int i = 0; i < nmbCouples; ++i) {
 
-    const G4MaterialCutsCouple* couple = 
-                                     coupleTable -> GetMaterialCutsCouple(i);
+    const G4MaterialCutsCouple* couple = coupleTable->GetMaterialCutsCouple(i);
+    const G4Material* material = couple->GetMaterial();
 
-    const G4Material* material = couple -> GetMaterial();
-    //    G4ProductionCuts* productionCuts = couple -> GetProductionCuts();
-
-    for(G4int atomicNumberIon = 3; atomicNumberIon < 102; atomicNumberIon++) {
+    for(G4int atomicNumberIon = 3; atomicNumberIon < 102; ++atomicNumberIon) {
 
        LossTableList::iterator iter = lossTableList.begin();
        LossTableList::iterator iter_end = lossTableList.end();
 
-       for(;iter != iter_end; iter++) { 
+       for(;iter != iter_end; ++iter) {
 
           if(*iter == 0) {
               G4cout << "G4IonParametrisedLossModel::Initialise():"
                      << " Skipping illegal table."
-                     << G4endl;         
+                     << G4endl;
           }
-
-          G4bool isApplicable = 
-                    (*iter) -> BuildDEDXTable(atomicNumberIon, material);
-          if(isApplicable) {
+	  
+	  if((*iter)->BuildDEDXTable(atomicNumberIon, material)) {
 
 #ifdef PRINT_TABLE_BUILT
              G4cout << "  Atomic Number Ion = " << atomicNumberIon
                     << ", Material = " << material -> GetName()
                     << ", Table = " << (*iter) -> GetName()
-                    << G4endl;      
+                    << G4endl;
 #endif
-             break; 
+             break;
 	  }
        }
     }
   }
 
-  // The particle change object 
+  // The particle change object
   if(! particleChangeLoss) {
     particleChangeLoss = GetParticleChangeForLoss();
+    braggIonModel->SetParticleChange(particleChangeLoss, 0);
+    betheBlochModel->SetParticleChange(particleChangeLoss, 0);
   }
- 
+
   // The G4BraggIonModel and G4BetheBlochModel instances are initialised with
   // the same settings as the current model:
   braggIonModel -> Initialise(particle, cuts);
@@ -688,8 +697,6 @@ void G4IonParametrisedLossModel::SampleSecondaries(
 			     const G4DynamicParticle* particle,
 			     G4double cutKinEnergySec,
 			     G4double userMaxKinEnergySec) {
-
-
   // ############## Sampling of secondaries #################################
   // The probability density function (pdf) of the kinetic energy T of a
   // secondary electron may be written as:
@@ -759,7 +766,6 @@ void G4IonParametrisedLossModel::SampleSecondaries(
     GetAngularDistribution()->SampleDirection(particle, kinEnergySec,
                                               Z, mat),
                                                    kinEnergySec);
-
 
   secondaries->push_back(delta);
 
@@ -908,9 +914,8 @@ void G4IonParametrisedLossModel::UpdateDEDXCache(
 void G4IonParametrisedLossModel::CorrectionsAlongStep(
                              const G4MaterialCutsCouple* couple,
 			     const G4DynamicParticle* dynamicParticle,
-			     G4double& eloss,
-			     G4double&,
-                             G4double length) {
+                             const G4double& length,
+			     G4double& eloss) {
 
   // ############## Corrections for along step energy loss calculation ######
   // The computed energy loss (due to electronic stopping) is overwritten
@@ -932,7 +937,7 @@ void G4IonParametrisedLossModel::CorrectionsAlongStep(
   if(kineticEnergy == eloss) { return; }
 
   G4double cutEnergy = DBL_MAX;
-  size_t cutIndex = couple -> GetIndex();
+  std::size_t cutIndex = couple -> GetIndex();
   cutEnergy = cutEnergies[cutIndex];
 
   UpdateDEDXCache(particle, material, cutEnergy);
@@ -1057,7 +1062,7 @@ void G4IonParametrisedLossModel::BuildRangeVector(
                      const G4MaterialCutsCouple* matCutsCouple) {
 
   G4double cutEnergy = DBL_MAX;
-  size_t cutIndex = matCutsCouple -> GetIndex();
+  std::size_t cutIndex = matCutsCouple -> GetIndex();
   cutEnergy = cutEnergies[cutIndex];
 
   const G4Material* material = matCutsCouple -> GetMaterial();
@@ -1076,9 +1081,10 @@ void G4IonParametrisedLossModel::BuildRangeVector(
   G4double logDeltaIntegr = logDeltaEnergy / G4double(nmbSubBins);
 
   G4PhysicsFreeVector* energyRangeVector =
-                              new G4PhysicsFreeVector(nmbBins+1,
-                                                       lowerEnergy,
-                                                       upperEnergy, true); //final boolean argument specifies spline 
+    new G4PhysicsFreeVector(nmbBins+1,
+			    lowerEnergy,
+			    upperEnergy,
+			    /*spline=*/true);
 
   G4double dedxLow = ComputeDEDXPerVolume(material,
                                           particle,
@@ -1090,11 +1096,11 @@ void G4IonParametrisedLossModel::BuildRangeVector(
   energyRangeVector -> PutValues(0, lowerEnergy, range);
 
   G4double logEnergy = std::log(lowerEnergy);
-  for(size_t i = 1; i < nmbBins+1; i++) {
+  for(std::size_t i = 1; i < nmbBins+1; ++i) {
 
       G4double logEnergyIntegr = logEnergy;
 
-      for(size_t j = 0; j < nmbSubBins; j++) {
+      for(std::size_t j = 0; j < nmbSubBins; ++j) {
 
           G4double binLowerBoundary = G4Exp(logEnergyIntegr);
           logEnergyIntegr += logDeltaIntegr;
@@ -1137,6 +1143,8 @@ void G4IonParametrisedLossModel::BuildRangeVector(
 #endif
 
   }
+  //vector is filled: activate spline
+  energyRangeVector -> FillSecondDerivatives();
 
   G4double lowerRangeEdge =
                     energyRangeVector -> Value(lowerEnergy);
@@ -1144,15 +1152,18 @@ void G4IonParametrisedLossModel::BuildRangeVector(
                     energyRangeVector -> Value(upperEnergy);
 
   G4PhysicsFreeVector* rangeEnergyVector
-                      = new G4PhysicsFreeVector(nmbBins+1,
-                                                 lowerRangeEdge,
-                                                 upperRangeEdge, true); //final boolean argument specifies spline
+    = new G4PhysicsFreeVector(nmbBins+1,
+			      lowerRangeEdge,
+			      upperRangeEdge,
+			      /*spline=*/true);
 
-  for(size_t i = 0; i < nmbBins+1; i++) {
+  for(std::size_t i = 0; i < nmbBins+1; ++i) {
       G4double energy = energyRangeVector -> Energy(i);
       rangeEnergyVector ->
              PutValues(i, energyRangeVector -> Value(energy), energy);
   }
+
+  rangeEnergyVector -> FillSecondDerivatives();
 
 #ifdef PRINT_DEBUG_TABLES
   G4cout << *energyLossVector
@@ -1256,8 +1267,6 @@ G4bool G4IonParametrisedLossModel::AddDEDXTable(
      }
   }
 
-  //G4cout << "Adding DEDX table: " << nam << G4endl;
-
   G4VIonDEDXScalingAlgorithm* scalingAlgorithm = algorithm;
   if(scalingAlgorithm == 0)
      scalingAlgorithm = new G4VIonDEDXScalingAlgorithm;
@@ -1282,7 +1291,6 @@ G4bool G4IonParametrisedLossModel::RemoveDEDXTable(
      G4String tableName = (*iter) -> GetName();
 
      if(tableName == nam) {
-        //G4cout << "Removing DEDX table: " << nam << G4endl;
         delete (*iter);
 
         // Remove from table list
@@ -1323,13 +1331,3 @@ void G4IonParametrisedLossModel::ListDEDXTables() {
      G4cout << "   " << tableName << G4endl;
   }
 }
-
-// #########################################################################
-/*
-void G4IonParametrisedLossModel::DeactivateICRU73Scaling() {
-
-  RemoveDEDXTable("ICRU73");
-  AddDEDXTable("ICRU73", new G4IonStoppingData("ion_stopping_data/icru73"));
-}
-*/
-// #########################################################################

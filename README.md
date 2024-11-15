@@ -2,6 +2,8 @@
 
 This repo is maintained by Jonathan Williams, see the full list of contributors [below](#contributors).
 
+**There is a known bug with the stopping powers in this version.  If performing DSAM simulations or anything else that depends on the stopping process, use the [Geant4.10](https://github.com/e-j-w/G4TIP/tree/Geant4.10) branch instead.**
+
 ## Description
 
 Unified simulation code for [TIP](https://fiveyearplan.triumf.ca/tip/) and [TIGRESS](https://fiveyearplan.triumf.ca/teams-tools/tigress-triumf-isac-gamma-ray-suppressed-spectrometer/) using the GEANT4 framework.
@@ -242,13 +244,13 @@ For visualization using the GEANT4 Qt visualization driver, run the program as `
 
 ## Other notes
 
-Some GEANT4 classes have been backported from version 9.4 for use in this code:
+Some GEANT4 classes have been backported from older GEANT4 versions for use in this code:
 
-G4IonStoppingData (from GEANT4.9.4) - modified to allow for user defined stopping powers.
+G4IonStoppingData, G4IonParametrisedLossModel, G4VIonDEDXTable (from GEANT4.11.2) - modified to allow for user defined stopping powers.
 
 G4NuclearDecayChannel (from GEANT4.9.4) - reimplemented as GammaDecayChannel, a decay channel with only gamma decay.  This is done to properly compute properties of daughter nuclei and emitted gammas when considering a cascade of decays.
 
-G4Decay (from GEANT4.10.3) - modified to suppress warnings.
+G4Decay (from GEANT4.11.2) - modified to suppress warnings.
 
 ## Contributors<a name="contributors"></a>
 
